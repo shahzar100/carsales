@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SearchContextProvider } from "@/backend/SearchContext";
+import Header from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,9 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen px-1 grid grid-rows-[auto_1fr_auto] gap-4 p-4`}
       >
-        <SearchContextProvider>{children}</SearchContextProvider>
+        <SearchContextProvider>
+          <Header />
+          <main className="overflow-auto">{children}</main>
+          <footer className="border-t p-4 w-full">
+            <div className="mx-auto max-w-5xl">Footer content here</div>
+          </footer>
+        </SearchContextProvider>
       </body>
     </html>
   );
