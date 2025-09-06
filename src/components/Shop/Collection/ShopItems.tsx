@@ -132,9 +132,9 @@ const ShopItems = () => {
   return (
     <>
       {isClient && (
-        <div className="px-4 py-8">
+        <div className="px-4 py-8 flex flex-col gap-8">
           {/* Header */}
-          <div className="mb-8">
+          <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               Browse Our Car Collection
             </h1>
@@ -147,16 +147,12 @@ const ShopItems = () => {
           <FilterBar brands={brands} fuelTypes={fuelTypes} colors={colors} />
 
           {/* Results Count */}
-          <div className="mb-6">
-            <p className="text-gray-600">
-              Showing {filteredCars.length} of {cars.length} cars
-            </p>
-          </div>
+          <p className="text-gray-600">
+            Showing {filteredCars.length} of {cars.length} cars
+          </p>
 
           {/* Car Grid */}
-          <div className="flex-1">
-            <ItemGrid cars={filteredCars} />
-          </div>
+          <ItemGrid cars={filteredCars} />
         </div>
       )}
     </>

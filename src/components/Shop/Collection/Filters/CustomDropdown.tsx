@@ -145,7 +145,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <div className="relative flex-1" ref={dropdownRef}>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
         {label}
       </label>
 
@@ -154,12 +154,12 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         className={`
-          w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm 
-          transition-all duration-200 ease-in-out focus:outline-none focus:ring-1 
-          focus:ring-blue-500 focus:border-blue-500 hover:shadow-md text-sm
+          w-full px-4 py-3 text-left bg-white border rounded-xl shadow-sm 
+          transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 
+          focus:ring-blue-500 focus:border-blue-500 hover:shadow-md
           ${
             isOpen
-              ? "ring-1 ring-blue-500 border-blue-500 shadow-md"
+              ? "ring-2 ring-blue-500 border-blue-500 shadow-md"
               : "border-gray-300"
           }
           ${hasSelectedValues ? "text-gray-900" : "text-gray-500"}
@@ -168,36 +168,12 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         aria-expanded={isOpen}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {icon && <div className="text-gray-400 flex-shrink-0">{icon}</div>}
-            <div className="flex-1 min-w-0">
-              {multiSelect && Array.isArray(value) && value.length > 1 ? (
-                <span className="truncate text-sm">{displayText}</span>
-              ) : multiSelect && Array.isArray(value) && value.length === 1 ? (
-                <div className="flex items-center gap-1">
-                  <span className="truncate text-sm">{displayText}</span>
-                  <div
-                    onClick={(e) => removeValue(value[0], e)}
-                    className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer p-0.5 rounded hover:bg-red-50"
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        removeValue(value[0], e as any);
-                      }
-                    }}
-                  >
-                    <X size={12} />
-                  </div>
-                </div>
-              ) : (
-                <span className="truncate text-sm">{displayText}</span>
-              )}
-            </div>
+          <div className="flex items-center gap-3">
+            {icon && <div className="text-gray-400">{icon}</div>}
+            <span className="truncate">{displayText}</span>
           </div>
           <ChevronDown
-            className={`h-4 w-4 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
+            className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -205,7 +181,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto backdrop-blur-sm">
           <div className="py-1">
             {options.map((option, index) => (
               <button
@@ -214,7 +190,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 onClick={() => handleOptionClick(option.value)}
                 onMouseEnter={() => setHighlightedIndex(index)}
                 className={`
-                  w-full px-3 py-2 text-left text-sm transition-all duration-150
+                  w-full px-4 py-3 text-left text-sm transition-all duration-150
                   flex items-center justify-between hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100
                   ${
                     highlightedIndex === index
@@ -222,16 +198,16 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                       : ""
                   }
                   ${
-                    isSelected(option.value)
+                    value === option.value
                       ? "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900 font-medium"
                       : "text-gray-900"
                   }
-                  first:rounded-t-lg last:rounded-b-lg
+                  first:rounded-t-xl last:rounded-b-xl
                 `}
               >
                 <span className="truncate">{option.label}</span>
-                {isSelected(option.value) && (
-                  <Check className="h-3 w-3 text-blue-600 flex-shrink-0 ml-2" />
+                {value === option.value && (
+                  <Check className="h-4 w-4 text-blue-600 flex-shrink-0 ml-2" />
                 )}
               </button>
             ))}

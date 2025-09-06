@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Car,
   Calendar,
@@ -8,6 +8,7 @@ import {
   Palette,
   Filter,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { useSearchContext } from "@/backend/SearchContext";
 import CustomDropdown from "./CustomDropdown";
@@ -20,6 +21,7 @@ interface FilterBarProps {
 
 const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
   const { filters, updateFilters, clearFilters } = useSearchContext();
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const handleFilterChange = (filterType: string, value: string | string[]) => {
     // Handle array values for multi-select
@@ -104,26 +106,9 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
     ...colors.map((color) => ({ value: color, label: color })),
   ];
 
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full min-w-0 overflow-x-auto">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Filter className="text-gray-600" size={16} />
-          <h2 className="text-base font-medium text-gray-900">Filters</h2>
-        </div>
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="flex items-center gap-1 px-2 py-1 text-xs text-red-600 hover:text-red-800 
-                     hover:bg-red-50 rounded transition-colors"
-          >
-            <X size={12} />
-            Clear
-          </button>
-        )}
-      </div>
-
-      <div className="flex gap-4 w-full">
+  const renderComponents = () => {
+    return (
+      <div className="flex flex-col lg:flex-row gap-4 w-full">
         <CustomDropdown
           label="Brand"
           options={brandOptions.slice(1)}
@@ -140,41 +125,45 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
           multiSelect={true}
         />
 
-        <CustomDropdown
-          label="Year From"
-          options={yearOptions}
-          value={filters.yearFrom?.toString() || ""}
-          onChange={(value) => handleFilterChange("yearFrom", value)}
-          placeholder="Any year"
-          icon={<Calendar size={14} />}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <CustomDropdown
+            label="Year From"
+            options={yearOptions}
+            value={filters.yearFrom?.toString() || ""}
+            onChange={(value) => handleFilterChange("yearFrom", value)}
+            placeholder="Any year"
+            icon={<Calendar size={14} />}
+          />
 
-        <CustomDropdown
-          label="Year To"
-          options={yearOptions}
-          value={filters.yearTo?.toString() || ""}
-          onChange={(value) => handleFilterChange("yearTo", value)}
-          placeholder="Any year"
-          icon={<Calendar size={14} />}
-        />
+          <CustomDropdown
+            label="Year To"
+            options={yearOptions}
+            value={filters.yearTo?.toString() || ""}
+            onChange={(value) => handleFilterChange("yearTo", value)}
+            placeholder="Any year"
+            icon={<Calendar size={14} />}
+          />
+        </div>
 
-        <CustomDropdown
-          label="Price From"
-          options={priceFromOptions}
-          value={filters.priceFrom?.toString() || ""}
-          onChange={(value) => handleFilterChange("priceFrom", value)}
-          placeholder="Any price"
-          icon={<DollarSign size={14} />}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <CustomDropdown
+            label="Price From"
+            options={priceFromOptions}
+            value={filters.priceFrom?.toString() || ""}
+            onChange={(value) => handleFilterChange("priceFrom", value)}
+            placeholder="Any price"
+            icon={<DollarSign size={14} />}
+          />
 
-        <CustomDropdown
-          label="Price To"
-          options={priceToOptions}
-          value={filters.priceTo?.toString() || ""}
-          onChange={(value) => handleFilterChange("priceTo", value)}
-          placeholder="Any price"
-          icon={<DollarSign size={14} />}
-        />
+          <CustomDropdown
+            label="Price To"
+            options={priceToOptions}
+            value={filters.priceTo?.toString() || ""}
+            onChange={(value) => handleFilterChange("priceTo", value)}
+            placeholder="Any price"
+            icon={<DollarSign size={14} />}
+          />
+        </div>
 
         <CustomDropdown
           label="Fuel Type"
@@ -208,7 +197,99 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
           multiSelect={true}
         />
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <>
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden mb-4">
+        <button
+          onClick={() => setIsFilterModalOpen(true)}
+          className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 
+                     flex items-center justify-between hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Filter className="text-gray-600" size={20} />
+            <span className="text-base font-medium text-gray-900">Filters</span>
+            {hasActiveFilters && (
+              <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                Active
+              </span>
+            )}
+          </div>
+          <ChevronDown className="text-gray-400" size={20} />
+        </button>
+      </div>
+
+      {/* Desktop Filter Bar */}
+      <div className="hidden lg:flex flex-col gap-4 bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-medium text-gray-900 flex items-center gap-2">
+            <Filter className="text-gray-600" size={16} />
+            Filters
+          </h2>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 px-2 py-1 text-xs text-red-600 hover:text-red-800 
+                         hover:bg-red-50 rounded transition-colors"
+            >
+              <X size={12} />
+              Clear
+            </button>
+          )}
+        </div>
+
+        {renderComponents()}
+      </div>
+
+      {/* Mobile Filter Modal */}
+      {isFilterModalOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
+          <div className="bg-white w-full rounded-t-lg max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Filter className="text-gray-600" size={20} />
+                Filters
+              </h2>
+              <button
+                onClick={() => setIsFilterModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {renderComponents()}
+
+              <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex gap-3">
+                {hasActiveFilters && (
+                  <button
+                    onClick={() => {
+                      clearFilters();
+                      setIsFilterModalOpen(false);
+                    }}
+                    className="flex-1 px-4 py-3 text-red-600 border border-red-200 
+                             hover:bg-red-50 rounded-lg transition-colors font-medium"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsFilterModalOpen(false)}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white 
+                           hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

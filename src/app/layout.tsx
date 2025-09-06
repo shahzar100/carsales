@@ -28,12 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen px-1 grid grid-rows-[auto_1fr_auto] gap-4 p-4`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4`}
       >
         <SearchContextProvider>
           <ViewingProvider>
             <Header />
-            <main className="overflow-auto bg-black">{children}</main>
+            <main>{children}</main>
             <footer className="border-t p-4 w-full">
               <div className="mx-auto max-w-5xl text-center text-gray-600">
                 <p>&copy; 2025 Car Sales & Viewing. All rights reserved.</p>
