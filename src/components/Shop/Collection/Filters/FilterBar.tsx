@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Car,
   Calendar,
@@ -22,6 +22,41 @@ interface FilterBarProps {
 const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
   const { filters, updateFilters, clearFilters } = useSearchContext();
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isFilterModalOpen) {
+      // Store original scroll position
+      const scrollY = window.scrollY;
+
+      // Prevent scrolling
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+
+      return () => {
+        // Restore scrolling
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
+    }
+
+    // Cleanup function for when component unmounts or modal closes
+    return () => {
+      if (isFilterModalOpen) {
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+      }
+    };
+  }, [isFilterModalOpen]);
 
   const handleFilterChange = (filterType: string, value: string | string[]) => {
     // Handle array values for multi-select
@@ -246,8 +281,14 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
 
       {/* Mobile Filter Modal */}
       {isFilterModalOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
-          <div className="bg-white w-full rounded-t-lg max-h-[90vh] overflow-y-auto">
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end overflow-y-auto"
+          onClick={() => setIsFilterModalOpen(false)}
+        >
+          <div
+            className="bg-white w-full rounded-t-lg max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Filter className="text-gray-600" size={20} />
