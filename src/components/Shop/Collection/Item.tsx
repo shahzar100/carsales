@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import React from "react";
-import GridItem from "../../Helpful/GridItem";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
 import { Calendar, Eye, Car, Fuel, Palette, DoorOpen } from "lucide-react";
@@ -40,25 +39,15 @@ const Item: React.FC<ItemProps> = ({ car }) => {
   };
 
   return (
-    <GridItem link={`/Booking`} onClick={setCarForViewing}>
-      <Link
-        href={`/BrowseFleet/${car._id}`}
-        className="w-full h-1/3 md:w-1/3 md:h-full relative group"
-      >
+    <div className="flex flex-col md:flex-row gap-4 border hover:border-2 border-blue-500 group p-4 rounded-md">
+      <div className="relative w-full h-60 lg:w-2/5 lg:h-auto overflow-hidden">
         <Image
-          src={car.Image || "/car.webp"}
-          width={300}
-          height={200}
+          src={"/car.jpg"}
+          fill
           alt={`${car.Brand} ${car.Name}`}
-          className="object-cover w-full h-full rounded-lg transition-transform group-hover:scale-105"
+          className="object-contain lg:object-cover transition-transform duration-500 group-hover:scale-105 rounded-md"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
-          <Eye
-            className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
-            size={32}
-          />
-        </div>
-      </Link>
+      </div>
 
       <div className="flex flex-col p-4 gap-4 lg:w-2/3 w-full lg:h-full justify-between">
         <div>
@@ -95,16 +84,17 @@ const Item: React.FC<ItemProps> = ({ car }) => {
             <p className="text-sm text-gray-500">Purchase Price</p>
           </div>
 
-          <button
+          <Link
+            href={`/BrowseFleet/${car._id}`}
             onClick={setCarForViewing}
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
           >
             <Calendar size={20} />
             Book Viewing
-          </button>
+          </Link>
         </div>
       </div>
-    </GridItem>
+    </div>
   );
 };
 

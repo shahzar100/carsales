@@ -1,6 +1,5 @@
 import React from "react";
 import Item from "./Item";
-import Grid from "../../Helpful/Grid";
 
 interface Car {
   _id: string;
@@ -21,8 +20,8 @@ interface ItemGridProps {
 
 const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
   return (
-    <Grid>
-      <div className="col-span-full mb-6">
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold text-gray-900">
           {cars.length} Cars Available for Viewing
         </h2>
@@ -43,7 +42,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
           </p>
         </div>
       )}
-    </Grid>
+    </div>
   );
 };
 

@@ -132,7 +132,7 @@ const ShopItems = () => {
   return (
     <>
       {isClient && (
-        <div className="px-4 py-8 flex flex-col gap-8">
+        <div className="px-4 py-8 flex flex-col gap-8 mx-auto max-w-7xl">
           {/* Header */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
