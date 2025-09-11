@@ -1,16 +1,35 @@
 import React from "react";
 import NavMenu from "./Dropdown/NavMenu";
 import NavLink from "./Dropdown/NavLink";
-
 const Header = () => {
   return (
-    <nav className="flex justify-between items-center mx-auto max-w-7xl row-span-1 w-full p-4 sticky top-0 z-50 bg-white rounded-full">
-      <h1> Title </h1>
+    <nav className="flex justify-between items-center mx-auto max-w-7xl row-span-1 w-full px-6 py-4 sticky top-0 z-50 bg-white/95 backdrop-blur-sm border border-gray-100 shadow-sm rounded-full">
+      <h1 className="text-xl font-bold tracking-tight"> Title </h1>
 
       <NavMenu>
-        <NavLink href="/BrowseFleet" text={"Browse Fleet"} />
-        <NavLink href="/BookTestDrive" text={" Book Test Drive"} />
-        <NavLink href="/Services" text={"Services"} />
+        <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>
+          <div className="w-full">
+            <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">
+              Brands
+            </h3>
+            <div className="grid grid-cols-2 gap-1 text-sm">
+              <NavLink href="/BrowseFleet/Toyota" text="Toyota" />
+              <NavLink href="/BrowseFleet/Honda" text="Honda" />
+              <NavLink href="/BrowseFleet/BMW" text="BMW" />
+              <NavLink href="/BrowseFleet/Audi" text="Audi" />
+            </div>
+          </div>
+        </NavLink>
+        <NavLink dropdown={true} href="/Services" text={"Services"}>
+          <div className="flex flex-col space-y-2 w-full">
+            <NavLink href="/Services/Detailing" text={"Detailing"} />
+            <NavLink href="/Services/Tints" text={"Tints"} />
+            <NavLink href="/Services/Repairs" text={"Repairs"} />
+          </div>
+        </NavLink>
+        <NavLink href="/Car Parts" text={"Car Parts"} />
+        <NavLink href="/Recoveries" text={"Recoveries"} />
+        <NavLink href="/AccidentClaims" text={"Accident Claims"} />
         <NavLink href="/AboutUs" text={"About Us"} />
       </NavMenu>
     </nav>
