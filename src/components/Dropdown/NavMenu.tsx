@@ -1,7 +1,6 @@
 "use client";
 import { Menu, X } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 
 interface NavMenuProps {
   children: React.ReactNode;
@@ -42,23 +41,6 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
       document.body.style.paddingRight = "";
     };
   }, [menu]);
-
-  // // Handle click outside - close menu when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-  //       setMenu(false);
-  //     }
-  //   };
-
-  //   if (menu) {
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [menu]);
 
   return (
     <>
