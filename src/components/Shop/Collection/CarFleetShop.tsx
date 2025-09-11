@@ -69,9 +69,12 @@ interface Car {
   Image?: string;
 }
 
-const ShopItems = () => {
+interface CarFleetShopProps {
+  cars: Car[];
+}
+
+const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
   const [isClient, setIsClient] = useState(false);
-  const [cars, setCars] = useState<Car[]>(mockCars);
   const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
   const { filters } = useSearchContext();
 
@@ -159,4 +162,4 @@ const ShopItems = () => {
   );
 };
 
-export default ShopItems;
+export default CarFleetShop;
