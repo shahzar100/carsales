@@ -44,7 +44,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
 
   return (
     <>
-      <div className="lg:flex gap-8 hidden items-center">{children}</div>
+      <div className="lg:flex xl:gap-8 hidden items-center">{children}</div>
       <button
         onClick={() => setMenu(!menu)}
         className="cursor-pointer lg:hidden p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 border border-gray-200 shadow-sm"
@@ -69,7 +69,9 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
               </button>
             </div>
 
-            <div className="flex flex-col py-4">{children}</div>
+            <div className="flex flex-col py-6 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto">
+              {children}
+            </div>
           </div>
         </>
       )}
