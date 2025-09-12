@@ -27,7 +27,7 @@ const Header = () => {
             <NavLink href="/Services/Repairs" text={"Repairs"} />
           </div>
         </NavLink>
-        <NavLink href="/Car Parts" text={"Car Parts"} />
+        <NavLink href="/CarParts" text={"Car Parts"} />
         <NavLink href="/Recoveries" text={"Recoveries"} />
         <NavLink href="/AccidentClaims" text={"Accident Claims"} />
         <NavLink href="/AboutUs" text={"About Us"} />

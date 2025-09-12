@@ -34,7 +34,7 @@ export default function RootLayout({
         <SearchContextProvider>
           <ViewingProvider>
             <Header />
-            <main>{children}</main>
+            <main className="min-h-screen">{children}</main>
             <footer className="border-t bg-gray-50 w-full">
               <div className="mx-auto max-w-7xl px-6 py-12">
                 {/* Main Footer Content */}
