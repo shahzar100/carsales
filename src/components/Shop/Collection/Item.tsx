@@ -3,15 +3,7 @@ import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
-import {
-  Calendar,
-  Eye,
-  Car,
-  Fuel,
-  Palette,
-  DoorOpen,
-  Info,
-} from "lucide-react";
+import { Calendar, Car, Fuel, Palette, DoorOpen, Info } from "lucide-react";
 
 interface CarData {
   _id: string;

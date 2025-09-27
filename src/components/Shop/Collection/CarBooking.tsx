@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Calendar, MapPin, Phone, Clock, ChevronDown } from "lucide-react";
+import React from "react";
+import { Calendar, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 interface CarData {

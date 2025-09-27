@@ -2,8 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import CarBooking from "./CarBooking";
-import { Car, Fuel } from "lucide-react";
 
 interface CarData {
   _id: string;

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, Check, X } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 
 interface Option {
   value: string;
@@ -106,20 +106,20 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     }
   };
 
-  const removeValue = (valueToRemove: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (multiSelect && Array.isArray(value)) {
-      const newValues = value.filter((v) => v !== valueToRemove);
-      onChange(newValues);
-    }
-  };
+  // const removeValue = (valueToRemove: string, e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   if (multiSelect && Array.isArray(value)) {
+  //     const newValues = value.filter((v) => v !== valueToRemove);
+  //     onChange(newValues);
+  //   }
+  // };
 
-  const isSelected = (optionValue: string): boolean => {
-    if (multiSelect && Array.isArray(value)) {
-      return value.includes(optionValue);
-    }
-    return value === optionValue;
-  };
+  // const isSelected = (optionValue: string): boolean => {
+  //   if (multiSelect && Array.isArray(value)) {
+  //     return value.includes(optionValue);
+  //   }
+  //   return value === optionValue;
+  // };
 
   const getDisplayText = (): string => {
     if (multiSelect && Array.isArray(value) && value.length > 0) {
