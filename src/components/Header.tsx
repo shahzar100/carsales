@@ -3,7 +3,7 @@ import NavMenu from "./Dropdown/NavMenu";
 import NavLink from "./Dropdown/NavLink";
 const Header = () => {
   return (
-    <nav className="flex justify-between items-center mx-auto max-w-7xl row-span-1 w-full px-6 py-4 sticky top-0 z-50 bg-white/95 backdrop-blur-sm border border-gray-100 shadow-sm rounded-full">
+    <nav className="flex gap-8 justify-between items-center mx-auto max-w-7xl row-span-1 w-full px-6 py-4 sticky top-0 z-50 bg-white/95 backdrop-blur-sm border border-gray-100 shadow-sm rounded-full">
       <h1 className="text-xl font-bold tracking-tight"> Title </h1>
 
       <NavMenu>
@@ -30,6 +30,7 @@ const Header = () => {
         <NavLink href="/CarParts" text={"Car Parts"} />
         <NavLink href="/Recoveries" text={"Recoveries"} />
         <NavLink href="/AccidentClaims" text={"Accident Claims"} />
+        <NavLink href="/ViewBooking" text={"View Bookings"} />
         <NavLink href="/AboutUs" text={"About Us"} />
       </NavMenu>
     </nav>

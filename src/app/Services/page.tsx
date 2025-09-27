@@ -179,12 +179,12 @@ const Services = () => {
                 >
                   Learn More & Book
                 </Link>
-                <a
+                <Link
                   href={`mailto:info@carsales.com?subject=Inquiry about ${service.title}&body=Hi, I'm interested in learning more about your ${service.title} services. Please provide more details and pricing information.`}
                   className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-medium text-center block transition-colors duration-200"
                 >
                   Email Inquiry
-                </a>
+                </Link>
               </div>
             </div>
           );

@@ -1,43 +1,70 @@
 import React from "react";
 import CarDisplay from "@/components/Shop/Collection/CarDisplay";
-
-// Mock car data for now - replace with your actual data fetching
-const mockCars = [
-  {
-    _id: "1",
-    Name: "Model S",
-    Brand: "Tesla",
-    Year: 2023,
-    Fuel: "Electric",
-    Doors: 4,
-    Colour: "White",
-    Price: 85000,
-    Mileage: 5000,
-    Image: "/car.webp",
-  },
-  {
-    _id: "2",
-    Name: "Civic",
-    Brand: "Honda",
-    Year: 2022,
-    Fuel: "Petrol",
-    Doors: 4,
-    Colour: "Blue",
-    Price: 25000,
-    Mileage: 15000,
-    Image: "/car.webp",
-  },
-];
+import clientPromise from "@/backend/mongodb";
+import { ObjectId } from "mongodb";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     _id: string;
-  };
+  }>;
 }
 
-const CarDetailsPage = ({ params }: PageProps) => {
-  // For now, using mock data - replace with actual data fetching
-  const car = mockCars.find((c) => c._id === params._id) || mockCars[0];
+interface CarData {
+  _id: string;
+  Name: string;
+  Brand: string;
+  Year: number;
+  Fuel: string;
+  Doors: number;
+  Colour: string;
+  Price: number;
+  Mileage: number;
+  Image?: string;
+}
+
+const getCar = async (id: string) => {
+  try {
+    const client = await clientPromise;
+    const db = client.db("carWebsite");
+
+    const collection = db.collection("cars");
+
+    const car = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!car) {
+      return null;
+    }
+
+    return {
+      ...car,
+      _id: car._id.toString(),
+      Image: String(car.Image),
+    } as CarData;
+  } catch (error) {
+    console.error("Error fetching car:", error);
+    return null; // Return null instead of {}
+  }
+};
+
+const CarDetailsPage = async ({ params }: PageProps) => {
+  const { _id } = await params;
+  const car = await getCar(_id);
+
+  // Handle the null case properly
+  if (!car) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Car Not Found
+          </h1>
+          <p className="text-gray-600">
+            The car you're looking for doesn't exist.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

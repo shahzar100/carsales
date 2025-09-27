@@ -27,19 +27,11 @@ const HeroSection = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
-                href="/Shop"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 flex items-center gap-3 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                href="/BrowseFleet"
+                className="flex items-center w-full justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 gap-3 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <Search size={24} />
                 Browse Cars
-              </Link>
-
-              <Link
-                href="/Booking"
-                className="bg-transparent border-2 border-white hover:bg-white hover:text-black text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 flex items-center gap-3 text-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                <Calendar size={24} />
-                Book Viewing
               </Link>
             </div>
           </div>
@@ -84,13 +76,22 @@ const HeroSection = () => {
                   </div>
                 </div>
 
-                {/* View Car Button */}
-                <Link
-                  href="/Shop/featured-bmw-x5"
-                  className="block w-full bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors text-center border border-gray-700 hover:border-gray-600"
-                >
-                  View Details
-                </Link>
+                <div className="flex gap-8 flex-col xl:flex-row w-full">
+                  {/* View Car Button */}
+                  <Link
+                    href="/BrowseFleet/featured-bmw-x5"
+                    className="flex items-center justify-center w-full bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors text-center border border-gray-700 hover:border-gray-600"
+                  >
+                    View Details
+                  </Link>
+                  <Link
+                    href="/Booking"
+                    className="flex items-center justify-center gap-3 w-full bg-transparent border-2 border-white hover:bg-white hover:text-black text-white px-6 py-5 rounded-lg font-semibold transition-all duration-300 text-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    <Calendar size={24} />
+                    Schedule Booking
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

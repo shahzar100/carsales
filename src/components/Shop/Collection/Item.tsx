@@ -3,7 +3,15 @@ import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
-import { Calendar, Eye, Car, Fuel, Palette, DoorOpen } from "lucide-react";
+import {
+  Calendar,
+  Eye,
+  Car,
+  Fuel,
+  Palette,
+  DoorOpen,
+  Info,
+} from "lucide-react";
 
 interface CarData {
   _id: string;
@@ -84,14 +92,24 @@ const Item: React.FC<ItemProps> = ({ car }) => {
             <p className="text-sm text-gray-500">Purchase Price</p>
           </div>
 
-          <Link
-            href={`/BrowseFleet/${car._id}`}
-            onClick={setCarForViewing}
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
-          >
-            <Calendar size={20} />
-            Book Viewing
-          </Link>
+          <div className="flex w-full gap-4">
+            <Link
+              href={`/BrowseFleet/${car._id}`}
+              onClick={setCarForViewing}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
+            >
+              <Info size={20} />
+              More details
+            </Link>
+            <Link
+              href={`/Booking/${car._id}`}
+              onClick={setCarForViewing}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
+            >
+              <Calendar size={20} />
+              Book Viewing
+            </Link>
+          </div>
         </div>
       </div>
     </div>
