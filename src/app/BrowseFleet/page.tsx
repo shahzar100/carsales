@@ -15,26 +15,23 @@ interface Car {
   Mileage: number;
   Image?: string;
 }
-const convertImageToString = (image: any): string | undefined => {
+
+// Define a type for image that can be a string or buffer object
+type ImageInput =
+  | string
+  | { buffer: { data: number[] } }
+  | { buffer: Buffer }
+  | Buffer
+  | undefined
+  | null;
+
+const convertImageToString = (image: ImageInput): string | undefined => {
   // If image is already a string (URL), return it
   if (typeof image === "string") {
     return image;
   }
 
-  // If image is a Buffer or has buffer property
-  if (image && typeof image === "object" && "buffer" in image) {
-    try {
-      // Convert buffer to base64 data URL
-      const buffer = Buffer.from(image.buffer.data || image.buffer);
-      const base64String = buffer.toString("base64");
-      return `data:image/jpeg;base64,${base64String}`;
-    } catch (error) {
-      console.error("Error converting image buffer:", error);
-      return undefined;
-    }
-  }
-
-  // If image is a direct Buffer
+  // If image is a Buffer directly
   if (Buffer.isBuffer(image)) {
     try {
       const base64String = image.toString("base64");
@@ -44,6 +41,38 @@ const convertImageToString = (image: any): string | undefined => {
       return undefined;
     }
   }
+
+  // If image is a Buffer or has buffer property
+  if (image && typeof image === "object" && "buffer" in image) {
+    try {
+      // Convert buffer to base64 data URL
+      let buffer: Buffer;
+      if (Buffer.isBuffer(image.buffer)) {
+        buffer = image.buffer;
+      } else if (image.buffer && "data" in image.buffer) {
+        buffer = Buffer.from(image.buffer.data);
+      } else {
+        return undefined;
+      }
+      const base64String = buffer.toString("base64");
+      return `data:image/jpeg;base64,${base64String}`;
+    } catch (error) {
+      console.error("Error converting image buffer:", error);
+      return undefined;
+    }
+  }
+
+  // If image is Buffer type but not instance
+  if (image && typeof image === "object") {
+    try {
+      const base64String = (image as Buffer).toString("base64");
+      return `data:image/jpeg;base64,${base64String}`;
+    } catch (error) {
+      console.error("Error converting image buffer:", error);
+      return undefined;
+    }
+  }
+
   return undefined;
 };
 

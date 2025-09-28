@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sparkles,
   Shield,
@@ -128,10 +129,11 @@ const Services = () => {
 
               {/* Service Image */}
               <div className="relative h-48 bg-gray-200 rounded-lg overflow-hidden mb-6">
-                <img
+                <Image
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
               </div>
@@ -139,7 +141,7 @@ const Services = () => {
               {/* Features List */}
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-3">
-                  What's Included:
+                  What&apos;s Included:
                 </h4>
                 <ul className="space-y-2">
                   {service.features.map((feature, index) => (
@@ -255,7 +257,7 @@ const Services = () => {
         <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
         <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
           Contact us today for a free quote or to schedule your service
-          appointment. We're here to keep your vehicle running and looking its
+          appointment. We&apos;re here to keep your vehicle running and looking its
           best.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
