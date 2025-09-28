@@ -1,13 +1,13 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.NEXT_MONGODB_URI;
+const uri = process.env.MONGODB_URI;
 const options = {};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (!uri) {
-  throw new Error("Please define the NEXT_MONGODB_URI");
+  throw new Error("Please define the MONGODB_URI");
 }
 
 if (process.env.NODE_ENV === "development") {

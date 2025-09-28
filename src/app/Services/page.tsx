@@ -257,8 +257,8 @@ const Services = () => {
         <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
         <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
           Contact us today for a free quote or to schedule your service
-          appointment. We&apos;re here to keep your vehicle running and looking its
-          best.
+          appointment. We&apos;re here to keep your vehicle running and looking
+          its best.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
