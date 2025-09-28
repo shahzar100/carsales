@@ -4,7 +4,9 @@ import NavLink from "./Dropdown/NavLink";
 const Header = () => {
   return (
     <nav className="flex gap-8 justify-between items-center mx-auto max-w-7xl row-span-1 w-full px-6 py-4 sticky top-0 z-50 bg-white/95 backdrop-blur-sm border border-gray-100 shadow-sm rounded-full">
-      <h1 className="text-xl font-bold tracking-tight"> Title </h1>
+      <Link className="text-xl font-bold tracking-tight" href="/">
+        Title
+      </Link>
 
       <NavMenu>
         <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>
