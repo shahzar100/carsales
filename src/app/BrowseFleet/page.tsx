@@ -22,10 +22,10 @@ const convertImageToString = (image: any): string | undefined => {
   }
 
   // If image is a Buffer or has buffer property
-  if (image && image.buffer) {
+  if (image && typeof image === "object" && "buffer" in image) {
     try {
       // Convert buffer to base64 data URL
-      const buffer = Buffer.from(image.buffer);
+      const buffer = Buffer.from(image.buffer.data || image.buffer);
       const base64String = buffer.toString("base64");
       return `data:image/jpeg;base64,${base64String}`;
     } catch (error) {

@@ -59,7 +59,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
             Car Not Found
           </h1>
           <p className="text-gray-600">
-            The car you're looking for doesn't exist.
+            The car you&apos;re looking for doesn&apos;t exist.
           </p>
         </div>
       </div>

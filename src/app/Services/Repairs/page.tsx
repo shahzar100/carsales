@@ -230,7 +230,7 @@ const Repairs = () => {
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold mb-4">24/7 Emergency Support</h3>
             <p className="text-lg text-red-100">
-              Stranded on the road? We're here to help with immediate
+              Stranded on the road? We&apost;re here to help with immediate
               assistance.
             </p>
           </div>
@@ -339,7 +339,7 @@ const Repairs = () => {
               Non-Emergency Repairs
             </h3>
             <p className="text-gray-300 mb-4">
-              Email us details about your vehicle's issues for accurate
+              Email us details about your vehicle&apost;s issues for accurate
               diagnosis and pricing.
             </p>
             <a

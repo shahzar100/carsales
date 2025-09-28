@@ -247,7 +247,7 @@ const Tints = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">5% VLT</h3>
               <p className="text-sm text-gray-600">
-                Very dark, maximum privacy. Often called "limo tint"
+                Very dark, maximum privacy. Often called &ldquo;limo tint&rdquo;
               </p>
             </div>
             <div className="text-center">
@@ -281,8 +281,8 @@ const Tints = () => {
           <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
               <strong>Legal Notice:</strong> Please check your local laws for
-              legal tint limits. We'll help ensure your tint complies with local
-              regulations.
+              legal tint limits. We&apos;ll help ensure your tint complies with
+              local regulations.
             </p>
           </div>
         </div>
