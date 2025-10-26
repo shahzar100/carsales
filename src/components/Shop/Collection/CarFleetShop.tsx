@@ -4,58 +4,6 @@ import { useSearchContext } from "@/backend/SearchContext";
 import FilterBar from "./Filters/FilterBar";
 import ItemGrid from "./ItemGrid";
 
-// Mock car data - replace with your actual data source
-const mockCars = [
-  {
-    _id: "1",
-    Name: "Model S",
-    Brand: "Tesla",
-    Year: 2023,
-    Fuel: "Electric",
-    Doors: 4,
-    Colour: "White",
-    Price: 85000,
-    Mileage: 5000,
-    Image: "/car.webp",
-  },
-  {
-    _id: "2",
-    Name: "Civic",
-    Brand: "Honda",
-    Year: 2022,
-    Fuel: "Petrol",
-    Doors: 4,
-    Colour: "Blue",
-    Price: 25000,
-    Mileage: 15000,
-    Image: "/car.webp",
-  },
-  {
-    _id: "3",
-    Name: "X5",
-    Brand: "BMW",
-    Year: 2023,
-    Fuel: "Diesel",
-    Doors: 5,
-    Colour: "Black",
-    Price: 65000,
-    Mileage: 8000,
-    Image: "/car.webp",
-  },
-  {
-    _id: "4",
-    Name: "A4",
-    Brand: "Audi",
-    Year: 2021,
-    Fuel: "Petrol",
-    Doors: 4,
-    Colour: "Silver",
-    Price: 35000,
-    Mileage: 12000,
-    Image: "/car.webp",
-  },
-];
-
 interface Car {
   _id: string;
   Name: string;
@@ -75,7 +23,7 @@ interface CarFleetShopProps {
 
 const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
   const [isClient, setIsClient] = useState(false);
-  const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
+  const [filteredCars, setFilteredCars] = useState<Car[]>(cars);
   const { filters } = useSearchContext();
 
   useEffect(() => {
