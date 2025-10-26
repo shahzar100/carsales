@@ -44,7 +44,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
 
   return (
     <>
-      <div className="hidden lg:flex border max-w-5xl items-center justify-center">
+      <div className="hidden lg:flex max-w-5xl items-center justify-center">
         {children}
       </div>
       <button

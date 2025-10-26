@@ -7,6 +7,8 @@ interface ButtonProps {
   onClick: () => void;
   customWidth?: string;
   variant?: "default" | "ghost" | "outline";
+  disabled: boolean;
+  iconPlacement: "left" | "right";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -15,6 +17,8 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   customWidth,
   variant = "default",
+  disabled,
+  iconPlacement,
 }) => {
   const baseClasses =
     "group text-base transition-all duration-200 hover:bg-gray-100 rounded-lg p-2";
@@ -26,14 +30,16 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${
         customWidth || ""
       }`}
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
-        <Icon size={20} />
-        <p className="hidden group-hover:block whitespace-nowrap">{text}</p>
+        {iconPlacement === "left" && <Icon size={20} />}
+        <p>{text}</p>
+        {iconPlacement === "right" && <Icon size={20} />}
       </div>
     </button>
   );

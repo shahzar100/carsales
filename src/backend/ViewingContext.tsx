@@ -9,6 +9,10 @@ interface ViewingBooking {
     year: number;
     price: number;
     image?: string;
+    fuel?: string;
+    doors?: number;
+    colour?: string;
+    mileage?: number;
   };
   selectedDate?: string;
   selectedTime?: string;
@@ -16,7 +20,6 @@ interface ViewingBooking {
     name: string;
     email: string;
     phone: string;
-    message?: string;
   };
   dealership?: {
     location: string;

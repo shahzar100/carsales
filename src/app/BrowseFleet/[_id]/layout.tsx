@@ -76,7 +76,7 @@ export default async function CarLayout({ children, params }: LayoutProps) {
             </div>
           </div>
 
-          <div className="p-8 max-w-5xl mx-auto border">{children}</div>
+          <div className="p-8 max-w-5xl mx-auto">{children}</div>
 
           <CarBooking car={car} />
         </>

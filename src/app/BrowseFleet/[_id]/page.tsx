@@ -67,7 +67,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 rounded-xl">
       {car && <CarDisplay car={car} />}
     </div>
   );

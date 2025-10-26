@@ -3,6 +3,7 @@
 import React from "react";
 import { Calendar, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
+import { useViewing } from "@/backend/ViewingContext";
 
 interface CarData {
   _id: string;
@@ -22,6 +23,24 @@ interface CarBookingProps {
 }
 
 const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
+  const { updateViewingBooking } = useViewing();
+
+  const handleBookingClick = () => {
+    updateViewingBooking({
+      carId: car._id,
+      carDetails: {
+        make: car.Brand,
+        model: car.Name,
+        year: car.Year,
+        price: car.Price,
+        image: car.Image,
+        fuel: car.Fuel,
+        doors: car.Doors,
+        colour: car.Colour,
+        mileage: car.Mileage,
+      },
+    });
+  };
   return (
     <div className="fixed bottom-0 left-0 right-0 2xl:bottom-6 2xl:right-6 2xl:left-auto 2xl:max-w-sm z-50">
       {/* Main CTA Card */}
@@ -41,7 +60,8 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
           {/* Mobile: 3 Buttons in a Row */}
           <div className="flex w-full gap-8 2xl:hidden">
             <Link
-              href={`/Booking?carId=${car._id}`}
+              href={`/Booking/${car._id}`}
+              onClick={handleBookingClick}
               className="flex w-full flex-col items-center justify-center px-2 py-3 rounded-lg font-medium text-xs transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-white text-blue-700 hover:bg-gray-50"
             >
               <Calendar size={16} className="mb-1" />
@@ -71,6 +91,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
             <div className="space-y-2 mb-3">
               <Link
                 href={`/Booking?carId=${car._id}`}
+                onClick={handleBookingClick}
                 className="w-full px-6 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 bg-white text-blue-700 hover:bg-gray-50 group"
               >
                 <Calendar size={18} />
