@@ -74,30 +74,19 @@ const HeroSection = async () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-3xl leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed">
               Browse our premium collection of vehicles and schedule convenient
               viewing appointments. Experience quality cars with expert
               guidance.
             </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                href="/BrowseFleet"
-                className="flex items-center w-full justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 gap-3 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                <Search size={24} />
-                Browse Cars
-              </Link>
-            </div>
           </div>
 
           {/* Right Column - Featured Car */}
           <div className="relative">
             {featuredCar ? (
-              <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl">
+              <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl flex flex-col gap-8">
                 {/* Featured Badge */}
-                <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   <Star size={16} />
                   Featured Car
                 </div>
@@ -191,11 +180,22 @@ const HeroSection = async () => {
           </div>
         </div>
 
+        {/* CTA Button - After Featured Car */}
+        <div className="flex justify-center mt-12 w-full">
+          <Link
+            href="/BrowseFleet"
+            className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 gap-3 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 w-full"
+          >
+            <Search size={24} />
+            Browse Cars
+          </Link>
+        </div>
+
         {/* Stats Section - Moved Below */}
         <div className="mt-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2">
                 <Car className="text-blue-400" size={32} />
                 <span className="text-3xl font-bold">500+</span>
               </div>
@@ -203,7 +203,7 @@ const HeroSection = async () => {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2">
                 <Calendar className="text-green-400" size={32} />
                 <span className="text-3xl font-bold">24/7</span>
               </div>
@@ -211,7 +211,7 @@ const HeroSection = async () => {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2">
                 <Star className="text-yellow-400" size={32} />
                 <span className="text-3xl font-bold">4.9</span>
               </div>
