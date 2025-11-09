@@ -5,6 +5,7 @@ import { useViewing } from "@/backend/ViewingContext";
 import DateTimeStep from "./DateTimeStep";
 import ContactInfoStep from "./ContactInfoStep";
 import ReviewStep from "./ReviewStep";
+import Link from "next/link";
 
 const BookingForm = () => {
   const { viewingBooking, clearViewingBooking } = useViewing();
@@ -76,24 +77,31 @@ const BookingForm = () => {
       <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[400px]">
         <div className="text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            Booking Confirmed!
+          </h3>
           <p className="text-gray-600 mb-4">
             Your viewing has been scheduled successfully.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600 mb-1">Your Booking Reference:</p>
-            <p className="text-2xl font-bold text-blue-600">{bookingReference}</p>
+            <p className="text-sm text-gray-600 mb-1">
+              Your Booking Reference:
+            </p>
+            <p className="text-2xl font-bold text-blue-600">
+              {bookingReference}
+            </p>
           </div>
           <p className="text-sm text-gray-600 mb-6">
-            A confirmation email has been sent to {viewingBooking.customerInfo?.email}.
-            Please keep your booking reference for your records.
+            A confirmation email has been sent to{" "}
+            {viewingBooking.customerInfo?.email}. Please keep your booking
+            reference for your records.
           </p>
-          <a
-            href={`/bookings/lookup?ref=${bookingReference}`}
+          <Link
+            href={`/Bookings/lookup?ref=${bookingReference}`}
             className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             View Booking Details
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -140,7 +148,13 @@ const BookingForm = () => {
         <div className="text-sm text-gray-500">{formPart} of 3</div>
 
         <Button
-          text={formPart === 3 ? (submitting ? "Submitting..." : "Confirm Booking") : "Next"}
+          text={
+            formPart === 3
+              ? submitting
+                ? "Submitting..."
+                : "Confirm Booking"
+              : "Next"
+          }
           onClick={handleNext}
           icon={ArrowRight}
           disabled={

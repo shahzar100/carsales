@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCarViewingBookingsCollection, CarViewingBooking, getShopInfoCollection } from "@/lib/models";
+import {
+  getCarViewingBookingsCollection,
+  CarViewingBooking,
+  getShopInfoCollection,
+} from "@/lib/models";
 import { generateBookingReference } from "@/lib/utils/booking";
 import { sendEmail } from "@/lib/email/client";
 import { createCarViewingBookingConfirmationEmail } from "@/lib/email/templates";
@@ -9,14 +13,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.customerInfo?.name || !body.customerInfo?.email || !body.customerInfo?.phone) {
+    if (
+      !body.customerInfo?.name ||
+      !body.customerInfo?.email ||
+      !body.customerInfo?.phone
+    ) {
       return NextResponse.json(
         { error: "Customer information is required" },
         { status: 400 }
       );
     }
 
-    if (!body.carId || !body.carDetails || !body.appointmentDate || !body.appointmentTime) {
+    if (
+      !body.carId ||
+      !body.carDetails ||
+      !body.appointmentDate ||
+      !body.appointmentTime
+    ) {
       return NextResponse.json(
         { error: "Booking details are required" },
         { status: 400 }
@@ -54,7 +67,7 @@ export async function POST(request: NextRequest) {
     // Get shop info for email
     const shopCollection = await getShopInfoCollection();
     let shopInfo = await shopCollection.findOne({});
-    
+
     if (!shopInfo) {
       shopInfo = {
         businessName: "Car Sales & Viewing",
@@ -70,12 +83,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Send confirmation email
-    const emailHtml = createCarViewingBookingConfirmationEmail(newBooking as CarViewingBooking, {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    });
+    const emailHtml = createCarViewingBookingConfirmationEmail(
+      newBooking as CarViewingBooking,
+      {
+        businessName: shopInfo.businessName,
+        phone: shopInfo.phone,
+        email: shopInfo.email,
+        address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+      }
+    );
 
     await sendEmail({
       to: body.customerInfo.email,
@@ -87,7 +103,8 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         bookingReference,
-        message: "Car viewing booking created successfully. Check your email for confirmation.",
+        message:
+          "Car viewing booking created successfully. Check your email for confirmation.",
       },
     });
   } catch (error) {
