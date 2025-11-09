@@ -6,13 +6,14 @@ import DateTimeStep from "./DateTimeStep";
 import ContactInfoStep from "./ContactInfoStep";
 import ReviewStep from "./ReviewStep";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BookingForm = () => {
   const { viewingBooking, clearViewingBooking } = useViewing();
+  const router = useRouter();
   const [formPart, setFormPart] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [bookingReference, setBookingReference] = useState("");
+  const [redirecting, setRedirecting] = useState(false);
   const [error, setError] = useState("");
 
   const handlePrevious = () => {
@@ -52,18 +53,49 @@ const BookingForm = () => {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        setBookingReference(result.data.bookingReference);
-        setSubmitted(true);
-        clearViewingBooking();
+        const bookingRef = result.data.bookingReference;
+        const customerEmail = viewingBooking.customerInfo?.email;
+
+        // Set redirecting state to prevent re-renders
+        setRedirecting(true);
+
+        // Use replace to immediately navigate without adding to history
+        router.replace(
+          `/Booking/confirmation?ref=${bookingRef}&email=${encodeURIComponent(
+            customerEmail || ""
+          )}`
+        );
+
+        // Clear booking data after a short delay to ensure navigation starts
+        setTimeout(() => {
+          clearViewingBooking();
+        }, 100);
       } else {
         setError(result.error || "Failed to create booking. Please try again.");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
     } finally {
-      setSubmitting(false);
+      if (!redirecting) {
+        setSubmitting(false);
+      }
     }
   };
+
+  // Show loading state during redirect to prevent flash of other content
+  if (redirecting) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4 animate-pulse" />
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            Booking Confirmed!
+          </h3>
+          <p className="text-gray-600">Redirecting to confirmation...</p>
+        </div>
+      </div>
+    );
+  }
 
   const isStep1Valid =
     viewingBooking.selectedDate && viewingBooking.selectedTime;
@@ -72,43 +104,8 @@ const BookingForm = () => {
     viewingBooking.customerInfo?.email?.trim() &&
     viewingBooking.customerInfo?.phone?.trim();
 
-  if (submitted) {
-    return (
-      <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Booking Confirmed!
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Your viewing has been scheduled successfully.
-          </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600 mb-1">
-              Your Booking Reference:
-            </p>
-            <p className="text-2xl font-bold text-blue-600">
-              {bookingReference}
-            </p>
-          </div>
-          <p className="text-sm text-gray-600 mb-6">
-            A confirmation email has been sent to{" "}
-            {viewingBooking.customerInfo?.email}. Please keep your booking
-            reference for your records.
-          </p>
-          <Link
-            href={`/Bookings/lookup?ref=${bookingReference}`}
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            View Booking Details
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col h-full min-h-[400px]">
+    <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col h-full min-h-[400px] text-gray-800">
       {/* Header */}
       <div className="mb-6">
         <h3 className="font-bold text-xl mb-2">Schedule Your Viewing</h3>
@@ -141,7 +138,7 @@ const BookingForm = () => {
           text="Previous"
           onClick={handlePrevious}
           icon={ArrowLeft}
-          disabled={formPart === 1 || submitting}
+          disabled={formPart === 1 || submitting || redirecting}
           iconPlacement="left"
         />
 
@@ -159,6 +156,7 @@ const BookingForm = () => {
           icon={ArrowRight}
           disabled={
             submitting ||
+            redirecting ||
             (formPart === 1 && !isStep1Valid) ||
             (formPart === 2 && !isStep2Valid)
           }

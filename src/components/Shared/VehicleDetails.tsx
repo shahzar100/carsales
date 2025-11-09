@@ -56,7 +56,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
           )}
 
           {/* Compact Vehicle Specifications Grid */}
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-2 gap-3 mt-4 text-gray-800">
             {vehicle.mileage && (
               <div className="flex items-center gap-4 p-2 bg-gray-50 rounded">
                 <Gauge className="text-blue-500" size={16} />

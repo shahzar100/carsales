@@ -93,11 +93,22 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    await sendEmail({
+    console.log("📧 Attempting to send confirmation email...");
+    const emailResult = await sendEmail({
       to: body.customerInfo.email,
-      subject: `Car Viewing Confirmation - ${bookingReference}`,
+      subject: `🚗 Car Viewing Confirmation - ${bookingReference}`,
       html: emailHtml,
     });
+
+    if (!emailResult.success) {
+      console.warn(
+        "⚠️ Email failed to send but booking was created:",
+        emailResult.error
+      );
+      // Don't fail the request if email fails - booking is still valid
+    } else {
+      console.log("✅ Confirmation email sent successfully");
+    }
 
     return NextResponse.json({
       success: true,
