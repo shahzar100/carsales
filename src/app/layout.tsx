@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SearchContextProvider } from "@/backend/SearchContext";
 import { ViewingProvider } from "@/backend/ViewingContext";
+import { ShopProvider } from "@/backend/ShopContext";
 import Header from "@/components/Header";
 import Link from "next/link";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Car Sales & Viewing",
@@ -29,12 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4`}
+        className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4"
       >
         <SearchContextProvider>
           <ViewingProvider>
-            <Header />
-            <main className="min-h-screen">{children}</main>
+            <ShopProvider>
+              <Header />
+              <main className="min-h-screen">{children}</main>
             <footer className="border-t bg-gray-50 w-full">
               <div className="mx-auto max-w-7xl px-6 py-12">
                 {/* Main Footer Content */}
@@ -213,6 +204,7 @@ export default function RootLayout({
                 </div>
               </div>
             </footer>
+            </ShopProvider>
           </ViewingProvider>
         </SearchContextProvider>
       </body>
