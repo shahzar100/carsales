@@ -14,7 +14,6 @@ import {
   Search,
   CheckCircle,
   XCircle,
-  AlertCircle,
 } from "lucide-react";
 
 interface Car {
@@ -307,14 +306,14 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4">
           <nav className="flex gap-8">
             {[
-              { id: "cars", label: "Cars", icon: Car },
-              { id: "service", label: "Service Bookings", icon: Calendar },
-              { id: "viewing", label: "Car Viewings", icon: Eye },
-              { id: "shop", label: "Shop Settings", icon: Settings },
+              { id: "cars" as const, label: "Cars", icon: Car },
+              { id: "service" as const, label: "Service Bookings", icon: Calendar },
+              { id: "viewing" as const, label: "Car Viewings", icon: Eye },
+              { id: "shop" as const, label: "Shop Settings", icon: Settings },
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 py-4 px-2 border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-600 text-blue-600"

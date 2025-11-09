@@ -87,7 +87,9 @@ export async function POST(request: NextRequest) {
         zipCode: "12345",
         phone: "(555) 123-4567",
         email: "info@carsales.com",
-      } as any;
+        hours: {},
+        updatedAt: new Date(),
+      };
     }
 
     // Send cancellation email

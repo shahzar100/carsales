@@ -51,10 +51,15 @@ export async function POST(request: NextRequest) {
     if (!shopInfo) {
       shopInfo = {
         businessName: "Car Sales & Viewing",
-        address: "123 Auto Street, City, State 12345",
+        address: "123 Auto Street",
+        city: "City",
+        state: "State",
+        zipCode: "12345",
         phone: "(555) 123-4567",
         email: "info@carsales.com",
-      } as any;
+        hours: {},
+        updatedAt: new Date(),
+      };
     }
 
     // Send confirmation email
