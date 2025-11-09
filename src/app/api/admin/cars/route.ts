@@ -108,7 +108,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carsCollection.updateOne(
-      { _id: new ObjectId(_id) },
+      { _id: new ObjectId(_id) } as unknown as Filter<Car>,
       { $set: updatedCar }
     );
 
@@ -153,7 +153,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const carsCollection = await getCarsCollection();
-    const result = await carsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await carsCollection.deleteOne({ _id: new ObjectId(id) } as unknown as Filter<Car>);
 
     if (result.deletedCount === 0) {
       return NextResponse.json(
