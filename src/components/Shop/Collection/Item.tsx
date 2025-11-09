@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
 import { Calendar, Info } from "lucide-react";
 import VehicleDetails from "../../Shared/VehicleDetails";
+import NavButton from "../../UI/NavButton";
 
 interface CarData {
   _id: string;
@@ -60,22 +60,22 @@ const Item: React.FC<ItemProps> = ({ car }) => {
 
       <div className="p-4 bg-gray-50">
         <div className="flex w-full gap-4">
-          <Link
+          <NavButton
             href={`/BrowseFleet/${car._id}`}
             onClick={setCarForViewing}
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
           >
             <Info size={20} />
             More details
-          </Link>
-          <Link
+          </NavButton>
+          <NavButton
             href={`/Booking/${car._id}`}
             onClick={setCarForViewing}
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
           >
             <Calendar size={20} />
             Book Viewing
-          </Link>
+          </NavButton>
         </div>
       </div>
     </div>

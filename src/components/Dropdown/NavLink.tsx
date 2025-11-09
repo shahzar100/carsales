@@ -1,5 +1,8 @@
+"use client";
 import Link from "next/link";
 import React from "react";
+import { useNavigation } from "@/backend/NavigationContext";
+import { usePathname } from "next/navigation";
 
 interface NavLinkProps {
   href: string;
@@ -14,13 +17,27 @@ const NavLink: React.FC<NavLinkProps> = ({
   dropdown = false,
   children,
 }) => {
+  const { setIsNavigating, setNavigationTarget } = useNavigation();
+  const pathname = usePathname();
+
   const baseClasses = dropdown
-    ? "hover:underline underline-offset-4 decoration-red-500 text-lg lg:text-base font-semibold transition-all duration-200 hover:text-red-500 px-6 py-4 rounded-lg group-hover:bg-red-50 border-b border-gray-100 block w-full text-left"
-    : "hover:underline underline-offset-4 decoration-red-500 text-base font-medium transition-all duration-200 hover:text-red-500 py-2 px-6 rounded-md hover:bg-red-50 block w-full text-left text-gray-700";
+    ? "text-gray-700 hover:underline underline-offset-4 decoration-red-500 text-lg lg:text-base font-semibold transition-all duration-200 hover:text-red-500 px-6 py-4 rounded-lg group-hover:bg-red-50 border-b border-gray-100 block w-full text-left"
+    : "hover:underline underline-offset-4 decoration-red-500 text-base font-medium transition-all duration-200 hover:text-red-500 py-2 px-6 rounded-md hover:bg-red-50 block w-full text-left text-gray-700 hover:text-red-500";
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Don't show loader if navigating to the same page
+    if (href === pathname) {
+      return;
+    }
+
+    // Start loading animation
+    setIsNavigating(true);
+    setNavigationTarget(text);
+  };
 
   return (
-    <div className="group relative">
-      <Link href={href} className={baseClasses}>
+    <div className="group relative text-black">
+      <Link href={href} className={baseClasses} onClick={handleClick}>
         {text}
       </Link>
 
