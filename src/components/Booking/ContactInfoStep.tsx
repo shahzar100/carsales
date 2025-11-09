@@ -82,7 +82,7 @@ const ContactInfoStep = () => {
           </div>
           <p className="text-xs text-gray-500 flex items-center">
             <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
-            We'll send viewing confirmation to this email
+            We&apos;ll send viewing confirmation to this email
           </p>
         </div>
 

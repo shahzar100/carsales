@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Calendar,
-  Clock,
   User,
   Mail,
   Phone,
@@ -137,7 +136,7 @@ const ReviewStep = () => {
                 Ready to Confirm
               </h5>
               <p className="text-sm text-gray-600">
-                Please review the details above and click "Confirm Booking" to
+                Please review the details above and click &quot;Confirm Booking&quot; to
                 schedule your viewing. You will receive a confirmation email
                 with all the details and directions to our showroom.
               </p>
@@ -152,7 +151,7 @@ const ReviewStep = () => {
           </h5>
           <ul className="text-sm text-yellow-700 space-y-1">
             <li>• Please arrive 10 minutes before your scheduled time</li>
-            <li>• Bring a valid driver's license for test drives</li>
+            <li>• Bring a valid driver&apos;s license for test drives</li>
             <li>
               • Contact us at least 2 hours in advance if you need to reschedule
             </li>
