@@ -32,18 +32,17 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
         </h3>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="md:w-1/3 flex">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="h-72 w-full lg:w-1/2 relative">
           <Image
             src={"/tesla.webp"}
-            width={300}
-            height={200}
             alt={`${vehicle.make} ${vehicle.model}`}
-            className="w-full h-56 object-cover rounded-lg"
+            fill
+            className="object-cover md:object-none"
           />
         </div>
 
-        <div className="md:w-2/3 space-y-4 flex flex-col justify-between">
+        <div className="lg:w-1/2 space-y-4 flex flex-col justify-between">
           <h2 className="font-bold text-2xl text-gray-800">
             {vehicle.year && `${vehicle.year} `}
             {vehicle.make} {vehicle.model}
