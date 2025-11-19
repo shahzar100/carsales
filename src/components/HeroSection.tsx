@@ -92,13 +92,11 @@ const HeroSection = async () => {
                 </div>
 
                 {/* Car Image */}
-                <div className="bg-gray-800 rounded-xl h-56 mb-6 flex items-center justify-center border border-gray-700 overflow-hidden">
+                <div className="bg-gray-800 rounded-xl h-72 overflow-hidden relative">
                   <Image
                     src={"/tesla.webp"}
                     alt={`${featuredCar.Brand} ${featuredCar.Name}`}
-                    width={500}
-                    height={500}
-                    className="w-full h-96 object-cover"
+                    fill
                   />
                 </div>
 
