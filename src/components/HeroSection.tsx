@@ -60,9 +60,9 @@ const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
 const HeroSection = async () => {
   const featuredCar = await getFeaturedCar();
   return (
-    <section className="relative bg-black text-white overflow-hidden">
-      <div className="container mx-auto px-6 py-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+    <section className="relative bg-black text-white overflow-hidden z-60">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
           {/* Left Column - Content */}
           <div className="text-center lg:text-left">
             {/* Main Heading */}
@@ -84,46 +84,58 @@ const HeroSection = async () => {
           {/* Right Column - Featured Car */}
           <div className="relative">
             {featuredCar ? (
-              <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl flex flex-col gap-8">
+              <div className="bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-800 shadow-2xl flex flex-col gap-4 sm:gap-6 lg:gap-8">
                 {/* Featured Badge */}
                 <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   <Star size={16} />
                   Featured Car
                 </div>
-
                 {/* Car Image */}
-                <div className="bg-gray-800 rounded-xl h-72 overflow-hidden relative">
-                  <Image
-                    src={"/tesla.webp"}
-                    alt={`${featuredCar.Brand} ${featuredCar.Name}`}
-                    fill
-                  />
-                </div>
+                <div className="group relative">
+                  <div className="aspect-4/3 sm:aspect-video w-full relative rounded-lg sm:rounded-xl overflow-hidden bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 shadow-lg max-h-48 sm:max-h-64 lg:max-h-none">
+                    {/* Main Image */}
+                    <Image
+                      src="/tesla.webp"
+                      alt={`${featuredCar.Brand} ${featuredCar.Name}`}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
+                    />
 
+                    {/* Subtle Shine Effect */}
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out z-20" />
+
+                    {/* Corner Badge */}
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-green-500/90 backdrop-blur-sm text-white px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-xs font-semibold z-30">
+                      Available
+                    </div>
+                  </div>
+
+                  {/* Image Loading Fallback */}
+                  <div className="absolute inset-0 bg-gray-800 rounded-xl flex items-center justify-center opacity-0 transition-opacity">
+                    <Car size={48} className="text-gray-600" />
+                  </div>
+                </div>{" "}
                 {/* Car Details */}
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-bold text-white">
+                <div className="space-y-3 sm:space-y-4">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white">
                     {featuredCar
                       ? `${featuredCar.Year} ${featuredCar.Brand} ${featuredCar.Name}`
                       : "2023 BMW X5"}
                   </h3>
                   <p className="text-gray-400">
-                    {featuredCar
-                      ? `${featuredCar.Doors} Door • ${featuredCar.Fuel} • ${featuredCar.Colour}`
-                      : "Premium SUV • Automatic • Petrol"}
+                    {featuredCar &&
+                      `${featuredCar.Doors} Door • ${featuredCar.Fuel} • ${featuredCar.Colour}`}
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl font-bold text-blue-400">
-                      £
-                      {featuredCar
-                        ? featuredCar.Price.toLocaleString()
-                        : "45,999"}
+                    <span className="text-2xl sm:text-3xl font-bold text-green-400">
+                      £{featuredCar && featuredCar.Price.toLocaleString()}
                     </span>
-                    <span className="text-gray-400">
-                      {featuredCar
-                        ? `${featuredCar.Mileage.toLocaleString()} miles`
-                        : "15,000 miles"}
+                    <span className="text-sm sm:text-base text-gray-400">
+                      {featuredCar &&
+                        `${featuredCar.Mileage.toLocaleString()} miles`}
                     </span>
                   </div>
 
@@ -139,7 +151,7 @@ const HeroSection = async () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-8 flex-col xl:flex-row w-full">
+                  <div className="flex gap-3 sm:gap-4 lg:gap-8 flex-col sm:flex-row xl:flex-row w-full">
                     {/* View Car Button */}
                     <Link
                       href={

@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4">
+      <body className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4 overflow-x-hidden">
         <NavigationProvider>
           <SearchContextProvider>
             <ViewingProvider>

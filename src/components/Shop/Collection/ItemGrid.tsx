@@ -34,7 +34,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
         </p>
       </div>
 
-      <div className="lg:flex flex-col hidden">
+      <div className="lg:flex flex-col gap-10 hidden">
         {cars.length > 0 ? (
           cars.map((car) => <Item car={car} key={car._id} />)
         ) : (
