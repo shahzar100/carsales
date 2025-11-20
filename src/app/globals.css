@@ -1,1 +1,93 @@
 @import "tailwindcss";
+
+/* Default Image Styles - Tailwind v4 */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  display: block;
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Next.js Image Component Styles */
+img[data-nimg] {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Image Loading States */
+img[data-nimg="loading"] {
+  opacity: 0.5;
+  filter: blur(4px);
+}
+
+img[data-nimg="loaded"] {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Image Error State */
+img[data-nimg="error"] {
+  background-color: rgb(229 231 235);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img[data-nimg="error"]::after {
+  content: "Image not found";
+  color: rgb(107 114 128);
+  font-size: 0.875rem;
+}
+
+/* Responsive Image Containers */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: rgb(243 244 246);
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover img {
+  transform: scale(1.05);
+}
+
+/* Car Image Specific Styles */
+.car-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.car-image-thumbnail {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Hero Image Styles */
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Avatar/Profile Image Styles */
+.avatar-image {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgb(229 231 235);
+}
