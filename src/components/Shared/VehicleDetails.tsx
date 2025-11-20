@@ -24,7 +24,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
+    <div className={`bg-white rounded-lg shadow-lg p-2 lg:p-6 ${className}`}>
       {showTitle && (
         <h3 className="font-bold text-xl mb-4 flex items-center">
           <Car className="mr-2" size={24} />

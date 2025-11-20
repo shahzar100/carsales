@@ -24,7 +24,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
   const [car, setCar] = useState<number>(0);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 lg:gap-8">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold text-gray-900">
           {cars.length} Cars Available for Viewing
@@ -49,14 +49,13 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
         )}
       </div>
 
-      <div className="lg:hidden block relative">
+      <div className="lg:hidden relative flex flex-col gap-4">
         <Item car={cars[car]} />
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center gap-4">
           <Button
             onClick={() => setCar(car - 1)}
             disabled={car === 0}
             icon={ArrowLeftCircle}
-            iconPlacement="left"
             iconSize="large"
           />
           <span>

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceAppointmentsCollection, getCarViewingBookingsCollection, getShopInfoCollection } from "@/lib/models";
+import {
+  getServiceAppointmentsCollection,
+  getCarViewingBookingsCollection,
+  getShopInfoCollection,
+} from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { sendEmail } from "@/lib/email/client";
 import { createBookingCancellationEmail } from "@/lib/email/templates";
@@ -8,10 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -19,7 +20,10 @@ export async function POST(request: NextRequest) {
 
     if (!bookingReference || !type || !reason) {
       return NextResponse.json(
-        { error: "Booking reference, type, and cancellation reason are required" },
+        {
+          error:
+            "Booking reference, type, and cancellation reason are required",
+        },
         { status: 400 }
       );
     }
@@ -48,10 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!booking) {
-      return NextResponse.json(
-        { error: "Booking not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
     if (booking.status === "cancelled") {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     // Get shop info for email
     const shopCollection = await getShopInfoCollection();
     let shopInfo = await shopCollection.findOne({});
-    
+
     if (!shopInfo) {
       shopInfo = {
         businessName: "Car Sales & Viewing",
@@ -87,7 +88,15 @@ export async function POST(request: NextRequest) {
         zipCode: "12345",
         phone: "(555) 123-4567",
         email: "info@carsales.com",
-        hours: {},
+        hours: {
+          monday: "9:00 AM - 6:00 PM",
+          tuesday: "9:00 AM - 6:00 PM",
+          wednesday: "9:00 AM - 6:00 PM",
+          thursday: "9:00 AM - 6:00 PM",
+          friday: "9:00 AM - 6:00 PM",
+          saturday: "9:00 AM - 4:00 PM",
+          sunday: "Closed",
+        },
         updatedAt: new Date(),
       };
     }
