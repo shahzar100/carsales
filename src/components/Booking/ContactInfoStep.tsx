@@ -140,15 +140,15 @@ const ContactInfoStep = () => {
                   </h5>
                   <div className="space-y-1 text-sm text-green-700">
                     <p>
-                      <span className="font-medium">Name:</span>{" "}
+                      <span className="font-medium">Name: </span>
                       {viewingBooking.customerInfo.name}
                     </p>
                     <p>
-                      <span className="font-medium">Email:</span>{" "}
+                      <span className="font-medium">Email: </span>
                       {viewingBooking.customerInfo.email}
                     </p>
                     <p>
-                      <span className="font-medium">Phone:</span>{" "}
+                      <span className="font-medium">Phone: </span>
                       {viewingBooking.customerInfo.phone}
                     </p>
                   </div>
