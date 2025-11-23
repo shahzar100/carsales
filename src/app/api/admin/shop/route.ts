@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getShopInfoCollection, ShopInfo } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
@@ -86,10 +86,17 @@ export async function PUT(request: NextRequest) {
       { upsert: true }
     );
 
-    return NextResponse.json({
-      success: true,
-      data: shopInfo,
-    });
+    if (result.acknowledged) {
+      return NextResponse.json({
+        success: true,
+        data: shopInfo,
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Failed to update shop information" },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error("Error updating shop info:", error);
     return NextResponse.json(

@@ -19,8 +19,8 @@ export default function ShopSettingsPage() {
       const response = await fetch("/api/admin/shop");
       const data = await response.json();
       if (data.success) setShopInfo(data.data);
-    } catch (error) {
-      console.error("Error fetching shop info:", error);
+    } catch {
+      console.error("Error fetching settings:");
     } finally {
       setLoading(false);
     }
@@ -46,15 +46,15 @@ export default function ShopSettingsPage() {
         toast.error("Update Failed", "Failed to update shop information");
       }
     } catch (error) {
-      toast.error("Error", "An error occurred while updating shop information");
+      toast.error("Error", String(error));
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="text-gray-600">Loading shop settings...</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function ShopSettingsPage() {
 
   if (!shopInfo) {
     return (
-      <div className="text-center py-8">
+      <div className="py-8 text-center">
         <p className="text-gray-600">No shop information found.</p>
       </div>
     );

@@ -32,6 +32,7 @@ export default function AdminLoginPage() {
         setError(result.error || "Login failed");
       }
     } catch (err) {
+      console.log(err);
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -39,37 +40,37 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
-      <div className="max-w-md w-full">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+      <div className="w-full max-w-md">
         {/* Logo/Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-            <Lock className="w-8 h-8 text-white" />
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
+            <Lock className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
+          <h1 className="mb-2 text-3xl font-bold text-white">Admin Portal</h1>
           <p className="text-gray-400">Sign in to access the dashboard</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-lg shadow-2xl p-8">
+        <div className="rounded-lg bg-white p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <User className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                 <input
                   id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Enter your username"
                 />
               </div>
@@ -79,19 +80,19 @@ export default function AdminLoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                 <input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Enter your password"
                 />
               </div>
@@ -99,8 +100,8 @@ export default function AdminLoginPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -109,7 +110,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -117,7 +118,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-gray-500 text-sm mt-6">
+        <p className="mt-6 text-center text-sm text-gray-500">
           Protected area. Authorized personnel only.
         </p>
       </div>

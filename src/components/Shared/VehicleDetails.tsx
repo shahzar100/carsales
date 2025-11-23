@@ -24,16 +24,16 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-lg p-2 lg:p-6 ${className}`}>
+    <div className={`rounded-lg bg-white p-2 shadow-lg lg:p-6 ${className}`}>
       {showTitle && (
-        <h3 className="font-bold text-xl mb-4 flex items-center">
+        <h3 className="mb-4 flex items-center text-xl font-bold">
           <Car className="mr-2" size={24} />
           Vehicle Details
         </h3>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="h-54 lg:h-80 w-full lg:w-1/2 relative">
+      <div className="flex flex-col gap-6 lg:flex-row">
+        <div className="relative h-54 w-full lg:h-80 lg:w-1/2">
           <Image
             src={"/tesla.webp"}
             alt={`${vehicle.make} ${vehicle.model}`}
@@ -42,8 +42,8 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
           />
         </div>
 
-        <div className="lg:w-1/2 space-y-4 flex flex-col justify-between">
-          <h2 className="font-bold text-2xl text-gray-800">
+        <div className="flex flex-col justify-between space-y-4 lg:w-1/2">
+          <h2 className="text-2xl font-bold text-gray-800">
             {vehicle.year && `${vehicle.year} `}
             {vehicle.make} {vehicle.model}
           </h2>
@@ -55,13 +55,13 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
           )}
 
           {/* Compact Vehicle Specifications Grid */}
-          <div className="grid grid-cols-2 gap-3 mt-4 text-gray-800">
+          <div className="mt-4 grid grid-cols-2 gap-3 text-gray-800">
             {vehicle.mileage && (
-              <div className="flex items-center gap-4 p-2 bg-gray-50 rounded">
+              <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
                 <Gauge className="text-blue-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Mileage</p>
-                  <p className="font-medium text-sm">
+                  <p className="text-sm font-medium">
                     {vehicle.mileage.toLocaleString()} miles
                   </p>
                 </div>
@@ -69,31 +69,31 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
             )}
 
             {vehicle.fuel && (
-              <div className="flex items-center gap-4 p-2 bg-gray-50 rounded">
+              <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
                 <Fuel className="text-green-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Fuel Type</p>
-                  <p className="font-medium text-sm">{vehicle.fuel}</p>
+                  <p className="text-sm font-medium">{vehicle.fuel}</p>
                 </div>
               </div>
             )}
 
             {vehicle.doors && (
-              <div className="flex items-center gap-4 p-2 bg-gray-50 rounded">
+              <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
                 <Hash className="text-purple-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Doors</p>
-                  <p className="font-medium text-sm">{vehicle.doors}</p>
+                  <p className="text-sm font-medium">{vehicle.doors}</p>
                 </div>
               </div>
             )}
 
             {vehicle.colour && (
-              <div className="flex items-center gap-4 p-2 bg-gray-50 rounded">
+              <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
                 <Palette className="text-orange-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Colour</p>
-                  <p className="font-medium text-sm">{vehicle.colour}</p>
+                  <p className="text-sm font-medium">{vehicle.colour}</p>
                 </div>
               </div>
             )}

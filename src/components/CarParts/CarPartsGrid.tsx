@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 import FilterSection from "./FilterSection";
 
 export interface CarPart {
@@ -69,22 +70,24 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
       />
 
       {/* Parts Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredParts.map((part) => (
           <div
             key={part.id}
-            className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
           >
             {/* Part Image */}
-            <div className="relative h-48 bg-gray-100 rounded-t-lg overflow-hidden">
-              <img
+            <div className="relative h-48 overflow-hidden rounded-t-lg bg-gray-100">
+              <Image
                 src={part.image}
                 alt={part.name}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
+                width={300}
+                height={192}
               />
               <div className="absolute top-2 right-2">
                 <span
-                  className={`px-2 py-1 text-xs font-semibold rounded-full ${getConditionBadgeClass(
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${getConditionBadgeClass(
                     part.condition
                   )}`}
                 >
@@ -96,21 +99,21 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
             {/* Part Details */}
             <div className="p-4">
               <div className="mb-2">
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                   {part.brand} • {part.category}
                 </span>
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+              <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-gray-900">
                 {part.name}
               </h3>
 
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+              <p className="mb-3 line-clamp-2 text-sm text-gray-600">
                 {part.description}
               </p>
 
               <div className="mb-3">
-                <p className="text-xs text-gray-500 mb-1">Compatible with:</p>
+                <p className="mb-1 text-xs text-gray-500">Compatible with:</p>
                 <p className="text-sm font-medium text-gray-700">
                   {part.compatibility}
                 </p>
@@ -124,7 +127,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                 </div>
                 <button
                   onClick={() => handleReservePart(part.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-600"
                 >
                   Reserve Part
                 </button>
@@ -136,9 +139,9 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
 
       {/* No results message */}
       {filteredParts.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-2">No parts found</div>
-          <div className="text-gray-400 text-sm">
+        <div className="py-12 text-center">
+          <div className="mb-2 text-lg text-gray-500">No parts found</div>
+          <div className="text-sm text-gray-400">
             Try adjusting your filters to see more results
           </div>
         </div>

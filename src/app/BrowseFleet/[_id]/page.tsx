@@ -53,9 +53,9 @@ const CarDetailsPage = async ({ params }: PageProps) => {
   // Handle the null case properly
   if (!car) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="mb-2 text-2xl font-bold text-gray-900">
             Car Not Found
           </h1>
           <p className="text-gray-600">
@@ -67,7 +67,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 rounded-xl">
+    <div className="min-h-screen rounded-xl bg-gray-50">
       {car && <CarDisplay car={car} />}
     </div>
   );

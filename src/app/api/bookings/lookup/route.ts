@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceAppointmentsCollection, getCarViewingBookingsCollection } from "@/lib/models";
+import {
+  getServiceAppointmentsCollection,
+  getCarViewingBookingsCollection,
+} from "@/lib/models";
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,14 +19,15 @@ export async function GET(request: NextRequest) {
     const serviceCollection = await getServiceAppointmentsCollection();
     const viewingCollection = await getCarViewingBookingsCollection();
 
-    const serviceBooking = await serviceCollection.findOne({ bookingReference: ref });
-    const viewingBooking = await viewingCollection.findOne({ bookingReference: ref });
+    const serviceBooking = await serviceCollection.findOne({
+      bookingReference: ref,
+    });
+    const viewingBooking = await viewingCollection.findOne({
+      bookingReference: ref,
+    });
 
     if (!serviceBooking && !viewingBooking) {
-      return NextResponse.json(
-        { error: "Booking not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
     return NextResponse.json({

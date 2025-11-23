@@ -31,12 +31,11 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const size = iconSize === "small" ? 16 : iconSize === "medium" ? 30 : 40;
-  const isIconOnly = !text;
 
   return (
     <button
       disabled={disabled}
-      className={`flex items-center gap-4 cursor-pointer ${baseClasses} ${
+      className={`flex cursor-pointer items-center gap-4 ${baseClasses} ${
         variantClasses[variant]
       } ${customWidth || ""}`}
       onClick={onClick}

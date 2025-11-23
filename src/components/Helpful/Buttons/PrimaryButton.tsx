@@ -53,13 +53,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`
-        ${baseClasses}
-        ${colorClasses}
-        ${finalPadding}
-        ${finalWidth}
-        ${disabled ? disabledClasses : ""}
-      `.trim()}
+      className={` ${baseClasses} ${colorClasses} ${finalPadding} ${finalWidth} ${disabled ? disabledClasses : ""} `.trim()}
     >
       {Icon && <Icon size={20} />}
       {text}

@@ -34,8 +34,8 @@ export default function ServiceBookingsPage() {
       if (data.success) {
         setServiceBookings(data.data.serviceBookings);
       }
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
+    } catch {
+      console.error("Error fetching bookings:");
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export default function ServiceBookingsPage() {
       } else {
         toast.error("Cancellation Failed", "Failed to cancel booking");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error", "An error occurred while cancelling the booking");
     }
   };
@@ -89,7 +89,7 @@ export default function ServiceBookingsPage() {
     };
     return (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${
+        className={`rounded-full px-2 py-1 text-xs font-medium ${
           colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
         }`}
       >
@@ -139,16 +139,16 @@ export default function ServiceBookingsPage() {
       } else {
         toast.error("Confirmation Failed", "Failed to confirm booking");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error", "An error occurred while confirming the booking");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="text-gray-600">Loading service bookings...</p>
         </div>
       </div>

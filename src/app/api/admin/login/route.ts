@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
     session.username = admin.username;
     await session.save();
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: "Login successful"
+      message: "Login successful",
     });
   } catch (error) {
     console.error("Login error:", error);

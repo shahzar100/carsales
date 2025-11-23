@@ -145,7 +145,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <div className="relative flex-1" ref={dropdownRef}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="mb-2 block text-sm font-medium text-gray-700">
         {label}
       </label>
 
@@ -153,17 +153,11 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
-        className={`
-          w-full px-4 py-3 text-left bg-white border rounded-xl shadow-sm 
-          transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 
-          focus:ring-blue-500 focus:border-blue-500 hover:shadow-md
-          ${
-            isOpen
-              ? "ring-2 ring-blue-500 border-blue-500 shadow-md"
-              : "border-gray-300"
-          }
-          ${hasSelectedValues ? "text-gray-900" : "text-gray-500"}
-        `}
+        className={`w-full rounded-xl border bg-white px-4 py-3 text-left shadow-sm transition-all duration-200 ease-in-out hover:shadow-md focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+          isOpen
+            ? "border-blue-500 shadow-md ring-2 ring-blue-500"
+            : "border-gray-300"
+        } ${hasSelectedValues ? "text-gray-900" : "text-gray-500"} `}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -181,7 +175,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto backdrop-blur-sm">
+        <div className="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg backdrop-blur-sm">
           <div className="py-1">
             {options.map((option, index) => (
               <button
@@ -189,25 +183,19 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 type="button"
                 onClick={() => handleOptionClick(option.value)}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                className={`
-                  w-full px-4 py-3 text-left text-sm transition-all duration-150
-                  flex items-center justify-between hover:bg-linear-to-r hover:from-blue-50 hover:to-blue-100
-                  ${
-                    highlightedIndex === index
-                      ? "bg-linear-to-r from-blue-50 to-blue-100"
-                      : ""
-                  }
-                  ${
-                    value === option.value
-                      ? "bg-linear-to-r from-blue-100 to-blue-200 text-blue-900 font-medium"
-                      : "text-gray-900"
-                  }
-                  first:rounded-t-xl last:rounded-b-xl
-                `}
+                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-all duration-150 hover:bg-linear-to-r hover:from-blue-50 hover:to-blue-100 ${
+                  highlightedIndex === index
+                    ? "bg-linear-to-r from-blue-50 to-blue-100"
+                    : ""
+                } ${
+                  value === option.value
+                    ? "bg-linear-to-r from-blue-100 to-blue-200 font-medium text-blue-900"
+                    : "text-gray-900"
+                } first:rounded-t-xl last:rounded-b-xl`}
               >
                 <span className="truncate">{option.label}</span>
                 {value === option.value && (
-                  <Check className="h-4 w-4 text-blue-600 shrink-0 ml-2" />
+                  <Check className="ml-2 h-4 w-4 shrink-0 text-blue-600" />
                 )}
               </button>
             ))}

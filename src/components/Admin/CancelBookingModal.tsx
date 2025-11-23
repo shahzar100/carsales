@@ -23,20 +23,20 @@ export default function CancelBookingModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <div className="flex items-center justify-between mb-4">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div className="w-full max-w-md rounded-lg bg-white p-6">
+        <div className="mb-4 flex items-center justify-between">
           <h3 className="text-xl font-bold">Cancel Booking</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
           >
-            <X className="w-6 h-6" />
+            <X className="h-6 w-6" />
           </button>
         </div>
 
         <div className="mb-4">
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="mb-2 text-sm text-gray-600">
             Booking Reference:{" "}
             <span className="font-mono font-bold">
               {selectedBooking.booking.bookingReference}
@@ -51,7 +51,7 @@ export default function CancelBookingModal({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Cancellation Reason <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -59,9 +59,9 @@ export default function CancelBookingModal({
             onChange={(e) => setCancelReason(e.target.value)}
             placeholder="Please provide a reason for cancellation (minimum 10 characters)"
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="mt-1 text-xs text-gray-500">
             {cancelReason.length}/10 characters minimum
           </p>
         </div>
@@ -69,14 +69,14 @@ export default function CancelBookingModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             onClick={handleCancel}
             disabled={cancelReason.length < 10}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel Booking
           </button>

@@ -80,16 +80,16 @@ const Services = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Hero Section */}
-      <div className="text-center mb-16">
-        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+      <div className="mb-16 text-center">
+        <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
           Professional Auto Services
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+        <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600">
           From premium detailing to expert repairs, we provide comprehensive
           automotive services to keep your vehicle in peak condition. All
           services backed by our satisfaction guarantee.
         </p>
-        <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 gap-4">
+        <div className="flex items-center justify-center gap-4 space-x-8 text-sm text-gray-500">
           <div className="flex items-center gap-1">
             <CheckCircle className="h-5 w-5 text-green-500" />
             Certified Technicians
@@ -106,47 +106,47 @@ const Services = () => {
       </div>
 
       {/* Services Grid */}
-      <div className="grid lg:grid-cols-3 gap-8 mb-16">
+      <div className="mb-16 grid gap-8 lg:grid-cols-3">
         {mainServices.map((service) => {
           const IconComponent = service.icon;
           return (
             <div
               key={service.id}
-              className={`${service.bgColor} rounded-2xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 group`}
+              className={`${service.bgColor} group rounded-2xl border border-gray-200 p-8 transition-all duration-300 hover:shadow-lg`}
             >
               {/* Service Header */}
-              <div className="text-center mb-6">
+              <div className="mb-6 text-center">
                 <div
-                  className={`inline-flex items-center justify-center w-16 h-16 ${service.iconColor} bg-white rounded-full shadow-md mb-4 group-hover:scale-110 transition-transform duration-300`}
+                  className={`inline-flex h-16 w-16 items-center justify-center ${service.iconColor} mb-4 rounded-full bg-white shadow-md transition-transform duration-300 group-hover:scale-110`}
                 >
                   <IconComponent size={32} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="mb-2 text-2xl font-bold text-gray-900">
                   {service.title}
                 </h3>
                 <p className="text-gray-600">{service.description}</p>
               </div>
 
               {/* Service Image */}
-              <div className="relative h-48 bg-gray-200 rounded-lg overflow-hidden mb-6">
+              <div className="relative mb-6 h-48 overflow-hidden rounded-lg bg-gray-200">
                 <Image
                   src={service.image}
                   alt={service.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                <div className="bg-opacity-20 group-hover:bg-opacity-10 absolute inset-0 bg-black transition-all duration-300"></div>
               </div>
 
               {/* Features List */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">
+                <h4 className="mb-3 font-semibold text-gray-900">
                   What&apos;s Included:
                 </h4>
                 <ul className="space-y-2">
                   {service.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 shrink-0" />
+                      <CheckCircle className="mt-0.5 mr-2 h-4 w-4 shrink-0 text-green-500" />
                       <span className="text-sm text-gray-700">{feature}</span>
                     </li>
                   ))}
@@ -154,8 +154,8 @@ const Services = () => {
               </div>
 
               {/* Pricing & Duration */}
-              <div className="border-t border-gray-200 pt-4 mb-6">
-                <div className="flex justify-between items-center mb-2">
+              <div className="mb-6 border-t border-gray-200 pt-4">
+                <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-600">
                     Price Range:
                   </span>
@@ -163,7 +163,7 @@ const Services = () => {
                     {service.priceRange}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-600">
                     Duration:
                   </span>
@@ -177,13 +177,13 @@ const Services = () => {
               <div className="space-y-3">
                 <Link
                   href={service.href}
-                  className={`w-full ${service.buttonColor} text-white py-3 px-6 rounded-lg font-medium text-center block transition-colors duration-200`}
+                  className={`w-full ${service.buttonColor} block rounded-lg px-6 py-3 text-center font-medium text-white transition-colors duration-200`}
                 >
                   Learn More & Book
                 </Link>
                 <Link
                   href={`mailto:info@carsales.com?subject=Inquiry about ${service.title}&body=Hi, I'm interested in learning more about your ${service.title} services. Please provide more details and pricing information.`}
-                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-medium text-center block transition-colors duration-200"
+                  className="block w-full rounded-lg bg-gray-200 px-6 py-3 text-center font-medium text-gray-800 transition-colors duration-200 hover:bg-gray-300"
                 >
                   Email Inquiry
                 </Link>
@@ -194,23 +194,23 @@ const Services = () => {
       </div>
 
       {/* Why Choose Us Section */}
-      <div className="bg-gray-50 rounded-2xl p-8 lg:p-12 mb-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <div className="mb-16 rounded-2xl bg-gray-50 p-8 lg:p-12">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-gray-900">
             Why Choose Our Services?
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
             We combine years of experience with state-of-the-art equipment to
             deliver exceptional results that exceed your expectations.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="text-center">
-            <div className="bg-red-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <CheckCircle size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="mb-2 font-semibold text-gray-900">
               Quality Guarantee
             </h3>
             <p className="text-sm text-gray-600">
@@ -219,10 +219,10 @@ const Services = () => {
           </div>
 
           <div className="text-center">
-            <div className="bg-red-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Clock size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="mb-2 font-semibold text-gray-900">
               Fast Turnaround
             </h3>
             <p className="text-sm text-gray-600">
@@ -231,20 +231,20 @@ const Services = () => {
           </div>
 
           <div className="text-center">
-            <div className="bg-red-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Star size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Expert Team</h3>
+            <h3 className="mb-2 font-semibold text-gray-900">Expert Team</h3>
             <p className="text-sm text-gray-600">
               Certified professionals with years of experience
             </p>
           </div>
 
           <div className="text-center">
-            <div className="bg-red-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Shield size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Fully Insured</h3>
+            <h3 className="mb-2 font-semibold text-gray-900">Fully Insured</h3>
             <p className="text-sm text-gray-600">
               Complete coverage for your peace of mind
             </p>
@@ -253,29 +253,29 @@ const Services = () => {
       </div>
 
       {/* Contact CTA Section */}
-      <div className="bg-red-500 text-white rounded-2xl p-8 lg:p-12 text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-        <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
+      <div className="rounded-2xl bg-red-500 p-8 text-center text-white lg:p-12">
+        <h2 className="mb-4 text-3xl font-bold">Ready to Get Started?</h2>
+        <p className="mx-auto mb-8 max-w-2xl text-xl text-red-100">
           Contact us today for a free quote or to schedule your service
           appointment. We&apos;re here to keep your vehicle running and looking
           its best.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Link
             href="tel:(555)123-4567"
-            className=" text-red-500 bg-white hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors duration-200"
+            className="rounded-lg bg-white px-8 py-3 font-medium text-red-500 transition-colors duration-200 hover:bg-gray-100"
           >
             Call (555) 123-4567
           </Link>
           <Link
             href="mailto:info@carsales.com"
-            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 border border-red-400"
+            className="rounded-lg border border-red-400 bg-red-600 px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-700"
           >
             Email Us
           </Link>
           <Link
             href="/contact"
-            className="bg-transparent hover:bg-red-600 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 border border-red-400"
+            className="rounded-lg border border-red-400 bg-transparent px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
           >
             Visit Our Location
           </Link>

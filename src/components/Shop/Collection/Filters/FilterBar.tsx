@@ -143,7 +143,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
 
   const renderComponents = () => {
     return (
-      <div className="flex flex-col lg:flex-row gap-4 w-full">
+      <div className="flex w-full flex-col gap-4 lg:flex-row">
         <CustomDropdown
           label="Brand"
           options={brandOptions.slice(1)}
@@ -151,8 +151,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             Array.isArray(filters.make)
               ? filters.make
               : filters.make
-              ? [filters.make]
-              : []
+                ? [filters.make]
+                : []
           }
           onChange={(value) => handleFilterChange("make", value)}
           placeholder="Any brand"
@@ -207,8 +207,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             Array.isArray(filters.fuelType)
               ? filters.fuelType
               : filters.fuelType
-              ? [filters.fuelType]
-              : []
+                ? [filters.fuelType]
+                : []
           }
           onChange={(value) => handleFilterChange("fuelType", value)}
           placeholder="Any fuel"
@@ -223,8 +223,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             Array.isArray(filters.color)
               ? filters.color
               : filters.color
-              ? [filters.color]
-              : []
+                ? [filters.color]
+                : []
           }
           onChange={(value) => handleFilterChange("color", value)}
           placeholder="Any color"
@@ -238,17 +238,16 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
   return (
     <>
       {/* Mobile Filter Button */}
-      <div className="lg:hidden mb-4">
+      <div className="mb-4 lg:hidden">
         <button
           onClick={() => setIsFilterModalOpen(true)}
-          className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 
-                     flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:bg-gray-50"
         >
           <div className="flex items-center gap-2">
             <Filter className="text-gray-600" size={20} />
             <span className="text-base font-medium text-gray-900">Filters</span>
             {hasActiveFilters && (
-              <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+              <span className="rounded-full bg-blue-500 px-2 py-1 text-xs text-white">
                 Active
               </span>
             )}
@@ -258,17 +257,16 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
       </div>
 
       {/* Desktop Filter Bar */}
-      <div className="hidden lg:flex flex-col gap-4 bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full">
+      <div className="hidden w-full flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:flex">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-medium text-gray-900 flex items-center gap-2">
+          <h2 className="flex items-center gap-2 text-base font-medium text-gray-900">
             <Filter className="text-gray-600" size={16} />
             Filters
           </h2>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-1 px-2 py-1 text-xs text-red-600 hover:text-red-800 
-                         hover:bg-red-50 rounded transition-colors"
+              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-red-600 transition-colors hover:bg-red-50 hover:text-red-800"
             >
               <X size={12} />
               Clear
@@ -282,46 +280,44 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
       {/* Mobile Filter Modal */}
       {isFilterModalOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end overflow-y-auto"
+          className="bg-opacity-50 fixed inset-0 z-50 flex items-end overflow-y-auto bg-black lg:hidden"
           onClick={() => setIsFilterModalOpen(false)}
         >
           <div
-            className="bg-white w-full rounded-t-lg max-h-[90vh] overflow-y-auto"
+            className="max-h-[90vh] w-full overflow-y-auto rounded-t-lg bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
+              <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <Filter className="text-gray-600" size={20} />
                 Filters
               </h2>
               <button
                 onClick={() => setIsFilterModalOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="rounded-full p-2 transition-colors hover:bg-gray-100"
               >
                 <X size={20} className="text-gray-500" />
               </button>
             </div>
 
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
               {renderComponents()}
 
-              <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex gap-3">
+              <div className="sticky bottom-0 flex gap-3 border-t border-gray-200 bg-white pt-4">
                 {hasActiveFilters && (
                   <button
                     onClick={() => {
                       clearFilters();
                       setIsFilterModalOpen(false);
                     }}
-                    className="flex-1 px-4 py-3 text-red-600 border border-red-200 
-                             hover:bg-red-50 rounded-lg transition-colors font-medium"
+                    className="flex-1 rounded-lg border border-red-200 px-4 py-3 font-medium text-red-600 transition-colors hover:bg-red-50"
                   >
                     Clear All
                   </button>
                 )}
                 <button
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white 
-                           hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                  className="flex-1 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
                 >
                   Apply Filters
                 </button>

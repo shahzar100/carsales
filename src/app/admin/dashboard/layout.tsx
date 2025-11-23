@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   AdminHeader,
@@ -14,26 +14,26 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [notification, setNotification] = useState<Notification | null>(null);
+  const [notification] = useState<Notification | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/logout");
       const result = await response.json();
       if (!result.isLoggedIn) {
         router.push("/admin/login");
       }
-    } catch (error) {
+    } catch {
       router.push("/admin/login");
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const handleLogout = async () => {
     try {
@@ -46,9 +46,9 @@ export default function AdminDashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function AdminDashboardLayout({
       <AdminNavigationTabs />
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">{children}</div>
+      <div className="mx-auto max-w-7xl px-4 py-8">{children}</div>
     </div>
   );
 }

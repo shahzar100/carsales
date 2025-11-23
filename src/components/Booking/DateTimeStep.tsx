@@ -7,7 +7,7 @@ const DateTimeStep = () => {
 
   return (
     <div className="space-y-6">
-      <h4 className="text-lg font-semibold text-gray-800 mb-4">
+      <h4 className="mb-4 text-lg font-semibold text-gray-800">
         Select Date & Time
       </h4>
 
@@ -15,9 +15,9 @@ const DateTimeStep = () => {
         {/* Date Selection */}
         <div className="space-y-3">
           <label className="flex items-center text-sm font-medium text-gray-700">
-            <Calendar className="w-4 h-4 mr-2 text-blue-600" />
+            <Calendar className="mr-2 h-4 w-4 text-blue-600" />
             Preferred Date
-            <span className="text-red-500 ml-1">*</span>
+            <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -32,17 +32,17 @@ const DateTimeStep = () => {
                   .toISOString()
                   .split("T")[0]
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-400"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               required
             />
             {!viewingBooking.selectedDate && (
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <Calendar className="w-5 h-5 text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <Calendar className="h-5 w-5 text-gray-400" />
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 flex items-center">
-            <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+          <p className="flex items-center text-xs text-gray-500">
+            <span className="mr-2 h-1 w-1 rounded-full bg-gray-400"></span>
             Available dates: Today to next 30 days
           </p>
         </div>
@@ -50,9 +50,9 @@ const DateTimeStep = () => {
         {/* Time Selection */}
         <div className="space-y-3">
           <label className="flex items-center text-sm font-medium text-gray-700">
-            <Clock className="w-4 h-4 mr-2 text-blue-600" />
+            <Clock className="mr-2 h-4 w-4 text-blue-600" />
             Preferred Time
-            <span className="text-red-500 ml-1">*</span>
+            <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <select
@@ -60,7 +60,7 @@ const DateTimeStep = () => {
               onChange={(e) =>
                 updateViewingBooking({ selectedTime: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-400 appearance-none cursor-pointer"
+              className="w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="" disabled className="text-gray-400">
@@ -83,9 +83,9 @@ const DateTimeStep = () => {
               </optgroup>
             </select>
             {/* Custom dropdown arrow */}
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
               <svg
-                className="w-5 h-5 text-gray-400"
+                className="h-5 w-5 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -99,23 +99,23 @@ const DateTimeStep = () => {
               </svg>
             </div>
           </div>
-          <p className="text-xs text-gray-500 flex items-center">
-            <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+          <p className="flex items-center text-xs text-gray-500">
+            <span className="mr-2 h-1 w-1 rounded-full bg-gray-400"></span>
             Each viewing session is approximately 1 hour
           </p>
         </div>
 
         {/* Additional Information */}
         {viewingBooking.selectedDate && viewingBooking.selectedTime && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-blue-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                  <Calendar className="h-4 w-4 text-blue-600" />
                 </div>
               </div>
               <div>
-                <h5 className="text-sm font-medium text-blue-900 mb-1">
+                <h5 className="mb-1 text-sm font-medium text-blue-900">
                   Viewing Scheduled
                 </h5>
                 <p className="text-sm text-blue-700">

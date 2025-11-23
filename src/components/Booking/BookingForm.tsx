@@ -5,7 +5,6 @@ import { useViewing } from "@/backend/ViewingContext";
 import DateTimeStep from "./DateTimeStep";
 import ContactInfoStep from "./ContactInfoStep";
 import ReviewStep from "./ReviewStep";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const BookingForm = () => {
@@ -74,6 +73,7 @@ const BookingForm = () => {
         setError(result.error || "Failed to create booking. Please try again.");
       }
     } catch (err) {
+      console.log("Booking submission error:", err);
       setError("An error occurred. Please try again.");
     } finally {
       if (!redirecting) {
@@ -85,10 +85,10 @@ const BookingForm = () => {
   // Show loading state during redirect to prevent flash of other content
   if (redirecting) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg bg-white p-6 shadow-lg">
         <div className="text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4 animate-pulse" />
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 animate-pulse text-green-500" />
+          <h3 className="mb-2 text-2xl font-bold text-gray-900">
             Booking Confirmed!
           </h3>
           <p className="text-gray-600">Redirecting to confirmation...</p>
@@ -105,14 +105,14 @@ const BookingForm = () => {
     viewingBooking.customerInfo?.phone?.trim();
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col h-full min-h-[400px] text-gray-800">
+    <div className="flex h-full min-h-[400px] flex-col rounded-lg bg-white p-6 text-gray-800 shadow-lg">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="font-bold text-xl mb-2">Schedule Your Viewing</h3>
-        <p className="text-gray-600 text-sm">Step {formPart} of 3</p>
-        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+        <h3 className="mb-2 text-xl font-bold">Schedule Your Viewing</h3>
+        <p className="text-sm text-gray-600">Step {formPart} of 3</p>
+        <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
           <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            className="h-2 rounded-full bg-blue-600 transition-all duration-300"
             style={{ width: `${(formPart / 3) * 100}%` }}
           ></div>
         </div>
@@ -120,7 +120,7 @@ const BookingForm = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -133,7 +133,7 @@ const BookingForm = () => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+      <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
         <Button
           text="Previous"
           onClick={handlePrevious}

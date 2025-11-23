@@ -21,23 +21,23 @@ export default function BookingDetailsModal({
   onClose,
 }: BookingDetailsModalProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6">
+        <div className="mb-6 flex items-center justify-between">
           <h3 className="text-xl font-bold">Booking Details</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
           >
-            <X className="w-6 h-6" />
+            <X className="h-6 w-6" />
           </button>
         </div>
 
         <div className="space-y-6">
           {/* Booking Reference */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
+          <div className="rounded-lg bg-blue-50 p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
               <span className="font-semibold text-blue-900">
                 Booking Reference
               </span>
@@ -45,17 +45,17 @@ export default function BookingDetailsModal({
             <p className="font-mono text-lg font-bold text-blue-800">
               {booking.bookingReference}
             </p>
-            <div className="flex items-center gap-2 mt-2">
+            <div className="mt-2 flex items-center gap-2">
               <span className="text-sm text-blue-700">Status:</span>
               <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                className={`rounded-full px-2 py-1 text-xs font-medium ${
                   booking.status === "confirmed"
                     ? "bg-green-100 text-green-800"
                     : booking.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : booking.status === "cancelled"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-gray-100 text-gray-800"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : booking.status === "cancelled"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
                 }`}
               >
                 {booking.status}
@@ -64,35 +64,35 @@ export default function BookingDetailsModal({
           </div>
 
           {/* Customer Information */}
-          <div className="border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <User className="w-5 h-5 text-gray-600" />
+          <div className="rounded-lg border p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <User className="h-5 w-5 text-gray-600" />
               <span className="font-semibold text-gray-900">
                 Customer Information
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Name
                 </label>
                 <p className="text-gray-900">{booking.customerInfo.name}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Phone
                 </label>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-gray-400" />
+                  <Phone className="h-4 w-4 text-gray-400" />
                   <p className="text-gray-900">{booking.customerInfo.phone}</p>
                 </div>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Email
                 </label>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-gray-400" />
+                  <Mail className="h-4 w-4 text-gray-400" />
                   <p className="text-gray-900">{booking.customerInfo.email}</p>
                 </div>
               </div>
@@ -100,16 +100,16 @@ export default function BookingDetailsModal({
           </div>
 
           {/* Appointment Details */}
-          <div className="border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-5 h-5 text-gray-600" />
+          <div className="rounded-lg border p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-gray-600" />
               <span className="font-semibold text-gray-900">
                 Appointment Details
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Date
                 </label>
                 <p className="text-gray-900">
@@ -125,7 +125,7 @@ export default function BookingDetailsModal({
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Time
                 </label>
                 <p className="text-gray-900">{booking.appointmentTime}</p>
@@ -135,15 +135,15 @@ export default function BookingDetailsModal({
 
           {/* Service Type (for service bookings) */}
           {booking.serviceType && (
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <MapPin className="w-5 h-5 text-gray-600" />
+            <div className="rounded-lg border p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-gray-600" />
                 <span className="font-semibold text-gray-900">
                   Service Information
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
+                <label className="mb-1 block text-sm font-medium text-gray-500">
                   Service Type
                 </label>
                 <p className="text-gray-900">{booking.serviceType}</p>
@@ -153,28 +153,28 @@ export default function BookingDetailsModal({
 
           {/* Car Details (for viewing bookings) */}
           {booking.carDetails && (
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Car className="w-5 h-5 text-gray-600" />
+            <div className="rounded-lg border p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <Car className="h-5 w-5 text-gray-600" />
                 <span className="font-semibold text-gray-900">
                   Vehicle Information
                 </span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
+                  <label className="mb-1 block text-sm font-medium text-gray-500">
                     Vehicle
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="font-medium text-gray-900">
                     {booking.carDetails.year} {booking.carDetails.make}{" "}
                     {booking.carDetails.model}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
+                  <label className="mb-1 block text-sm font-medium text-gray-500">
                     Price
                   </label>
-                  <p className="text-gray-900 font-bold text-green-600">
+                  <p className="font-bold text-gray-900 text-green-600">
                     ${booking.carDetails.price.toLocaleString()}
                   </p>
                 </div>
@@ -183,8 +183,8 @@ export default function BookingDetailsModal({
           )}
 
           {/* Additional Notes Section */}
-          <div className="border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="rounded-lg border p-4">
+            <div className="mb-3 flex items-center gap-2">
               <span className="font-semibold text-gray-900">
                 Additional Information
               </span>
@@ -200,10 +200,10 @@ export default function BookingDetailsModal({
         </div>
 
         {/* Close Button */}
-        <div className="flex justify-end mt-6 pt-4 border-t">
+        <div className="mt-6 flex justify-end border-t pt-4">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200"
           >
             Close
           </button>

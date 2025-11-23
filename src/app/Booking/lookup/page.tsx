@@ -68,7 +68,7 @@ export default function BookingLookupPage() {
         setError(result.error || "Booking not found");
       }
     } catch (err) {
-      setError("Failed to lookup booking. Please try again.");
+      setError(String(err));
     } finally {
       setLoading(false);
     }
@@ -105,22 +105,22 @@ export default function BookingLookupPage() {
     } = {
       pending: {
         color: "bg-yellow-100 text-yellow-800",
-        icon: <AlertCircle className="w-4 h-4" />,
+        icon: <AlertCircle className="h-4 w-4" />,
         text: "Pending",
       },
       confirmed: {
         color: "bg-green-100 text-green-800",
-        icon: <CheckCircle className="w-4 h-4" />,
+        icon: <CheckCircle className="h-4 w-4" />,
         text: "Confirmed",
       },
       completed: {
         color: "bg-blue-100 text-blue-800",
-        icon: <CheckCircle className="w-4 h-4" />,
+        icon: <CheckCircle className="h-4 w-4" />,
         text: "Completed",
       },
       cancelled: {
         color: "bg-red-100 text-red-800",
-        icon: <XCircle className="w-4 h-4" />,
+        icon: <XCircle className="h-4 w-4" />,
         text: "Cancelled",
       },
     };
@@ -129,7 +129,7 @@ export default function BookingLookupPage() {
 
     return (
       <div
-        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${config.color} font-medium`}
+        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 ${config.color} font-medium`}
       >
         {config.icon}
         <span>{config.text}</span>
@@ -138,11 +138,11 @@ export default function BookingLookupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-50 px-4 py-12">
+      <div className="mx-auto max-w-3xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-8 text-center">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">
             Booking Lookup
           </h1>
           <p className="text-gray-600">
@@ -151,30 +151,30 @@ export default function BookingLookupPage() {
         </div>
 
         {/* Search Box */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
           <div className="flex gap-3">
-            <div className="flex-1 relative">
+            <div className="relative flex-1">
               <input
                 type="text"
                 value={reference}
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Enter your booking reference (e.g., BK-ABC123)"
-                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
-              <Search className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+              <Search className="absolute top-3.5 left-3 h-5 w-5 text-gray-400" />
             </div>
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Searching..." : "Search"}
             </button>
           </div>
 
           {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {error}
             </div>
           )}
@@ -182,12 +182,12 @@ export default function BookingLookupPage() {
 
         {/* Booking Details */}
         {booking && (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="overflow-hidden rounded-lg bg-white shadow-md">
             {/* Header with Status */}
             <div className="bg-linear-to-r from-blue-600 to-purple-600 p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm opacity-90 mb-1">Booking Reference</p>
+                  <p className="mb-1 text-sm opacity-90">Booking Reference</p>
                   <h2 className="text-2xl font-bold">
                     {booking.bookingReference}
                   </h2>
@@ -198,23 +198,23 @@ export default function BookingLookupPage() {
 
             {/* Cancellation Notice */}
             {booking.status === "cancelled" && booking.cancellationReason && (
-              <div className="bg-red-50 border-l-4 border-red-500 p-4 m-6">
-                <h3 className="font-semibold text-red-900 mb-2">
+              <div className="m-6 border-l-4 border-red-500 bg-red-50 p-4">
+                <h3 className="mb-2 font-semibold text-red-900">
                   Cancellation Reason:
                 </h3>
                 <p className="text-red-800">{booking.cancellationReason}</p>
               </div>
             )}
 
-            <div className="p-6 space-y-6">
+            <div className="space-y-6 p-6">
               {/* Appointment Details */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">
                   Appointment Details
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <Calendar className="mt-0.5 h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm text-gray-500">Date</p>
                       <p className="font-medium text-gray-900">
@@ -223,7 +223,7 @@ export default function BookingLookupPage() {
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <Clock className="mt-0.5 h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm text-gray-500">Time</p>
                       <p className="font-medium text-gray-900">
@@ -233,7 +233,7 @@ export default function BookingLookupPage() {
                   </div>
                   {bookingType === "service" && booking.serviceType && (
                     <div className="flex items-start gap-3">
-                      <Car className="w-5 h-5 text-gray-400 mt-0.5" />
+                      <Car className="mt-0.5 h-5 w-5 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-500">Service Type</p>
                         <p className="font-medium text-gray-900">
@@ -243,13 +243,13 @@ export default function BookingLookupPage() {
                     </div>
                   )}
                   {bookingType === "viewing" && booking.carDetails && (
-                    <div className="bg-gray-50 rounded-lg p-4 mt-3">
-                      <p className="text-sm text-gray-500 mb-2">Vehicle</p>
+                    <div className="mt-3 rounded-lg bg-gray-50 p-4">
+                      <p className="mb-2 text-sm text-gray-500">Vehicle</p>
                       <h4 className="text-lg font-bold text-gray-900">
                         {booking.carDetails.year} {booking.carDetails.make}{" "}
                         {booking.carDetails.model}
                       </h4>
-                      <p className="text-green-600 font-bold text-lg mt-1">
+                      <p className="mt-1 text-lg font-bold text-green-600">
                         ${booking.carDetails.price.toLocaleString()}
                       </p>
                     </div>
@@ -259,7 +259,7 @@ export default function BookingLookupPage() {
 
               {/* Customer Information */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">
                   Your Information
                 </h3>
                 <div className="space-y-2 text-sm">
@@ -286,7 +286,7 @@ export default function BookingLookupPage() {
 
               {/* Action Note */}
               {booking.status !== "cancelled" && (
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                   <p className="text-sm text-blue-800">
                     If you need to cancel or reschedule your appointment, please
                     contact us at least 24 hours in advance.

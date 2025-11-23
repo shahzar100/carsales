@@ -8,7 +8,9 @@ export interface SessionData {
 }
 
 export const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_SECRET || "complex_password_at_least_32_characters_long",
+  password:
+    process.env.SESSION_SECRET ||
+    "complex_password_at_least_32_characters_long",
   cookieName: "carsales_admin_session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
@@ -27,7 +29,10 @@ export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, salt);
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 

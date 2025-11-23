@@ -22,16 +22,16 @@ const ReviewStep = () => {
 
   return (
     <div className="space-y-6">
-      <h4 className="text-lg font-semibold text-gray-800 mb-4">
+      <h4 className="mb-4 text-lg font-semibold text-gray-800">
         Review & Confirm Your Booking
       </h4>
 
       <div className="space-y-6">
         {/* Vehicle Information */}
         {viewingBooking.carDetails && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h5 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
-              <Car className="w-4 h-4 mr-2 text-blue-600" />
+          <div className="rounded-lg bg-gray-50 p-4">
+            <h5 className="mb-3 flex items-center text-sm font-medium text-gray-900">
+              <Car className="mr-2 h-4 w-4 text-blue-600" />
               Vehicle Details
             </h5>
             <div className="space-y-2 text-sm text-gray-700">
@@ -62,9 +62,9 @@ const ReviewStep = () => {
         )}
 
         {/* Date & Time Information */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h5 className="text-sm font-medium text-blue-900 mb-3 flex items-center">
-            <Calendar className="w-4 h-4 mr-2 text-blue-600" />
+        <div className="rounded-lg bg-blue-50 p-4">
+          <h5 className="mb-3 flex items-center text-sm font-medium text-blue-900">
+            <Calendar className="mr-2 h-4 w-4 text-blue-600" />
             Appointment Details
           </h5>
           <div className="space-y-2 text-sm text-blue-700">
@@ -93,24 +93,24 @@ const ReviewStep = () => {
 
         {/* Contact Information */}
         {viewingBooking.customerInfo && (
-          <div className="bg-green-50 rounded-lg p-4">
-            <h5 className="text-sm font-medium text-green-900 mb-3 flex items-center">
-              <User className="w-4 h-4 mr-2 text-green-600" />
+          <div className="rounded-lg bg-green-50 p-4">
+            <h5 className="mb-3 flex items-center text-sm font-medium text-green-900">
+              <User className="mr-2 h-4 w-4 text-green-600" />
               Contact Information
             </h5>
             <div className="space-y-2 text-sm text-green-700">
               <p className="flex items-center">
-                <User className="w-3 h-3 mr-2" />
+                <User className="mr-2 h-3 w-3" />
                 <span className="font-medium">Name:</span>{" "}
                 {viewingBooking.customerInfo.name}
               </p>
               <p className="flex items-center">
-                <Mail className="w-3 h-3 mr-2" />
+                <Mail className="mr-2 h-3 w-3" />
                 <span className="font-medium">Email:</span>{" "}
                 {viewingBooking.customerInfo.email}
               </p>
               <p className="flex items-center">
-                <Phone className="w-3 h-3 mr-2" />
+                <Phone className="mr-2 h-3 w-3" />
                 <span className="font-medium">Phone:</span>{" "}
                 {viewingBooking.customerInfo.phone}
               </p>
@@ -119,13 +119,13 @@ const ReviewStep = () => {
         )}
 
         {/* Confirmation Message */}
-        <div className="bg-linear-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
+        <div className="rounded-lg border border-blue-200 bg-linear-to-r from-blue-50 to-green-50 p-4">
           <div className="flex items-start space-x-3">
             <div className="shrink-0">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+              <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h5 className="text-sm font-medium text-gray-900 mb-1">
+              <h5 className="mb-1 text-sm font-medium text-gray-900">
                 Ready to Confirm
               </h5>
               <p className="text-sm text-gray-600">
@@ -139,11 +139,11 @@ const ReviewStep = () => {
         </div>
 
         {/* Important Notes */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h5 className="text-sm font-medium text-yellow-800 mb-2">
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+          <h5 className="mb-2 text-sm font-medium text-yellow-800">
             Important Information
           </h5>
-          <ul className="text-sm text-yellow-700 space-y-1">
+          <ul className="space-y-1 text-sm text-yellow-700">
             <li>• Please arrive 10 minutes before your scheduled time</li>
             <li>• Bring a valid driver&apos;s license for test drives</li>
             <li>

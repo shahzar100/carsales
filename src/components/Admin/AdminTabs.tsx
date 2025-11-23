@@ -15,20 +15,20 @@ export default function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   ];
 
   return (
-    <div className="bg-white border-b">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="border-b bg-white">
+      <div className="mx-auto max-w-7xl px-4">
         <nav className="flex gap-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center gap-2 py-4 px-2 border-b-2 transition-colors ${
+              className={`flex items-center gap-2 border-b-2 px-2 py-4 transition-colors ${
                 activeTab === tab.id
                   ? "border-blue-600 text-blue-600"
                   : "border-transparent text-gray-600 hover:text-gray-900"
               }`}
             >
-              <tab.icon className="w-4 h-4" />
+              <tab.icon className="h-4 w-4" />
               <span className="font-medium">{tab.label}</span>
             </button>
           ))}

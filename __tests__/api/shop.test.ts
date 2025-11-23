@@ -3,11 +3,7 @@
  */
 import { NextRequest } from "next/server";
 import { GET } from "@/app/api/shop/route";
-import {
-  getTestCollections,
-  createTestShopInfo,
-  seedDatabase,
-} from "../utils/testUtils";
+import { getTestCollections, createTestShopInfo } from "../utils/testUtils";
 
 describe("/api/shop", () => {
   afterEach(async () => {

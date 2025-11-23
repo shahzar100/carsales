@@ -60,20 +60,20 @@ const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
 const HeroSection = async () => {
   const featuredCar = await getFeaturedCar();
   return (
-    <section className="relative bg-black text-white overflow-hidden z-50">
-      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
+    <section className="relative z-50 overflow-hidden bg-black text-white">
+      <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Left Column - Content */}
           <div className="text-center lg:text-left">
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight">
+            <h1 className="mb-8 text-5xl leading-tight font-bold tracking-tight md:text-6xl lg:text-7xl">
               Find Your Perfect Car
-              <span className="block text-blue-400 mt-2">
+              <span className="mt-2 block text-blue-400">
                 Book a Viewing Today
               </span>
             </h1>
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed">
+            <p className="max-w-3xl text-lg leading-relaxed text-gray-300 md:text-xl">
               Browse our premium collection of vehicles and schedule convenient
               viewing appointments. Experience quality cars with expert
               guidance.
@@ -83,15 +83,15 @@ const HeroSection = async () => {
           {/* Right Column - Featured Car */}
           <div className="relative">
             {featuredCar && (
-              <div className="bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-800 shadow-2xl flex flex-col gap-4 sm:gap-6 lg:gap-8">
+              <div className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-4 shadow-2xl sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
                 {/* Featured Badge */}
-                <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                <div className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
                   <Star size={16} />
                   Featured Car
                 </div>
                 {/* Car Image */}
                 <div className="group relative">
-                  <div className="aspect-video w-full relative rounded-lg">
+                  <div className="relative aspect-video w-full rounded-lg">
                     {/* Main Image */}
                     <Image
                       src="/tesla.webp"
@@ -103,13 +103,13 @@ const HeroSection = async () => {
                   </div>
 
                   {/* Image Loading Fallback */}
-                  <div className="absolute inset-0 bg-gray-800 rounded-xl flex items-center justify-center opacity-0 transition-opacity">
+                  <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-gray-800 opacity-0 transition-opacity">
                     <Car size={48} className="text-gray-600" />
                   </div>
                 </div>{" "}
                 {/* Car Details */}
                 <div className="space-y-3 sm:space-y-4">
-                  <h3 className="text-xl sm:text-2xl font-bold text-white">
+                  <h3 className="text-xl font-bold text-white sm:text-2xl">
                     {featuredCar
                       ? `${featuredCar.Year} ${featuredCar.Brand} ${featuredCar.Name}`
                       : "2023 BMW X5"}
@@ -120,17 +120,17 @@ const HeroSection = async () => {
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl sm:text-3xl font-bold text-green-400">
+                    <span className="text-2xl font-bold text-green-400 sm:text-3xl">
                       £{featuredCar && featuredCar.Price.toLocaleString()}
                     </span>
-                    <span className="text-sm sm:text-base text-gray-400">
+                    <span className="text-sm text-gray-400 sm:text-base">
                       {featuredCar &&
                         `${featuredCar.Mileage.toLocaleString()} miles`}
                     </span>
                   </div>
 
                   {/* Features */}
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
+                  <div className="grid grid-cols-2 gap-4 border-t border-gray-700 pt-4">
                     <div className="flex items-center gap-2 text-sm text-gray-300">
                       <Eye size={16} className="text-blue-400" />
                       <span>Available for viewing</span>
@@ -141,7 +141,7 @@ const HeroSection = async () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-3 sm:gap-4 lg:gap-8 flex-col sm:flex-row xl:flex-row w-full">
+                  <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-4 lg:gap-8 xl:flex-row">
                     {/* View Car Button */}
                     <Link
                       href={
@@ -149,7 +149,7 @@ const HeroSection = async () => {
                           ? `/BrowseFleet/${featuredCar._id}`
                           : "/BrowseFleet"
                       }
-                      className="flex items-center justify-center w-full bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors text-center border border-gray-700 hover:border-gray-600"
+                      className="flex w-full items-center justify-center rounded-lg border border-gray-700 bg-gray-800 px-6 py-3 text-center font-semibold text-white transition-colors hover:border-gray-600 hover:bg-gray-700"
                     >
                       View Details
                     </Link>
@@ -162,10 +162,10 @@ const HeroSection = async () => {
         </div>
 
         {/* CTA Button - After Featured Car */}
-        <div className="flex justify-center mt-12 w-full">
+        <div className="mt-12 flex w-full justify-center">
           <Link
             href="/BrowseFleet"
-            className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold transition-all duration-300 gap-3 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 w-full"
+            className="flex w-full transform items-center justify-center gap-3 rounded-lg bg-blue-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl"
           >
             <Search size={24} />
             Browse Cars
@@ -174,7 +174,7 @@ const HeroSection = async () => {
 
         {/* Stats Section - Moved Below */}
         <div className="mt-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2">
                 <Car className="text-blue-400" size={32} />

@@ -42,17 +42,17 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
     });
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 2xl:bottom-6 2xl:right-6 2xl:left-auto 2xl:max-w-sm z-50">
+    <div className="fixed right-0 bottom-0 left-0 z-50 2xl:right-6 2xl:bottom-6 2xl:left-auto 2xl:max-w-sm">
       {/* Main CTA Card */}
-      <div className="bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-t-3xl 2xl:rounded-3xl shadow-2xl overflow-hidden border-t-4 2xl:border-4 border-blue-200/20 relative">
-        <div className="relative p-3 2xl:p-6 text-white">
+      <div className="relative overflow-hidden rounded-t-3xl border-t-4 border-blue-200/20 bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 shadow-2xl 2xl:rounded-3xl 2xl:border-4">
+        <div className="relative p-3 text-white 2xl:p-6">
           {/* Header - Desktop Only */}
-          <div className="text-center mb-3 hidden 2xl:block">
-            <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+          <div className="mb-3 hidden text-center 2xl:block">
+            <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-xl bg-white/20">
               <Calendar size={28} className="text-white" />
             </div>
-            <h3 className="text-2xl font-bold mb-1">Book Your Viewing</h3>
-            <p className="text-blue-100 text-sm">
+            <h3 className="mb-1 text-2xl font-bold">Book Your Viewing</h3>
+            <p className="text-sm text-blue-100">
               Experience luxury automotive excellence
             </p>
           </div>
@@ -62,14 +62,14 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
             <Link
               href={`/Booking/${car._id}`}
               onClick={handleBookingClick}
-              className="flex w-full flex-col items-center justify-center px-2 py-3 rounded-lg font-medium text-xs transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-white text-blue-700 hover:bg-gray-50"
+              className="flex w-full transform flex-col items-center justify-center rounded-lg bg-white px-2 py-3 text-xs font-medium text-blue-700 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-xl"
             >
               <Calendar size={16} className="mb-1" />
               <span>Book</span>
             </Link>
             <a
               href="tel:01234567890"
-              className="flex w-full flex-col items-center justify-center px-2 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-white hover:text-blue-100 border border-white/20 hover:border-white/30"
+              className="flex w-full flex-col items-center justify-center rounded-lg border border-white/20 bg-white/10 px-2 py-3 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-blue-100"
             >
               <Phone size={16} className="mb-1" />
               <span className="text-xs font-medium">Call</span>
@@ -78,7 +78,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
               href="https://maps.google.com/maps?q=Premium+Car+Centre,+123+Motor+Way,+City+Centre"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full flex-col items-center justify-center px-2 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-white hover:text-blue-100 border border-white/20 hover:border-white/30"
+              className="flex w-full flex-col items-center justify-center rounded-lg border border-white/20 bg-white/10 px-2 py-3 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-blue-100"
             >
               <MapPin size={16} className="mb-1" />
               <span className="text-xs font-medium">Visit</span>
@@ -88,29 +88,29 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
           {/* Desktop Layout */}
           <div className="hidden 2xl:block">
             {/* Quick Action Buttons */}
-            <div className="space-y-2 mb-3">
+            <div className="mb-3 space-y-2">
               <Link
                 href={`/Booking?carId=${car._id}`}
                 onClick={handleBookingClick}
-                className="w-full px-6 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 bg-white text-blue-700 hover:bg-gray-50 group"
+                className="group flex w-full transform items-center justify-center gap-2 rounded-xl bg-white px-6 py-4 text-base font-bold text-blue-700 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-gray-50 hover:shadow-2xl"
               >
                 <Calendar size={18} />
                 Schedule Viewing
-                <span className="ml-1 group-hover:translate-x-1 transition-transform">
+                <span className="ml-1 transition-transform group-hover:translate-x-1">
                   →
                 </span>
               </Link>
             </div>
 
             {/* Trust Indicators */}
-            <div className="text-center mb-3">
+            <div className="mb-3 text-center">
               <div className="flex items-center justify-center gap-3 text-xs text-blue-100">
                 <span className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-400"></div>
                   No Obligation
                 </span>
                 <span className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
+                  <div className="h-1.5 w-1.5 rounded-full bg-yellow-400"></div>
                   Expert Guidance
                 </span>
               </div>
@@ -120,7 +120,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
             <div className="grid grid-cols-2 gap-2">
               <a
                 href="tel:01234567890"
-                className="flex items-center justify-center gap-2 px-3 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 text-white hover:text-blue-100 border border-white/20 hover:border-white/30"
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-blue-100"
               >
                 <Phone size={16} />
                 <span className="text-sm font-medium">Call Now</span>
@@ -129,7 +129,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
                 href="https://maps.google.com/maps?q=Premium+Car+Centre,+123+Motor+Way,+City+Centre"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-3 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 text-white hover:text-blue-100 border border-white/20 hover:border-white/30"
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-blue-100"
               >
                 <MapPin size={16} />
                 <span className="text-sm font-medium">Showroom</span>

@@ -18,7 +18,7 @@ export default function ToastContainer() {
 
   return createPortal(
     <div
-      className="fixed top-4 right-4 z-[9999] pointer-events-none"
+      className="pointer-events-none fixed top-4 right-4 z-[9999]"
       style={{ zIndex: 999999 }} // Ensure maximum z-index
     >
       <div className="pointer-events-auto">

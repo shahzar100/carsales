@@ -51,8 +51,8 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   ];
 
   return (
-    <div className="mb-8 bg-gray-50 p-6 rounded-lg">
-      <div className="flex flex-wrap gap-4 items-center justify-center">
+    <div className="mb-8 rounded-lg bg-gray-50 p-6">
+      <div className="flex flex-wrap items-center justify-center gap-4">
         <CustomDropdown
           options={brandOptions}
           placeholder="All Brands"

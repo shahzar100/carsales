@@ -99,10 +99,10 @@ const Page = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header Section */}
       <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="mb-4 text-4xl font-bold text-gray-900">
           Car Parts & Components
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        <p className="mx-auto max-w-3xl text-lg text-gray-600">
           Browse our extensive collection of quality car parts. Reserve your
           parts today and complete your purchase at our location with expert
           installation available.
@@ -113,39 +113,39 @@ const Page = () => {
       <CarPartsGrid parts={mockCarParts} />
 
       {/* Bottom Info Section */}
-      <div className="mt-16 bg-red-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="mt-16 rounded-lg bg-red-50 p-8 text-center">
+        <h2 className="mb-4 text-2xl font-bold text-gray-900">
           How Part Reservation Works
         </h2>
-        <div className="grid md:grid-cols-3 gap-6 mt-8">
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-lg mb-3">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               1
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Reserve Online</h3>
-            <p className="text-gray-600 text-sm">
+            <h3 className="mb-2 font-semibold text-gray-900">Reserve Online</h3>
+            <p className="text-sm text-gray-600">
               Browse and reserve the parts you need from our online catalog.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-lg mb-3">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               2
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="mb-2 font-semibold text-gray-900">
               Visit Our Location
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-sm text-gray-600">
               Come to our shop to inspect and complete your purchase.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-lg mb-3">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               3
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="mb-2 font-semibold text-gray-900">
               Expert Installation
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-sm text-gray-600">
               Get professional installation services from our certified
               mechanics.
             </p>
@@ -154,7 +154,7 @@ const Page = () => {
         <div className="mt-8">
           <Link
             href="/contact"
-            className="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md transition-colors duration-200"
+            className="inline-flex items-center rounded-md bg-red-500 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
           >
             Contact Us for More Info
           </Link>

@@ -246,8 +246,8 @@ export function createCarViewingBookingConfirmationEmail(
                 }
                 <h3 style="margin: 0 0 10px; color: #212529; font-size: 22px; font-weight: bold;">
                   ${booking.carDetails.year} ${booking.carDetails.make} ${
-    booking.carDetails.model
-  }
+                    booking.carDetails.model
+                  }
                 </h3>
                 <p style="margin: 0; color: #28a745; font-size: 20px; font-weight: bold;">$${booking.carDetails.price.toLocaleString()}</p>
               </div>
@@ -435,8 +435,8 @@ export function createBookingCancellationEmail(
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                 <h3 style="margin: 0 0 5px; color: #212529; font-size: 18px; font-weight: bold;">
                   ${viewingBooking.carDetails.year} ${
-                      viewingBooking.carDetails.make
-                    } ${viewingBooking.carDetails.model}
+                    viewingBooking.carDetails.make
+                  } ${viewingBooking.carDetails.model}
                 </h3>
                 <p style="margin: 0; color: #28a745; font-size: 16px; font-weight: bold;">$${viewingBooking.carDetails.price.toLocaleString()}</p>
               </div>

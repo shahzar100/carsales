@@ -5,9 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 const Header = () => {
   return (
-    <nav className="flex gap-8 justify-between items-center mx-auto max-w-7xl row-span-1 w-full px-6 py-4 sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm rounded-lg z-60">
+    <nav className="sticky top-0 z-60 row-span-1 mx-auto flex w-full max-w-7xl items-center justify-between gap-8 rounded-lg bg-white/95 px-6 py-4 shadow-sm backdrop-blur-sm">
       <Link
-        className="text-xl font-bold tracking-tight text-black rounded-full"
+        className="rounded-full text-xl font-bold tracking-tight text-black"
         href="/"
       >
         <Image
@@ -15,14 +15,14 @@ const Header = () => {
           alt="Business Logo"
           width={120}
           height={50}
-          className="object-contain rounded-full"
+          className="rounded-full object-contain"
         />
       </Link>
 
       <NavMenu>
         <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>
           <div className="w-full">
-            <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">
+            <h3 className="mb-4 text-sm font-bold tracking-wider text-gray-900 uppercase">
               Brands
             </h3>
             <div className="grid grid-cols-2 gap-1 text-sm">
@@ -34,7 +34,7 @@ const Header = () => {
           </div>
         </NavLink>
         <NavLink dropdown={true} href="/Services" text={"Services"}>
-          <div className="flex flex-col space-y-2 w-full">
+          <div className="flex w-full flex-col space-y-2">
             <NavLink
               href="/Services/Detailing"
               text={"Detailing"}

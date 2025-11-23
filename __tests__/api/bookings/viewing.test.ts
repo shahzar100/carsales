@@ -3,10 +3,7 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/bookings/viewing/route";
-import {
-  getTestCollections,
-  createTestCarViewingBooking,
-} from "../../utils/testUtils";
+import { getTestCollections } from "../../utils/testUtils";
 
 // Mock the email client
 jest.mock("@/lib/email/client", () => ({

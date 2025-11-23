@@ -3,18 +3,18 @@ import { getCarsCollection, Car } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const carsCollection = await getCarsCollection();
-    const cars = await carsCollection.find({}).sort({ createdAt: -1 }).toArray();
+    const cars = await carsCollection
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
 
     return NextResponse.json({
       success: true,
@@ -33,10 +33,7 @@ export async function POST(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -80,10 +77,7 @@ export async function PUT(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -113,10 +107,7 @@ export async function PUT(request: NextRequest) {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { error: "Car not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -136,10 +127,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -153,13 +141,12 @@ export async function DELETE(request: NextRequest) {
     }
 
     const carsCollection = await getCarsCollection();
-    const result = await carsCollection.deleteOne({ _id: new ObjectId(id).toString() });
+    const result = await carsCollection.deleteOne({
+      _id: new ObjectId(id).toString(),
+    });
 
     if (result.deletedCount === 0) {
-      return NextResponse.json(
-        { error: "Car not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
     return NextResponse.json({

@@ -98,20 +98,15 @@ export default function Toast({ toast, onRemove }: ToastProps) {
 
   return (
     <div
-      className={`
-        relative max-w-md w-full rounded-lg p-4 mb-3 transition-all duration-300 ease-in-out transform
-        ${styles.container}
-        ${
-          isVisible
-            ? "translate-x-0 opacity-100 scale-100"
-            : "translate-x-full opacity-0 scale-95"
-        }
-        ${isRemoving ? "translate-x-full opacity-0 scale-95" : ""}
-      `}
+      className={`relative mb-3 w-full max-w-md transform rounded-lg p-4 transition-all duration-300 ease-in-out ${styles.container} ${
+        isVisible
+          ? "translate-x-0 scale-100 opacity-100"
+          : "translate-x-full scale-95 opacity-0"
+      } ${isRemoving ? "translate-x-full scale-95 opacity-0" : ""} `}
     >
       {/* Progress bar */}
       {!toast.persistent && toast.duration && toast.duration > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-lg overflow-hidden">
+        <div className="absolute right-0 bottom-0 left-0 h-1 overflow-hidden rounded-b-lg bg-gray-200">
           <div
             className={`h-full transition-all duration-50 ease-linear ${styles.progress}`}
             style={{ width: `${progress}%` }}
@@ -122,11 +117,11 @@ export default function Toast({ toast, onRemove }: ToastProps) {
       <div className="flex items-start">
         {/* Icon */}
         <div className="flex-shrink-0 pt-0.5">
-          <Icon className={`w-5 h-5 ${styles.icon}`} />
+          <Icon className={`h-5 w-5 ${styles.icon}`} />
         </div>
 
         {/* Content */}
-        <div className="ml-3 flex-1 min-w-0">
+        <div className="ml-3 min-w-0 flex-1">
           <div className={`text-sm font-semibold ${styles.title}`}>
             {toast.title}
           </div>
@@ -150,12 +145,12 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         </div>
 
         {/* Close button */}
-        <div className="flex-shrink-0 ml-4">
+        <div className="ml-4 flex-shrink-0">
           <button
             onClick={handleRemove}
-            className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200"
+            className="inline-flex text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:text-gray-600 focus:outline-none"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         </div>
       </div>

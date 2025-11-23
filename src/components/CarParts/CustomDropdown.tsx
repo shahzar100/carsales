@@ -51,7 +51,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-gray-400 transition-colors duration-200"
+        className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-left shadow-sm transition-colors duration-200 hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none"
       >
         <div className="flex items-center justify-between">
           <span
@@ -63,22 +63,22 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           </span>
           <ChevronDown
             className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
-              isOpen ? "transform rotate-180" : ""
+              isOpen ? "rotate-180 transform" : ""
             }`}
           />
         </div>
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg">
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className={`w-full px-4 py-2 text-left hover:bg-red-50 hover:text-red-700 transition-colors duration-150 ${
+              className={`w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-red-50 hover:text-red-700 ${
                 value === option.value
-                  ? "bg-red-100 text-red-800 font-medium"
+                  ? "bg-red-100 font-medium text-red-800"
                   : "text-gray-900"
               }`}
             >

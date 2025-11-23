@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto] gap-4 p-4 overflow-x-hidden">
+      <body className="grid min-h-screen grid-rows-[auto_1fr_auto] gap-4 overflow-x-hidden p-4 antialiased">
         <ToastProvider>
           <NavigationProvider>
             <SearchContextProvider>
@@ -30,17 +30,17 @@ export default function RootLayout({
                   <PageLoader />
                   <Header />
                   <main className="min-h-screen">{children}</main>
-                  <footer className="border-t bg-gray-50 w-full">
+                  <footer className="w-full border-t bg-gray-50">
                     <div className="mx-auto max-w-7xl px-6 py-12">
                       {/* Main Footer Content */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                      <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                         {/* Company Info */}
                         <div>
-                          <h3 className="font-bold text-lg text-gray-900 mb-4">
+                          <h3 className="mb-4 text-lg font-bold text-gray-900">
                             {process.env.NEXT_PUBLIC_BUSINESS_NAME ||
                               "Car Sales & Viewing"}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4">
+                          <p className="mb-4 text-sm text-gray-600">
                             Browse our premium car collection with convenient
                             viewing and booking services.
                           </p>
@@ -63,7 +63,7 @@ export default function RootLayout({
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="hover:text-red-500 transition-colors cursor-pointer"
+                                className="cursor-pointer transition-colors hover:text-red-500"
                               >
                                 {process.env.NEXT_PUBLIC_BUSINESS_ADDRESS ||
                                   "123 Auto Street"}
@@ -79,7 +79,7 @@ export default function RootLayout({
                                   process.env.NEXT_PUBLIC_BUSINESS_PHONE ||
                                   "+15551234567"
                                 }`}
-                                className="hover:text-red-500 transition-colors cursor-pointer"
+                                className="cursor-pointer transition-colors hover:text-red-500"
                               >
                                 {process.env.NEXT_PUBLIC_BUSINESS_PHONE ||
                                   "(555) 123-4567"}
@@ -92,7 +92,7 @@ export default function RootLayout({
                                   process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
                                   "info@carsales.com"
                                 }`}
-                                className="hover:text-red-500 transition-colors cursor-pointer"
+                                className="cursor-pointer transition-colors hover:text-red-500"
                               >
                                 {process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
                                   "info@carsales.com"}
@@ -103,7 +103,7 @@ export default function RootLayout({
 
                         {/* Browse & Services */}
                         <div>
-                          <h4 className="font-semibold text-gray-900 mb-4">
+                          <h4 className="mb-4 font-semibold text-gray-900">
                             Browse & Services
                           </h4>
                           <ul className="space-y-2 text-sm">
@@ -139,7 +139,7 @@ export default function RootLayout({
 
                         {/* Support & Info */}
                         <div>
-                          <h4 className="font-semibold text-gray-900 mb-4">
+                          <h4 className="mb-4 font-semibold text-gray-900">
                             Support & Info
                           </h4>
                           <ul className="space-y-2 text-sm">
@@ -161,7 +161,7 @@ export default function RootLayout({
 
                         {/* Admin & Legal */}
                         <div>
-                          <h4 className="font-semibold text-gray-900 mb-4">
+                          <h4 className="mb-4 font-semibold text-gray-900">
                             Admin & Legal
                           </h4>
                           <ul className="space-y-2 text-sm">
@@ -180,31 +180,31 @@ export default function RootLayout({
 
                       {/* Bottom Bar */}
                       <div className="border-t border-gray-200 pt-6">
-                        <div className="flex flex-col md:flex-row justify-between items-center">
-                          <p className="text-gray-600 text-sm">
+                        <div className="flex flex-col items-center justify-between md:flex-row">
+                          <p className="text-sm text-gray-600">
                             &copy; 2025{" "}
                             {process.env.NEXT_PUBLIC_BUSINESS_NAME ||
                               "Car Sales & Viewing"}
                             . All rights reserved.
                           </p>
-                          <div className="flex space-x-6 mt-4 md:mt-0">
+                          <div className="mt-4 flex space-x-6 md:mt-0">
                             <a
                               href="#"
-                              className="text-gray-400 hover:text-red-500 transition-colors"
+                              className="text-gray-400 transition-colors hover:text-red-500"
                             >
                               <span className="sr-only">Facebook</span>
                               📘
                             </a>
                             <a
                               href="#"
-                              className="text-gray-400 hover:text-red-500 transition-colors"
+                              className="text-gray-400 transition-colors hover:text-red-500"
                             >
                               <span className="sr-only">Twitter</span>
                               🐦
                             </a>
                             <a
                               href="#"
-                              className="text-gray-400 hover:text-red-500 transition-colors"
+                              className="text-gray-400 transition-colors hover:text-red-500"
                             >
                               <span className="sr-only">Instagram</span>
                               📷

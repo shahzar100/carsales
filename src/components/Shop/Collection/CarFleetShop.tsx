@@ -83,10 +83,10 @@ const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
   return (
     <>
       {isClient && (
-        <div className="px-4 py-8 flex flex-col gap-8 mx-auto max-w-7xl">
+        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8">
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="mb-4 text-3xl font-bold text-gray-900">
               Browse Our Car Collection
             </h1>
             <p className="text-gray-600">

@@ -7,7 +7,7 @@ const ContactInfoStep = () => {
 
   return (
     <div className="space-y-6">
-      <h4 className="text-lg font-semibold text-gray-800 mb-4">
+      <h4 className="mb-4 text-lg font-semibold text-gray-800">
         Contact Information
       </h4>
 
@@ -15,9 +15,9 @@ const ContactInfoStep = () => {
         {/* Full Name */}
         <div className="space-y-3">
           <label className="flex items-center text-sm font-medium text-gray-700">
-            <User className="w-4 h-4 mr-2 text-blue-600" />
+            <User className="mr-2 h-4 w-4 text-blue-600" />
             Full Name
-            <span className="text-red-500 ml-1">*</span>
+            <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -34,17 +34,17 @@ const ContactInfoStep = () => {
                 })
               }
               placeholder="Enter your full name"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-400"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               required
             />
             {!viewingBooking.customerInfo?.name && (
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <User className="w-5 h-5 text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <User className="h-5 w-5 text-gray-400" />
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 flex items-center">
-            <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+          <p className="flex items-center text-xs text-gray-500">
+            <span className="mr-2 h-1 w-1 rounded-full bg-gray-400"></span>
             Please provide your first and last name
           </p>
         </div>
@@ -52,9 +52,9 @@ const ContactInfoStep = () => {
         {/* Email Address */}
         <div className="space-y-3">
           <label className="flex items-center text-sm font-medium text-gray-700">
-            <Mail className="w-4 h-4 mr-2 text-blue-600" />
+            <Mail className="mr-2 h-4 w-4 text-blue-600" />
             Email Address
-            <span className="text-red-500 ml-1">*</span>
+            <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -71,17 +71,17 @@ const ContactInfoStep = () => {
                 })
               }
               placeholder="Enter your email address"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-400"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               required
             />
             {!viewingBooking.customerInfo?.email && (
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <Mail className="w-5 h-5 text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <Mail className="h-5 w-5 text-gray-400" />
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 flex items-center">
-            <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+          <p className="flex items-center text-xs text-gray-500">
+            <span className="mr-2 h-1 w-1 rounded-full bg-gray-400"></span>
             We&apos;ll send viewing confirmation to this email
           </p>
         </div>
@@ -89,9 +89,9 @@ const ContactInfoStep = () => {
         {/* Phone Number */}
         <div className="space-y-3">
           <label className="flex items-center text-sm font-medium text-gray-700">
-            <Phone className="w-4 h-4 mr-2 text-blue-600" />
+            <Phone className="mr-2 h-4 w-4 text-blue-600" />
             Phone Number
-            <span className="text-red-500 ml-1">*</span>
+            <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -108,17 +108,17 @@ const ContactInfoStep = () => {
                 })
               }
               placeholder="Enter your phone number"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-400"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               required
             />
             {!viewingBooking.customerInfo?.phone && (
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <Phone className="w-5 h-5 text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <Phone className="h-5 w-5 text-gray-400" />
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 flex items-center">
-            <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+          <p className="flex items-center text-xs text-gray-500">
+            <span className="mr-2 h-1 w-1 rounded-full bg-gray-400"></span>
             For appointment reminders and updates
           </p>
         </div>
@@ -127,15 +127,15 @@ const ContactInfoStep = () => {
         {viewingBooking.customerInfo?.name &&
           viewingBooking.customerInfo?.email &&
           viewingBooking.customerInfo?.phone && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4">
               <div className="flex items-start space-x-3">
                 <div className="shrink-0">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-green-600" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                    <User className="h-4 w-4 text-green-600" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h5 className="text-sm font-medium text-green-900 mb-2">
+                  <h5 className="mb-2 text-sm font-medium text-green-900">
                     Contact Details Complete
                   </h5>
                   <div className="space-y-1 text-sm text-green-700">

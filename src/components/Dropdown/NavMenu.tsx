@@ -44,12 +44,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
 
   return (
     <>
-      <div className="hidden lg:flex max-w-5xl items-center justify-center">
+      <div className="hidden max-w-5xl items-center justify-center lg:flex">
         {children}
       </div>
       <button
         onClick={() => setMenu(!menu)}
-        className="cursor-pointer lg:hidden p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 border border-gray-200 shadow-sm"
+        className="cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-colors duration-200 hover:bg-gray-100 lg:hidden"
         aria-label="Toggle menu"
       >
         <Menu size={20} />
@@ -58,20 +58,20 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
         <>
           <div
             ref={menuRef}
-            className="fixed top-0 right-0 w-screen h-screen overflow-y-auto z-50 bg-white shadow-2xl transform transition-transform duration-300 ease-out"
+            className="fixed top-0 right-0 z-50 h-screen w-screen transform overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-out"
           >
-            <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-6">
               <h2 className="text-xl font-bold text-gray-900"> Title </h2>
               <button
                 onClick={() => setMenu(false)}
-                className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 bg-white shadow-sm"
+                className="rounded-full bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-gray-200"
                 aria-label="Close menu"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex flex-col py-6 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto">
+            <div className="mx-auto flex max-w-4xl flex-col px-4 py-6 sm:px-6 md:px-8">
               {children}
             </div>
           </div>

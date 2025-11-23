@@ -4,7 +4,6 @@
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/login/route";
 import { getTestCollections, createTestAdminUser } from "../../utils/testUtils";
-import bcrypt from "bcryptjs";
 
 describe("/api/admin/login", () => {
   afterEach(async () => {

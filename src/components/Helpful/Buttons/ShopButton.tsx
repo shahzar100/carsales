@@ -42,7 +42,7 @@ const ShopButton: React.FC<ShopButtonProps> = ({
       onClick={handleButtonClick}
       className={`${
         size || "h-20 w-20"
-      } ${color} rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+      } ${color} flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none`}
       disabled={isDisabled}
       initial={{ scale: 1 }}
       animate={{ scale: isSwapping ? 1.2 : 1 }}

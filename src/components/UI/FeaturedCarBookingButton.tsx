@@ -46,7 +46,7 @@ const FeaturedCarBookingButton: React.FC<FeaturedCarBookingButtonProps> = ({
     <Link
       href={`/Booking/${car._id}`}
       onClick={setCarForViewing}
-      className="flex items-center justify-center gap-3 w-full bg-transparent border-2 border-white hover:bg-white hover:text-black text-white px-6 py-5 rounded-lg font-semibold transition-all duration-300 text-lg hover:shadow-xl transform hover:-translate-y-1"
+      className="flex w-full transform items-center justify-center gap-3 rounded-lg border-2 border-white bg-transparent px-6 py-5 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-black hover:shadow-xl"
     >
       <Calendar size={24} />
       Schedule Booking

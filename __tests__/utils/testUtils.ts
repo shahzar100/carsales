@@ -117,7 +117,7 @@ export const createTestAdminUser = async () => {
 export const createAuthenticatedRequest = async (
   method: string,
   url: string,
-  body?: any
+  body?: Record<string, unknown>
 ) => {
   // Mock iron-session for authenticated requests
   const mockSession = {
@@ -149,7 +149,7 @@ export const createAuthenticatedRequest = async (
 export const createUnauthenticatedRequest = (
   method: string,
   url: string,
-  body?: any
+  body?: Record<string, unknown>
 ) => {
   // Mock the auth utility to return false
   jest.doMock("@/lib/utils/auth", () => ({

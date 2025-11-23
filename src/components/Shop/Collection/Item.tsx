@@ -55,15 +55,15 @@ const Item: React.FC<ItemProps> = ({ car }) => {
   };
 
   return (
-    <div className="border hover:border-2 border-blue-500 bg-white group rounded-md overflow-hidden min-w-lg mx-auto lg:max-w-full lg:mx-0">
+    <div className="group mx-auto min-w-lg overflow-hidden rounded-md border border-blue-500 bg-white hover:border-2 lg:mx-0 lg:max-w-full">
       <VehicleDetails vehicle={vehicleData} showTitle={false} />
 
-      <div className="p-4 bg-gray-50">
+      <div className="bg-gray-50 p-4">
         <div className="flex w-full gap-4">
           <NavButton
             href={`/BrowseFleet/${car._id}`}
             onClick={setCarForViewing}
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
           >
             <Info size={20} />
             More details
@@ -71,7 +71,7 @@ const Item: React.FC<ItemProps> = ({ car }) => {
           <NavButton
             href={`/Booking/${car._id}`}
             onClick={setCarForViewing}
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
           >
             <Calendar size={20} />
             Book Viewing
