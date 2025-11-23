@@ -1,0 +1,73 @@
+import React from "react";
+import { CheckCircle, Shield, Clock, LucideIcon } from "lucide-react";
+
+interface WhyChooseItem {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  bgColor: string;
+  textColor: string;
+}
+
+interface WhyChooseUsProps {
+  items?: WhyChooseItem[];
+}
+
+const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
+  const defaultItems: WhyChooseItem[] = [
+    {
+      icon: CheckCircle,
+      title: "Certified Expertise",
+      description:
+        "ASE certified technicians with years of experience on all vehicle makes and models.",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
+    },
+    {
+      icon: Shield,
+      title: "Quality Guarantee",
+      description:
+        "All repairs backed by comprehensive warranty and satisfaction guarantee.",
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
+    },
+    {
+      icon: Clock,
+      title: "Fast Turnaround",
+      description:
+        "Efficient service with most repairs completed within 1-2 business days.",
+      bgColor: "bg-purple-100",
+      textColor: "text-purple-600",
+    },
+  ];
+
+  const displayItems = items || defaultItems;
+
+  return (
+    <div className="mb-16">
+      <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
+        Why Choose Our Repair Shop?
+      </h2>
+      <div className="grid gap-8 md:grid-cols-3">
+        {displayItems.map((item, index) => {
+          const IconComponent = item.icon;
+          return (
+            <div key={index} className="p-6 text-center">
+              <div
+                className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${item.bgColor} ${item.textColor}`}
+              >
+                <IconComponent size={32} />
+              </div>
+              <h3 className="mb-3 text-xl font-semibold text-gray-900">
+                {item.title}
+              </h3>
+              <p className="text-gray-600">{item.description}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default WhyChooseUs;
