@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-import { NextRequest } from "next/server";
 import { GET } from "@/app/api/shop/route";
 import { getTestCollections, createTestShopInfo } from "../utils/testUtils";
 
@@ -20,8 +19,7 @@ describe("/api/shop", () => {
       await shopInfo.insertOne(testShopInfo);
       await client.close();
 
-      const request = new NextRequest("http://localhost:3000/api/shop");
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -32,8 +30,7 @@ describe("/api/shop", () => {
     });
 
     it("should return default shop info when no shop info exists in database", async () => {
-      const request = new NextRequest("http://localhost:3000/api/shop");
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -49,8 +46,7 @@ describe("/api/shop", () => {
       const originalEnv = process.env.MONGODB_URI;
       process.env.MONGODB_URI = "invalid-uri";
 
-      const request = new NextRequest("http://localhost:3000/api/shop");
-      const response = await GET(request);
+      const response = await GET();
 
       expect(response.status).toBe(500);
 
