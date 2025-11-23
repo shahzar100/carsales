@@ -4,7 +4,7 @@ import {
   getCarViewingBookingsCollection,
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
-import { ObjectId } from "mongodb";
+import { ObjectId, Document } from "mongodb";
 
 export async function GET() {
   try {
@@ -104,13 +104,24 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update the booking status
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await collection.updateOne({ _id: objectId } as any, {
-      $set: {
-        status: status,
-        updatedAt: new Date(),
-      },
-    });
+    // Use MongoDB's generic Document type for compatibility with ObjectId
+    const genericCollection = collection as unknown as {
+      updateOne: (
+        filter: Document,
+        update: Document
+      ) => Promise<{ matchedCount: number; modifiedCount: number }>;
+      findOne: (filter: Document) => Promise<Document | null>;
+    };
+
+    const result = await genericCollection.updateOne(
+      { _id: objectId },
+      {
+        $set: {
+          status: status,
+          updatedAt: new Date(),
+        },
+      }
+    );
 
     if (result.matchedCount === 0) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
@@ -124,12 +135,9 @@ export async function PUT(request: NextRequest) {
     }
 
     // Get the updated booking
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updatedBooking = await collection.findOne({
+    const updatedBooking = await genericCollection.findOne({
       _id: objectId,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-
+    });
     return NextResponse.json({
       success: true,
       message: `Booking status updated to ${status}`,

@@ -174,7 +174,7 @@ export default function BookingDetailsModal({
                   <label className="mb-1 block text-sm font-medium text-gray-500">
                     Price
                   </label>
-                  <p className="font-bold text-gray-900 text-green-600">
+                  <p className="font-bold text-green-600">
                     ${booking.carDetails.price.toLocaleString()}
                   </p>
                 </div>
