@@ -116,7 +116,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
 
       <div className="flex items-start">
         {/* Icon */}
-        <div className="flex-shrink-0 pt-0.5">
+        <div className="shrink-0 pt-0.5">
           <Icon className={`h-5 w-5 ${styles.icon}`} />
         </div>
 
@@ -145,7 +145,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         </div>
 
         {/* Close button */}
-        <div className="ml-4 flex-shrink-0">
+        <div className="ml-4 shrink-0">
           <button
             onClick={handleRemove}
             className="inline-flex text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:text-gray-600 focus:outline-none"

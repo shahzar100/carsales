@@ -188,7 +188,7 @@ const Detailing = () => {
                         return (
                           <div key={idx} className="flex items-start">
                             <CheckCircle
-                              className={`mt-0.5 mr-2 h-3 w-3 flex-shrink-0 ${
+                              className={`mt-0.5 mr-2 h-3 w-3 shrink-0 ${
                                 isIncluded ? "text-blue-500" : "text-green-500"
                               }`}
                             />
@@ -219,7 +219,7 @@ const Detailing = () => {
                         return (
                           <div key={idx} className="flex items-start">
                             <CheckCircle
-                              className={`mt-0.5 mr-2 h-3 w-3 flex-shrink-0 ${
+                              className={`mt-0.5 mr-2 h-3 w-3 shrink-0 ${
                                 isIncluded ? "text-blue-500" : "text-green-500"
                               }`}
                             />

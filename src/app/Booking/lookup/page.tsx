@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Calendar,
@@ -39,13 +39,7 @@ export default function BookingLookupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (searchParams.get("ref")) {
-      handleSearch();
-    }
-  }, []);
-
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!reference.trim()) {
       setError("Please enter a booking reference");
       return;
@@ -72,7 +66,13 @@ export default function BookingLookupPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [reference]);
+
+  useEffect(() => {
+    if (searchParams.get("ref")) {
+      handleSearch();
+    }
+  }, [searchParams, handleSearch]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

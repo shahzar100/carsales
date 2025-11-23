@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useFilters } from "@/store/FilterContext";
 
 const SelectionBoxes = ({ options, type }) => {
-  const { state, dispatch } = useFilters(); // Get the filter state and dispatch function from the filter context
+  const { dispatch } = useFilters(); // Get the dispatch function from the filter context
   const [menu, setMenu] = useState(false);
 
   const handleChange = (option) => {
@@ -29,6 +29,7 @@ const SelectionBoxes = ({ options, type }) => {
             {options &&
               options.map((option) => (
                 <button
+                  key={option}
                   onClick={() => {
                     handleChange(option);
                     setMenu(false);

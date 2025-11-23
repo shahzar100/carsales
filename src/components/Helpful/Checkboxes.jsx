@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFilters } from "@/store/FilterContext";
 
-const Checkboxes = ({ title, disabled, type }) => {
+const Checkboxes = ({ title, type }) => {
   const { state, dispatch } = useFilters(); // Get the filter state and dispatch function from the filter context
   const [isSelected, setIsSelected] = useState(false);
 
