@@ -3,6 +3,7 @@
 ## Overview
 
 This is a comprehensive car sales application with:
+
 - Car inventory management
 - Service booking system
 - Car viewing appointment scheduling
@@ -19,6 +20,7 @@ This is a comprehensive car sales application with:
 ## Environment Setup
 
 1. Copy the example environment file:
+
 ```bash
 cp .env.example .env.local
 ```
@@ -39,17 +41,37 @@ EMAIL_FROM=noreply@yourdomain.com
 
 # Site Configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Business Information (Server-side for API routes)
+NEXT_BUSINESS_NAME="Car Sales & Viewing"
+NEXT_BUSINESS_ADDRESS="123 Auto Street"
+NEXT_BUSINESS_CITY="City"
+NEXT_BUSINESS_STATE="State"
+NEXT_BUSINESS_ZIP="12345"
+NEXT_BUSINESS_PHONE="(555) 123-4567"
+NEXT_BUSINESS_EMAIL="info@carsales.com"
+
+# Business Information (Client-side for frontend display)
+NEXT_PUBLIC_BUSINESS_NAME="Car Sales & Viewing"
+NEXT_PUBLIC_BUSINESS_ADDRESS="123 Auto Street"
+NEXT_PUBLIC_BUSINESS_CITY="City"
+NEXT_PUBLIC_BUSINESS_STATE="State"
+NEXT_PUBLIC_BUSINESS_ZIP="12345"
+NEXT_PUBLIC_BUSINESS_PHONE="(555) 123-4567"
+NEXT_PUBLIC_BUSINESS_EMAIL="info@carsales.com"
 ```
 
 ### Getting API Keys
 
 #### MongoDB Atlas
+
 1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a free cluster
 3. Get your connection string
 4. Replace `<username>`, `<password>`, and `<cluster>` in the connection string
 
 #### Resend
+
 1. Go to [Resend](https://resend.com)
 2. Sign up for a free account
 3. Generate an API key from the dashboard
@@ -58,11 +80,13 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Create an admin user:
+
 ```bash
 node scripts/setup-admin.mjs
 ```
@@ -72,6 +96,7 @@ Follow the prompts to create your admin username and password.
 ## Running the Application
 
 ### Development Mode
+
 ```bash
 npm run dev
 ```
@@ -79,6 +104,7 @@ npm run dev
 The application will be available at `http://localhost:3000`
 
 ### Production Build
+
 ```bash
 npm run build
 npm start
@@ -87,6 +113,7 @@ npm start
 ## Application Structure
 
 ### User-Facing Pages
+
 - `/` - Home page with featured vehicles
 - `/BrowseFleet` - Browse available cars
 - `/BrowseFleet/[id]` - Individual car details with booking
@@ -94,6 +121,7 @@ npm start
 - `/bookings/lookup` - Customer booking lookup
 
 ### Admin Pages
+
 - `/admin` - Admin redirect (checks authentication)
 - `/admin/login` - Admin login page
 - `/admin/dashboard` - Main admin dashboard with:
@@ -105,12 +133,14 @@ npm start
 ### API Endpoints
 
 #### Public Endpoints
+
 - `POST /api/bookings/service` - Create service appointment
 - `POST /api/bookings/viewing` - Create car viewing appointment
 - `GET /api/bookings/lookup?ref=BK-XXXXX` - Lookup booking by reference
 - `GET /api/shop` - Get shop information
 
 #### Admin Endpoints (Authenticated)
+
 - `POST /api/admin/login` - Admin login
 - `POST /api/admin/logout` - Admin logout
 - `GET /api/admin/logout` - Check session status
@@ -126,6 +156,7 @@ npm start
 ## Features
 
 ### For Customers
+
 1. **Browse Vehicles**: View available cars with detailed information
 2. **Book Car Viewings**: Schedule appointments to view cars
 3. **Book Services**: Schedule service appointments
@@ -133,19 +164,23 @@ npm start
 5. **Email Notifications**: Receive confirmation emails for all bookings
 
 ### For Administrators
+
 1. **Vehicle Management**:
+
    - Add new vehicles with full details
    - Edit existing vehicles
    - Delete vehicles
    - Update vehicle status (available, reserved, sold)
 
 2. **Booking Management**:
+
    - View all service and viewing bookings
    - Search and filter bookings
    - Cancel bookings with reason (customer gets email)
    - Track booking status
 
 3. **Shop Configuration**:
+
    - Update business information
    - Set operating hours
    - Configure contact details
@@ -161,6 +196,7 @@ npm start
 The system includes professional HTML email templates for:
 
 1. **Service Booking Confirmation**
+
    - Booking reference
    - Service details
    - Date and time
@@ -168,6 +204,7 @@ The system includes professional HTML email templates for:
    - Link to booking lookup
 
 2. **Car Viewing Confirmation**
+
    - Booking reference
    - Vehicle details with image
    - Date and time
@@ -193,6 +230,7 @@ The application uses the following MongoDB collections:
 ## Booking Reference System
 
 Each booking receives a unique reference in the format `BK-XXXXXX` where XXXXXX is a 6-character alphanumeric code. Customers can use this reference to:
+
 - Look up their booking
 - Contact support
 - Reference in communications
@@ -202,43 +240,52 @@ Each booking receives a unique reference in the format `BK-XXXXXX` where XXXXXX 
 ### Adding New Features
 
 #### Add a New Service Type
+
 1. Update the service booking form
 2. Ensure the `serviceType` field accepts the new type
 3. No database changes needed - it's a flexible string field
 
 #### Add Car Images
+
 Upload images to a CDN (Cloudinary, AWS S3, etc.) and store URLs in the `image` field when adding cars through the admin dashboard.
 
 ### Customization
 
 #### Email Branding
+
 Edit `/src/lib/email/templates.ts` to customize:
+
 - Colors and styling
 - Company logo
 - Email footer
 - Template layout
 
 #### UI Theme
+
 The application uses Tailwind CSS. Customize colors in `tailwind.config.js`.
 
 ## Troubleshooting
 
 ### MongoDB Connection Issues
+
 - Verify your connection string is correct
 - Ensure your IP is whitelisted in MongoDB Atlas
 - Check that the database user has proper permissions
 
 ### Email Not Sending
+
 - Verify Resend API key is correct
 - Check that the sender email is verified in Resend
 - Review Resend dashboard for error logs
 
 ### Build Errors
+
 - Clear Next.js cache: `rm -rf .next`
 - Reinstall dependencies: `rm -rf node_modules && npm install`
 - Check TypeScript errors: `npm run type-check`
 
 ### Session Issues
+
 - Ensure SESSION_SECRET is at least 32 characters
 - Clear browser cookies and try again
 - Check that iron-session is properly installed
@@ -255,6 +302,7 @@ The application uses Tailwind CSS. Customize colors in `tailwind.config.js`.
 ## Support
 
 For issues or questions:
+
 1. Check this README
 2. Review the code comments
 3. Check MongoDB and Resend service status

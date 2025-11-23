@@ -9,7 +9,7 @@ import PageLoader from "@/components/UI/PageLoader";
 import NavLink from "@/components/Dropdown/NavLink";
 
 export const metadata: Metadata = {
-  title: "Car Sales & Viewing",
+  title: process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing",
   description: "Book car viewings and browse our vehicle inventory",
 };
 
@@ -35,7 +35,8 @@ export default function RootLayout({
                       {/* Company Info */}
                       <div>
                         <h3 className="font-bold text-lg text-gray-900 mb-4">
-                          Car Sales & Viewing
+                          {process.env.NEXT_PUBLIC_BUSINESS_NAME ||
+                            "Car Sales & Viewing"}
                         </h3>
                         <p className="text-gray-600 text-sm mb-4">
                           Browse our premium car collection with convenient
@@ -45,30 +46,53 @@ export default function RootLayout({
                           <p>
                             📍{" "}
                             <a
-                              href="https://maps.google.com/?q=123+Auto+Street,+City"
+                              href={`https://maps.google.com/?q=${encodeURIComponent(
+                                `${
+                                  process.env.NEXT_PUBLIC_BUSINESS_ADDRESS ||
+                                  "123 Auto Street"
+                                }, ${
+                                  process.env.NEXT_PUBLIC_BUSINESS_CITY ||
+                                  "City"
+                                }, ${
+                                  process.env.NEXT_PUBLIC_BUSINESS_STATE || ""
+                                } ${
+                                  process.env.NEXT_PUBLIC_BUSINESS_ZIP || ""
+                                }`.trim()
+                              )}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-red-500 transition-colors cursor-pointer"
                             >
-                              123 Auto Street, City
+                              {process.env.NEXT_PUBLIC_BUSINESS_ADDRESS ||
+                                "123 Auto Street"}
+                              ,{" "}
+                              {process.env.NEXT_PUBLIC_BUSINESS_CITY || "City"}
                             </a>
                           </p>
                           <p>
                             📞{" "}
                             <a
-                              href="tel:+15551234567"
+                              href={`tel:${
+                                process.env.NEXT_PUBLIC_BUSINESS_PHONE ||
+                                "+15551234567"
+                              }`}
                               className="hover:text-red-500 transition-colors cursor-pointer"
                             >
-                              (555) 123-4567
+                              {process.env.NEXT_PUBLIC_BUSINESS_PHONE ||
+                                "(555) 123-4567"}
                             </a>
                           </p>
                           <p>
                             ✉️{" "}
                             <a
-                              href="mailto:info@carsales.com"
+                              href={`mailto:${
+                                process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
+                                "info@carsales.com"
+                              }`}
                               className="hover:text-red-500 transition-colors cursor-pointer"
                             >
-                              info@carsales.com
+                              {process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
+                                "info@carsales.com"}
                             </a>
                           </p>
                         </div>
@@ -145,7 +169,10 @@ export default function RootLayout({
                     <div className="border-t border-gray-200 pt-6">
                       <div className="flex flex-col md:flex-row justify-between items-center">
                         <p className="text-gray-600 text-sm">
-                          &copy; 2025 Car Sales & Viewing. All rights reserved.
+                          &copy; 2025{" "}
+                          {process.env.NEXT_PUBLIC_BUSINESS_NAME ||
+                            "Car Sales & Viewing"}
+                          . All rights reserved.
                         </p>
                         <div className="flex space-x-6 mt-4 md:mt-0">
                           <a

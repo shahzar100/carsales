@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 export interface ShopInfo {
   businessName: string;
@@ -33,13 +39,13 @@ interface ShopContextType {
 }
 
 const defaultShopInfo: ShopInfo = {
-  businessName: "Car Sales & Viewing",
-  address: "123 Auto Street",
-  city: "City",
-  state: "State",
-  zipCode: "12345",
-  phone: "(555) 123-4567",
-  email: "info@carsales.com",
+  businessName: process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing",
+  address: process.env.NEXT_PUBLIC_BUSINESS_ADDRESS || "123 Auto Street",
+  city: process.env.NEXT_PUBLIC_BUSINESS_CITY || "City",
+  state: process.env.NEXT_PUBLIC_BUSINESS_STATE || "State",
+  zipCode: process.env.NEXT_PUBLIC_BUSINESS_ZIP || "12345",
+  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(555) 123-4567",
+  email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "info@carsales.com",
   hours: {
     monday: "9:00 AM - 6:00 PM",
     tuesday: "9:00 AM - 6:00 PM",
@@ -59,7 +65,9 @@ const defaultShopInfo: ShopInfo = {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
-export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ShopProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [shopInfo, setShopInfo] = useState<ShopInfo | null>(null);
   const [loading, setLoading] = useState(true);
 

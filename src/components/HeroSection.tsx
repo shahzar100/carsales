@@ -60,7 +60,7 @@ const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
 const HeroSection = async () => {
   const featuredCar = await getFeaturedCar();
   return (
-    <section className="relative bg-black text-white overflow-hidden z-60">
+    <section className="relative bg-black text-white overflow-hidden z-50">
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
           {/* Left Column - Content */}
@@ -72,7 +72,6 @@ const HeroSection = async () => {
                 Book a Viewing Today
               </span>
             </h1>
-
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed">
               Browse our premium collection of vehicles and schedule convenient
@@ -83,7 +82,7 @@ const HeroSection = async () => {
 
           {/* Right Column - Featured Car */}
           <div className="relative">
-            {featuredCar ? (
+            {featuredCar && (
               <div className="bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-800 shadow-2xl flex flex-col gap-4 sm:gap-6 lg:gap-8">
                 {/* Featured Badge */}
                 <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
@@ -157,25 +156,6 @@ const HeroSection = async () => {
                     <FeaturedCarBookingButton car={featuredCar} />
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl text-center">
-                <div className="bg-gray-800 rounded-xl h-48 mb-6 flex items-center justify-center border border-gray-700">
-                  <Car size={64} className="text-gray-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  No Featured Cars Available
-                </h3>
-                <p className="text-gray-400 mb-6">
-                  Please check back later or browse our full collection.
-                </p>
-                <Link
-                  href="/BrowseFleet"
-                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  <Search size={20} />
-                  Browse All Cars
-                </Link>
               </div>
             )}
           </div>

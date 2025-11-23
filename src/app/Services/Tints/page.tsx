@@ -7,7 +7,7 @@ const Tints = () => {
     {
       name: "Ceramic Premium",
       type: "Ceramic",
-      price: "$400-$800",
+      price: "£400-£800",
       vlt: "5%, 20%, 35%, 50%",
       warranty: "Lifetime",
       description:
@@ -25,7 +25,7 @@ const Tints = () => {
     {
       name: "Carbon Series",
       type: "Carbon",
-      price: "$300-$600",
+      price: "£300-£600",
       vlt: "5%, 20%, 35%, 50%",
       warranty: "10 Years",
       description:
@@ -43,7 +43,7 @@ const Tints = () => {
     {
       name: "Dyed Film",
       type: "Traditional",
-      price: "$200-$400",
+      price: "£200-£400",
       vlt: "5%, 20%, 35%, 50%",
       warranty: "5 Years",
       description:

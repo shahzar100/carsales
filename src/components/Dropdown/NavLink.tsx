@@ -42,7 +42,7 @@ const NavLink: React.FC<NavLinkProps> = ({
       </Link>
 
       {dropdown && (
-        <div className="block lg:group-hover:block lg:hidden lg:absolute lg:top-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:w-64 lg:pt-2">
+        <div className="block lg:group-hover:block lg:hidden lg:absolute lg:top-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:w-64 lg:pt-2 z-70">
           <div className="bg-gray-50 lg:bg-white lg:shadow-lg lg:rounded-lg lg:border lg:border-gray-200 lg:p-4 flex flex-col items-start lg:items-start px-6 py-4 border-b border-gray-100">
             {children}
           </div>

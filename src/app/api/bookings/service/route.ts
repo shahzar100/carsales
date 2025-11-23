@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceAppointmentsCollection, ServiceAppointment, getShopInfoCollection } from "@/lib/models";
+import {
+  getServiceAppointmentsCollection,
+  ServiceAppointment,
+  getShopInfoCollection,
+} from "@/lib/models";
 import { generateBookingReference } from "@/lib/utils/booking";
 import { sendEmail } from "@/lib/email/client";
 import { createServiceBookingConfirmationEmail } from "@/lib/email/templates";
@@ -9,7 +13,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.customerInfo?.name || !body.customerInfo?.email || !body.customerInfo?.phone) {
+    if (
+      !body.customerInfo?.name ||
+      !body.customerInfo?.email ||
+      !body.customerInfo?.phone
+    ) {
       return NextResponse.json(
         { error: "Customer information is required" },
         { status: 400 }
@@ -46,29 +54,38 @@ export async function POST(request: NextRequest) {
 
     // Get shop info for email
     const shopCollection = await getShopInfoCollection();
-    let shopInfo = await shopCollection.findOne({});
-    
-    if (!shopInfo) {
-      shopInfo = {
-        businessName: "Car Sales & Viewing",
-        address: "123 Auto Street",
-        city: "City",
-        state: "State",
-        zipCode: "12345",
-        phone: "(555) 123-4567",
-        email: "info@carsales.com",
-        hours: {},
-        updatedAt: new Date(),
-      };
-    }
+    const dbShopInfo = await shopCollection.findOne({});
+
+    const shopInfo = dbShopInfo || {
+      businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
+      address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
+      city: process.env.NEXT_BUSINESS_CITY || "City",
+      state: process.env.NEXT_BUSINESS_STATE || "State",
+      zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
+      phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
+      email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
+      hours: {
+        monday: "9:00 AM - 6:00 PM",
+        tuesday: "9:00 AM - 6:00 PM",
+        wednesday: "9:00 AM - 6:00 PM",
+        thursday: "9:00 AM - 6:00 PM",
+        friday: "9:00 AM - 6:00 PM",
+        saturday: "10:00 AM - 4:00 PM",
+        sunday: "Closed",
+      },
+      updatedAt: new Date(),
+    };
 
     // Send confirmation email
-    const emailHtml = createServiceBookingConfirmationEmail(newBooking as ServiceAppointment, {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    });
+    const emailHtml = createServiceBookingConfirmationEmail(
+      newBooking as ServiceAppointment,
+      {
+        businessName: shopInfo.businessName,
+        phone: shopInfo.phone,
+        email: shopInfo.email,
+        address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+      }
+    );
 
     await sendEmail({
       to: body.customerInfo.email,
@@ -80,7 +97,8 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         bookingReference,
-        message: "Service booking created successfully. Check your email for confirmation.",
+        message:
+          "Service booking created successfully. Check your email for confirmation.",
       },
     });
   } catch (error) {

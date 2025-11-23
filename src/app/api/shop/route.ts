@@ -11,13 +11,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: {
-          businessName: "Car Sales & Viewing",
-          address: "123 Auto Street",
-          city: "City",
-          state: "State",
-          zipCode: "12345",
-          phone: "(555) 123-4567",
-          email: "info@carsales.com",
+          businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
+          address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
+          city: process.env.NEXT_BUSINESS_CITY || "City",
+          state: process.env.NEXT_BUSINESS_STATE || "State",
+          zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
+          phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
+          email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
           hours: {
             monday: "9:00 AM - 6:00 PM",
             tuesday: "9:00 AM - 6:00 PM",

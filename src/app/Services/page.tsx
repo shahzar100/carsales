@@ -25,7 +25,7 @@ const Services = () => {
         "Engine Bay Cleaning",
         "Ceramic Coating Available",
       ],
-      priceRange: "$150 - $500",
+      priceRange: "£150 - £500",
       duration: "3-6 hours",
       href: "/Services/Detailing",
       image: "/car.jpg",
@@ -46,7 +46,7 @@ const Services = () => {
         "Privacy Enhancement",
         "Lifetime Warranty",
       ],
-      priceRange: "$200 - $800",
+      priceRange: "£200 - £800",
       duration: "2-4 hours",
       href: "/Services/Tints",
       image: "/car.jpg",
@@ -146,7 +146,7 @@ const Services = () => {
                 <ul className="space-y-2">
                   {service.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 shrink-0" />
                       <span className="text-sm text-gray-700">{feature}</span>
                     </li>
                   ))}

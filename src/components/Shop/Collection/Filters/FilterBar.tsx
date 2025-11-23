@@ -103,26 +103,26 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
   // Generate price options
   const priceFromOptions = [
     { value: "", label: "Any price" },
-    { value: "5000", label: "$5,000" },
-    { value: "10000", label: "$10,000" },
-    { value: "15000", label: "$15,000" },
-    { value: "20000", label: "$20,000" },
-    { value: "30000", label: "$30,000" },
-    { value: "50000", label: "$50,000" },
-    { value: "75000", label: "$75,000" },
-    { value: "100000", label: "$100,000" },
+    { value: "5000", label: "£5,000" },
+    { value: "10000", label: "£10,000" },
+    { value: "15000", label: "£15,000" },
+    { value: "20000", label: "£20,000" },
+    { value: "30000", label: "£30,000" },
+    { value: "50000", label: "£50,000" },
+    { value: "75000", label: "£75,000" },
+    { value: "100000", label: "£100,000" },
   ];
 
   const priceToOptions = [
     { value: "", label: "Any price" },
-    { value: "15000", label: "$15,000" },
-    { value: "25000", label: "$25,000" },
-    { value: "35000", label: "$35,000" },
-    { value: "50000", label: "$50,000" },
-    { value: "75000", label: "$75,000" },
-    { value: "100000", label: "$100,000" },
-    { value: "150000", label: "$150,000" },
-    { value: "200000", label: "$200,000+" },
+    { value: "15000", label: "£15,000" },
+    { value: "25000", label: "£25,000" },
+    { value: "35000", label: "£35,000" },
+    { value: "50000", label: "£50,000" },
+    { value: "75000", label: "£75,000" },
+    { value: "100000", label: "£100,000" },
+    { value: "150000", label: "£150,000" },
+    { value: "200000", label: "£200,000+" },
   ];
 
   // Transform brands, fuel types, and colors into option format
