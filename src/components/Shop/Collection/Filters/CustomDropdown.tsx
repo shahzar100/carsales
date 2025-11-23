@@ -191,15 +191,15 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 onMouseEnter={() => setHighlightedIndex(index)}
                 className={`
                   w-full px-4 py-3 text-left text-sm transition-all duration-150
-                  flex items-center justify-between hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100
+                  flex items-center justify-between hover:bg-linear-to-r hover:from-blue-50 hover:to-blue-100
                   ${
                     highlightedIndex === index
-                      ? "bg-gradient-to-r from-blue-50 to-blue-100"
+                      ? "bg-linear-to-r from-blue-50 to-blue-100"
                       : ""
                   }
                   ${
                     value === option.value
-                      ? "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900 font-medium"
+                      ? "bg-linear-to-r from-blue-100 to-blue-200 text-blue-900 font-medium"
                       : "text-gray-900"
                   }
                   first:rounded-t-xl last:rounded-b-xl
@@ -207,7 +207,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
               >
                 <span className="truncate">{option.label}</span>
                 {value === option.value && (
-                  <Check className="h-4 w-4 text-blue-600 flex-shrink-0 ml-2" />
+                  <Check className="h-4 w-4 text-blue-600 shrink-0 ml-2" />
                 )}
               </button>
             ))}

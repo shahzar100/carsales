@@ -60,7 +60,7 @@ const PageLoader = () => {
 
         {/* Progress Bar */}
         <div className="w-64 bg-gray-200 rounded-full h-2 mt-6 mx-auto overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
+          <div className="h-full bg-linear-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
         </div>
       </div>
     </div>

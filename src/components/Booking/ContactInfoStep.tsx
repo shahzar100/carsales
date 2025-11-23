@@ -129,7 +129,7 @@ const ContactInfoStep = () => {
           viewingBooking.customerInfo?.phone && (
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-green-600" />
                   </div>

@@ -202,7 +202,7 @@ const Repairs = () => {
                 <div className="grid grid-cols-1 gap-3">
                   {category.services.map((service, idx) => (
                     <div key={idx} className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-3 shrink-0" />
                       <span className="text-gray-700">{service}</span>
                     </div>
                   ))}
@@ -226,7 +226,7 @@ const Repairs = () => {
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
           Emergency & Roadside Services
         </h2>
-        <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl p-8">
+        <div className="bg-linear-to-r from-red-500 to-orange-500 text-white rounded-2xl p-8">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold mb-4">24/7 Emergency Support</h3>
             <p className="text-lg text-red-100">

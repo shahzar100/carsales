@@ -1,6 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Search, Calendar, Clock, Car, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Clock,
+  Car,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 interface Booking {
@@ -48,7 +56,9 @@ export default function BookingLookupPage() {
     setBooking(null);
 
     try {
-      const response = await fetch(`/api/bookings/lookup?ref=${encodeURIComponent(reference)}`);
+      const response = await fetch(
+        `/api/bookings/lookup?ref=${encodeURIComponent(reference)}`
+      );
       const result = await response.json();
 
       if (response.ok && result.success) {
@@ -90,17 +100,37 @@ export default function BookingLookupPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: { [key: string]: { color: string; icon: React.ReactNode; text: string } } = {
-      pending: { color: "bg-yellow-100 text-yellow-800", icon: <AlertCircle className="w-4 h-4" />, text: "Pending" },
-      confirmed: { color: "bg-green-100 text-green-800", icon: <CheckCircle className="w-4 h-4" />, text: "Confirmed" },
-      completed: { color: "bg-blue-100 text-blue-800", icon: <CheckCircle className="w-4 h-4" />, text: "Completed" },
-      cancelled: { color: "bg-red-100 text-red-800", icon: <XCircle className="w-4 h-4" />, text: "Cancelled" },
+    const statusConfig: {
+      [key: string]: { color: string; icon: React.ReactNode; text: string };
+    } = {
+      pending: {
+        color: "bg-yellow-100 text-yellow-800",
+        icon: <AlertCircle className="w-4 h-4" />,
+        text: "Pending",
+      },
+      confirmed: {
+        color: "bg-green-100 text-green-800",
+        icon: <CheckCircle className="w-4 h-4" />,
+        text: "Confirmed",
+      },
+      completed: {
+        color: "bg-blue-100 text-blue-800",
+        icon: <CheckCircle className="w-4 h-4" />,
+        text: "Completed",
+      },
+      cancelled: {
+        color: "bg-red-100 text-red-800",
+        icon: <XCircle className="w-4 h-4" />,
+        text: "Cancelled",
+      },
     };
 
     const config = statusConfig[status] || statusConfig.pending;
 
     return (
-      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${config.color} font-medium`}>
+      <div
+        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${config.color} font-medium`}
+      >
         {config.icon}
         <span>{config.text}</span>
       </div>
@@ -112,8 +142,12 @@ export default function BookingLookupPage() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Booking Lookup</h1>
-          <p className="text-gray-600">Enter your booking reference to view your appointment details</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Booking Lookup
+          </h1>
+          <p className="text-gray-600">
+            Enter your booking reference to view your appointment details
+          </p>
         </div>
 
         {/* Search Box */}
@@ -150,11 +184,13 @@ export default function BookingLookupPage() {
         {booking && (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             {/* Header with Status */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+            <div className="bg-linear-to-r from-blue-600 to-purple-600 p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Booking Reference</p>
-                  <h2 className="text-2xl font-bold">{booking.bookingReference}</h2>
+                  <h2 className="text-2xl font-bold">
+                    {booking.bookingReference}
+                  </h2>
                 </div>
                 <div>{getStatusBadge(booking.status)}</div>
               </div>
@@ -163,7 +199,9 @@ export default function BookingLookupPage() {
             {/* Cancellation Notice */}
             {booking.status === "cancelled" && booking.cancellationReason && (
               <div className="bg-red-50 border-l-4 border-red-500 p-4 m-6">
-                <h3 className="font-semibold text-red-900 mb-2">Cancellation Reason:</h3>
+                <h3 className="font-semibold text-red-900 mb-2">
+                  Cancellation Reason:
+                </h3>
                 <p className="text-red-800">{booking.cancellationReason}</p>
               </div>
             )}
@@ -171,20 +209,26 @@ export default function BookingLookupPage() {
             <div className="p-6 space-y-6">
               {/* Appointment Details */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Appointment Details
+                </h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-sm text-gray-500">Date</p>
-                      <p className="font-medium text-gray-900">{formatDate(booking.appointmentDate)}</p>
+                      <p className="font-medium text-gray-900">
+                        {formatDate(booking.appointmentDate)}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-sm text-gray-500">Time</p>
-                      <p className="font-medium text-gray-900">{formatTime(booking.appointmentTime)}</p>
+                      <p className="font-medium text-gray-900">
+                        {formatTime(booking.appointmentTime)}
+                      </p>
                     </div>
                   </div>
                   {bookingType === "service" && booking.serviceType && (
@@ -192,7 +236,9 @@ export default function BookingLookupPage() {
                       <Car className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
                         <p className="text-sm text-gray-500">Service Type</p>
-                        <p className="font-medium text-gray-900">{booking.serviceType}</p>
+                        <p className="font-medium text-gray-900">
+                          {booking.serviceType}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -200,7 +246,8 @@ export default function BookingLookupPage() {
                     <div className="bg-gray-50 rounded-lg p-4 mt-3">
                       <p className="text-sm text-gray-500 mb-2">Vehicle</p>
                       <h4 className="text-lg font-bold text-gray-900">
-                        {booking.carDetails.year} {booking.carDetails.make} {booking.carDetails.model}
+                        {booking.carDetails.year} {booking.carDetails.make}{" "}
+                        {booking.carDetails.model}
                       </h4>
                       <p className="text-green-600 font-bold text-lg mt-1">
                         ${booking.carDetails.price.toLocaleString()}
@@ -212,19 +259,27 @@ export default function BookingLookupPage() {
 
               {/* Customer Information */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Your Information
+                </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Name:</span>
-                    <span className="font-medium text-gray-900">{booking.customerInfo.name}</span>
+                    <span className="font-medium text-gray-900">
+                      {booking.customerInfo.name}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Email:</span>
-                    <span className="font-medium text-gray-900">{booking.customerInfo.email}</span>
+                    <span className="font-medium text-gray-900">
+                      {booking.customerInfo.email}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Phone:</span>
-                    <span className="font-medium text-gray-900">{booking.customerInfo.phone}</span>
+                    <span className="font-medium text-gray-900">
+                      {booking.customerInfo.phone}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -233,7 +288,8 @@ export default function BookingLookupPage() {
               {booking.status !== "cancelled" && (
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    If you need to cancel or reschedule your appointment, please contact us at least 24 hours in advance.
+                    If you need to cancel or reschedule your appointment, please
+                    contact us at least 24 hours in advance.
                   </p>
                 </div>
               )}

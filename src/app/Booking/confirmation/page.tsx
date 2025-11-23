@@ -75,7 +75,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
 
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-blue-600 text-sm font-semibold">1</span>
               </div>
               <div>
@@ -91,7 +91,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
             </div>
 
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-blue-600 text-sm font-semibold">2</span>
               </div>
               <div>
@@ -106,7 +106,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
             </div>
 
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-blue-600 text-sm font-semibold">3</span>
               </div>
               <div>

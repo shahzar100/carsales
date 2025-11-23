@@ -204,7 +204,7 @@ const Tints = () => {
                 <div className="space-y-2">
                   {option.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-3 mt-0.5 shrink-0" />
                       <span className="text-sm text-gray-700">{feature}</span>
                     </div>
                   ))}

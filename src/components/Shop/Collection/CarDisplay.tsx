@@ -46,7 +46,7 @@ const CarDisplay: React.FC<CarDisplayProps> = ({ car }) => {
             <h3 className="text-lg font-bold text-gray-900 mb-4">
               Additional Information
             </h3>
-            <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-linear-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-gray-600">
                 This vehicle has been thoroughly inspected and comes with our
                 quality guarantee. Contact us to schedule a viewing or test

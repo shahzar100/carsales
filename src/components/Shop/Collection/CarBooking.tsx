@@ -44,7 +44,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 2xl:bottom-6 2xl:right-6 2xl:left-auto 2xl:max-w-sm z-50">
       {/* Main CTA Card */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-t-3xl 2xl:rounded-3xl shadow-2xl overflow-hidden border-t-4 2xl:border-4 border-blue-200/20 relative">
+      <div className="bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-t-3xl 2xl:rounded-3xl shadow-2xl overflow-hidden border-t-4 2xl:border-4 border-blue-200/20 relative">
         <div className="relative p-3 2xl:p-6 text-white">
           {/* Header - Desktop Only */}
           <div className="text-center mb-3 hidden 2xl:block">

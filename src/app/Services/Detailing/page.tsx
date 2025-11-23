@@ -133,7 +133,7 @@ const Detailing = () => {
                   isSelected
                     ? "border-blue-500 shadow-lg ring-2 ring-blue-200"
                     : pkg.popular
-                    ? "border-blue-400 shadow-lg transform scale-[1.02] bg-gradient-to-b from-blue-50 to-white"
+                    ? "border-blue-400 shadow-lg transform scale-[1.02] bg-linear-to-b from-blue-50 to-white"
                     : "border-gray-200 hover:border-blue-300 hover:shadow-md"
                 } ${pkg.popular ? "p-5" : "p-6"}`}
                 onClick={() => setSelectedPackage(pkg.id)}
@@ -141,7 +141,7 @@ const Detailing = () => {
                 {/* Most Popular Badge - Top of Card */}
                 {pkg.popular && (
                   <div className="mb-4">
-                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-2 rounded-lg text-sm font-bold text-center shadow-md text-black">
+                    <div className="bg-linear-to-r from-blue-500 to-blue-600 px-4 py-2 rounded-lg text-sm font-bold text-center shadow-md text-black">
                       ⭐ MOST POPULAR ⭐
                     </div>
                   </div>
