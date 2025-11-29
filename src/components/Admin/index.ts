@@ -1,7 +1,5 @@
-export { default as AdminHeader } from "./AdminHeader";
 export { default as AdminTabs } from "./AdminTabs";
 export { default as AdminNavigationTabs } from "./AdminNavigationTabs";
-export { default as CarsTab } from "./CarsTab";
 export { default as ServiceBookingsTab } from "./ServiceBookingsTab";
 export { default as ViewingBookingsTab } from "./ViewingBookingsTab";
 export { default as ShopSettingsTab } from "./ShopSettingsTab";

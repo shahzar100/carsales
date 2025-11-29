@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Car, Calendar, Eye, Settings } from "lucide-react";
+import AddCarModal from "./CarModal";
 
 export default function AdminNavigationTabs() {
   const pathname = usePathname();
@@ -18,8 +19,8 @@ export default function AdminNavigationTabs() {
   ];
 
   return (
-    <div className="border-b bg-white">
-      <div className="mx-auto max-w-7xl px-4">
+    <div className="flex items-center justify-between border-b bg-white p-4">
+      <div className="mx-auto max-w-7xl">
         <nav className="flex gap-8">
           {tabs.map((tab) => {
             const isActive = pathname === tab.id;
@@ -40,6 +41,7 @@ export default function AdminNavigationTabs() {
           })}
         </nav>
       </div>
+      <AddCarModal />
     </div>
   );
 }
