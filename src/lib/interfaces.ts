@@ -1,4 +1,4 @@
-export interface Car {
+export interface CarInterface {
   _id?: string;
   make: string;
   model: string;
@@ -16,6 +16,7 @@ export interface Car {
   status: "available" | "sold" | "reserved";
   createdAt: Date;
   updatedAt: Date;
+  featured: boolean;
 }
 
 export interface ServiceAppointment {

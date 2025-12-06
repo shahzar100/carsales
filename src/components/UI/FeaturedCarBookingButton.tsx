@@ -4,40 +4,24 @@ import React from "react";
 import Link from "next/link";
 import { Calendar } from "lucide-react";
 import { useViewing } from "@/backend/ViewingContext";
+import { CarInterface } from "@/lib/interfaces";
 
-interface FeaturedCarBookingButtonProps {
-  car: {
-    _id: string;
-    Name: string;
-    Brand: string;
-    Year: number;
-    Fuel: string;
-    Doors: number;
-    Colour: string;
-    Price: number;
-    Mileage: number;
-    Image?: string;
-  };
-}
-
-const FeaturedCarBookingButton: React.FC<FeaturedCarBookingButtonProps> = ({
-  car,
-}) => {
+const FeaturedCarBookingButton: React.FC<{ car: CarInterface }> = ({ car }) => {
   const { updateViewingBooking } = useViewing();
 
   const setCarForViewing = () => {
     updateViewingBooking({
       carId: car._id,
       carDetails: {
-        make: car.Brand,
-        model: car.Name,
-        year: car.Year,
-        price: car.Price,
-        image: car.Image || "/tesla.webp",
-        fuel: car.Fuel,
-        doors: car.Doors,
-        colour: car.Colour,
-        mileage: car.Mileage,
+        make: car.make,
+        model: car.model,
+        year: car.year,
+        price: car.price,
+        image: car.image || "/tesla.webp",
+        fuel: car.fuel,
+        doors: car.doors,
+        colour: car.colour,
+        mileage: car.mileage,
       },
     });
   };

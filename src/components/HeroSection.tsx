@@ -4,22 +4,9 @@ import { Car, Calendar, Search, Star, Eye, Clock } from "lucide-react";
 import clientPromise from "@/backend/mongodb";
 import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
+import { CarInterface } from "@/lib/interfaces";
 
-interface FeaturedCar {
-  _id: string;
-  Name: string;
-  Brand: string;
-  Year: number;
-  Fuel: string;
-  Doors: number;
-  Colour: string;
-  Price: number;
-  Mileage: number;
-  Image?: string;
-  Featured?: boolean;
-}
-
-const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
+const getFeaturedCar = async (): Promise<CarInterface | null> => {
   try {
     const client = await clientPromise;
     const db = client.db("carWebsite");
@@ -28,11 +15,6 @@ const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
     // First try to find a car marked as featured
     let featuredCar = await collection.findOne({ Featured: true });
 
-    // If no featured car found, get the first car from the collection
-    if (!featuredCar) {
-      featuredCar = await collection.findOne({});
-    }
-
     if (!featuredCar) {
       return null;
     }
@@ -40,16 +22,20 @@ const getFeaturedCar = async (): Promise<FeaturedCar | null> => {
     // Convert MongoDB document to plain object
     return {
       _id: featuredCar._id.toString(),
-      Name: String(featuredCar.Name || ""),
-      Brand: String(featuredCar.Brand || ""),
-      Year: Number(featuredCar.Year || new Date().getFullYear()),
-      Fuel: String(featuredCar.Fuel || ""),
-      Doors: Number(featuredCar.Doors || 4),
-      Colour: String(featuredCar.Colour || ""),
-      Price: Number(featuredCar.Price || 0),
-      Mileage: Number(featuredCar.Mileage || 0),
-      Image: featuredCar.Image ? String(featuredCar.Image) : undefined,
-      Featured: Boolean(featuredCar.Featured || false),
+      make: featuredCar.make,
+      model: featuredCar.model,
+      year: featuredCar.year,
+      fuel: featuredCar.fuel,
+      doors: featuredCar.doors,
+      colour: featuredCar.colour,
+      price: featuredCar.price,
+      mileage: featuredCar.mileage,
+      image: featuredCar.image,
+      transmission: featuredCar.transmission,
+      featured: featuredCar.featured,
+      status: featuredCar.status,
+      createdAt: featuredCar.createdAt,
+      updatedAt: featuredCar.updatedAt,
     };
   } catch (error) {
     console.error("Error fetching featured car:", error);
@@ -62,18 +48,26 @@ const HeroSection = async () => {
   return (
     <section className="relative z-50 overflow-hidden bg-black text-white">
       <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
+        <div
+          className={`mx-auto grid max-w-7xl items-center gap-6 sm:gap-8 ${featuredCar?.make ? "lg:grid-cols-2" : "lg:grid-cols-1"} lg:gap-12`}
+        >
           {/* Left Column - Content */}
-          <div className="text-center lg:text-left">
+          <div
+            className={`${featuredCar?.make ? "text-center lg:text-left" : "text-center"}`}
+          >
             {/* Main Heading */}
-            <h1 className="mb-8 text-5xl leading-tight font-bold tracking-tight md:text-6xl lg:text-7xl">
+            <h1
+              className={`${featuredCar?.make ? "mb-8 text-5xl leading-tight font-bold tracking-tight md:text-6xl lg:text-7xl" : "mb-12 text-6xl leading-tight font-bold tracking-tight md:text-7xl lg:text-8xl"}`}
+            >
               Find Your Perfect Car
               <span className="mt-2 block text-blue-400">
                 Book a Viewing Today
               </span>
             </h1>
             {/* Subtitle */}
-            <p className="max-w-3xl text-lg leading-relaxed text-gray-300 md:text-xl">
+            <p
+              className={`${featuredCar?.make ? "max-w-3xl" : "mx-auto max-w-4xl"} text-lg leading-relaxed text-gray-300 md:text-xl`}
+            >
               Browse our premium collection of vehicles and schedule convenient
               viewing appointments. Experience quality cars with expert
               guidance.
@@ -81,8 +75,8 @@ const HeroSection = async () => {
           </div>
 
           {/* Right Column - Featured Car */}
-          <div className="relative">
-            {featuredCar && (
+          {featuredCar?.make && (
+            <div className="relative">
               <div className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-4 shadow-2xl sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
                 {/* Featured Badge */}
                 <div className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
@@ -95,7 +89,7 @@ const HeroSection = async () => {
                     {/* Main Image */}
                     <Image
                       src="/tesla.webp"
-                      alt={`${featuredCar.Brand} ${featuredCar.Name}`}
+                      alt={`${featuredCar.make} ${featuredCar.model}`}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       priority
@@ -111,21 +105,21 @@ const HeroSection = async () => {
                 <div className="space-y-3 sm:space-y-4">
                   <h3 className="text-xl font-bold text-white sm:text-2xl">
                     {featuredCar
-                      ? `${featuredCar.Year} ${featuredCar.Brand} ${featuredCar.Name}`
+                      ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
                       : "2023 BMW X5"}
                   </h3>
                   <p className="text-gray-400">
                     {featuredCar &&
-                      `${featuredCar.Doors} Door • ${featuredCar.Fuel} • ${featuredCar.Colour}`}
+                      `${featuredCar.doors} Door • ${featuredCar.fuel} • ${featuredCar.colour}`}
                   </p>
 
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-green-400 sm:text-3xl">
-                      £{featuredCar && featuredCar.Price.toLocaleString()}
+                      £{featuredCar && featuredCar.price.toLocaleString()}
                     </span>
                     <span className="text-sm text-gray-400 sm:text-base">
                       {featuredCar &&
-                        `${featuredCar.Mileage.toLocaleString()} miles`}
+                        `${featuredCar.mileage.toLocaleString()} miles`}
                     </span>
                   </div>
 
@@ -157,8 +151,8 @@ const HeroSection = async () => {
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* CTA Button - After Featured Car */}
