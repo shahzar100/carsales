@@ -1,3 +1,30 @@
+/**
+ * EMAIL TEMPLATES MODULE (523 lines)
+ *
+ * SUMMARY:
+ * This file contains HTML email templates for the car sales application.
+ * It generates styled, professional emails for booking confirmations and notifications.
+ *
+ * MAIN FUNCTIONS:
+ * - createServiceBookingConfirmationEmail: Service appointment confirmation emails
+ * - createCarViewingConfirmationEmail: Car viewing booking confirmation emails
+ * - createCancellationEmail: Booking cancellation notification emails
+ *
+ * TECHNICAL DEBT ISSUES:
+ * - Massive inline HTML templates mixed with TypeScript logic
+ * - No template engine used - raw string concatenation
+ * - Repetitive styling code duplicated across templates
+ * - Hard to maintain and test due to mixed concerns
+ * - No email template previewing system
+ *
+ * REFACTORING NEEDED:
+ * - Extract to separate .html template files
+ * - Use a proper email template engine (Handlebars, Mustache)
+ * - Create shared CSS/styling system
+ * - Add email preview functionality
+ * - Split into smaller, focused template functions
+ */
+
 import { ServiceAppointment, CarViewingBooking } from "@/lib/models";
 import { formatDate, formatTime } from "@/lib/utils/booking";
 
