@@ -14,8 +14,6 @@ export default async function CarsPage() {
   const cars = await getCars();
 
   return (
-    <div>
-      <Cars cars={cars} />
-    </div>
+    <div>{cars.length > 0 ? <Cars cars={cars} /> : <p>No cars added.</p>}</div>
   );
 }

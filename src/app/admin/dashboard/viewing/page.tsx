@@ -72,7 +72,7 @@ export default function ViewingBookingsPage() {
       } else {
         toast.error("Cancellation Failed", "Failed to cancel booking");
       }
-    } catch {
+    } catch (error) {
       toast.error("Error", "An error occurred while cancelling the booking");
     }
   };
@@ -157,15 +157,19 @@ export default function ViewingBookingsPage() {
 
   return (
     <div>
-      <ViewingBookingsTab
-        bookings={viewingBookings}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onCancelBooking={handleShowCancelModal}
-        onConfirmBooking={handleConfirmBooking}
-        onViewDetails={handleViewDetails}
-        getStatusBadge={getStatusBadge}
-      />
+      {viewingBookings.length > 0 ? (
+        <ViewingBookingsTab
+          bookings={viewingBookings}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onCancelBooking={handleShowCancelModal}
+          onConfirmBooking={handleConfirmBooking}
+          onViewDetails={handleViewDetails}
+          getStatusBadge={getStatusBadge}
+        />
+      ) : (
+        <p>No viewing bookings available.</p>
+      )}
 
       {/* Modals */}
       {showCancelModal && selectedBooking && (

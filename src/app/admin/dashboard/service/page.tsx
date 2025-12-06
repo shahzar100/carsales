@@ -157,15 +157,19 @@ export default function ServiceBookingsPage() {
 
   return (
     <div>
-      <ServiceBookingsTab
-        bookings={serviceBookings}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onCancelBooking={handleShowCancelModal}
-        onConfirmBooking={handleConfirmBooking}
-        onViewDetails={handleViewDetails}
-        getStatusBadge={getStatusBadge}
-      />
+      {serviceBookings.length > 0 ? (
+        <ServiceBookingsTab
+          bookings={serviceBookings}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onCancelBooking={handleShowCancelModal}
+          onConfirmBooking={handleConfirmBooking}
+          onViewDetails={handleViewDetails}
+          getStatusBadge={getStatusBadge}
+        />
+      ) : (
+        <p>No service bookings available.</p>
+      )}
 
       {/* Modals */}
       {showCancelModal && selectedBooking && (
