@@ -1,5 +1,5 @@
 import { CheckCircle, XCircle } from "lucide-react";
-import { Notification } from "./types";
+import { Notification } from "../../lib/types";
 
 interface NotificationComponentProps {
   notification: Notification;

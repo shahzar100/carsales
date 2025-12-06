@@ -1,5 +1,5 @@
 import React from "react";
-import { ShopInfo } from "./types";
+import { ShopInfo } from "../../lib/types";
 
 interface ShopSettingsTabProps {
   shopInfo: ShopInfo;

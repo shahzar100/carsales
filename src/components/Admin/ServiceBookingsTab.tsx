@@ -1,5 +1,5 @@
 import { Search, Eye, Check } from "lucide-react";
-import { Booking, SelectedBooking } from "./types";
+import { Booking, SelectedBooking } from "../../lib/types";
 
 interface ServiceBookingsTabProps {
   bookings: Booking[];

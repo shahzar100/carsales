@@ -1,5 +1,5 @@
 import { Car, Calendar, Eye, Settings } from "lucide-react";
-import { ActiveTab } from "./types";
+import { ActiveTab } from "../../lib/types";
 
 interface AdminTabsProps {
   activeTab: ActiveTab;

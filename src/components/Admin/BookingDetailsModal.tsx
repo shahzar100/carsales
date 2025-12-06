@@ -9,7 +9,7 @@ import {
   Car,
   MapPin,
 } from "lucide-react";
-import { Booking } from "./types";
+import { Booking } from "../../lib/types";
 
 interface BookingDetailsModalProps {
   booking: Booking;
@@ -33,177 +33,43 @@ export default function BookingDetailsModal({
           </button>
         </div>
 
-        <div className="space-y-6">
-          {/* Booking Reference */}
-          <div className="rounded-lg bg-blue-50 p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-600" />
-              <span className="font-semibold text-blue-900">
-                Booking Reference
-              </span>
-            </div>
-            <p className="font-mono text-lg font-bold text-blue-800">
-              {booking.bookingReference}
-            </p>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-sm text-blue-700">Status:</span>
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-medium ${
-                  booking.status === "confirmed"
-                    ? "bg-green-100 text-green-800"
-                    : booking.status === "pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : booking.status === "cancelled"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {booking.status}
-              </span>
-            </div>
+        <div className="space-y-3">
+          <div>
+            <strong>Reference:</strong> {booking.bookingReference}
           </div>
-
-          {/* Customer Information */}
-          <div className="rounded-lg border p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <User className="h-5 w-5 text-gray-600" />
-              <span className="font-semibold text-gray-900">
-                Customer Information
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Name
-                </label>
-                <p className="text-gray-900">{booking.customerInfo.name}</p>
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Phone
-                </label>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <p className="text-gray-900">{booking.customerInfo.phone}</p>
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Email
-                </label>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <p className="text-gray-900">{booking.customerInfo.email}</p>
-                </div>
-              </div>
-            </div>
+          <div>
+            <strong>Customer:</strong>{" "}
+            {booking.customerInfo.name.replace(/<[^>]*>/g, "")}
           </div>
-
-          {/* Appointment Details */}
-          <div className="rounded-lg border p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-gray-600" />
-              <span className="font-semibold text-gray-900">
-                Appointment Details
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Date
-                </label>
-                <p className="text-gray-900">
-                  {new Date(booking.appointmentDate).toLocaleDateString(
-                    "en-US",
-                    {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )}
-                </p>
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Time
-                </label>
-                <p className="text-gray-900">{booking.appointmentTime}</p>
-              </div>
-            </div>
+          <div>
+            <strong>Phone:</strong>{" "}
+            {booking.customerInfo.phone.replace(
+              /(\d{3})(\d{3})(\d{4})/,
+              "$1-***-$3"
+            )}
           </div>
-
-          {/* Service Type (for service bookings) */}
-          {booking.serviceType && (
-            <div className="rounded-lg border p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-gray-600" />
-                <span className="font-semibold text-gray-900">
-                  Service Information
-                </span>
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-500">
-                  Service Type
-                </label>
-                <p className="text-gray-900">{booking.serviceType}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Car Details (for viewing bookings) */}
-          {booking.carDetails && (
-            <div className="rounded-lg border p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <Car className="h-5 w-5 text-gray-600" />
-                <span className="font-semibold text-gray-900">
-                  Vehicle Information
-                </span>
-              </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-500">
-                    Vehicle
-                  </label>
-                  <p className="font-medium text-gray-900">
-                    {booking.carDetails.year} {booking.carDetails.make}{" "}
-                    {booking.carDetails.model}
-                  </p>
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-500">
-                    Price
-                  </label>
-                  <p className="font-bold text-green-600">
-                    ${booking.carDetails.price.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Additional Notes Section */}
-          <div className="rounded-lg border p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="font-semibold text-gray-900">
-                Additional Information
-              </span>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p>
-                Booking created:{" "}
-                {new Date(booking.appointmentDate).toLocaleDateString()}
-              </p>
-              <p>Reference ID: {booking._id}</p>
-            </div>
+          <div>
+            <strong>Email:</strong> {booking.customerInfo.email}
+          </div>
+          <div>
+            <strong>Status:</strong>
+            <select
+              className="ml-2 rounded border px-2 py-1"
+              value={booking.status}
+              onChange={() => {}}
+            >
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </div>
         </div>
 
-        {/* Close Button */}
-        <div className="mt-6 flex justify-end border-t pt-4">
+        <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200"
+            className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
           >
             Close
           </button>

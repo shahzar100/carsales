@@ -8,4 +8,4 @@ export { default as CancelBookingModal } from "./CancelBookingModal";
 export { default as BookingDetailsModal } from "./BookingDetailsModal";
 export { default as NotificationComponent } from "./NotificationComponent";
 
-export * from "./types";
+export * from "../../lib/types";
