@@ -1,3 +1,34 @@
+/**
+ * FILTER BAR COMPONENT (333 lines)
+ *
+ * SUMMARY:
+ * Complex filtering interface for the car shop/collection page.
+ * Provides multiple filter options (brand, fuel, color, price, year) with modal and inline views.
+ *
+ * MAIN FEATURES:
+ * - Multi-filter car search (brand, fuel type, color, price range, year)
+ * - Responsive design with mobile modal and desktop inline filters
+ * - Real-time search with URL parameter sync
+ * - Filter state management via SearchContext
+ * - Body scroll prevention when modal is open
+ *
+ * TECHNICAL DEBT ISSUES:
+ * - Massive component handling multiple concerns
+ * - Complex responsive logic mixed with filter logic
+ * - Duplicate filter rendering for mobile/desktop
+ * - Heavy DOM manipulation for scroll prevention
+ * - Tightly coupled to SearchContext implementation
+ * - No proper accessibility features
+ *
+ * REFACTORING NEEDED:
+ * - Split into separate Mobile/Desktop filter components
+ * - Extract scroll prevention to custom hook
+ * - Create reusable filter input components
+ * - Implement proper ARIA labels and keyboard navigation
+ * - Use CSS-only solutions for responsive behavior where possible
+ * - Abstract filter logic into composable hooks
+ */
+
 "use client";
 import React, { useState, useEffect } from "react";
 import {

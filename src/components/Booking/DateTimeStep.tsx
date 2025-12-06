@@ -14,14 +14,20 @@ const DateTimeStep = () => {
       <div className="space-y-6">
         {/* Date Selection */}
         <div className="space-y-3">
-          <label className="flex items-center text-sm font-medium text-gray-700">
+          <label
+            htmlFor="preferredDate"
+            className="flex items-center text-sm font-medium text-gray-700"
+          >
             <Calendar className="mr-2 h-4 w-4 text-blue-600" />
             Preferred Date
             <span className="ml-1 text-red-500">*</span>
           </label>
           <div className="relative">
             <input
+              id="preferredDate"
+              name="preferredDate"
               type="date"
+              required
               value={viewingBooking.selectedDate || ""}
               onChange={(e) =>
                 updateViewingBooking({ selectedDate: e.target.value })
@@ -33,7 +39,6 @@ const DateTimeStep = () => {
                   .split("T")[0]
               }
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-              required
             />
             {!viewingBooking.selectedDate && (
               <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">

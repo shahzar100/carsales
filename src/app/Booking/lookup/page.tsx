@@ -1,3 +1,35 @@
+/**
+ * BOOKING LOOKUP PAGE (302 lines)
+ *
+ * SUMMARY:
+ * Customer-facing page for looking up existing bookings by reference number.
+ * Displays booking details, status, and allows cancellation for service and viewing appointments.
+ *
+ * MAIN FEATURES:
+ * - Search bookings by reference number
+ * - Display service and car viewing booking details
+ * - Show booking status with appropriate icons
+ * - Allow booking cancellation with reason
+ * - Handle multiple booking types (service/viewing)
+ * - URL parameter support for direct booking access
+ *
+ * TECHNICAL DEBT ISSUES:
+ * - Mixed API calling logic with UI rendering
+ * - Hardcoded booking types and status handling
+ * - No proper error boundary or loading states
+ * - Repetitive booking display logic
+ * - No caching of booking data
+ * - Cancellation logic embedded in main component
+ *
+ * REFACTORING NEEDED:
+ * - Extract booking API calls to custom hooks
+ * - Create separate components for different booking types
+ * - Implement proper error boundaries
+ * - Add skeleton loading states
+ * - Use React Query for caching and state management
+ * - Extract cancellation logic to separate component/hook
+ */
+
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import {

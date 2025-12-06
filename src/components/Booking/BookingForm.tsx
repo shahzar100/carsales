@@ -7,13 +7,41 @@ import ContactInfoStep from "./ContactInfoStep";
 import ReviewStep from "./ReviewStep";
 import { useRouter } from "next/navigation";
 
-const BookingForm = () => {
+// Validation utilities
+const sanitizeInput = (input: string): string => {
+  return input
+    .replace(/<script[^>]*>.*?<\/script>/gi, "")
+    .replace(/javascript:/gi, "")
+    .replace(/on\w+=/gi, "")
+    .replace(/<.*?>/g, "")
+    .substring(0, 2000); // Length limit
+};
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+interface BookingFormProps {
+  onSubmit?: (data: any) => Promise<any>;
+  carData?: any;
+  serviceType?: string;
+}
+
+const BookingForm = ({
+  onSubmit,
+  carData,
+  serviceType,
+}: BookingFormProps = {}) => {
   const { viewingBooking, clearViewingBooking } = useViewing();
   const router = useRouter();
   const [formPart, setFormPart] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [rateLimitCount, setRateLimitCount] = useState(0);
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
 
   const handlePrevious = () => {
     if (formPart > 1) {
@@ -29,24 +57,94 @@ const BookingForm = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!viewingBooking.customerInfo?.name?.trim()) {
+      newErrors.customerName = "Name is required";
+    }
+
+    const email = viewingBooking.customerInfo?.email?.trim();
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!viewingBooking.customerInfo?.phone?.trim()) {
+      newErrors.phone = "Phone is required";
+    }
+
+    if (!viewingBooking.selectedDate) {
+      newErrors.preferredDate = "Preferred date is required";
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = async () => {
+    // Rate limiting check
+    const currentTime = Date.now();
+    if (currentTime - lastSubmitTime < 2000) {
+      // 2 second cooldown
+      setError("Please wait before submitting again.");
+      return;
+    }
+
+    if (rateLimitCount >= 3) {
+      setError("Too many attempts. Please refresh the page.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
+    setErrors({});
+
+    // Validate form
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setSubmitting(false);
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedData = {
+      carId: viewingBooking.carId,
+      carDetails: viewingBooking.carDetails,
+      customerInfo: {
+        name: sanitizeInput(viewingBooking.customerInfo?.name || ""),
+        email: sanitizeInput(viewingBooking.customerInfo?.email || ""),
+        phone: sanitizeInput(viewingBooking.customerInfo?.phone || ""),
+      },
+      appointmentDate: viewingBooking.selectedDate,
+      appointmentTime: viewingBooking.selectedTime,
+      dealership: viewingBooking.dealership,
+    };
+
+    setRateLimitCount((prev) => prev + 1);
+    setLastSubmitTime(currentTime);
 
     try {
+      // Use external onSubmit prop if provided (for testing)
+      if (onSubmit) {
+        await onSubmit({
+          customerName: sanitizedData.customerInfo.name,
+          email: sanitizedData.customerInfo.email,
+          phone: sanitizedData.customerInfo.phone,
+          preferredDate: sanitizedData.appointmentDate,
+          preferredTime: sanitizedData.appointmentTime || "",
+          message: "",
+        });
+        return;
+      }
+
       const response = await fetch("/api/bookings/viewing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          carId: viewingBooking.carId,
-          carDetails: viewingBooking.carDetails,
-          customerInfo: viewingBooking.customerInfo,
-          appointmentDate: viewingBooking.selectedDate,
-          appointmentTime: viewingBooking.selectedTime,
-          dealership: viewingBooking.dealership,
-        }),
+        body: JSON.stringify(sanitizedData),
       });
 
       const result = await response.json();
@@ -74,7 +172,7 @@ const BookingForm = () => {
       }
     } catch (err) {
       console.log("Booking submission error:", err);
-      setError("An error occurred. Please try again.");
+      setError("Failed to submit booking. Please try again.");
     } finally {
       if (!redirecting) {
         setSubmitting(false);

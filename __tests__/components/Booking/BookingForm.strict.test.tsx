@@ -13,234 +13,10 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+// Import the actual component
+import BookingForm from "@/components/TestBookingForm";
+
 describe("BookingForm Component - CRITICAL REQUIREMENTS", () => {
-  // Mock implementation based on expected behavior
-  const BookingForm = ({ onSubmit, carData, serviceType }: any) => {
-    const [formData, setFormData] = React.useState({
-      customerName: "",
-      email: "",
-      phone: "",
-      preferredDate: "",
-      preferredTime: "",
-      message: "",
-    });
-
-    const [errors, setErrors] = React.useState<Record<string, string>>({});
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-    const validateForm = () => {
-      const newErrors: Record<string, string> = {};
-
-      if (!formData.customerName.trim()) {
-        newErrors.customerName = "Name is required";
-      }
-
-      if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Invalid email format";
-      }
-
-      if (!formData.phone.trim()) {
-        newErrors.phone = "Phone is required";
-      }
-
-      if (!formData.preferredDate) {
-        newErrors.preferredDate = "Preferred date is required";
-      }
-
-      return newErrors;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setIsSubmitting(true);
-
-      const validationErrors = validateForm();
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        setIsSubmitting(false);
-        return;
-      }
-
-      try {
-        await onSubmit(formData);
-      } catch (error) {
-        setErrors({ submit: "Failed to submit booking. Please try again." });
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label
-              htmlFor="customerName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Full Name *
-            </label>
-            <input
-              id="customerName"
-              name="customerName"
-              type="text"
-              required
-              aria-describedby={
-                errors.customerName ? "customerName-error" : undefined
-              }
-              aria-invalid={!!errors.customerName}
-              value={formData.customerName}
-              onChange={(e) =>
-                setFormData({ ...formData, customerName: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-            {errors.customerName && (
-              <div
-                id="customerName-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.customerName}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email Address *
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              aria-describedby={errors.email ? "email-error" : undefined}
-              aria-invalid={!!errors.email}
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-            {errors.email && (
-              <div
-                id="email-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.email}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Phone Number *
-            </label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              required
-              aria-describedby={errors.phone ? "phone-error" : undefined}
-              aria-invalid={!!errors.phone}
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-            {errors.phone && (
-              <div
-                id="phone-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.phone}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="preferredDate"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Preferred Date *
-            </label>
-            <input
-              id="preferredDate"
-              name="preferredDate"
-              type="date"
-              required
-              min={new Date().toISOString().split("T")[0]}
-              aria-describedby={
-                errors.preferredDate ? "preferredDate-error" : undefined
-              }
-              aria-invalid={!!errors.preferredDate}
-              value={formData.preferredDate}
-              onChange={(e) =>
-                setFormData({ ...formData, preferredDate: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-            {errors.preferredDate && (
-              <div
-                id="preferredDate-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.preferredDate}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor="message"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Additional Message
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            rows={4}
-            value={formData.message}
-            onChange={(e) =>
-              setFormData({ ...formData, message: e.target.value })
-            }
-            className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-
-        {errors.submit && (
-          <div className="text-sm text-red-600" role="alert">
-            {errors.submit}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isSubmitting ? "Submitting..." : "Submit Booking"}
-        </button>
-      </form>
-    );
-  };
-
   const mockProps = {
     onSubmit: jest.fn(),
     carData: {
@@ -599,6 +375,122 @@ describe("BookingForm Component - CRITICAL REQUIREMENTS", () => {
       // STRICT: Input should be limited or validated
       // This test shows what SHOULD happen - may need implementation
       expect(messageInput.value.length).toBeLessThanOrEqual(2000);
+    });
+
+    it("MUST prevent SQL injection attempts", async () => {
+      const user = userEvent.setup();
+      render(<BookingForm {...mockProps} />);
+
+      const sqlInjection = "'; DROP TABLE users; --";
+      const nameInput = screen.getByLabelText(/full name/i);
+
+      await user.type(nameInput, sqlInjection);
+
+      // STRICT: SQL injection patterns should be sanitized
+      expect((nameInput as HTMLInputElement).value).not.toContain("DROP TABLE");
+      expect((nameInput as HTMLInputElement).value).not.toContain("--;");
+    });
+
+    it("MUST enforce minimum security standards", async () => {
+      const user = userEvent.setup();
+      render(<BookingForm {...mockProps} />);
+
+      // STRICT: Test various malicious inputs
+      const maliciousInputs = [
+        "javascript:alert('xss')",
+        "onload=alert(1)",
+        "<iframe src=javascript:alert(1)>",
+        "data:text/html,<script>alert(1)</script>",
+      ];
+
+      const nameInput = screen.getByLabelText(/full name/i) as HTMLInputElement;
+
+      for (const malicious of maliciousInputs) {
+        await user.clear(nameInput);
+        await user.type(nameInput, malicious);
+
+        // STRICT: None of these should remain in the input
+        expect(nameInput.value).not.toContain("javascript:");
+        expect(nameInput.value).not.toContain("onload=");
+        expect(nameInput.value).not.toContain("<iframe");
+        expect(nameInput.value).not.toContain("data:");
+      }
+    });
+  });
+
+  describe("ENHANCED VALIDATION REQUIREMENTS", () => {
+    it("MUST validate phone number format", async () => {
+      const user = userEvent.setup();
+      render(<BookingForm {...mockProps} />);
+
+      const phoneInput = screen.getByLabelText(/phone number/i);
+
+      // Test invalid phone formats
+      const invalidPhones = ["123", "abc", "123-abc-def", "+1-800"];
+
+      for (const phone of invalidPhones) {
+        await user.clear(phoneInput);
+        await user.type(phoneInput, phone);
+
+        const submitButton = screen.getByRole("button", {
+          name: /submit booking/i,
+        });
+        await user.click(submitButton);
+
+        // Should show validation error for invalid formats
+        expect(mockProps.onSubmit).not.toHaveBeenCalled();
+      }
+    });
+
+    it("MUST prevent future date limits", async () => {
+      const user = userEvent.setup();
+      render(<BookingForm {...mockProps} />);
+
+      const dateInput = screen.getByLabelText(/preferred date/i);
+
+      // Test date far in the future (2 years)
+      const futureDate = new Date();
+      futureDate.setFullYear(futureDate.getFullYear() + 2);
+      const futureDateString = futureDate.toISOString().split("T")[0];
+
+      await user.type(dateInput, futureDateString);
+
+      const submitButton = screen.getByRole("button", {
+        name: /submit booking/i,
+      });
+      await user.click(submitButton);
+
+      // Should have reasonable future date limits
+      expect(mockProps.onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("MUST handle network failures gracefully", async () => {
+      const user = userEvent.setup();
+      mockProps.onSubmit.mockRejectedValueOnce(new Error("Network timeout"));
+
+      render(<BookingForm {...mockProps} />);
+
+      // Fill valid form
+      await user.type(screen.getByLabelText(/full name/i), "John Doe");
+      await user.type(screen.getByLabelText(/email/i), "john@test.com");
+      await user.type(screen.getByLabelText(/phone/i), "555-123-4567");
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      await user.type(
+        screen.getByLabelText(/preferred date/i),
+        tomorrow.toISOString().split("T")[0]
+      );
+
+      const submitButton = screen.getByRole("button", {
+        name: /submit booking/i,
+      });
+      await user.click(submitButton);
+
+      // Should show user-friendly error message
+      await waitFor(() => {
+        expect(screen.getByText(/failed to submit booking/i)).toBeTruthy();
+      });
     });
   });
 });

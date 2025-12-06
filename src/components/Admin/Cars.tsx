@@ -1,8 +1,14 @@
 import React from "react";
 import { Car } from "@/lib/interfaces";
 
-const Cars = ({ cars }: { cars: Car[] }) => {
+interface CarsProps {
+  cars: Car[];
+  loading?: boolean;
+}
+
+const Cars = ({ cars }: CarsProps) => {
   console.log(cars);
+
   return (
     <>
       {cars.length > 0 && (
