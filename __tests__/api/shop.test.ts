@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { GET } from "@/app/api/shop/route";
+import { GET } from "@/app/api/bussinessinfo/route";
 import { getTestCollections, createTestShopInfo } from "../utils/testUtils";
 
 describe("/api/shop", () => {

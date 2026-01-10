@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getShopInfoCollection, ShopInfo } from "@/lib/models";
+import { getBussinessInfoCollection, ShopInfo } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 
 export async function GET() {
@@ -9,39 +9,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const shopCollection = await getShopInfoCollection();
+    const shopCollection = await getBussinessInfoCollection();
     const shopInfo = await shopCollection.findOne({});
-
-    if (!shopInfo) {
-      // Return default shop info if none exists
-      return NextResponse.json({
-        success: true,
-        data: {
-          businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
-          address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
-          city: process.env.NEXT_BUSINESS_CITY || "City",
-          state: process.env.NEXT_BUSINESS_STATE || "State",
-          zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
-          phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
-          email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
-          hours: {
-            monday: "9:00 AM - 6:00 PM",
-            tuesday: "9:00 AM - 6:00 PM",
-            wednesday: "9:00 AM - 6:00 PM",
-            thursday: "9:00 AM - 6:00 PM",
-            friday: "9:00 AM - 6:00 PM",
-            saturday: "10:00 AM - 4:00 PM",
-            sunday: "Closed",
-          },
-          description: "Your trusted car dealership",
-          socialMedia: {
-            facebook: "",
-            twitter: "",
-            instagram: "",
-          },
-        },
-      });
-    }
 
     return NextResponse.json({
       success: true,
@@ -64,7 +33,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const shopCollection = await getShopInfoCollection();
+    const shopCollection = await getBussinessInfoCollection();
 
     const shopInfo: Omit<ShopInfo, "_id"> = {
       businessName: body.businessName,

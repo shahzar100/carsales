@@ -15,10 +15,12 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.17",
+    "@types/bcrypt": "^6.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/uuid": "^10.0.0",
     "@vercel/functions": "^3.1.0",
     "autoprefixer": "^10.4.22",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "date-fns": "^4.1.0",
     "iron-session": "^8.0.4",

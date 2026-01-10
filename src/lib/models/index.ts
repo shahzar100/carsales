@@ -1,7 +1,7 @@
 import { Db, Collection } from "mongodb";
 import clientPromise from "@/backend/mongodb";
 import {
-  Car,
+  CarInterface,
   ServiceAppointment,
   CarViewingBooking,
   ShopInfo,
@@ -9,23 +9,23 @@ import {
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
-export type { Car, ServiceAppointment, CarViewingBooking, ShopInfo, AdminUser };
+export type { CarInterface, ServiceAppointment, CarViewingBooking, ShopInfo, AdminUser };
 
-let carsCollection: Collection<Car>;
+let carsCollection: Collection<CarInterface>;
 let serviceAppointmentsCollection: Collection<ServiceAppointment>;
 let carViewingBookingsCollection: Collection<CarViewingBooking>;
 let shopInfoCollection: Collection<ShopInfo>;
 let adminUsersCollection: Collection<AdminUser>;
 
-async function getDb(): Promise<Db> {
+async function getDb(name: string = "MMC"): Promise<Db> {
   const client = await clientPromise;
-  return client.db("carWebsite");
+  return client.db(name);
 }
 
-export async function getCarsCollection(): Promise<Collection<Car>> {
+export async function getCarsCollection(): Promise<Collection<CarInterface>> {
   if (!carsCollection) {
     const db = await getDb();
-    carsCollection = db.collection<Car>("cars");
+    carsCollection = db.collection<CarInterface>("cars");
 
     // Create indexes
     await carsCollection.createIndex({ status: 1 });
@@ -75,10 +75,10 @@ export async function getCarViewingBookingsCollection(): Promise<
   return carViewingBookingsCollection;
 }
 
-export async function getShopInfoCollection(): Promise<Collection<ShopInfo>> {
+export async function getBussinessInfoCollection(): Promise<Collection<ShopInfo>> {
   if (!shopInfoCollection) {
-    const db = await getDb();
-    shopInfoCollection = db.collection<ShopInfo>("shopInfo");
+    const db = await getDb("Venue");
+    shopInfoCollection = db.collection<ShopInfo>("MMC_Leeds");
   }
   return shopInfoCollection;
 }
@@ -88,7 +88,7 @@ export async function getAdminUsersCollection(): Promise<
 > {
   if (!adminUsersCollection) {
     const db = await getDb();
-    adminUsersCollection = db.collection<AdminUser>("adminUsers");
+    adminUsersCollection = db.collection<AdminUser>("admUsers");
 
     // Create indexes
     await adminUsersCollection.createIndex({ username: 1 }, { unique: true });

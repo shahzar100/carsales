@@ -24,7 +24,7 @@ export default function ShopSettingsTab({
               </label>
               <input
                 type="text"
-                value={shopInfo.businessName}
+                value={shopInfo.businessName ?? ""}
                 onChange={(e) =>
                   onShopInfoChange({
                     ...shopInfo,
@@ -41,7 +41,7 @@ export default function ShopSettingsTab({
               </label>
               <input
                 type="tel"
-                value={shopInfo.phone}
+                value={shopInfo.phone ?? ""}
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, phone: e.target.value })
                 }
@@ -57,7 +57,7 @@ export default function ShopSettingsTab({
             </label>
             <input
               type="email"
-              value={shopInfo.email}
+              value={shopInfo.email ?? ""}
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, email: e.target.value })
               }
@@ -72,7 +72,7 @@ export default function ShopSettingsTab({
             </label>
             <input
               type="text"
-              value={shopInfo.address}
+              value={shopInfo.address ?? ""}
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, address: e.target.value })
               }
@@ -88,7 +88,7 @@ export default function ShopSettingsTab({
               </label>
               <input
                 type="text"
-                value={shopInfo.city}
+                value={shopInfo.city ?? ""}
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, city: e.target.value })
                 }
@@ -102,7 +102,7 @@ export default function ShopSettingsTab({
               </label>
               <input
                 type="text"
-                value={shopInfo.state}
+                value={shopInfo.state ?? ""}
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, state: e.target.value })
                 }
@@ -116,7 +116,7 @@ export default function ShopSettingsTab({
               </label>
               <input
                 type="text"
-                value={shopInfo.zipCode}
+                value={shopInfo.zipCode ?? ""}
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, zipCode: e.target.value })
                 }
@@ -131,7 +131,7 @@ export default function ShopSettingsTab({
               Description
             </label>
             <textarea
-              value={shopInfo.description || ""}
+              value={shopInfo.description ?? ""}
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, description: e.target.value })
               }
@@ -150,7 +150,7 @@ export default function ShopSettingsTab({
                   </label>
                   <input
                     type="text"
-                    value={shopInfo.hours[day]}
+                    value={shopInfo.hours[day] ?? ""}
                     onChange={(e) =>
                       onShopInfoChange({
                         ...shopInfo,

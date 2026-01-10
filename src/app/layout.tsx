@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SearchContextProvider } from "@/backend/SearchContext";
 import { ViewingProvider } from "@/backend/ViewingContext";
-import { ShopProvider } from "@/backend/ShopContext";
+import { BusinessInfoProvider } from "@/backend/BusinessInfoContext";
 import { NavigationProvider } from "@/backend/NavigationContext";
 import { ToastProvider, ToastContainer } from "@/components/Toast";
 import Header from "@/components/Header";
@@ -26,7 +26,7 @@ export default function RootLayout({
           <NavigationProvider>
             <SearchContextProvider>
               <ViewingProvider>
-                <ShopProvider>
+                <BusinessInfoProvider>
                   <PageLoader />
                   <Header />
                   <main className="min-h-screen">{children}</main>
@@ -214,7 +214,7 @@ export default function RootLayout({
                       </div>
                     </div>
                   </footer>
-                </ShopProvider>
+                </BusinessInfoProvider>
               </ViewingProvider>
             </SearchContextProvider>
           </NavigationProvider>
