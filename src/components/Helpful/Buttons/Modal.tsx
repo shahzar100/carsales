@@ -6,9 +6,10 @@ interface ModalProps {
   children: React.ReactNode;
   onClose: () => void;
   size?: "sm" | "md" | "lg" | "xl" | "full";
-}
+  
+  title?: string;}
 
-const Modal = ({ children, onClose, size = "lg" }: ModalProps) => {
+const Modal = ({ title, children, onClose, size = "lg" }: ModalProps) => {
   const sizeClasses = {
     sm: "w-1/3 h-auto max-h-[60vh]",
     md: "w-1/2 h-1/2",
@@ -26,13 +27,17 @@ const Modal = ({ children, onClose, size = "lg" }: ModalProps) => {
     };
   }, []);
   return (
-    <div className="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center bg-black/50">
+    <div className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50">
       <div
-        className={`overflow-y-scroll rounded-lg border bg-white p-8 ${sizeClasses[size]}`}
+        className={`flex flex-col gap-4 overflow-y-scroll rounded-lg border bg-white p-8 ${sizeClasses[size]}`}
       >
-        <Button disabled={false} onClick={onClose}>
+        <div className="flex justify-between items-center gap-4">
+        <h2 className="text-xl font-bold"> {title} </h2>
+ <Button disabled={false} onClick={onClose}>
           <X />
         </Button>
+        </div>
+       
         {children}
       </div>
     </div>
