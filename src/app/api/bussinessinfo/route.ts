@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBussinessInfoCollection } from "@/lib/models";
+import { getBussinessInfoCollection, serializeDocument } from "@/lib/models";
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      data: shopInfo,
+      data: shopInfo ? serializeDocument(shopInfo) : null,
     });
   } catch (error) {
     console.error("Error fetching shop info:", error);

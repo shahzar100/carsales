@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBussinessInfoCollection, ShopInfo } from "@/lib/models";
+import {
+  getBussinessInfoCollection,
+  ShopInfo,
+  serializeDocument,
+} from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 
 export async function GET() {
@@ -14,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      data: shopInfo,
+      data: shopInfo ? serializeDocument(shopInfo) : null,
     });
   } catch (error) {
     console.error("Error fetching shop info:", error);
@@ -58,7 +62,7 @@ export async function PUT(request: NextRequest) {
     if (result.acknowledged) {
       return NextResponse.json({
         success: true,
-        data: shopInfo,
+        data: serializeDocument(shopInfo),
       });
     } else {
       return NextResponse.json(

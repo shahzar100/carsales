@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 const Header = () => {
   return (
-    <nav className="sticky top-0 z-60 row-span-1 mx-auto flex w-full max-w-7xl items-center justify-between gap-8 rounded-lg bg-white/95 px-6 py-4 shadow-sm backdrop-blur-sm">
+    <nav className="sticky top-0 z-60 row-span-1 mx-auto flex w-full max-w-7xl items-center justify-between gap-8 rounded-lg bg-white/95 px-6 py-2 shadow-sm backdrop-blur-sm">
       <Link
         className="rounded-full text-xl font-bold tracking-tight text-black"
         href="/"
@@ -13,9 +13,9 @@ const Header = () => {
         <Image
           src="/logo.jpeg"
           alt="Business Logo"
-          width={120}
-          height={50}
-          className="rounded-full object-contain"
+          width={100}
+          height={100}
+          className="aspect-square"
         />
       </Link>
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
+  serializeDocument,
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId, Document } from "mongodb";
@@ -29,8 +30,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        serviceBookings,
-        viewingBookings,
+        serviceBookings: serviceBookings.map(b => serializeDocument(b)),
+        viewingBookings: viewingBookings.map(b => serializeDocument(b)),
       },
     });
   } catch (error) {
@@ -141,7 +142,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Booking status updated to ${status}`,
-      data: updatedBooking,
+      data: updatedBooking ? serializeDocument(updatedBooking) : null,
     });
   } catch (error) {
     console.error("Error updating booking status:", error);

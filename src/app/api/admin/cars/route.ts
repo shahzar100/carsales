@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCarsCollection, Car } from "@/lib/models";
+import {
+  getCarsCollection,
+  CarInterface,
+  serializeDocument,
+} from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 
@@ -18,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      data: cars,
+      data: cars.map((car) => serializeDocument(car)),
     });
   } catch (error) {
     console.error("Error fetching cars:", error);
@@ -39,7 +43,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const carsCollection = await getCarsCollection();
 
-    const newCar: Omit<Car, "_id"> = {
+    const newCar: Omit<CarInterface, "_id"> = {
       make: body.make,
       model: body.model,
       year: parseInt(body.year),
@@ -56,13 +60,17 @@ export async function POST(request: NextRequest) {
       status: body.status || "available",
       createdAt: new Date(),
       updatedAt: new Date(),
+      featured: body.featured || false,
     };
 
-    const result = await carsCollection.insertOne(newCar as Car);
+    const result = await carsCollection.insertOne(newCar as CarInterface);
 
     return NextResponse.json({
       success: true,
-      data: { _id: result.insertedId, ...newCar },
+      data: serializeDocument({
+        _id: result.insertedId.toString(),
+        ...newCar,
+      }),
     });
   } catch (error) {
     console.error("Error creating car:", error);
@@ -102,7 +110,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carsCollection.updateOne(
-      { _id: new ObjectId(_id).toString() },
+      { _id: new ObjectId(String(_id)) as any },
       { $set: updatedCar }
     );
 
@@ -112,7 +120,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: { _id, ...updatedCar },
+      data: serializeDocument({ _id, ...updatedCar }),
     });
   } catch (error) {
     console.error("Error updating car:", error);
@@ -142,7 +150,7 @@ export async function DELETE(request: NextRequest) {
 
     const carsCollection = await getCarsCollection();
     const result = await carsCollection.deleteOne({
-      _id: new ObjectId(id).toString(),
+      _id: new ObjectId(String(id)) as any,
     });
 
     if (result.deletedCount === 0) {

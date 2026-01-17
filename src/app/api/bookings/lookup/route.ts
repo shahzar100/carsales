@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
+  serializeDocument,
 } from "@/lib/models";
 
 export async function GET(request: NextRequest) {
@@ -30,11 +31,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
+    const booking = serviceBooking || viewingBooking;
     return NextResponse.json({
       success: true,
       data: {
         type: serviceBooking ? "service" : "viewing",
-        booking: serviceBooking || viewingBooking,
+        booking: serializeDocument(booking),
       },
     });
   } catch (error) {

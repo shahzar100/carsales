@@ -1,47 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { Car, Calendar, Search, Star, Eye, Clock } from "lucide-react";
-import clientPromise from "@/backend/mongodb";
+import { Calendar, Car, Clock, Eye, Search, Star } from "lucide-react";
 import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
-import { CarInterface } from "@/lib/interfaces";
-
-const getFeaturedCar = async (): Promise<CarInterface | null> => {
-  try {
-    const client = await clientPromise;
-    const db = client.db("carWebsite");
-    const collection = db.collection("cars");
-
-    // First try to find a car marked as featured
-    let featuredCar = await collection.findOne({ Featured: true });
-
-    if (!featuredCar) {
-      return null;
-    }
-
-    // Convert MongoDB document to plain object
-    return {
-      _id: featuredCar._id.toString(),
-      make: featuredCar.make,
-      model: featuredCar.model,
-      year: featuredCar.year,
-      fuel: featuredCar.fuel,
-      doors: featuredCar.doors,
-      colour: featuredCar.colour,
-      price: featuredCar.price,
-      mileage: featuredCar.mileage,
-      image: featuredCar.image,
-      transmission: featuredCar.transmission,
-      featured: featuredCar.featured,
-      status: featuredCar.status,
-      createdAt: featuredCar.createdAt,
-      updatedAt: featuredCar.updatedAt,
-    };
-  } catch (error) {
-    console.error("Error fetching featured car:", error);
-    return null;
-  }
-};
+import { getFeaturedCar } from "@/lib/models";
 
 const HeroSection = async () => {
   const featuredCar = await getFeaturedCar();

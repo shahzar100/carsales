@@ -12,19 +12,63 @@ import {
 export type { CarInterface, ServiceAppointment, CarViewingBooking, ShopInfo, AdminUser };
 
 let carsCollection: Collection<CarInterface>;
+let featuredCar: CarInterface | null;
 let serviceAppointmentsCollection: Collection<ServiceAppointment>;
 let carViewingBookingsCollection: Collection<CarViewingBooking>;
 let shopInfoCollection: Collection<ShopInfo>;
 let adminUsersCollection: Collection<AdminUser>;
+
+// Helper function to convert ObjectId and Date fields to strings
+export function serializeDocument<T>(doc: T): T {
+  if (!doc || typeof doc !== "object") return doc;
+
+  const serialized = { ...doc } as Record<string, unknown>;
+
+  for (const key of Object.keys(serialized)) {
+    const value = serialized[key];
+    if (value && typeof value === "object") {
+      // Check if it's an ObjectId (has toHexString method)
+      if ("toHexString" in value && typeof value.toHexString === "function") {
+        serialized[key] = value.toHexString();
+      }
+      // Check if it's a Date
+      else if (value instanceof Date) {
+        serialized[key] = value.toISOString();
+      }
+      // Recursively handle nested objects
+      else if (!Array.isArray(value)) {
+        serialized[key] = serializeDocument(value);
+      }
+      // Handle arrays
+      else if (Array.isArray(value)) {
+        serialized[key] = value.map((item) =>
+          typeof item === "object" ? serializeDocument(item) : item
+        );
+      }
+    }
+  }
+
+  return serialized as T;
+}
 
 async function getDb(name: string = "MMC"): Promise<Db> {
   const client = await clientPromise;
   return client.db(name);
 }
 
+export async function getFeaturedCar(): Promise<CarInterface | null> {
+  if (featuredCar) return featuredCar;
+
+  const cars = await getCarsCollection();
+  const car = await cars.findOne({ featured: true });
+  featuredCar = car ? serializeDocument(car) as CarInterface : null;
+  return featuredCar;
+}
+
 export async function getCarsCollection(): Promise<Collection<CarInterface>> {
   if (!carsCollection) {
     const db = await getDb();
+    //not featured car
     carsCollection = db.collection<CarInterface>("cars");
 
     // Create indexes
@@ -82,6 +126,9 @@ export async function getBussinessInfoCollection(): Promise<Collection<ShopInfo>
   }
   return shopInfoCollection;
 }
+
+// Alias for backwards compatibility
+export const getShopInfoCollection = getBussinessInfoCollection;
 
 export async function getAdminUsersCollection(): Promise<
   Collection<AdminUser>
