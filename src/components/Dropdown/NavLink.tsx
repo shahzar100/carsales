@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { useNavigation } from "@/backend/NavigationContext";
 import { usePathname } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 interface NavLinkProps {
   href: string;
@@ -37,8 +38,15 @@ const NavLink: React.FC<NavLinkProps> = ({
 
   return (
     <div className="group relative text-black">
-      <Link href={href} className={baseClasses} onClick={handleClick}>
+      <Link
+        href={href}
+        className={`flex items-center ${baseClasses}`}
+        onClick={handleClick}
+      >
         {text}
+        {dropdown && (
+          <ChevronDown className="ml-1 h-3 w-3 transition-transform duration-200 group-hover:rotate-180" />
+        )}
       </Link>
 
       {dropdown && (

@@ -44,12 +44,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
 
   return (
     <>
-      <div className="hidden max-w-5xl items-center justify-center lg:flex">
+      <div className="hidden max-w-5xl items-center justify-center gap-4 xl:flex">
         {children}
       </div>
       <button
         onClick={() => setMenu(!menu)}
-        className="cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-colors duration-200 hover:bg-gray-100 lg:hidden"
+        className="cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-colors duration-200 hover:bg-gray-100 xl:hidden"
         aria-label="Toggle menu"
       >
         <Menu size={20} />
