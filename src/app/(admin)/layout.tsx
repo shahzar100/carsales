@@ -1,14 +1,15 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AdminNavigationTabs,
-  NotificationComponent,
-  Notification,
-} from "@/components/Admin";
+import { NotificationComponent, Notification } from "@/components/Admin";
 import { LogOut } from "lucide-react";
+import NavMenu from "@/components/Dropdown/NavMenu";
+import NavLink from "@/components/Dropdown/NavLink";
+import AddCarModal from "@/components/Admin/CarModal";
+import AddUser from "@/components/Admin/AddUser";
+import Link from "next/link";
 
-export default function AdminDashboardLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -56,29 +57,40 @@ export default function AdminDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="grid min-h-screen grid-rows-[auto_1fr] bg-gray-50">
       {/* Notification */}
       {notification && <NotificationComponent notification={notification} />}
 
       {/* Header */}
-      <div className="mx-auto max-w-7xl px-4 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+      <nav className="sticky top-0 z-50 flex items-center justify-between gap-4 border-b bg-white px-4 py-3 shadow-sm">
+        <Link
+          href="/admin/dashboard"
+          className="text-xl font-bold text-gray-900"
+        >
+          Admin Dashboard
+        </Link>
+
+        <NavMenu title="Admin Menu">
+          <NavLink href="/admin/dashboard" text="Cars" />
+          <NavLink href="/admin/dashboard/service" text="Service Bookings" />
+          <NavLink href="/admin/dashboard/viewing" text="Car Viewings" />
+          <NavLink href="/admin/dashboard/shop" text="Shop Settings" />
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 rounded-lg px-4 py-2 text-red-600 transition-colors hover:bg-red-50"
           >
             <LogOut className="h-4 w-4" />
-            <span>Logout</span>
+            <span className="hidden sm:inline">Logout</span>
           </button>
-        </div>
-      </div>
+        </NavMenu>
+      </nav>
 
-      {/* Navigation Tabs */}
-      <AdminNavigationTabs />
+      {/* Quick Actions Bar */}
 
       {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 py-8">{children}</div>
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8">
+        {children}
+      </main>
     </div>
   );
 }
