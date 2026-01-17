@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 
 interface NavMenuProps {
   children: React.ReactNode;
+  title: string;
 }
 
-const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
+const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
   const [menu, setMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +62,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children }) => {
             className="fixed top-0 right-0 z-50 h-screen w-screen transform overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-out"
           >
             <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-6">
-              <h2 className="text-xl font-bold text-gray-900"> Title </h2>
+              <h2 className="text-xl font-bold text-gray-900"> {title} </h2>
               <button
                 onClick={() => setMenu(false)}
                 className="rounded-full bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-gray-200"

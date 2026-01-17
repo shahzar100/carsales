@@ -19,7 +19,7 @@ const Header = () => {
         />
       </Link>
 
-      <NavMenu>
+      <NavMenu title="Menu">
         <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>
           <div className="w-full">
             <h3 className="mb-4 text-sm font-bold tracking-wider text-gray-900 uppercase">
