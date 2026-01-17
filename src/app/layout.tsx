@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="grid min-h-screen grid-rows-[auto_1fr_auto] gap-4 overflow-x-hidden p-4 antialiased">
+      <body className="overflow-x-hidde grid min-h-screen grid-rows-[auto_1fr_auto] antialiased">
         <ToastProvider>
           <NavigationProvider>
             <SearchContextProvider>
@@ -37,8 +37,7 @@ export default function RootLayout({
                         {/* Company Info */}
                         <div>
                           <h3 className="mb-4 text-lg font-bold text-gray-900">
-                            {process.env.NEXT_PUBLIC_BUSINESS_NAME ||
-                              "Car Sales & Viewing"}
+                            {process.env.NEXT_PUBLIC_BUSINESS_NAME}
                           </h3>
                           <p className="mb-4 text-sm text-gray-600">
                             Browse our premium car collection with convenient
