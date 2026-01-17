@@ -5,8 +5,6 @@ import { NotificationComponent, Notification } from "@/components/Admin";
 import { LogOut } from "lucide-react";
 import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
-import AddCarModal from "@/components/Admin/CarModal";
-import AddUser from "@/components/Admin/AddUser";
 import Link from "next/link";
 
 export default function AdminLayout({
