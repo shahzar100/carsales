@@ -1,13 +1,23 @@
-import React from "react";
-import { AdminForm } from "@/components/Admin";
+"use client";
+import React, { useEffect } from "react";
+import { AdminForm, useAuth } from "@/components/Admin";
+import { useRouter } from "next/navigation";
 
 export default function AdminAuthPage() {
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/admin/dashboard");
+    }
+  }, []);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+    <div className="bg-linear-to-brpx-4 flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md">
         {/* Logo/Title */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-white">Admin Portal</h1>
+          <h1 className="mb-2 text-3xl font-bold">Admin Portal</h1>
         </div>
         <AdminForm />
 

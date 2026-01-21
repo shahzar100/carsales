@@ -1,5 +1,5 @@
 // Auth
-export { default as AuthWrapper } from "./Auth/withAuth";
+export { default as AuthWrapper, useAuth } from "../../contexts/AuthContext";
 
 // Navigation
 export { default as AdminNavigationTabs } from "./Navigation/AdminNavigationTabs";

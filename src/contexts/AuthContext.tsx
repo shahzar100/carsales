@@ -25,11 +25,11 @@ export function useAuth() {
   return context;
 }
 
-interface AuthWrapperProps {
+interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export default function AuthWrapper({ children }: AuthWrapperProps) {
+export default function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
