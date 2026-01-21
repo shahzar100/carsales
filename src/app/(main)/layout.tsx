@@ -125,7 +125,7 @@ export default function MainLayout({
               </h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <NavLink href="/admin" text="Admin Dashboard" />
+                  <NavLink href="/admin/dashboard" text="Admin Dashboard" />
                 </li>
                 <li>
                   <NavLink href="/privacy" text="Privacy Policy" />

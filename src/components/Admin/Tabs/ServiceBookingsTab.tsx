@@ -1,7 +1,7 @@
 import { Search, Eye, Check } from "lucide-react";
-import { Booking, SelectedBooking } from "../../lib/types";
+import { Booking, SelectedBooking } from "@/lib/types";
 
-interface ViewingBookingsTabProps {
+interface ServiceBookingsTabProps {
   bookings: Booking[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
@@ -11,7 +11,7 @@ interface ViewingBookingsTabProps {
   getStatusBadge: (status: string) => React.ReactElement;
 }
 
-export default function ViewingBookingsTab({
+export default function ServiceBookingsTab({
   bookings,
   searchTerm,
   onSearchChange,
@@ -19,7 +19,7 @@ export default function ViewingBookingsTab({
   onConfirmBooking,
   onViewDetails,
   getStatusBadge,
-}: ViewingBookingsTabProps) {
+}: ServiceBookingsTabProps) {
   const filteredBookings = bookings.filter(
     (booking) =>
       booking.bookingReference
@@ -54,7 +54,7 @@ export default function ViewingBookingsTab({
                 Customer
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Vehicle
+                Service
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Date/Time
@@ -81,14 +81,7 @@ export default function ViewingBookingsTab({
                     </p>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">
-                  {booking.carDetails && (
-                    <p className="font-medium">
-                      {booking.carDetails.year} {booking.carDetails.make}{" "}
-                      {booking.carDetails.model}
-                    </p>
-                  )}
-                </td>
+                <td className="px-4 py-3 text-sm">{booking.serviceType}</td>
                 <td className="px-4 py-3 text-sm">
                   <p>
                     {new Date(booking.appointmentDate).toLocaleDateString()}
@@ -120,7 +113,7 @@ export default function ViewingBookingsTab({
                       booking.status !== "completed" && (
                         <button
                           onClick={() =>
-                            onCancelBooking({ booking, type: "viewing" })
+                            onCancelBooking({ booking, type: "service" })
                           }
                           className="rounded px-2 py-1 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-800"
                         >

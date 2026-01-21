@@ -1,15 +1,6 @@
 import React from "react";
-import {
-  X,
-  Calendar,
-  Clock,
-  User,
-  Mail,
-  Phone,
-  Car,
-  MapPin,
-} from "lucide-react";
-import { Booking } from "../../lib/types";
+import { X } from "lucide-react";
+import { Booking } from "@/lib/types";
 
 interface BookingDetailsModalProps {
   booking: Booking;

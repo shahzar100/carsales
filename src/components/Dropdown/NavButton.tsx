@@ -1,61 +1,36 @@
 "use client";
-import Link from "next/link";
 import React from "react";
-import { useNavigation } from "@/backend/NavigationContext";
-import { usePathname } from "next/navigation";
-import { ChevronDown, LucideIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
-interface NavLinkProps {
-  href: string;
+interface NavButtonProps {
   text: string;
   dropdown?: boolean;
-  dropdownOnly?: boolean;
-  icon?: LucideIcon;
   children?: React.ReactNode;
+  onClick?: () => void;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({
-  href,
+const NavButton: React.FC<NavButtonProps> = ({
+  onClick,
   text,
   dropdown = false,
-  icon: Icon,
   children,
 }) => {
-  const { setIsNavigating, setNavigationTarget } = useNavigation();
-  const pathname = usePathname();
-
   const baseClasses = dropdown
     ? "text-gray-700 hover:underline underline-offset-4 decoration-red-500 text-lg lg:text-base font-semibold transition-all duration-200 hover:text-red-500 px-6 py-4 rounded-lg group-hover:bg-red-50 border-b border-gray-100 block w-full text-left"
     : "hover:underline underline-offset-4 decoration-red-500 text-base font-medium transition-all duration-200 hover:text-red-500 py-2 px-6 rounded-md hover:bg-red-50 block w-full text-left text-gray-700 hover:text-red-500";
 
-  const handleClick = () => {
-    // Don't show loader if navigating to the same page
-    if (href === pathname) {
-      return;
-    }
-
-    // Start loading animation
-    setIsNavigating(true);
-    setNavigationTarget(text);
-  };
-
   return (
     <div className="group relative text-black">
-      <Link
-        href={href}
-        className={`flex items-center gap-2 ${baseClasses}`}
-        onClick={handleClick}
-      >
-        {Icon && <Icon className="h-4 w-4" />}
+      <button onClick={onClick} className={`flex items-center ${baseClasses}`}>
         {text}
         {dropdown && (
           <ChevronDown className="ml-1 h-3 w-3 transition-transform duration-200 group-hover:rotate-180" />
         )}
-      </Link>
+      </button>
 
       {dropdown && (
         <div className="z-70 block lg:absolute lg:top-full lg:left-1/2 lg:hidden lg:w-64 lg:-translate-x-1/2 lg:transform lg:pt-2 lg:group-hover:block">
-          <div className="flex flex-col items-start border-b border-gray-100 bg-gray-50 px-6 py-4 lg:items-start lg:rounded-lg lg:border lg:border-gray-200 lg:bg-white lg:p-4 lg:shadow-lg">
+          <div className="flex w-full flex-col items-start border-b border-gray-100 bg-gray-50 px-6 py-4 lg:items-start lg:rounded-lg lg:border lg:border-gray-200 lg:bg-white lg:p-4 lg:shadow-lg">
             {children}
           </div>
         </div>
@@ -64,4 +39,4 @@ const NavLink: React.FC<NavLinkProps> = ({
   );
 };
 
-export default NavLink;
+export default NavButton;

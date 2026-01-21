@@ -59,7 +59,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
         <>
           <div
             ref={menuRef}
-            className="fixed top-0 right-0 z-50 h-screen w-screen transform overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-out"
+            className="fixed top-0 right-0 z-50 h-screen w-screen overflow-y-auto bg-white shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-6">
               <h2 className="text-xl font-bold text-gray-900"> {title} </h2>

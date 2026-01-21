@@ -1,5 +1,5 @@
 import React from "react";
-import AdminForm from "@/components/Admin/AdminForm";
+import { AdminForm } from "@/components/Admin";
 
 export default function AdminAuthPage() {
   return (
@@ -17,5 +17,5 @@ export default function AdminAuthPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,8 +1,7 @@
-import Cars from "@/components/Admin/Cars";
+import { Cars } from "@/components/Admin";
 import React from "react";
 import { CarInterface } from "@/lib/interfaces";
 import { getCarsCollection } from "@/lib/models";
-import DashboardMenuButtons from "@/components/Admin/DashboardMenuButtons";
 
 export default async function CarsPage() {
   //fetch from mongodb using the proper collection helper
@@ -16,7 +15,6 @@ export default async function CarsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <DashboardMenuButtons />
       {cars.length > 0 ? <Cars cars={cars} /> : <p>No cars added.</p>}
     </div>
   );

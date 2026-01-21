@@ -1,11 +1,24 @@
-export { default as AdminTabs } from "./AdminTabs";
-export { default as AdminNavigationTabs } from "./AdminNavigationTabs";
-export { default as ServiceBookingsTab } from "./ServiceBookingsTab";
-export { default as ViewingBookingsTab } from "./ViewingBookingsTab";
-export { default as ShopSettingsTab } from "./ShopSettingsTab";
-export { default as CarModal } from "./CarModal";
-export { default as CancelBookingModal } from "./CancelBookingModal";
-export { default as BookingDetailsModal } from "./BookingDetailsModal";
-export { default as NotificationComponent } from "./NotificationComponent";
+// Auth
+export { default as AuthWrapper } from "./Auth/withAuth";
 
+// Navigation
+export { default as AdminNavigationTabs } from "./Navigation/AdminNavigationTabs";
+export { default as DashboardMenuButtons } from "./Navigation/MenuButtons";
+
+// Tabs
+export { default as ServiceBookingsTab } from "./Tabs/ServiceBookingsTab";
+export { default as ViewingBookingsTab } from "./Tabs/ViewingBookingsTab";
+export { default as ShopSettingsTab } from "./Tabs/ShopSettingsTab";
+
+// Modals
+export { default as CarModal } from "./Modals/CarModal";
+export { default as CancelBookingModal } from "./Modals/CancelBookingModal";
+export { default as BookingDetailsModal } from "./Modals/BookingDetailsModal";
+export { default as AddAppointment } from "./Modals/AddAppointment";
+
+// Components
+export { default as AdminForm } from "./AdminForm";
+export { default as Cars } from "./Views/Cars";
+
+// Types
 export * from "../../lib/types";
