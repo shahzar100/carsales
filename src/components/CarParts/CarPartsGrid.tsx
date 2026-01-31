@@ -122,7 +122,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-2xl font-bold text-red-600">
-                    ${part.price}
+                    £{part.price}
                   </span>
                 </div>
                 <button

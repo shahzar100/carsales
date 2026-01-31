@@ -200,13 +200,13 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
 
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-xl font-bold text-blue-600">
-                      ${sanitizePrice(product.price)}
+                      £{sanitizePrice(product.price)}
                     </span>
                     {product.originalPrice &&
                       parseFloat(product.originalPrice) >
                         parseFloat(product.price) && (
                         <span className="text-sm text-gray-500 line-through">
-                          ${sanitizePrice(product.originalPrice)}
+                          £{sanitizePrice(product.originalPrice)}
                         </span>
                       )}
                   </div>
@@ -249,7 +249,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
                         ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
                         : "cursor-not-allowed bg-gray-300 text-gray-500"
                     } `}
-                    aria-label={`Add ${sanitizeText(product.name)} to cart for $${sanitizePrice(product.price)}`}
+                    aria-label={`Add ${sanitizeText(product.name)} to cart for £${sanitizePrice(product.price)}`}
                   >
                     {product.inStock ? "Add to Cart" : "Out of Stock"}
                   </button>
@@ -268,7 +268,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
             >
               <p>Items in cart: {cart.length}</p>
               <p>
-                Total: $
+                Total: £
                 {cart
                   .reduce(
                     (sum, item) => sum + parseFloat(item.price) * item.quantity,
@@ -349,7 +349,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
       expect(productImg.src).not.toContain("javascript:");
 
       // STRICT: Negative prices should be converted to 0.00
-      const priceElement = screen.getByText("$0.00");
+      const priceElement = screen.getByText("£0.00");
       expect(priceElement).toBeTruthy();
     });
 
@@ -505,7 +505,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
 
       // STRICT: Add to cart buttons should have descriptive labels
       const addButton = screen.getByLabelText(
-        /Add Brake Pads Set to cart for \$89\.99/
+        /Add Brake Pads Set to cart for £89\.99/
       );
       expect(addButton).toBeTruthy();
     });
@@ -570,11 +570,11 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
       );
 
       // STRICT: All invalid prices should be converted to 0.00
-      const prices = screen.getAllByText("$0.00");
+      const prices = screen.getAllByText("£0.00");
       expect(prices).toHaveLength(2); // NaN and Infinity
 
       // STRICT: Valid price should be properly formatted
-      expect(screen.getByText("$101.00")).toBeTruthy(); // Rounded to 2 decimal places
+      expect(screen.getByText("£101.00")).toBeTruthy(); // Rounded to 2 decimal places
     });
 
     it("MUST handle image errors gracefully", async () => {
