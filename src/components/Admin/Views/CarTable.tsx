@@ -7,10 +7,8 @@ interface CarTableProps {
 }
 
 const CarTable: React.FC<CarTableProps> = ({ cars }) => {
-  const [sortField, setSortField] = useState<keyof CarInterface>("createdAt");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Format price with currency
   const formatPrice = (price: number) => {
@@ -52,97 +50,53 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
     }
   };
 
-  // Handle sorting
-  const handleSort = (field: keyof CarInterface) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  // Pagination calculations
+  const totalPages = Math.ceil(cars.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCars = cars.slice(startIndex, endIndex);
+
+  // Reset to first page if current page exceeds total pages
+  React.useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [cars.length, itemsPerPage, currentPage, totalPages]);
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
-
-  // Sort icon component
-  const SortIcon = ({ field }: { field: keyof CarInterface }) => {
-    if (sortField !== field) {
-      return <span className="text-xs text-gray-400">⇅</span>;
-    }
-    return sortDirection === "asc" ? (
-      <span className="text-xs text-blue-600">▲</span>
-    ) : (
-      <span className="text-xs text-blue-600">▼</span>
-    );
-  };
-
-  // Filter and sort cars
-  const filteredAndSortedCars = cars
-    .filter((car) => {
-      const matchesSearch =
-        searchTerm === "" ||
-        `${car.make} ${car.model} ${car.year} ${car.colour}`
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        statusFilter === "all" || car.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-
-      if (aValue === undefined || bValue === undefined) return 0;
-
-      let comparison = 0;
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        comparison = aValue.localeCompare(bValue);
-      } else if (aValue instanceof Date && bValue instanceof Date) {
-        comparison = aValue.getTime() - bValue.getTime();
-      } else if (typeof aValue === "number" && typeof bValue === "number") {
-        comparison = aValue - bValue;
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, "...", totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
       } else {
-        comparison = String(aValue).localeCompare(String(bValue));
+        pages.push(
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages
+        );
       }
-
-      return sortDirection === "asc" ? comparison : -comparison;
-    });
+    }
+    return pages;
+  };
 
   return (
     <div className="max-h-6xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      {/* Header with search and filters */}
-      <div className="border-b border-gray-200 bg-gray-50 p-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Car Inventory</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {filteredAndSortedCars.length} of {cars.length} vehicles
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            {/* Search Input */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="🔍 Search cars..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 sm:w-64"
-              />
-            </div>
-            {/* Status Filter */}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
-              <option value="sold">Sold</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -151,53 +105,23 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
                 Vehicle
               </th>
-              <th
-                className="cursor-pointer px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:bg-gray-100"
-                onClick={() => handleSort("year")}
-              >
-                <div className="flex items-center gap-2">
-                  Year
-                  <SortIcon field="year" />
-                </div>
+              <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                Year
               </th>
-              <th
-                className="cursor-pointer px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:bg-gray-100"
-                onClick={() => handleSort("price")}
-              >
-                <div className="flex items-center gap-2">
-                  Price
-                  <SortIcon field="price" />
-                </div>
+              <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                Price
               </th>
-              <th
-                className="cursor-pointer px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:bg-gray-100"
-                onClick={() => handleSort("mileage")}
-              >
-                <div className="flex items-center gap-2">
-                  Mileage
-                  <SortIcon field="mileage" />
-                </div>
+              <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                Mileage
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
                 Specs
               </th>
-              <th
-                className="cursor-pointer px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:bg-gray-100"
-                onClick={() => handleSort("status")}
-              >
-                <div className="flex items-center gap-2">
-                  Status
-                  <SortIcon field="status" />
-                </div>
+              <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                Status
               </th>
-              <th
-                className="cursor-pointer px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:bg-gray-100"
-                onClick={() => handleSort("createdAt")}
-              >
-                <div className="flex items-center gap-2">
-                  Added
-                  <SortIcon field="createdAt" />
-                </div>
+              <th className="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                Added
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold tracking-wider text-gray-600 uppercase">
                 Featured
@@ -208,7 +132,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {filteredAndSortedCars.length === 0 ? (
+            {paginatedCars.length === 0 ? (
               <tr>
                 <td colSpan={9} className="px-6 py-12 text-center">
                   <div className="flex flex-col items-center">
@@ -223,7 +147,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                 </td>
               </tr>
             ) : (
-              filteredAndSortedCars.map((car, index) => (
+              paginatedCars.map((car, index) => (
                 <tr
                   key={car._id || index}
                   className="transition-colors hover:bg-gray-50"
@@ -347,51 +271,113 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
         </table>
       </div>
 
-      {/* Footer with summary */}
-      {filteredAndSortedCars.length > 0 && (
+      {/* Footer with summary and pagination */}
+      {cars.length > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
+          {/* Summary */}
           <div className="flex flex-wrap gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-green-500"></span>
               <span>
-                Available:{" "}
-                {
-                  filteredAndSortedCars.filter((c) => c.status === "available")
-                    .length
-                }
+                Available: {cars.filter((c) => c.status === "available").length}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-yellow-500"></span>
               <span>
-                Reserved:{" "}
-                {
-                  filteredAndSortedCars.filter((c) => c.status === "reserved")
-                    .length
-                }
+                Reserved: {cars.filter((c) => c.status === "reserved").length}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-red-500"></span>
               <span>
-                Sold:{" "}
-                {
-                  filteredAndSortedCars.filter((c) => c.status === "sold")
-                    .length
-                }
+                Sold: {cars.filter((c) => c.status === "sold").length}
               </span>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <span className="font-medium">Total Value:</span>
               <span className="font-bold text-gray-900">
                 {formatPrice(
-                  filteredAndSortedCars
+                  cars
                     .filter((c) => c.status === "available")
                     .reduce((sum, c) => sum + c.price, 0)
                 )}
               </span>
             </div>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-4 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-4 sm:flex-row">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>Show</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <span>per page</span>
+                <span className="ml-4 text-gray-500">
+                  Showing {startIndex + 1}-{Math.min(endIndex, cars.length)} of{" "}
+                  {cars.length}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {/* Previous Button */}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                >
+                  ← Prev
+                </button>
+
+                {/* Page Numbers */}
+                {getPageNumbers().map((page, idx) =>
+                  page === "..." ? (
+                    <span
+                      key={`ellipsis-${idx}`}
+                      className="px-2 text-gray-400"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page as number)}
+                      className={`min-w-[36px] rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        currentPage === page
+                          ? "bg-blue-600 text-white"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+
+                {/* Next Button */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

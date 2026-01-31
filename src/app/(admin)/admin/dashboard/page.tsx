@@ -21,10 +21,10 @@ export default async function CarsPage() {
   };
 
   const cars = await getCars();
-
+  const bookings = await getBookings();
   return (
     <>
-      <CarView cars={cars} />
+      <CarView bookings={bookings} cars={cars} />
     </>
   );
 }
