@@ -73,62 +73,58 @@ const Filters: React.FC<FiltersProps> = ({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="flex w-full flex-wrap gap-4 rounded-xl border border-4 border-gray-200 bg-white p-6 shadow-sm">
       {/* Header Section */}
-      <div className="border-b border-gray-100 p-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Car Inventory</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {filteredCount} of {totalCount} vehicles
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            {/* Search Input */}
-            <input
-              type="text"
-              placeholder="🔍 Search cars..."
-              value={state.searchTerm}
-              onChange={(e) =>
-                dispatch({ type: "SET_SEARCH_TERM", payload: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 sm:w-64"
-            />
-            {/* Status Filter */}
-            <select
-              value={state.statusFilter}
-              onChange={(e) =>
-                dispatch({ type: "SET_STATUS_FILTER", payload: e.target.value })
-              }
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
-              <option value="sold">Sold</option>
-            </select>
-            {/* Toggle Advanced Filters */}
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
-                showAdvanced
-                  ? "border-blue-500 bg-blue-50 text-blue-600"
-                  : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              {showAdvanced ? "Hide Filters" : "More Filters"}
-            </button>
-            {/* Reset Button */}
-            {hasActiveFilters && (
-              <button
-                onClick={() => dispatch({ type: "RESET_FILTERS" })}
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-100"
-              >
-                Reset All
-              </button>
-            )}
-          </div>
-        </div>
+      <div>
+        <h2 className="text-xl font-bold text-gray-900">Car Inventory</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          {filteredCount} of {totalCount} vehicles
+        </p>
+      </div>
+      <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="🔍 Search cars..."
+          value={state.searchTerm}
+          onChange={(e) =>
+            dispatch({ type: "SET_SEARCH_TERM", payload: e.target.value })
+          }
+          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        />
+        {/* Status Filter */}
+        <select
+          value={state.statusFilter}
+          onChange={(e) =>
+            dispatch({ type: "SET_STATUS_FILTER", payload: e.target.value })
+          }
+          className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="all">All Status</option>
+          <option value="available">Available</option>
+          <option value="reserved">Reserved</option>
+          <option value="sold">Sold</option>
+        </select>
+        {/* Toggle Advanced Filters */}
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
+            showAdvanced
+              ? "border-blue-500 bg-blue-50 text-blue-600"
+              : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+          }`}
+        >
+          {showAdvanced ? "Hide Filters" : "More Filters"}
+        </button>
+        {/* Reset Button */}
+        {hasActiveFilters && (
+          <button
+            onClick={() => dispatch({ type: "RESET_FILTERS" })}
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-100"
+          >
+            Reset All
+          </button>
+        )}
       </div>
 
       {/* Advanced Filters Section */}

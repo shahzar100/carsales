@@ -8,11 +8,11 @@ export default function AdminLayout({
 }) {
   return (
     <AuthWrapper>
-      <div className="grid min-h-screen grid-rows-[auto_1fr]">
+      <div className="grid min-h-screen grid-rows-[auto_1fr] overflow-x-hidden">
         {/* Header */}
         <AdminNavigationTabs />
         {/* Content */}
-        <main className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8">
+        <main className="flex w-full max-w-7xl flex-col gap-4 overflow-x-hidden px-4 py-8 lg:mx-auto">
           {children}
         </main>
       </div>

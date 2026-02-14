@@ -4,12 +4,14 @@ import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
 import DashboardMenuButtons from "./MenuButtons";
 import { useAuth } from "../../../contexts/AuthContext";
+import LinkPrimaryButton from "@/components/Helpful/Buttons/LinkPrimaryButton";
+import Button from "@/components/Helpful/Buttons/Button";
 
 export default function AdminNavigationTabs() {
   const { isLoggedIn, logout } = useAuth();
 
   const links = [
-    { href: "/admin/dashboard", text: "Cars", icon: Car },
+    { href: "/admin/dashboard/cars", text: "Cars", icon: Car },
     {
       href: "/admin/dashboard/service",
       text: "Service Bookings",
@@ -34,16 +36,11 @@ export default function AdminNavigationTabs() {
               icon={link.icon}
             />
           ))}
-
-          <DashboardMenuButtons />
-
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-red-600 transition-colors hover:bg-red-50"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
+          <LinkPrimaryButton href="/admin/dashboard/add" text={"Add"} />
+          <Button onClick={logout} variant="secondary" disabled={false}>
+            <LogOut className="h-4 w-4 text-red-500" />
+            <span className="hidden text-red-500 sm:inline">Logout</span>
+          </Button>
         </NavMenu>
       )}
     </nav>

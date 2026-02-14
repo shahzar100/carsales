@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import CarFleetShop from "../../components/Shop/Collection/CarFleetShop";
 import Loading from "./Loading";
 import clientPromise from "@/backend/mongodb";
 
@@ -108,9 +107,7 @@ const ShopPage = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Suspense fallback={<Loading />}>
-        <CarFleetShop cars={cars} />
-      </Suspense>
+      <Suspense fallback={<Loading />}></Suspense>
     </div>
   );
 };

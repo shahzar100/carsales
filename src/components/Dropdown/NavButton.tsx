@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LucideIcon } from "lucide-react";
 
 interface NavButtonProps {
   text: string;
@@ -29,8 +29,8 @@ const NavButton: React.FC<NavButtonProps> = ({
       </button>
 
       {dropdown && (
-        <div className="z-70 block lg:absolute lg:top-full lg:left-1/2 lg:hidden lg:w-64 lg:-translate-x-1/2 lg:transform lg:pt-2 lg:group-hover:block">
-          <div className="flex w-full flex-col items-start border-b border-gray-100 bg-gray-50 px-6 py-4 lg:items-start lg:rounded-lg lg:border lg:border-gray-200 lg:bg-white lg:p-4 lg:shadow-lg">
+        <div className="absolute top-full right-0 z-[9999] mt-2 hidden w-64 group-hover:block">
+          <div className="flex w-full flex-col items-start rounded-lg border border-gray-200 bg-white p-2 shadow-xl ring-1 ring-black/5">
             {children}
           </div>
         </div>

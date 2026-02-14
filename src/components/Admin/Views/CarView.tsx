@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Cars } from "@/components/Admin";
 import { CarInterface, CarViewingBooking } from "@/lib/interfaces";
 import Button from "@/components/Helpful/Buttons/Button";
-import { Car } from "lucide-react";
+import { Car, ChevronLeft, ChevronRight } from "lucide-react";
 import CarTable from "./CarTable";
 import Filters from "./Filters";
 import { FilterProvider, useFilters } from "../../../contexts/FilterContext";
@@ -19,6 +19,21 @@ const CarViewContent = ({
   const [viewType, setViewType] = useState<"table" | "card">("card");
   const [carId, setCarId] = useState<number>(0);
   const { state } = useFilters();
+
+  // Switch to card view on smaller screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768 && viewType !== "card") {
+        setViewType("card");
+      }
+    };
+
+    // Check on mount
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const carBookings = bookings.filter(
     (booking) => booking.carId === cars[carId]?._id
@@ -85,7 +100,9 @@ const CarViewContent = ({
   });
 
   return (
-    <div className="mx-auto flex w-6/8 flex-col gap-6">
+    <div
+      className={`mx-auto flex ${viewType === "card" ? "w-full md:w-6/8" : "w-full"} flex-col gap-6`}
+    >
       <Filters
         totalCount={cars.length}
         filteredCount={filteredCars.length}
@@ -118,12 +135,36 @@ const CarViewContent = ({
 
       {filteredCars.length > 0 && viewType === "card" && (
         <>
-          <Cars
-            car={filteredCars[carId]}
-            setCarId={setCarId}
-            length={filteredCars.length}
-            carId={carId}
-          />
+          <div className="relative flex w-full items-center gap-4">
+            {/* Left Navigation Button */}
+            <button
+              onClick={() => setCarId(carId - 1)}
+              disabled={carId === 0}
+              className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+            >
+              <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
+            </button>
+
+            {/* Car Card */}
+            <div className="min-w-0 flex-1">
+              <Cars
+                car={filteredCars[carId]}
+                setCarId={setCarId}
+                length={filteredCars.length}
+                carId={carId}
+              />
+            </div>
+
+            {/* Right Navigation Button */}
+            <button
+              onClick={() => setCarId(carId + 1)}
+              disabled={carId === filteredCars.length - 1}
+              className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+            >
+              <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
+            </button>
+          </div>
+
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
             {filteredCars.map((c, idx) => (
               <button
@@ -152,6 +193,7 @@ const CarViewContent = ({
       {viewType === "card" && (
         <div className="flex flex-col">
           <h2> Bookings</h2>
+
           {carBookings.length === 0 && <p>No bookings available.</p>}
         </div>
       )}

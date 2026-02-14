@@ -3,8 +3,6 @@ import React from "react";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import {
-  ChevronLeft,
-  ChevronRight,
   Fuel,
   Gauge,
   Car,
@@ -53,9 +51,9 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
   return (
     <>
       {/* Header */}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex w-full items-center justify-between">
         <h1 className="text-lg font-bold text-gray-900">
-          Car Inventory{" "}
+          Car Inventory
           <span className="font-normal text-gray-500">({length})</span>
         </h1>
         <span className="text-sm text-gray-500">
@@ -64,10 +62,10 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
       </div>
 
       {/* Main Card */}
-      <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
+      <div className="w-full overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
         <div className="flex flex-col md:flex-row">
           {/* Image Section */}
-          <div className="relative aspect-[4/3] md:aspect-auto md:w-1/2">
+          <div className="relative aspect-4/3 md:aspect-auto md:w-1/2">
             <Image
               src={"/tesla.webp"}
               alt={`${car.make} ${car.model}`}
@@ -75,22 +73,6 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
               className="object-cover"
               priority
             />
-
-            {/* Navigation Arrows */}
-            <button
-              onClick={() => setCarId(carId - 1)}
-              disabled={carId === 0}
-              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              <ChevronLeft className="h-4 w-4 text-gray-800" />
-            </button>
-            <button
-              onClick={() => setCarId(carId + 1)}
-              disabled={carId === length - 1}
-              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              <ChevronRight className="h-4 w-4 text-gray-800" />
-            </button>
 
             {/* Badges */}
             <div className="absolute top-2 left-2 flex gap-1.5">
@@ -109,7 +91,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
           </div>
 
           {/* Content Section */}
-          <div className="flex flex-1 flex-col p-4 md:p-5">
+          <div className="flex w-full flex-col p-4 md:p-5">
             {/* Title & Price */}
             <div className="mb-3 flex items-start justify-between gap-2">
               <div>
@@ -128,28 +110,28 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             </div>
 
             {/* Compact Specs */}
-            <div className="mb-3 grid grid-cols-4 gap-2">
+            <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Gauge className="h-3.5 w-3.5 text-blue-600" />
-                <span className="text-xs font-medium text-gray-700">
+                <Gauge className="h-3.5 w-3.5 shrink-0 text-blue-600" />
+                <span className="truncate text-xs font-medium text-gray-700">
                   {formatMileage(car.mileage)}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Fuel className="h-3.5 w-3.5 text-emerald-600" />
-                <span className="text-xs font-medium text-gray-700">
+                <Fuel className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                <span className="truncate text-xs font-medium text-gray-700">
                   {car.fuel}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Palette className="h-3.5 w-3.5 text-rose-600" />
-                <span className="text-xs font-medium text-gray-700">
+                <Palette className="h-3.5 w-3.5 shrink-0 text-rose-600" />
+                <span className="truncate text-xs font-medium text-gray-700">
                   {car.colour}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Car className="h-3.5 w-3.5 text-purple-600" />
-                <span className="text-xs font-medium text-gray-700">
+                <Car className="h-3.5 w-3.5 shrink-0 text-purple-600" />
+                <span className="truncate text-xs font-medium text-gray-700">
                   {car.year}
                 </span>
               </div>
