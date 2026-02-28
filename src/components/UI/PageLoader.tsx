@@ -54,7 +54,7 @@ const PageLoader = () => {
         {/* Progress Bar */}
         <div className="mx-auto mt-6 h-2 w-64 overflow-hidden rounded-full bg-gray-200">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
+            className="h-full rounded-full bg-linear-to-r from-blue-500 to-purple-600"
             animate={{ width: ["0%", "100%"] }}
             transition={{
               duration: 1.5,
