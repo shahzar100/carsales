@@ -148,9 +148,7 @@ describe("Form Component — Multi-Stage Navigation", () => {
       const steps = buildSteps([
         { validate: () => (valid ? true : "Error on step 1") },
       ]);
-      const { rerender } = render(
-        <Form steps={steps} onSubmit={onSubmit} />
-      );
+      const { rerender } = render(<Form steps={steps} onSubmit={onSubmit} />);
 
       // Initially disabled
       const nextButton = screen.getByText("Next").closest("button")!;
