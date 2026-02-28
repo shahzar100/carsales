@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Dropdown from "./Dropdown";
 import CarForm from "./CarForm";
+import AppointmentForm from "./AppointmentForm";
+import UserForm from "./UserForm";
 
 export interface CarFormData {
   make: string;
@@ -14,22 +16,12 @@ export interface CarFormData {
   doors: string;
   colour: string;
   status: string;
+  description: string;
+  featured: boolean;
 }
 
 const MainForm = () => {
   const [type, setType] = useState("");
-  const [carData, setCarData] = useState<CarFormData>({
-    make: "",
-    model: "",
-    year: "",
-    price: "",
-    mileage: "",
-    fuel: "",
-    transmission: "",
-    doors: "",
-    colour: "",
-    status: "",
-  });
 
   const options = [
     { value: "User", label: "User" },
@@ -37,21 +29,9 @@ const MainForm = () => {
     { value: "Appointment", label: "Appointment" },
   ];
 
-  const handleCarDataChange = (field: keyof CarFormData, value: string) => {
-    setCarData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", { type, carData });
-  };
-
   return (
     <div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex h-100 w-full flex-col gap-6 overflow-y-scroll rounded-lg border p-8"
-      >
+      <div className="flex w-full flex-col gap-6 rounded-lg border p-8">
         <Dropdown
           label="Type"
           placeholder="Select Type"
@@ -62,14 +42,9 @@ const MainForm = () => {
         />
 
         {type === "Car" && <CarForm />}
-
-        <button
-          type="submit"
-          className="mt-4 w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition-colors hover:bg-blue-700"
-        >
-          Submit
-        </button>
-      </form>
+        {type === "Appointment" && <AppointmentForm />}
+        {type === "User" && <UserForm />}
+      </div>
     </div>
   );
 };

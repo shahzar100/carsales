@@ -97,7 +97,9 @@ export interface ShopInfo {
 export interface AdminUser {
   _id?: string;
   username: string;
+  email: string;
   passwordHash: string;
+  role: "staff" | "manager" | "admin";
   createdAt: Date;
   lastLogin?: Date;
 }
