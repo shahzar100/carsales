@@ -35,7 +35,7 @@ export default function AdminNavigationTabs() {
               icon={link.icon}
             />
           ))}
-          <LinkPrimaryButton href="/admin/dashboard/add" text={"Add"} />
+          <LinkPrimaryButton href="/admin/dashboard/add" text={"Create New"} />
           <Button onClick={logout} variant="secondary" disabled={false}>
             <LogOut className="h-4 w-4 text-red-500" />
             <span className="hidden text-red-500 sm:inline">Logout</span>

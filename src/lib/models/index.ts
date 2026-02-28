@@ -9,7 +9,13 @@ import {
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
-export type { CarInterface, ServiceAppointment, CarViewingBooking, ShopInfo, AdminUser };
+export type {
+  CarInterface,
+  ServiceAppointment,
+  CarViewingBooking,
+  ShopInfo,
+  AdminUser,
+};
 
 let carsCollection: Collection<CarInterface>;
 let featuredCar: CarInterface | null;
@@ -61,7 +67,7 @@ export async function getFeaturedCar(): Promise<CarInterface | null> {
 
   const cars = await getCarsCollection();
   const car = await cars.findOne({ featured: true });
-  featuredCar = car ? serializeDocument(car) as CarInterface : null;
+  featuredCar = car ? (serializeDocument(car) as CarInterface) : null;
   return featuredCar;
 }
 
@@ -119,7 +125,9 @@ export async function getCarViewingBookingsCollection(): Promise<
   return carViewingBookingsCollection;
 }
 
-export async function getBussinessInfoCollection(): Promise<Collection<ShopInfo>> {
+export async function getBussinessInfoCollection(): Promise<
+  Collection<ShopInfo>
+> {
   if (!shopInfoCollection) {
     const db = await getDb("Venue");
     shopInfoCollection = db.collection<ShopInfo>("MMC_Leeds");
