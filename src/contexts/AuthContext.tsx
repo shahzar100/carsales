@@ -37,7 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/logout");
+      const response = await fetch("/api/admin/session");
       const result = await response.json();
       setIsLoggedIn(result.isLoggedIn);
     } catch {

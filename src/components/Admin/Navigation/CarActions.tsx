@@ -1,7 +1,6 @@
 import NavButton from "@/components/Dropdown/NavButton";
 import NavLink from "@/components/Dropdown/NavLink";
 import { CarInterface } from "@/lib/interfaces";
-import React from "react";
 
 const CarActions = ({ car }: { car: CarInterface }) => {
   return (

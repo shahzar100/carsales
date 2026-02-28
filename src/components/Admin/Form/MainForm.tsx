@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Dropdown from "./Dropdown";
-import { CarModal } from "..";
+import CarForm from "./CarForm";
 
 export interface CarFormData {
   make: string;
@@ -61,9 +61,7 @@ const MainForm = () => {
           required
         />
 
-        {type === "Car" && (
-          <CarModal data={carData} onChange={handleCarDataChange} />
-        )}
+        {type === "Car" && <CarForm />}
 
         <button
           type="submit"

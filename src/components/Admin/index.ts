@@ -9,9 +9,6 @@ export { default as ServiceBookingsTab } from "./Tabs/ServiceBookingsTab";
 export { default as ViewingBookingsTab } from "./Tabs/ViewingBookingsTab";
 export { default as ShopSettingsTab } from "./Tabs/ShopSettingsTab";
 
-// Modals
-export { default as CarModal } from "./Modals/CarModal";
-
 // Components
 export { default as AdminForm } from "./AdminForm";
 export { default as Cars } from "../Car/Cars";
