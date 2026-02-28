@@ -135,7 +135,7 @@ export async function getAdminUsersCollection(): Promise<
 > {
   if (!adminUsersCollection) {
     const db = await getDb();
-    adminUsersCollection = db.collection<AdminUser>("admUsers");
+    adminUsersCollection = db.collection<AdminUser>("adminUsers");
 
     // Create indexes
     await adminUsersCollection.createIndex({ username: 1 }, { unique: true });
