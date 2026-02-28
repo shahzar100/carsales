@@ -5,7 +5,7 @@ import {
   getCarViewingBookingsCollection,
   serializeDocument,
 } from "@/lib/models";
-import CarView from "@/components/Admin/Views/CarView";
+import CarView from "@/components/Car/CarView";
 
 export default async function CarsPage() {
   const getCars = async (): Promise<CarInterface[]> => {

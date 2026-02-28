@@ -1,93 +1,150 @@
 @import "tailwindcss";
 
-/* Default Image Styles - Tailwind v4 */
-img {
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  display: block;
-  image-rendering: auto;
-  image-rendering: crisp-edges;
-  image-rendering: -webkit-optimize-contrast;
+/* ========================================
+   REUSABLE STYLES
+   Consistent design tokens for the entire app
+   ======================================== */
+
+/* ---- Typography ---- */
+
+.heading-1 {
+  @apply text-2xl font-bold text-gray-900 md:text-3xl;
 }
 
-/* Next.js Image Component Styles */
-img[data-nimg] {
-  transition: all 0.3s ease-in-out;
+.heading-2 {
+  @apply text-xl font-bold text-gray-900;
 }
 
-/* Image Loading States */
-img[data-nimg="loading"] {
-  opacity: 0.5;
-  filter: blur(4px);
+.heading-3 {
+  @apply text-lg font-semibold text-gray-900;
 }
 
-img[data-nimg="loaded"] {
-  opacity: 1;
-  filter: blur(0);
+.heading-4 {
+  @apply text-base font-semibold text-gray-900;
 }
 
-/* Image Error State */
-img[data-nimg="error"] {
-  background-color: rgb(229 231 235);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.subtitle {
+  @apply text-sm text-gray-500;
 }
 
-img[data-nimg="error"]::after {
-  content: "Image not found";
-  color: rgb(107 114 128);
-  font-size: 0.875rem;
+.body {
+  @apply text-sm text-gray-700;
 }
 
-/* Responsive Image Containers */
-.image-container {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  background-color: rgb(243 244 246);
+.caption {
+  @apply text-xs text-gray-400;
 }
 
-.image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+/* ---- Labels ---- */
+
+.label {
+  @apply mb-1.5 block text-sm font-medium text-gray-700;
 }
 
-.image-container:hover img {
-  transform: scale(1.05);
+.label-sm {
+  @apply mb-1.5 block text-[11px] font-semibold tracking-wider text-gray-400 uppercase;
 }
 
-/* Car Image Specific Styles */
-.car-image {
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+/* ---- Inputs ---- */
+
+.input {
+  @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
 }
 
-.car-image-thumbnail {
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+.input-lg {
+  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
 }
 
-/* Hero Image Styles */
-.hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.input-error {
+  @apply w-full rounded-lg border border-red-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm ring-2 ring-red-100 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-red-200 focus:outline-none;
 }
 
-/* Avatar/Profile Image Styles */
-.avatar-image {
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid rgb(229 231 235);
+/* ---- Selects ---- */
+
+.select {
+  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+}
+
+.select-lg {
+  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+}
+
+/* ---- Cards ---- */
+
+.card {
+  @apply overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm;
+}
+
+.card-elevated {
+  @apply overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100;
+}
+
+.card-interactive {
+  @apply overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md;
+}
+
+/* ---- Badges ---- */
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
+
+.badge-sm {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase;
+}
+
+.badge-green {
+  @apply bg-emerald-100 text-emerald-700;
+}
+
+.badge-red {
+  @apply bg-red-100 text-red-700;
+}
+
+.badge-amber {
+  @apply bg-amber-100 text-amber-700;
+}
+
+.badge-blue {
+  @apply bg-blue-50 text-blue-600;
+}
+
+.badge-gray {
+  @apply bg-gray-100 text-gray-700;
+}
+
+/* ---- Tags (removable pills) ---- */
+
+.tag {
+  @apply inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600;
+}
+
+.tag-neutral {
+  @apply inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600;
+}
+
+/* ---- Dividers ---- */
+
+.divider {
+  @apply border-t border-gray-100;
+}
+
+.divider-strong {
+  @apply border-t border-gray-200;
+}
+
+/* ---- Section containers ---- */
+
+.section {
+  @apply px-5 py-4;
+}
+
+.section-muted {
+  @apply border-t border-gray-100 bg-gray-50/60 px-5 py-4;
+}
+
+/* ---- Range inputs (min/max pairs) ---- */
+
+.range-separator {
+  @apply text-xs font-medium text-gray-300;
 }

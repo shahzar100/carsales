@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Cars } from "@/components/Admin";
+import Cars from "./Cars";
 import { CarInterface, CarViewingBooking } from "@/lib/interfaces";
 import Button from "@/components/Helpful/Buttons/Button";
 import { Car, ChevronLeft, ChevronRight } from "lucide-react";
 import CarTable from "./CarTable";
 import Filters from "./Filters";
-import { FilterProvider, useFilters } from "../../../contexts/FilterContext";
+import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import Image from "next/image";
 
 const CarViewContent = ({
@@ -16,7 +16,7 @@ const CarViewContent = ({
   cars: CarInterface[];
   bookings: CarViewingBooking[];
 }) => {
-  const [viewType, setViewType] = useState<"table" | "card">("card");
+  const [viewType, setViewType] = useState<"table" | "card" | "list">("card");
   const [carId, setCarId] = useState<number>(0);
   const { state } = useFilters();
 
@@ -100,9 +100,7 @@ const CarViewContent = ({
   });
 
   return (
-    <div
-      className={`mx-auto flex ${viewType === "card" ? "w-full md:w-6/8" : "w-full"} flex-col gap-6`}
-    >
+    <div className={`flex w-full flex-col gap-6`}>
       <Filters
         totalCount={cars.length}
         filteredCount={filteredCars.length}
@@ -117,79 +115,81 @@ const CarViewContent = ({
         </div>
       )}
       {filteredCars.length > 0 && (
-        <div className="mb-4 flex items-center justify-end gap-2">
-          <Button
-            onClick={() => setViewType("table")}
-            disabled={viewType === "table"}
-          >
-            Table
-          </Button>
-          <Button
-            onClick={() => setViewType("card")}
-            disabled={viewType === "card"}
-          >
-            Card
-          </Button>
-        </div>
-      )}
-
-      {filteredCars.length > 0 && viewType === "card" && (
         <>
-          <div className="relative flex w-full items-center gap-4">
-            {/* Left Navigation Button */}
-            <button
-              onClick={() => setCarId(carId - 1)}
-              disabled={carId === 0}
-              className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+          <div className="mb-4 flex items-center justify-end gap-2">
+            <Button
+              onClick={() => setViewType("table")}
+              disabled={viewType === "table"}
             >
-              <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
-            </button>
-
-            {/* Car Card */}
-            <div className="min-w-0 flex-1">
-              <Cars
-                car={filteredCars[carId]}
-                setCarId={setCarId}
-                length={filteredCars.length}
-                carId={carId}
-              />
-            </div>
-
-            {/* Right Navigation Button */}
-            <button
-              onClick={() => setCarId(carId + 1)}
-              disabled={carId === filteredCars.length - 1}
-              className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+              Table
+            </Button>
+            <Button
+              onClick={() => setViewType("card")}
+              disabled={viewType === "card"}
             >
-              <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
-            </button>
+              Card
+            </Button>
           </div>
+          {viewType === "card" && (
+            <>
+              <div className="relative flex w-full items-center gap-4">
+                {/* Left Navigation Button */}
+                <button
+                  onClick={() => setCarId(carId - 1)}
+                  disabled={carId === 0}
+                  className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+                >
+                  <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
+                </button>
 
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-            {filteredCars.map((c, idx) => (
-              <button
-                key={c._id || idx}
-                onClick={() => setCarId(idx)}
-                className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all ${
-                  idx === carId
-                    ? "ring-2 ring-blue-600"
-                    : "opacity-50 hover:opacity-100"
-                }`}
-              >
-                <Image
-                  src={"/tesla.webp"}
-                  alt={`${c.make} ${c.model}`}
-                  fill
-                  className="object-cover"
-                />
-              </button>
-            ))}
-          </div>
+                {/* Car Card */}
+                <div className="min-w-0 flex-1">
+                  <Cars
+                    car={filteredCars[carId]}
+                    setCarId={setCarId}
+                    length={filteredCars.length}
+                    carId={carId}
+                  />
+                </div>
+
+                {/* Right Navigation Button */}
+                <button
+                  onClick={() => setCarId(carId + 1)}
+                  disabled={carId === filteredCars.length - 1}
+                  className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+                >
+                  <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
+                </button>
+              </div>
+
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                {filteredCars.map((c, idx) => (
+                  <button
+                    key={c._id || idx}
+                    onClick={() => setCarId(idx)}
+                    className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all ${
+                      idx === carId
+                        ? "ring-2 ring-blue-600"
+                        : "opacity-50 hover:opacity-100"
+                    }`}
+                  >
+                    <Image
+                      src={"/tesla.webp"}
+                      alt={`${c.make} ${c.model}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          {filteredCars.length > 0 && viewType === "table" && (
+            <CarTable cars={filteredCars} />
+          )}
         </>
       )}
-      {filteredCars.length > 0 && viewType === "table" && (
-        <CarTable cars={filteredCars} />
-      )}
+
       {viewType === "card" && (
         <div className="flex flex-col">
           <h2> Bookings</h2>

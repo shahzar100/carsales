@@ -14,7 +14,7 @@ export { default as CarModal } from "./Modals/CarModal";
 
 // Components
 export { default as AdminForm } from "./AdminForm";
-export { default as Cars } from "./Views/Cars";
+export { default as Cars } from "../Car/Cars";
 
 // Types
 export * from "../../lib/types";

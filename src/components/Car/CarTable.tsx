@@ -1,7 +1,7 @@
 import { CarInterface } from "@/lib/interfaces";
 import React, { useState } from "react";
 import Image from "next/image";
-import CarActions from "../Navigation/CarActions";
+import CarActions from "@/components/Admin/Navigation/CarActions";
 
 interface CarTableProps {
   cars: CarInterface[];

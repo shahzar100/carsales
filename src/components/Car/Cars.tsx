@@ -51,8 +51,8 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
   return (
     <>
       {/* Header */}
-      <div className="mb-4 flex w-full items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">
+      <div className="flex w-full items-center justify-between gap-2">
+        <h1 className="flex gap-1 text-lg font-bold text-gray-900">
           Car Inventory
           <span className="font-normal text-gray-500">({length})</span>
         </h1>
@@ -62,10 +62,10 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
       </div>
 
       {/* Main Card */}
-      <div className="w-full overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
+      <div className="mt-4 w-full overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
         <div className="flex flex-col md:flex-row">
           {/* Image Section */}
-          <div className="relative aspect-4/3 md:aspect-auto md:w-1/2">
+          <div className="relative aspect-4/3 w-full md:aspect-auto lg:w-1/2">
             <Image
               src={"/tesla.webp"}
               alt={`${car.make} ${car.model}`}
