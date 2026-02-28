@@ -702,11 +702,12 @@ describe("Dropdown & Navigation Components - ACCESSIBILITY & INTERACTION TESTS",
       );
 
       const trigger = screen.getByLabelText(/navigation menu/i);
-      const hamburgerLines = trigger.querySelectorAll("div div");
+      const hamburgerContainer = trigger.querySelector(".flex.h-6.w-6");
+      const closedLines = hamburgerContainer!.querySelectorAll(":scope > div");
 
       // STRICT: Closed state - no rotation
-      expect(hamburgerLines[0]).not.toHaveClass("rotate-45");
-      expect(hamburgerLines[1]).not.toHaveClass("opacity-0");
+      expect(closedLines[0]).not.toHaveClass("rotate-45");
+      expect(closedLines[1]).not.toHaveClass("opacity-0");
 
       // STRICT: Open state - hamburger transforms to X
       rerender(
@@ -718,9 +719,14 @@ describe("Dropdown & Navigation Components - ACCESSIBILITY & INTERACTION TESTS",
         />
       );
 
-      expect(hamburgerLines[0]).toHaveClass("rotate-45");
-      expect(hamburgerLines[1]).toHaveClass("opacity-0");
-      expect(hamburgerLines[2]).toHaveClass("-rotate-45");
+      // Re-query after rerender to get fresh DOM references
+      const updatedTrigger = screen.getByLabelText(/navigation menu/i);
+      const updatedContainer = updatedTrigger.querySelector(".flex.h-6.w-6");
+      const openLines = updatedContainer!.querySelectorAll(":scope > div");
+
+      expect(openLines[0]).toHaveClass("rotate-45");
+      expect(openLines[1]).toHaveClass("opacity-0");
+      expect(openLines[2]).toHaveClass("-rotate-45");
     });
 
     it("MUST trap focus within mobile menu", async () => {

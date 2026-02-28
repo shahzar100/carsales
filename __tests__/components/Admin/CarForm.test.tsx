@@ -74,28 +74,25 @@ describe("CarForm Component", () => {
 
   // ── Step 1: Basic Info Validation ──────────────────────────
   describe("Step 1 — Basic Information Validation", () => {
-    it("blocks next when make is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when make is empty", () => {
       render(<CarForm />);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Make is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when model is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when model is empty", () => {
       render(<CarForm />);
       setInput("e.g. Toyota", "Honda");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Model is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when year is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when year is empty", () => {
       render(<CarForm />);
       setInput("e.g. Toyota", "Honda");
       setInput("e.g. Corolla", "Civic");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Year is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 2 when all fields are filled", async () => {
@@ -125,8 +122,8 @@ describe("CarForm Component", () => {
       const user = userEvent.setup();
       render(<CarForm />);
       await goToStep2(user);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Price is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("blocks next when mileage is empty", async () => {
@@ -134,8 +131,8 @@ describe("CarForm Component", () => {
       render(<CarForm />);
       await goToStep2(user);
       setInput("e.g. 15000", "20000");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Mileage is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 3 when price and mileage are valid", async () => {
@@ -168,8 +165,8 @@ describe("CarForm Component", () => {
       const user = userEvent.setup();
       render(<CarForm />);
       await goToStep3(user);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Please select a fuel type")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("renders fuel type, transmission, doors and colour inputs", async () => {

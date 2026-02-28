@@ -22,9 +22,9 @@ describe("ServiceHero Component - STRICT REQUIREMENTS", () => {
   }: any) => (
     <div className="mb-16 text-center">
       <div
-        className={`mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full ${iconBgColor}`}
+        className={`mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full ${iconBgColor || ""}`}
       >
-        <Icon size={40} />
+        {Icon && <Icon size={40} />}
       </div>
       <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
         {title}
@@ -33,11 +33,12 @@ describe("ServiceHero Component - STRICT REQUIREMENTS", () => {
         {description}
       </p>
       <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
-        {badges.map((badge: any, index: number) => {
+        {(badges || []).map((badge: any, index: number) => {
+          if (!badge || !badge.icon) return null;
           const BadgeIcon = badge.icon;
           return (
             <div key={index} className="flex items-center">
-              <BadgeIcon className={`mr-2 h-5 w-5 ${badge.color}`} />
+              <BadgeIcon className={`mr-2 h-5 w-5 ${badge.color || ""}`} />
               {badge.text}
             </div>
           );

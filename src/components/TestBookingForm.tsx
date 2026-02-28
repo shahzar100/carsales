@@ -39,6 +39,12 @@ const sanitizeInput = (input: string): string => {
     .replace(/javascript:/gi, "")
     .replace(/on\w+=/gi, "")
     .replace(/<.*?>/g, "")
+    .replace(/data:/gi, "")
+    .replace(
+      /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|EXEC|UNION|TRUNCATE)\b\s+(TABLE|FROM|INTO|DATABASE|ALL|SET|WHERE)?)/gi,
+      ""
+    )
+    .replace(/--[;]?/g, "")
     .substring(0, 2000); // Length limit
 };
 
@@ -147,12 +153,15 @@ export default function BookingForm({
 
   const handleInputChange = (field: string, value: string) => {
     // Enforce character limits
-    if (field === "message" && value.length > 2000) {
-      value = value.substring(0, 2000);
+    if (field === "message") {
+      if (value.length > 2000) {
+        value = value.substring(0, 2000);
+      }
+      setFormData({ ...formData, [field]: value });
+    } else {
+      const sanitizedValue = sanitizeInput(value);
+      setFormData({ ...formData, [field]: sanitizedValue });
     }
-
-    const sanitizedValue = sanitizeInput(value);
-    setFormData({ ...formData, [field]: sanitizedValue });
 
     // Clear error when user starts typing
     if (errors[field]) {
@@ -163,7 +172,7 @@ export default function BookingForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label

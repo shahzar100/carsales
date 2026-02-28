@@ -3,7 +3,6 @@
  * These tests define the expected behavior for critical booking functionality
  * Failures indicate serious issues that must be fixed before production
  */
-import React from "react";
 import {
   render,
   screen,
@@ -150,7 +149,7 @@ describe("BookingForm Component - CRITICAL REQUIREMENTS", () => {
         const label = screen.getByText(new RegExp(fieldLabel, "i"));
         const inputId = input.getAttribute("id");
         expect(inputId).toBeTruthy();
-        expect(label).toHaveAttribute("htmlFor", inputId!);
+        expect(label).toHaveAttribute("for", inputId!);
       });
     });
 
@@ -361,7 +360,6 @@ describe("BookingForm Component - CRITICAL REQUIREMENTS", () => {
     });
 
     it("MUST validate data length limits", async () => {
-      const user = userEvent.setup();
       render(<BookingForm {...mockProps} />);
 
       // STRICT: Extremely long inputs should be handled
@@ -370,7 +368,7 @@ describe("BookingForm Component - CRITICAL REQUIREMENTS", () => {
       const messageInput = screen.getByLabelText(
         /additional message/i
       ) as HTMLTextAreaElement;
-      await user.type(messageInput, longString);
+      fireEvent.change(messageInput, { target: { value: longString } });
 
       // STRICT: Input should be limited or validated
       // This test shows what SHOULD happen - may need implementation

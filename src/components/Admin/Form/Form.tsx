@@ -33,6 +33,14 @@ const Form: React.FC<FormProps> = ({
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
 
+  // Reactively check whether the current step passes validation
+  // (without setting error messages — those only appear on explicit click)
+  const isCurrentStepValid = (() => {
+    const step = steps[currentStep];
+    if (!step.validate) return true;
+    return step.validate() === true;
+  })();
+
   const validateCurrentStep = useCallback((): boolean => {
     const step = steps[currentStep];
     if (step.validate) {
@@ -190,9 +198,13 @@ const Form: React.FC<FormProps> = ({
         </span>
 
         {isLastStep ? (
-          <SubmitButton label={submitLabel} loading={isSubmitting} />
+          <SubmitButton
+            label={submitLabel}
+            loading={isSubmitting}
+            disabled={!isCurrentStepValid}
+          />
         ) : (
-          <NextButton onClick={goToNext} />
+          <NextButton onClick={goToNext} disabled={!isCurrentStepValid} />
         )}
       </div>
     </form>

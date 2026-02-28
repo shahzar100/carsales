@@ -77,54 +77,41 @@ describe("UserForm Component", () => {
 
   // ── Step 1: Account Details Validation ─────────────────────
   describe("Step 1 — Account Details Validation", () => {
-    it("blocks next when username is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when username is empty", () => {
       render(<UserForm />);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Username is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when username is too short", async () => {
-      const user = userEvent.setup();
+    it("blocks next when username is too short", () => {
       render(<UserForm />);
       setInput("e.g. jsmith", "ab");
       setInput("e.g. john@example.com", "a@b.com");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Username must be at least 3 characters")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when username has invalid characters", async () => {
-      const user = userEvent.setup();
+    it("blocks next when username has invalid characters", () => {
       render(<UserForm />);
       setInput("e.g. jsmith", "bad user!");
       setInput("e.g. john@example.com", "a@b.com");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText(
-          "Username can only contain letters, numbers, and underscores"
-        )
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when email is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when email is empty", () => {
       render(<UserForm />);
       setInput("e.g. jsmith", "validuser");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Email is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next with invalid email format", async () => {
-      const user = userEvent.setup();
+    it("blocks next with invalid email format", () => {
       render(<UserForm />);
       setInput("e.g. jsmith", "validuser");
       setInput("e.g. john@example.com", "not-an-email");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please enter a valid email address")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 2 with valid data", async () => {
@@ -161,10 +148,8 @@ describe("UserForm Component", () => {
       const user = userEvent.setup();
       render(<UserForm />);
       await goToStep2(user);
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please select a privilege level")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 3 after selecting a role", async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../Helpful/Buttons/Button";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useViewing } from "@/backend/ViewingContext";
@@ -28,11 +28,7 @@ interface BookingFormProps {
   serviceType?: string;
 }
 
-const BookingForm = ({
-  onSubmit,
-  carData,
-  serviceType,
-}: BookingFormProps = {}) => {
+const BookingForm = ({ onSubmit }: BookingFormProps = {}) => {
   const { viewingBooking, clearViewingBooking } = useViewing();
   const router = useRouter();
   const [formPart, setFormPart] = useState(1);
@@ -183,7 +179,7 @@ const BookingForm = ({
   // Show loading state during redirect to prevent flash of other content
   if (redirecting) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg bg-white p-6 shadow-lg">
+      <div className="flex min-h-100 flex-col items-center justify-center rounded-lg bg-white p-6 shadow-lg">
         <div className="text-center">
           <CheckCircle className="mx-auto mb-4 h-16 w-16 animate-pulse text-green-500" />
           <h3 className="mb-2 text-2xl font-bold text-gray-900">
@@ -203,7 +199,7 @@ const BookingForm = ({
     viewingBooking.customerInfo?.phone?.trim();
 
   return (
-    <div className="flex h-full min-h-[400px] flex-col rounded-lg bg-white p-6 text-gray-800 shadow-lg">
+    <div className="flex h-full min-h-100 flex-col rounded-lg bg-white p-6 text-gray-800 shadow-lg">
       {/* Header */}
       <div className="mb-6">
         <h3 className="mb-2 text-xl font-bold">Schedule Your Viewing</h3>
@@ -233,33 +229,32 @@ const BookingForm = ({
       {/* Navigation Buttons */}
       <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
         <Button
-          text="Previous"
           onClick={handlePrevious}
-          icon={ArrowLeft}
           disabled={formPart === 1 || submitting || redirecting}
-          iconPlacement="left"
-        />
+        >
+          <ArrowLeft />
+          Previous
+        </Button>
 
         <div className="text-sm text-gray-500">{formPart} of 3</div>
 
         <Button
-          text={
-            formPart === 3
-              ? submitting
-                ? "Submitting..."
-                : "Confirm Booking"
-              : "Next"
-          }
           onClick={handleNext}
-          icon={ArrowRight}
           disabled={
             submitting ||
             redirecting ||
             (formPart === 1 && !isStep1Valid) ||
             (formPart === 2 && !isStep2Valid)
           }
-          iconPlacement="right"
-        />
+        >
+          {formPart === 3
+            ? submitting
+              ? "Submitting..."
+              : "Confirm Booking"
+            : "Next"}
+
+          <ArrowRight />
+        </Button>
       </div>
     </div>
   );

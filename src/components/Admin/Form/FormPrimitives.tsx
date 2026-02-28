@@ -73,8 +73,15 @@ export const FormButton: React.FC<{
 };
 
 // Convenience buttons used by Form.tsx navigation
-export const NextButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
-  <FormButton onClick={onClick} icon={<ChevronRight className="h-4 w-4" />}>
+export const NextButton: React.FC<{
+  onClick: () => void;
+  disabled?: boolean;
+}> = ({ onClick, disabled }) => (
+  <FormButton
+    onClick={onClick}
+    disabled={disabled}
+    icon={<ChevronRight className="h-4 w-4" />}
+  >
     Next
   </FormButton>
 );
@@ -97,11 +104,13 @@ export const PreviousButton: React.FC<{
 export const SubmitButton: React.FC<{
   label?: string;
   loading?: boolean;
-}> = ({ label = "Submit", loading }) => (
+  disabled?: boolean;
+}> = ({ label = "Submit", loading, disabled }) => (
   <FormButton
     type="submit"
     variant="success"
     loading={loading}
+    disabled={disabled}
     loadingText="Submitting..."
     icon={!loading ? <Check className="h-4 w-4" /> : undefined}
   >

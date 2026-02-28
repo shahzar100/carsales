@@ -134,31 +134,38 @@ describe("Form Component — Multi-Stage Navigation", () => {
   // ── Validation ───────────────────────────────────────────
   describe("Step Validation", () => {
     it("blocks navigation when validation fails", async () => {
-      const user = userEvent.setup();
       const steps = buildSteps([{ validate: () => "Field X is required" }]);
       render(<Form steps={steps} onSubmit={onSubmit} />);
 
-      await user.click(screen.getByText("Next"));
-
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
       expect(screen.getByTestId("step-1-content")).toBeInTheDocument();
-      expect(screen.getByText("Field X is required")).toBeInTheDocument();
     });
 
-    it("clears validation error when going back", async () => {
+    it("enables Next button once validation passes", async () => {
       const user = userEvent.setup();
-      let shouldFail = true;
+      let valid = false;
       const steps = buildSteps([
-        { validate: () => true },
-        { validate: () => (shouldFail ? "Error on step 2" : true) },
+        { validate: () => (valid ? true : "Error on step 1") },
       ]);
-      render(<Form steps={steps} onSubmit={onSubmit} />);
+      const { rerender } = render(
+        <Form steps={steps} onSubmit={onSubmit} />
+      );
 
-      await user.click(screen.getByText("Next"));
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Error on step 2")).toBeInTheDocument();
+      // Initially disabled
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
 
-      await user.click(screen.getByText("Previous"));
-      expect(screen.queryByText("Error on step 2")).not.toBeInTheDocument();
+      // Simulate the condition becoming valid
+      valid = true;
+      const updatedSteps = buildSteps([
+        { validate: () => (valid ? true : "Error on step 1") },
+      ]);
+      rerender(<Form steps={updatedSteps} onSubmit={onSubmit} />);
+
+      expect(nextButton).not.toBeDisabled();
+      await user.click(screen.getByText("Next"));
+      expect(screen.getByTestId("step-2-content")).toBeInTheDocument();
     });
 
     it("allows navigation when validation passes", async () => {
@@ -224,9 +231,9 @@ describe("Form Component — Multi-Stage Navigation", () => {
 
       await user.click(screen.getByText("Next"));
       await user.click(screen.getByText("Next"));
-      await user.click(screen.getByText("Submit"));
 
-      expect(screen.getByText("Status is required")).toBeInTheDocument();
+      const submitButton = screen.getByText("Submit").closest("button")!;
+      expect(submitButton).toBeDisabled();
       expect(onSubmit).not.toHaveBeenCalled();
     });
 

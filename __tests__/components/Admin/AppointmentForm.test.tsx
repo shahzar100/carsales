@@ -75,52 +75,43 @@ describe("AppointmentForm Component", () => {
 
   // ── Step 1: Customer Validation ────────────────────────────
   describe("Step 1 — Customer Details Validation", () => {
-    it("blocks next when name is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when name is empty", () => {
       render(<AppointmentForm />);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Customer name is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when email is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when email is empty", () => {
       render(<AppointmentForm />);
       setInput("e.g. John Smith", "John Smith");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Email is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("rejects invalid email format", async () => {
-      const user = userEvent.setup();
+    it("rejects invalid email format", () => {
       render(<AppointmentForm />);
       setInput("e.g. John Smith", "John Smith");
       setInput("e.g. john@example.com", "not-an-email");
       setInput("e.g. 07700 900000", "07700 900000");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please enter a valid email address")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("blocks next when phone is empty", async () => {
-      const user = userEvent.setup();
+    it("blocks next when phone is empty", () => {
       render(<AppointmentForm />);
       setInput("e.g. John Smith", "John Smith");
       setInput("e.g. john@example.com", "john@example.com");
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Phone number is required")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
-    it("rejects invalid phone format", async () => {
-      const user = userEvent.setup();
+    it("rejects invalid phone format", () => {
       render(<AppointmentForm />);
       setInput("e.g. John Smith", "John Smith");
       setInput("e.g. john@example.com", "john@example.com");
       setInput("e.g. 07700 900000", "abc");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please enter a valid phone number")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 2 with valid data", async () => {
@@ -149,10 +140,8 @@ describe("AppointmentForm Component", () => {
       const user = userEvent.setup();
       render(<AppointmentForm />);
       await goToStep2(user);
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please select a service type")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 3 after selecting a service", async () => {
@@ -184,21 +173,20 @@ describe("AppointmentForm Component", () => {
       const user = userEvent.setup();
       render(<AppointmentForm />);
       await goToStep3(user);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Please select a date")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("blocks next when time is not selected", async () => {
       const user = userEvent.setup();
       render(<AppointmentForm />);
       await goToStep3(user);
-      // Set a future date — FormInput doesn't use htmlFor, so query by input type
       const dateInput = document.querySelector(
         'input[type="date"]'
       ) as HTMLInputElement;
       fireEvent.change(dateInput, { target: { value: futureDate() } });
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Please select a time")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances to step 4 with valid date and time", async () => {

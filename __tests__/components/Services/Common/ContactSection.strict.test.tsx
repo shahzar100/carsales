@@ -27,6 +27,12 @@ describe("ContactSection Component - STRICT REQUIREMENTS", () => {
     backgroundColor = "bg-gray-900",
     textColor = "text-white",
   }: any) => {
+    const sanitizeUrl = (url: string): string => {
+      if (!url) return "#";
+      if (/^(javascript|data|vbscript):/i.test(url)) return "#";
+      return url;
+    };
+
     const getActionClasses = (style: string, isPrimary: boolean = true) => {
       const baseClasses =
         "rounded-lg px-8 py-3 font-medium transition-colors duration-200";
@@ -44,18 +50,20 @@ describe("ContactSection Component - STRICT REQUIREMENTS", () => {
     };
 
     const renderAction = (action: any, isPrimary: boolean = true) => {
+      if (!action) return null;
       const classes = getActionClasses(action.style, isPrimary);
+      const safeUrl = sanitizeUrl(action.url);
 
       if (action.type === "link") {
         return (
-          <Link href={action.url} className={classes}>
+          <Link href={safeUrl} className={classes}>
             {action.text}
           </Link>
         );
       }
 
       return (
-        <a href={action.url} className={classes}>
+        <a href={safeUrl} className={classes} tabIndex={0}>
           {action.text}
         </a>
       );
@@ -71,11 +79,14 @@ describe("ContactSection Component - STRICT REQUIREMENTS", () => {
         </div>
 
         <div className="mb-8 grid gap-8 md:grid-cols-2">
-          {primaryActions.map((action: any, index: number) => (
-            <div key={index} className="rounded-xl bg-gray-800 p-6">
-              {renderAction(action, true)}
-            </div>
-          ))}
+          {primaryActions.map((action: any, index: number) => {
+            if (!action) return null;
+            return (
+              <div key={index} className="rounded-xl bg-gray-800 p-6">
+                {renderAction(action, true)}
+              </div>
+            );
+          })}
         </div>
 
         {secondaryActions && (
@@ -214,7 +225,7 @@ describe("ContactSection Component - STRICT REQUIREMENTS", () => {
         expect(element).not.toHaveAttribute("tabindex", "-1");
 
         // STRICT: Focus should be visible
-        fireEvent.focus(element);
+        element.focus();
         expect(document.activeElement).toBe(element);
       });
     });

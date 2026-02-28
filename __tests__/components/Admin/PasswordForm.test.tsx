@@ -66,11 +66,10 @@ describe("PasswordForm Component", () => {
 
   // ── Step 1: Choose Action ──────────────────────────────────
   describe("Step 1 — Choose Action Validation", () => {
-    it("blocks next when no action is selected", async () => {
-      const user = userEvent.setup();
+    it("blocks next when no action is selected", () => {
       render(<PasswordForm />);
-      await user.click(screen.getByText("Next"));
-      expect(screen.getByText("Please select an action")).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("advances after selecting Reset Password", async () => {
@@ -128,10 +127,8 @@ describe("PasswordForm Component", () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep2(user);
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please enter a username or email")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("blocks next when user has not been looked up", async () => {
@@ -139,10 +136,8 @@ describe("PasswordForm Component", () => {
       render(<PasswordForm />);
       await goToStep2(user);
       setInput("e.g. jsmith or john@example.com", "someuser");
-      await user.click(screen.getByText("Next"));
-      expect(
-        screen.getByText("Please look up and verify the user first")
-      ).toBeInTheDocument();
+      const nextButton = screen.getByText("Next").closest("button")!;
+      expect(nextButton).toBeDisabled();
     });
 
     it("shows Look Up button", async () => {

@@ -148,6 +148,8 @@ const PasswordForm = () => {
           if (!data.identifier.trim())
             return "Please enter a username or email";
           if (!foundUser) return "Please look up and verify the user first";
+          if (data.action === "reminder" && !foundUser.email)
+            return "This user has no email address. Use Reset Password instead.";
           return true;
         },
         content: (
@@ -191,6 +193,14 @@ const PasswordForm = () => {
                 <InfoBanner variant="success">
                   User found — confirm the details below are correct.
                 </InfoBanner>
+
+                {data.action === "reminder" && !foundUser.email && (
+                  <InfoBanner variant="error">
+                    This user has no email address on file. A password reminder
+                    cannot be sent. Use{" "}
+                    <span className="font-medium">Reset Password</span> instead.
+                  </InfoBanner>
+                )}
                 <SummaryCard title="User Found">
                   <SummaryRow label="Username" value={foundUser.username} />
                   <SummaryRow label="Email" value={foundUser.email} />

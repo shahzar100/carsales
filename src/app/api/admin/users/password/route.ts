@@ -125,6 +125,16 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Password Reminder (email reset link) ────────────────
+    if (!user.email) {
+      return NextResponse.json(
+        {
+          error:
+            "This user has no email address on file. A password reminder cannot be sent.",
+        },
+        { status: 400 }
+      );
+    }
+
     const resetToken = crypto.randomBytes(32).toString("hex");
     const resetTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
 
