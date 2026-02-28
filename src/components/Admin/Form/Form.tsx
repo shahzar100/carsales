@@ -1,11 +1,7 @@
 "use client";
 import React, { useState, useCallback } from "react";
 import { Check } from "lucide-react";
-import {
-  NextButton,
-  PreviousButton,
-  SubmitButton,
-} from "./FormPrimitives";
+import { NextButton, PreviousButton, SubmitButton } from "./FormPrimitives";
 
 export interface FormStep {
   title: string;

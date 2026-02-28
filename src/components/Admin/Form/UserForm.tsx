@@ -21,7 +21,10 @@ interface UserFormData {
 
 // ── Helpers ──────────────────────────────────────────────────
 const roleBadge = (role: string) => {
-  const config: Record<string, { colour: "red" | "amber" | "blue"; label: string }> = {
+  const config: Record<
+    string,
+    { colour: "red" | "amber" | "blue"; label: string }
+  > = {
     admin: { colour: "red", label: "Admin" },
     manager: { colour: "amber", label: "Manager" },
     staff: { colour: "blue", label: "Staff" },
@@ -169,9 +172,7 @@ const UserForm = () => {
                 <SummaryCard title="New Admin User">
                   <SummaryRow label="Username" value={data.username} />
                   <SummaryRow label="Email" value={data.email} />
-                  <SummaryRow label="Role">
-                    {roleBadge(data.role)}
-                  </SummaryRow>
+                  <SummaryRow label="Role">{roleBadge(data.role)}</SummaryRow>
                   <SummaryRow
                     label="Password"
                     value="Auto-generated on submit"

@@ -102,4 +102,7 @@ export interface AdminUser {
   role: "staff" | "manager" | "admin";
   createdAt: Date;
   lastLogin?: Date;
+  resetToken?: string;
+  resetTokenExpiry?: Date;
+  updatedAt?: Date;
 }

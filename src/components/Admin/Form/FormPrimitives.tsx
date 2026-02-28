@@ -220,11 +220,7 @@ export const CopyableCode: React.FC<{
   value: string;
   title?: string;
   description?: string;
-}> = ({
-  value,
-  title = "Success",
-  description,
-}) => {
+}> = ({ value, title = "Success", description }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
