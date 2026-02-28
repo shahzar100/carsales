@@ -34,7 +34,7 @@ const Modal = ({ title, children, onClose, size = "lg" }: ModalProps) => {
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50">
       <div
         className={`flex flex-col gap-4 overflow-y-auto rounded-lg border bg-white p-8 ${sizeClasses[size]}`}
       >
