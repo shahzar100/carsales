@@ -73,7 +73,7 @@ const Filters: React.FC<FiltersProps> = ({
   };
 
   return (
-    <div className="flex w-full flex-wrap gap-4 rounded-xl border border-4 border-gray-200 bg-white p-6 shadow-sm">
+    <div className="flex w-full flex-wrap gap-4 rounded-xl border-4 border-gray-200 bg-white p-6 shadow-sm">
       {/* Header Section */}
       <div>
         <h2 className="text-xl font-bold text-gray-900">Car Inventory</h2>

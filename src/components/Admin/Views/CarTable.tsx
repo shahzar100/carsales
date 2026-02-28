@@ -102,7 +102,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
       <div>
         <table className="min-h-96 w-full">
           <thead>
-            <tr className="border-b-2 border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+            <tr className="border-b-2 border-gray-200 bg-linear-to-r from-gray-50 to-gray-100">
               <th className="px-5 py-4 text-left text-xs font-bold tracking-wider text-gray-700 uppercase">
                 Vehicle
               </th>
@@ -124,7 +124,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               <th className="px-4 py-4 text-left text-xs font-bold tracking-wider text-gray-700 uppercase">
                 Added
               </th>
-              <th className="w-56 border-l-2 border-gray-200 bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 text-center text-xs font-bold tracking-wider text-gray-700 uppercase">
+              <th className="w-56 border-l-2 border-gray-200 bg-linear-to-r from-slate-50 to-slate-100 px-6 py-4 text-center text-xs font-bold tracking-wider text-gray-700 uppercase">
                 Actions
               </th>
             </tr>
@@ -153,7 +153,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                   {/* Vehicle Info with Image */}
                   <td className="px-5 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-200">
+                      <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-200">
                         {car.image ? (
                           <Image
                             src={"/tesla.webp"}
@@ -162,7 +162,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
                             <span className="text-2xl text-gray-400">🖼️</span>
                           </div>
                         )}
@@ -229,13 +229,13 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                   </td>
 
                   {/* Actions Hub - Visual separation */}
-                  <td className="w-56 border-l-2 border-gray-100 bg-gradient-to-r from-slate-50/50 to-transparent px-6 py-5">
+                  <td className="w-56 border-l-2 border-gray-100 bg-linear-to-r from-slate-50/50 to-transparent px-6 py-5">
                     <div className="flex items-center justify-center gap-4">
                       {/* Featured Toggle */}
                       <button
                         className={`flex h-10 w-10 items-center justify-center rounded-xl text-xl shadow-sm transition-all duration-200 ${
                           car.featured
-                            ? "bg-gradient-to-br from-yellow-100 to-amber-100 ring-2 ring-yellow-300 hover:scale-110 hover:shadow-md"
+                            ? "bg-linear-to-br from-yellow-100 to-amber-100 ring-2 ring-yellow-300 hover:scale-110 hover:shadow-md"
                             : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-yellow-50 hover:text-yellow-500 hover:ring-yellow-200"
                         }`}
                         title={
@@ -248,7 +248,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                       </button>
 
                       {/* Divider */}
-                      <div className="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+                      <div className="h-8 w-px bg-linear-to-b from-transparent via-gray-300 to-transparent"></div>
 
                       {/* Action Buttons */}
                       <CarActions car={car} />
@@ -263,11 +263,11 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
 
       {/* Footer with summary and pagination */}
       {cars.length > 0 && (
-        <div className="border-t-2 border-gray-200 bg-gradient-to-r from-gray-50 to-slate-50 px-6 py-5">
+        <div className="border-t-2 border-gray-200 bg-linear-to-r from-gray-50 to-slate-50 px-6 py-5">
           {/* Summary */}
           <div className="flex flex-wrap items-center gap-8 text-sm">
             <div className="flex items-center gap-2.5">
-              <span className="h-3 w-3 rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-sm"></span>
+              <span className="h-3 w-3 rounded-full bg-linear-to-br from-green-400 to-green-600 shadow-sm"></span>
               <span className="font-medium text-gray-700">
                 Available:{" "}
                 <span className="text-gray-900">
@@ -276,7 +276,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               </span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="h-3 w-3 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 shadow-sm"></span>
+              <span className="h-3 w-3 rounded-full bg-linear-to-br from-yellow-400 to-amber-500 shadow-sm"></span>
               <span className="font-medium text-gray-700">
                 Reserved:{" "}
                 <span className="text-gray-900">
@@ -285,7 +285,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               </span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="h-3 w-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-sm"></span>
+              <span className="h-3 w-3 rounded-full bg-linear-to-br from-red-400 to-red-600 shadow-sm"></span>
               <span className="font-medium text-gray-700">
                 Sold:{" "}
                 <span className="text-gray-900">
@@ -363,9 +363,9 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page as number)}
-                        className={`min-w-[40px] rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                        className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
                           currentPage === page
-                            ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md"
+                            ? "bg-linear-to-br from-blue-500 to-blue-600 text-white shadow-md"
                             : "bg-white text-gray-600 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"
                         }`}
                       >

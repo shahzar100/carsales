@@ -154,7 +154,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute z-[9999] mt-2 w-full">
+        <div className="absolute z-9999 mt-2 w-full">
           <ul
             ref={listRef}
             role="listbox"
