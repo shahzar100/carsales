@@ -31,7 +31,7 @@
  */
 
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import {
   Search,
   Calendar,
@@ -64,6 +64,20 @@ interface Booking {
 }
 
 export default function BookingLookupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      }
+    >
+      <BookingLookupContent />
+    </Suspense>
+  );
+}
+
+function BookingLookupContent() {
   const searchParams = useSearchParams();
   const [reference, setReference] = useState(searchParams.get("ref") || "");
   const [booking, setBooking] = useState<Booking | null>(null);

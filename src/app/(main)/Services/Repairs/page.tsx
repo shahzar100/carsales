@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import {
   Wrench,
   CheckCircle,
@@ -6,6 +7,8 @@ import {
   Shield,
   Zap,
   Settings,
+  Truck,
+  ArrowRight,
 } from "lucide-react";
 import {
   ServiceHero,
@@ -14,10 +17,7 @@ import {
   WhyChooseUs,
   BlackRedSection,
 } from "@/components/Services/Common";
-import {
-  RepairServiceGrid,
-  EmergencyBanner,
-} from "@/components/Services/Repairs";
+import { RepairServiceGrid } from "@/components/Services/Repairs";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Repairs = () => {
@@ -74,15 +74,6 @@ const Repairs = () => {
         "Transfer Case Service",
       ],
     },
-  ];
-
-  const emergencyServices = [
-    "Roadside Assistance",
-    "Jump Start Service",
-    "Flat Tire Repair",
-    "Lockout Service",
-    "Emergency Towing",
-    "24/7 Diagnostic",
   ];
 
   const repairProcess = [
@@ -142,7 +133,32 @@ const Repairs = () => {
 
       <ServiceHero {...heroProps} />
 
-      <EmergencyBanner emergencyServices={emergencyServices} />
+      {/* Breakdown Recovery Link */}
+      <div className="mb-8 md:mb-16">
+        <Link
+          href="/Recoveries"
+          className="group flex flex-col items-center gap-4 rounded-xl border border-red-200 bg-red-50 p-5 transition-all duration-300 hover:border-red-300 hover:shadow-lg sm:flex-row sm:justify-between sm:p-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-md shadow-red-500/20">
+              <Truck size={24} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">
+                Breakdown Recovery Service
+              </h3>
+              <p className="text-sm text-red-700">
+                24/7 emergency roadside assistance &amp; vehicle recovery across
+                London.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 font-semibold text-white transition-colors group-hover:bg-red-500">
+            View Recovery Services
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </div>
+        </Link>
+      </div>
 
       <RepairServiceGrid repairServices={repairServices} />
 

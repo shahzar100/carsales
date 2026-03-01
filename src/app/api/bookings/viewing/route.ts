@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (!shopInfo) {
       shopInfo = {
+        _id: "default",
         businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
         address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
         city: process.env.NEXT_BUSINESS_CITY || "City",
@@ -78,7 +79,15 @@ export async function POST(request: NextRequest) {
         zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
         phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
         email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
-        hours: {},
+        hours: {
+          monday: "9:00 AM - 6:00 PM",
+          tuesday: "9:00 AM - 6:00 PM",
+          wednesday: "9:00 AM - 6:00 PM",
+          thursday: "9:00 AM - 6:00 PM",
+          friday: "9:00 AM - 6:00 PM",
+          saturday: "9:00 AM - 4:00 PM",
+          sunday: "Closed",
+        },
         updatedAt: new Date(),
       };
     }

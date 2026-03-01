@@ -222,7 +222,7 @@ const Services = () => {
               appointment.
             </p>
           </div>
-          <div className="mx-auto max-w-4xl rounded-xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl">
+          <div className="mx-auto max-w-4xl rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
             <ServiceBookingForm />
           </div>
         </div>

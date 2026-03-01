@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
 
     if (!shopInfo) {
       shopInfo = {
+        _id: "default",
         businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
         address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
         city: process.env.NEXT_BUSINESS_CITY || "City",

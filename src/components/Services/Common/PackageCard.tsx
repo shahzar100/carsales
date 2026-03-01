@@ -92,7 +92,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
       className={`group relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 ${
         popular
           ? `border border-red-500/50 shadow-2xl shadow-red-500/20 lg:scale-105`
-          : `border border-white/[0.12] hover:-translate-y-1 hover:border-white/25 hover:shadow-xl hover:shadow-red-500/10`
+          : `border border-white/12 hover:-translate-y-1 hover:border-white/25 hover:shadow-xl hover:shadow-red-500/10`
       }`}
       style={{
         background: popular
@@ -103,16 +103,16 @@ const PackageCard: React.FC<PackageCardProps> = ({
       }}
     >
       {/* Glass shine overlay */}
-      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-red-600/[0.1] via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-red-600/10 via-transparent to-transparent" />
 
       {/* Card inner */}
       <div className="relative flex flex-1 flex-col p-5 sm:p-7">
         {/* Top accent line */}
         <div
-          className={`absolute top-0 right-4 left-4 h-[2px] rounded-full ${
+          className={`absolute top-0 right-4 left-4 h-0.5 rounded-full ${
             popular
-              ? "bg-gradient-to-r from-transparent via-red-500 to-transparent"
-              : "bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              ? "bg-linear-to-r from-transparent via-red-500 to-transparent"
+              : "bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           }`}
         />
 
@@ -151,7 +151,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
         </div>
 
         {/* Divider */}
-        <div className="my-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="my-5 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
 
         {/* Body */}
         <div className="flex-1">{children}</div>

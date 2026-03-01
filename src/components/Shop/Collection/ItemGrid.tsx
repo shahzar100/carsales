@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Item from "./Item";
-import Button from "@/components/Helpful/Buttons/Button";
 import { ArrowLeftCircle, ArrowRightCircle } from "lucide-react";
 
 interface Car {
@@ -52,22 +51,23 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
       <div className="relative flex flex-col gap-4 lg:hidden">
         <Item car={cars[car]} />
         <div className="flex items-center justify-center gap-4">
-          <Button
+          <button
             onClick={() => setCar(car - 1)}
             disabled={car === 0}
-            icon={ArrowLeftCircle}
-            iconSize="large"
-          />
+            className="rounded-full p-1 text-gray-700 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:text-gray-300"
+          >
+            <ArrowLeftCircle className="h-8 w-8" />
+          </button>
           <span>
             {car + 1} of {cars.length}
           </span>
-          <Button
+          <button
             onClick={() => setCar(car + 1)}
             disabled={car === cars.length - 1}
-            icon={ArrowRightCircle}
-            iconPlacement="right"
-            iconSize="large"
-          />
+            className="rounded-full p-1 text-gray-700 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:text-gray-300"
+          >
+            <ArrowRightCircle className="h-8 w-8" />
+          </button>
         </div>
       </div>
     </div>

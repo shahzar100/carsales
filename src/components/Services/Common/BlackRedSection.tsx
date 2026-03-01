@@ -20,7 +20,7 @@ const BlackRedSection: React.FC<BlackRedSectionProps> = ({
     >
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/[0.04] blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-125 w-175 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/4 blur-3xl" />
       </div>
       <div className="relative mx-auto max-w-7xl">{children}</div>
     </div>

@@ -8,6 +8,7 @@ import Filters from "./Filters";
 import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import { filterCars } from "@/lib/utils/filterCars";
 import CarCard from "./CarCard";
+import CarListCard from "./CarListCard";
 
 const CarViewContent = ({
   cars,
@@ -90,7 +91,13 @@ const CarViewContent = ({
           {filteredCars.length > 0 && viewType === "table" && (
             <CarTable cars={filteredCars} />
           )}
-          {filteredCars.length > 0 && viewType === "list" && {}}
+          {filteredCars.length > 0 && viewType === "list" && (
+            <div className="flex flex-col gap-4">
+              {filteredCars.map((car) => (
+                <CarListCard key={car._id} car={car} variant="admin" />
+              ))}
+            </div>
+          )}
         </>
       )}
 
