@@ -1,0 +1,124 @@
+import React from "react";
+import { ActivityItem } from "./types";
+import { Calendar, Wrench, Eye, Clock } from "lucide-react";
+
+// ═════════════════════════════════════════════════════════════
+// RecentActivityTable — latest bookings across all types
+// ═════════════════════════════════════════════════════════════
+
+interface RecentActivityTableProps {
+  data: ActivityItem[];
+}
+
+const statusBadge = (status: string) => {
+  const styles: Record<string, string> = {
+    pending: "bg-amber-100 text-amber-700",
+    confirmed: "bg-blue-100 text-blue-700",
+    completed: "bg-emerald-100 text-emerald-700",
+    cancelled: "bg-red-100 text-red-700",
+  };
+  return (
+    <span
+      className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${styles[status] || "bg-gray-100 text-gray-600"}`}
+    >
+      {status}
+    </span>
+  );
+};
+
+const typeBadge = (type: "service" | "viewing") =>
+  type === "service" ? (
+    <span className="inline-flex items-center gap-1 text-purple-600">
+      <Wrench className="h-3.5 w-3.5" /> Service
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 text-blue-600">
+      <Eye className="h-3.5 w-3.5" /> Viewing
+    </span>
+  );
+
+const formatDate = (d: string) => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const timeAgo = (iso: string) => {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+};
+
+const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
+  <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="border-b border-gray-100 px-6 py-4">
+      <div className="flex items-center gap-2">
+        <Clock className="h-5 w-5 text-gray-400" />
+        <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+      </div>
+      <p className="mt-1 text-sm text-gray-500">Latest bookings & viewings</p>
+    </div>
+
+    {data.length === 0 ? (
+      <div className="p-8 text-center text-sm text-gray-400">
+        No recent activity
+      </div>
+    ) : (
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-100 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3">Type</th>
+              <th className="px-6 py-3">Reference</th>
+              <th className="px-6 py-3">Customer</th>
+              <th className="px-6 py-3">Detail</th>
+              <th className="px-6 py-3">Date</th>
+              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3 text-right">Created</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {data.map((item) => (
+              <tr
+                key={item.reference}
+                className="transition-colors hover:bg-gray-50/50"
+              >
+                <td className="px-6 py-3 text-xs font-medium whitespace-nowrap">
+                  {typeBadge(item.type)}
+                </td>
+                <td className="px-6 py-3 font-mono text-xs whitespace-nowrap text-gray-600">
+                  {item.reference}
+                </td>
+                <td className="px-6 py-3 font-medium whitespace-nowrap text-gray-900">
+                  {item.customer}
+                </td>
+                <td className="max-w-45 truncate px-6 py-3 text-gray-500">
+                  {item.detail || "—"}
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap text-gray-500">
+                  {formatDate(item.date)}
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap">
+                  {statusBadge(item.status)}
+                </td>
+                <td className="px-6 py-3 text-right text-xs whitespace-nowrap text-gray-400">
+                  {item.createdAt ? timeAgo(item.createdAt) : "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+);
+
+export default RecentActivityTable;

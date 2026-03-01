@@ -1,0 +1,12 @@
+export { default as KPIGrid } from "./KPIGrid";
+export { default as StatCard } from "./StatCard";
+export { default as BookingsChart } from "./BookingsChart";
+export { default as BookingsByDayChart } from "./BookingsByDayChart";
+export { default as InventoryPieChart } from "./InventoryPieChart";
+export { default as PriceDistributionChart } from "./PriceDistributionChart";
+export { default as PopularCarsChart } from "./PopularCarsChart";
+export { default as ServiceTypeChart } from "./ServiceTypeChart";
+export { default as RecentActivityTable } from "./RecentActivityTable";
+export { default as UpcomingAppointments } from "./UpcomingAppointments";
+export { default as DashboardSkeleton } from "./DashboardSkeleton";
+export type * from "./types";

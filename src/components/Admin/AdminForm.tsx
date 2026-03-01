@@ -10,7 +10,7 @@ const AdminForm = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);

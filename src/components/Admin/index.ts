@@ -8,6 +8,8 @@ export { default as AdminNavigationTabs } from "./Navigation/AdminNavigationTabs
 export { default as ServiceBookingsTab } from "./Tabs/ServiceBookingsTab";
 export { default as ViewingBookingsTab } from "./Tabs/ViewingBookingsTab";
 export { default as ShopSettingsTab } from "./Tabs/ShopSettingsTab";
+export { default as CancelBookingModal } from "./Tabs/CancelBookingModal";
+export { default as BookingDetailsModal } from "./Tabs/BookingDetailsModal";
 
 // Components
 export { default as AdminForm } from "./AdminForm";
