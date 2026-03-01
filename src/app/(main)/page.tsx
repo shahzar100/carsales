@@ -12,10 +12,10 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="container mx-auto px-6">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
+            <h2 className="section-title mb-4">
               Why Choose Our Car Viewing Service?
             </h2>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            <p className="description mx-auto max-w-2xl">
               We make car buying simple, transparent, and convenient with our
               professional viewing service.
             </p>
@@ -26,9 +26,7 @@ export default function Home() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
                 <Car className="text-blue-600" size={32} />
               </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">
-                Quality Vehicles
-              </h3>
+              <h3 className="heading-4 mb-2">Quality Vehicles</h3>
               <p className="text-gray-600">
                 Hand-picked, inspected cars from trusted sources
               </p>
@@ -38,9 +36,7 @@ export default function Home() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                 <Calendar className="text-green-600" size={32} />
               </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">
-                Easy Booking
-              </h3>
+              <h3 className="heading-4 mb-2">Easy Booking</h3>
               <p className="text-gray-600">
                 Schedule viewings at your convenience, 7 days a week
               </p>
@@ -50,9 +46,7 @@ export default function Home() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
                 <Shield className="text-purple-600" size={32} />
               </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">
-                No Pressure
-              </h3>
+              <h3 className="heading-4 mb-2">No Pressure</h3>
               <p className="text-gray-600">
                 Take your time, ask questions, and make informed decisions
               </p>
@@ -62,9 +56,7 @@ export default function Home() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
                 <Award className="text-yellow-600" size={32} />
               </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">
-                Expert Advice
-              </h3>
+              <h3 className="heading-4 mb-2">Expert Advice</h3>
               <p className="text-gray-600">
                 Knowledgeable staff to help you find the perfect match
               </p>
@@ -76,7 +68,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="bg-gray-900 py-20 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="mb-4 text-3xl font-bold lg:text-4xl">
+          <h2 className="section-title mb-4 text-white">
             Ready to Find Your Next Car?
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-gray-300">

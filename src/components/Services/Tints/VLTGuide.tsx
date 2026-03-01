@@ -42,7 +42,7 @@ const VLTGuide: React.FC = () => {
 
   return (
     <div className="mb-8 md:mb-16">
-      <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl">
+      <h2 className="section-title mb-8 text-center">
         Tint Darkness Guide (VLT)
       </h2>
       <div className="rounded-2xl bg-gray-50 p-4 sm:p-8">
@@ -56,9 +56,7 @@ const VLTGuide: React.FC = () => {
                   {option.vlt}
                 </span>
               </div>
-              <h3 className="mb-2 font-semibold text-gray-900">
-                {option.name}
-              </h3>
+              <h3 className="heading-4 mb-2">{option.name}</h3>
               <p className="text-sm text-gray-600">{option.description}</p>
             </div>
           ))}

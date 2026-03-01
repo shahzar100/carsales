@@ -16,7 +16,7 @@ export default function MainLayout({
           <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Company Info */}
             <div>
-              <h3 className="mb-4 text-lg font-bold text-gray-900">
+              <h3 className="heading-3 mb-4">
                 {process.env.NEXT_PUBLIC_BUSINESS_NAME}
               </h3>
               <p className="mb-4 text-sm text-gray-600">
@@ -75,9 +75,7 @@ export default function MainLayout({
 
             {/* Browse & Services */}
             <div>
-              <h4 className="mb-4 font-semibold text-gray-900">
-                Browse & Services
-              </h4>
+              <h4 className="heading-4 mb-4">Browse & Services</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <NavLink href="/BrowseFleet" text="Browse Fleet" />
@@ -102,9 +100,7 @@ export default function MainLayout({
 
             {/* Support & Info */}
             <div>
-              <h4 className="mb-4 font-semibold text-gray-900">
-                Support & Info
-              </h4>
+              <h4 className="heading-4 mb-4">Support & Info</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <NavLink href="/FAQ" text="FAQ" dropdown={false} />
@@ -120,9 +116,7 @@ export default function MainLayout({
 
             {/* Admin & Legal */}
             <div>
-              <h4 className="mb-4 font-semibold text-gray-900">
-                Admin & Legal
-              </h4>
+              <h4 className="heading-4 mb-4">Admin & Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <NavLink href="/admin/dashboard" text="Admin Dashboard" />

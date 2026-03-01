@@ -55,9 +55,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="mb-2 text-2xl font-bold text-gray-900">
-            Car Not Found
-          </h1>
+          <h1 className="page-title mb-2">Car Not Found</h1>
           <p className="text-gray-600">
             The car you&apos;re looking for doesn&apos;t exist.
           </p>

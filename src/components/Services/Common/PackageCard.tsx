@@ -88,7 +88,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
     <div
       className={`relative flex flex-col rounded-2xl border-2 bg-white p-4 transition-all duration-300 sm:p-7 ${
         popular
-          ? `lg:scale-105 transform ${c.border} shadow-lg`
+          ? `transform lg:scale-105 ${c.border} shadow-lg`
           : `border-gray-200 ${c.hoverBorder} hover:shadow-md`
       }`}
     >
@@ -105,7 +105,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
 
       {/* Header */}
       <div className="mb-4 text-center">
-        <h3 className="mb-0.5 text-2xl font-bold text-gray-900">{name}</h3>
+        <h3 className="heading-3 mb-0.5 text-center font-bold">{name}</h3>
         {subtitle && (
           <div className={`mb-1 text-base font-medium ${c.text}`}>
             {subtitle}

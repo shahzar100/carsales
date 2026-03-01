@@ -31,7 +31,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   return (
     <div className="h-fit rounded-lg bg-white p-6 shadow-md">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+        <h2 className="section-title flex items-center gap-2">
           <Filter size={20} />
           Filters
         </h2>

@@ -44,9 +44,7 @@ export default function BookingDetailsModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              Booking Details
-            </h3>
+            <h3 className="heading-3">Booking Details</h3>
             <p className="mt-0.5 font-mono text-sm text-gray-500">
               {booking.bookingReference}
             </p>

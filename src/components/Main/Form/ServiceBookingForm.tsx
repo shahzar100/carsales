@@ -261,9 +261,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
                         {locked.icon}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {locked.title}
-                        </h4>
+                        <h4 className="heading-4">{locked.title}</h4>
                         <p className="text-sm text-gray-600">
                           {locked.description}
                         </p>

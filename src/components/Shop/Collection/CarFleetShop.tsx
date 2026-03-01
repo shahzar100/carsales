@@ -86,9 +86,7 @@ const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
         <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8">
           {/* Header */}
           <div>
-            <h1 className="mb-4 text-3xl font-bold text-gray-900">
-              Browse Our Car Collection
-            </h1>
+            <h1 className="page-title mb-4">Browse Our Car Collection</h1>
             <p className="text-gray-600">
               Find your perfect car and book a viewing appointment
             </p>

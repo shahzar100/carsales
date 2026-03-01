@@ -22,9 +22,7 @@ interface BookingsChartProps {
 
 const BookingsChart: React.FC<BookingsChartProps> = ({ data }) => (
   <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h3 className="mb-1 text-lg font-semibold text-gray-900">
-      Bookings Over Time
-    </h3>
+    <h3 className="heading-3 mb-1">Bookings Over Time</h3>
     <p className="mb-6 text-sm text-gray-500">Last 6 months</p>
 
     <div className="h-72">

@@ -21,9 +21,7 @@ interface PopularCarsChartProps {
 
 const PopularCarsChart: React.FC<PopularCarsChartProps> = ({ data }) => (
   <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h3 className="mb-1 text-lg font-semibold text-gray-900">
-      Most Viewed Cars
-    </h3>
+    <h3 className="heading-3 mb-1">Most Viewed Cars</h3>
     <p className="mb-6 text-sm text-gray-500">
       Top vehicles by viewing bookings
     </p>

@@ -75,15 +75,13 @@ const Services = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Hero Section */}
       <div className="mb-16 text-center">
-        <h1 className="mb-6 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
-          Professional Auto Services
-        </h1>
-        <p className="mx-auto mb-8 max-w-3xl text-lg text-gray-600 sm:text-xl">
+        <h1 className="page-title mb-6">Professional Auto Services</h1>
+        <p className="description mx-auto mb-8 max-w-3xl">
           From premium detailing to expert repairs, we provide comprehensive
           automotive services to keep your vehicle in peak condition. All
           services backed by our satisfaction guarantee.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500 sm:gap-6">
           <div className="flex items-center gap-1">
             <CheckCircle className="h-5 w-5 text-green-500" />
             Certified Technicians
@@ -143,10 +141,8 @@ const Services = () => {
       {/* Why Choose Us Section */}
       <div className="mb-16 rounded-2xl bg-gray-50 p-8 lg:p-12">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900">
-            Why Choose Our Services?
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600">
+          <h2 className="section-title mb-4">Why Choose Our Services?</h2>
+          <p className="description mx-auto max-w-2xl">
             We combine years of experience with state-of-the-art equipment to
             deliver exceptional results that exceed your expectations.
           </p>
@@ -157,9 +153,7 @@ const Services = () => {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <CheckCircle size={24} />
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">
-              Quality Guarantee
-            </h3>
+            <h3 className="heading-4 mb-2">Quality Guarantee</h3>
             <p className="text-sm text-gray-600">
               100% satisfaction guaranteed on all services
             </p>
@@ -169,9 +163,7 @@ const Services = () => {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Clock size={24} />
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">
-              Fast Turnaround
-            </h3>
+            <h3 className="heading-4 mb-2">Fast Turnaround</h3>
             <p className="text-sm text-gray-600">
               Quick and efficient service without compromising quality
             </p>
@@ -181,7 +173,7 @@ const Services = () => {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Star size={24} />
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">Expert Team</h3>
+            <h3 className="heading-4 mb-2">Expert Team</h3>
             <p className="text-sm text-gray-600">
               Certified professionals with years of experience
             </p>
@@ -191,7 +183,7 @@ const Services = () => {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
               <Shield size={24} />
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">Fully Insured</h3>
+            <h3 className="heading-4 mb-2">Fully Insured</h3>
             <p className="text-sm text-gray-600">
               Complete coverage for your peace of mind
             </p>
@@ -202,9 +194,7 @@ const Services = () => {
       {/* Book a Service */}
       <div id="book" className="scroll-mt-8">
         <div className="mb-6 text-center">
-          <h2 className="mb-2 text-3xl font-bold text-gray-900">
-            Book a Service
-          </h2>
+          <h2 className="section-title mb-2">Book a Service</h2>
           <p className="mx-auto max-w-2xl text-gray-600">
             Ready to get started? Fill in the form below to schedule your
             appointment.

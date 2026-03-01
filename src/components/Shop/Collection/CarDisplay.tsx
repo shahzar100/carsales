@@ -43,9 +43,7 @@ const CarDisplay: React.FC<CarDisplayProps> = ({ car }) => {
 
           {/* Additional Features - Mobile friendly additional info */}
           <div className="rounded-xl bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-bold text-gray-900">
-              Additional Information
-            </h3>
+            <h3 className="heading-3 mb-4">Additional Information</h3>
             <div className="rounded-lg border border-blue-200 bg-linear-to-r from-blue-50 to-green-50 p-4">
               <p className="text-sm text-gray-600">
                 This vehicle has been thoroughly inspected and comes with our

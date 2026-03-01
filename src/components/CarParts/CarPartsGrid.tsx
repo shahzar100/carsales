@@ -104,9 +104,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                 </span>
               </div>
 
-              <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-gray-900">
-                {part.name}
-              </h3>
+              <h3 className="heading-3 mb-2 line-clamp-2">{part.name}</h3>
 
               <p className="mb-3 line-clamp-2 text-sm text-gray-600">
                 {part.description}

@@ -160,9 +160,7 @@ const Tints = () => {
       {/* Book Window Tinting */}
       <div id="book" className="scroll-mt-8">
         <div className="mb-6 text-center">
-          <h2 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
-            Book Your Window Tinting
-          </h2>
+          <h2 className="section-title mb-2">Book Your Window Tinting</h2>
           <p className="mx-auto max-w-2xl text-gray-600">
             Fill in the form below and we&apos;ll confirm your appointment.
           </p>

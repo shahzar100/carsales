@@ -174,9 +174,7 @@ export default function BookingLookupPage() {
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
-            Booking Lookup
-          </h1>
+          <h1 className="page-title mb-2">Booking Lookup</h1>
           <p className="text-gray-600">
             Enter your booking reference to view your appointment details
           </p>
@@ -241,9 +239,7 @@ export default function BookingLookupPage() {
             <div className="space-y-6 p-6">
               {/* Appointment Details */}
               <div>
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  Appointment Details
-                </h3>
+                <h3 className="heading-3 mb-4">Appointment Details</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Calendar className="mt-0.5 h-5 w-5 text-gray-400" />
@@ -277,7 +273,7 @@ export default function BookingLookupPage() {
                   {bookingType === "viewing" && booking.carDetails && (
                     <div className="mt-3 rounded-lg bg-gray-50 p-4">
                       <p className="mb-2 text-sm text-gray-500">Vehicle</p>
-                      <h4 className="text-lg font-bold text-gray-900">
+                      <h4 className="heading-3">
                         {booking.carDetails.year} {booking.carDetails.make}{" "}
                         {booking.carDetails.model}
                       </h4>
@@ -291,9 +287,7 @@ export default function BookingLookupPage() {
 
               {/* Customer Information */}
               <div>
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  Your Information
-                </h3>
+                <h3 className="heading-3 mb-4">Your Information</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Name:</span>

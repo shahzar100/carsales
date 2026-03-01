@@ -156,9 +156,7 @@ const Repairs = () => {
       {/* Book a Repair Service */}
       <div id="book" className="scroll-mt-8">
         <div className="mb-6 text-center">
-          <h2 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
-            Book Your Repair Service
-          </h2>
+          <h2 className="section-title mb-2">Book Your Repair Service</h2>
           <p className="mx-auto max-w-2xl text-gray-600">
             Fill in the form below to schedule your repair appointment.
           </p>

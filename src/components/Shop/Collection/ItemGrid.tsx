@@ -26,7 +26,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
   return (
     <div className="flex flex-col gap-4 lg:gap-8">
       <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="section-title">
           {cars.length} Cars Available for Viewing
         </h2>
         <p className="mt-1 text-gray-600">

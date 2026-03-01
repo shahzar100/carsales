@@ -19,9 +19,7 @@ const ProcessFlow: React.FC<ProcessFlowProps> = ({
 }) => {
   return (
     <div className="mb-8 md:mb-16">
-      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-12">
-        {title}
-      </h2>
+      <h2 className="section-title mb-6 text-center md:mb-12">{title}</h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
         {steps.map((process, index) => (
           <div key={index} className="text-center">
@@ -30,9 +28,7 @@ const ProcessFlow: React.FC<ProcessFlowProps> = ({
             >
               {process.step}
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">
-              {process.title}
-            </h3>
+            <h3 className="heading-4 mb-2">{process.title}</h3>
             <p className="text-sm text-gray-600">{process.description}</p>
           </div>
         ))}

@@ -16,9 +16,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="mb-2 text-2xl font-bold text-gray-900">
-            Invalid Confirmation Link
-          </h1>
+          <h1 className="page-title mb-2">Invalid Confirmation Link</h1>
           <p className="mb-6 text-gray-600">
             This confirmation link is invalid or has expired.
           </p>
@@ -43,10 +41,8 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
               <CheckCircle className="h-12 w-12 text-green-600" />
             </div>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
-            Booking Confirmed! 🎉
-          </h1>
-          <p className="text-lg text-gray-600">
+          <h1 className="page-title mb-2">Booking Confirmed! 🎉</h1>
+          <p className="description">
             Your car viewing appointment has been successfully scheduled.
           </p>
         </div>
@@ -68,7 +64,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
 
         {/* Important Information */}
         <div className="mb-6 rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-900">
+          <h2 className="section-title mb-4 flex items-center">
             <Mail className="mr-2 h-5 w-5 text-blue-600" />
             What Happens Next?
           </h2>

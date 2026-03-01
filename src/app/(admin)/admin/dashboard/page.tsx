@@ -43,10 +43,8 @@ export default async function DashboardPage({
       {/* ── Header ──────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-            Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="page-title tracking-tight">Dashboard</h1>
+          <p className="subtitle mt-1">
             Overview of your dealership performance
           </p>
         </div>

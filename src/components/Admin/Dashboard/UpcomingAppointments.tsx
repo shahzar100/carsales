@@ -56,9 +56,7 @@ const UpcomingAppointments: React.FC<UpcomingAppointmentsProps> = ({
     <div className="border-b border-gray-100 px-6 py-4">
       <div className="flex items-center gap-2">
         <Calendar className="h-5 w-5 text-gray-400" />
-        <h3 className="text-lg font-semibold text-gray-900">
-          Upcoming Appointments
-        </h3>
+        <h3 className="heading-3">Upcoming Appointments</h3>
       </div>
       <p className="mt-1 text-sm text-gray-500">Next 7 days</p>
     </div>

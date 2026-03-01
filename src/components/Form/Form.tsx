@@ -95,7 +95,7 @@ const Form: React.FC<FormProps> = ({
     >
       {/* Step Progress Indicator */}
       <div className="relative overflow-x-auto">
-        <div className="flex items-center justify-between min-w-0">
+        <div className="flex min-w-0 items-center justify-between">
           {steps.map((step, index) => {
             const isActive = index === currentStep;
             const isCompleted = completedSteps.has(index);
@@ -168,9 +168,7 @@ const Form: React.FC<FormProps> = ({
       {/* Step Content */}
       <div className="min-h-50 rounded-xl border border-gray-100 bg-gray-50/50 p-3 sm:p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {steps[currentStep].title}
-          </h3>
+          <h3 className="heading-3">{steps[currentStep].title}</h3>
           {steps[currentStep].description && (
             <p className="mt-1 text-sm text-gray-500">
               {steps[currentStep].description}

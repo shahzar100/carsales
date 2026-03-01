@@ -22,7 +22,7 @@ export default function AdminNavigationTabs() {
 
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between gap-4 border-b bg-white px-4 py-3 shadow-sm">
-      <a href="/admin/dashboard" className="text-xl font-bold text-gray-900">
+      <a href="/admin/dashboard" className="section-title">
         Admin Dashboard
       </a>
       {isLoggedIn && (

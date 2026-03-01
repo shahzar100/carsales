@@ -22,9 +22,7 @@ const CarViewing = () => {
   if (!viewingBooking.carDetails && !isTransitioning) {
     return (
       <div className="p-8 text-center">
-        <h2 className="mb-4 text-2xl font-bold text-gray-900">
-          No Car Selected
-        </h2>
+        <h2 className="section-title mb-4">No Car Selected</h2>
         <p className="mb-6 text-gray-600">
           Please select a car from our fleet to book a viewing.
         </p>
@@ -45,9 +43,7 @@ const CarViewing = () => {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
-      <h2 className="text-center text-2xl font-bold text-gray-900 sm:text-3xl">
-        Book Your Car Viewing
-      </h2>
+      <h2 className="section-title text-center">Book Your Car Viewing</h2>
 
       {/* Car Details Section */}
       <VehicleDetails vehicle={viewingBooking.carDetails} />

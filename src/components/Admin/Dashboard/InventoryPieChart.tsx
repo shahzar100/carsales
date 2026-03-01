@@ -40,7 +40,7 @@ const InventoryPieChart: React.FC<InventoryPieChartProps> = ({
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
+      <h3 className="heading-3 mb-1">{title}</h3>
       {subtitle && <p className="mb-4 text-sm text-gray-500">{subtitle}</p>}
 
       {total === 0 ? (

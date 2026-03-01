@@ -17,7 +17,7 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
 }) => {
   return (
     <div className="mb-8 md:mb-16">
-      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-12">
+      <h2 className="section-title mb-6 text-center md:mb-12">
         Our Repair Services
       </h2>
       <div className="grid gap-8 md:grid-cols-2">
@@ -34,9 +34,7 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
                 >
                   <IconComponent size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">
-                  {category.category}
-                </h3>
+                <h3 className="heading-3">{category.category}</h3>
               </div>
               <div className="grid grid-cols-1 gap-3">
                 {category.services.map((service, idx) => (

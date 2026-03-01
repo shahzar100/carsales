@@ -45,7 +45,7 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
 
   return (
     <div className="mb-16">
-      <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
+      <h2 className="section-title mb-12 text-center">
         Why Choose Our Repair Shop?
       </h2>
       <div className="grid gap-8 md:grid-cols-3">
@@ -58,9 +58,7 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
               >
                 <IconComponent size={32} />
               </div>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                {item.title}
-              </h3>
+              <h3 className="heading-4 mb-3">{item.title}</h3>
               <p className="text-gray-600">{item.description}</p>
             </div>
           );

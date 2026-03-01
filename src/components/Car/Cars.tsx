@@ -52,7 +52,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
     <>
       {/* Header */}
       <div className="flex w-full items-center justify-between gap-2">
-        <h1 className="flex gap-1 text-lg font-bold text-gray-900">
+        <h1 className="heading-3 flex gap-1">
           Car Inventory
           <span className="font-normal text-gray-500">({length})</span>
         </h1>
@@ -95,7 +95,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Title & Price */}
             <div className="mb-3 flex items-start justify-between gap-2">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="heading-3">
                   {car.year} {car.make} {car.model}
                 </h2>
                 <p className="text-xs text-gray-500">

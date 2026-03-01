@@ -99,10 +99,8 @@ const Page = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header Section */}
       <div className="mb-12 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
-          Car Parts & Components
-        </h1>
-        <p className="mx-auto max-w-3xl text-lg text-gray-600">
+        <h1 className="page-title mb-4">Car Parts & Components</h1>
+        <p className="description mx-auto max-w-3xl">
           Browse our extensive collection of quality car parts. Reserve your
           parts today and complete your purchase at our location with expert
           installation available.
@@ -114,15 +112,13 @@ const Page = () => {
 
       {/* Bottom Info Section */}
       <div className="mt-8 rounded-lg bg-red-50 p-4 text-center sm:p-8 md:mt-16">
-        <h2 className="mb-4 text-2xl font-bold text-gray-900">
-          How Part Reservation Works
-        </h2>
+        <h2 className="section-title mb-4">How Part Reservation Works</h2>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           <div className="flex flex-col items-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               1
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">Reserve Online</h3>
+            <h3 className="heading-4 mb-2">Reserve Online</h3>
             <p className="text-sm text-gray-600">
               Browse and reserve the parts you need from our online catalog.
             </p>
@@ -131,9 +127,7 @@ const Page = () => {
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               2
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">
-              Visit Our Location
-            </h3>
+            <h3 className="heading-4 mb-2">Visit Our Location</h3>
             <p className="text-sm text-gray-600">
               Come to our shop to inspect and complete your purchase.
             </p>
@@ -142,9 +136,7 @@ const Page = () => {
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-lg font-bold text-white">
               3
             </div>
-            <h3 className="mb-2 font-semibold text-gray-900">
-              Expert Installation
-            </h3>
+            <h3 className="heading-4 mb-2">Expert Installation</h3>
             <p className="text-sm text-gray-600">
               Get professional installation services from our certified
               mechanics.

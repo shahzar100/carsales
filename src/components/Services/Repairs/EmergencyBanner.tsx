@@ -17,9 +17,7 @@ const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
             <div className="flex items-center">
               <AlertCircle className="mr-4 h-8 w-8 text-red-500" />
               <div>
-                <h3 className="text-lg font-semibold text-red-900">
-                  Emergency Repair Services
-                </h3>
+                <h3 className="heading-3">Emergency Repair Services</h3>
                 <p className="text-red-700">
                   Need immediate assistance? We offer 24/7 emergency repair
                   services.
@@ -40,7 +38,7 @@ const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
 
       {/* Emergency Services */}
       <div className="mb-8 md:mb-16">
-        <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl">
+        <h2 className="section-title mb-8 text-center">
           Emergency & Roadside Services
         </h2>
         <div className="rounded-2xl bg-linear-to-r from-red-500 to-orange-500 p-4 text-white sm:p-8">

@@ -319,7 +319,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+              <h2 className="heading-3 flex items-center gap-2">
                 <Filter className="text-gray-600" size={20} />
                 Filters
               </h2>

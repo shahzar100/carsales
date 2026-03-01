@@ -21,9 +21,7 @@ interface BookingsByDayChartProps {
 
 const BookingsByDayChart: React.FC<BookingsByDayChartProps> = ({ data }) => (
   <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h3 className="mb-1 text-lg font-semibold text-gray-900">
-      Bookings by Day
-    </h3>
+    <h3 className="heading-3 mb-1">Bookings by Day</h3>
     <p className="mb-6 text-sm text-gray-500">Most popular appointment days</p>
 
     <div className="h-72">

@@ -28,9 +28,7 @@ const BenefitsGrid: React.FC<BenefitsGridProps> = ({
 
   return (
     <div className="mb-8 md:mb-16">
-      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-12">
-        {title}
-      </h2>
+      <h2 className="section-title mb-6 text-center md:mb-12">{title}</h2>
       <div className={gridClass}>
         {benefits.map((benefit, index) => {
           const IconComponent = benefit.icon;
@@ -42,9 +40,7 @@ const BenefitsGrid: React.FC<BenefitsGridProps> = ({
               <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 text-purple-600">
                 <IconComponent size={32} />
               </div>
-              <h3 className="mb-2 font-semibold text-gray-900">
-                {benefit.title}
-              </h3>
+              <h3 className="heading-4 mb-2">{benefit.title}</h3>
               <p className="text-sm text-gray-600">{benefit.description}</p>
             </div>
           );

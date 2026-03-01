@@ -23,9 +23,7 @@ const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
   data,
 }) => (
   <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h3 className="mb-1 text-lg font-semibold text-gray-900">
-      Price Distribution
-    </h3>
+    <h3 className="heading-3 mb-1">Price Distribution</h3>
     <p className="mb-6 text-sm text-gray-500">
       Number of cars in each price bracket
     </p>
