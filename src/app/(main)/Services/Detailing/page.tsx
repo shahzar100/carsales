@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
 import { ServiceHero, BackNavigation } from "@/components/Services/Common";
@@ -6,8 +5,6 @@ import { DetailingPackageGrid } from "@/components/Services/Detailing";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Detailing = () => {
-  const [selectedPackage, setSelectedPackage] = React.useState("silver");
-
   const detailingPackages = [
     {
       id: "bronze",
@@ -106,11 +103,7 @@ const Detailing = () => {
 
       <ServiceHero {...heroProps} />
 
-      <DetailingPackageGrid
-        packages={detailingPackages}
-        selectedPackage={selectedPackage}
-        onSelectPackage={setSelectedPackage}
-      />
+      <DetailingPackageGrid packages={detailingPackages} />
 
       {/* Book a Detailing Service */}
       <div id="book" className="scroll-mt-8">

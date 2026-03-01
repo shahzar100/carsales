@@ -205,25 +205,54 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
         },
         content: (
           <div className="space-y-5">
-            <div className="grid gap-4 sm:grid-cols-3">
-              {serviceCategories.map((cat) => (
-                <SelectionCard
-                  key={cat.value}
-                  selected={data.serviceType === cat.value}
-                  onSelect={() => {
-                    setData((prev) => ({
-                      ...prev,
-                      serviceType: cat.value,
-                      servicePackage: "",
-                    }));
-                  }}
-                  title={cat.title}
-                  description={cat.description}
-                  items={cat.items}
-                  activeColour={cat.activeColour}
-                />
-              ))}
-            </div>
+            {defaultService ? (
+              /* Locked to the page's service — show only the matching card */
+              (() => {
+                const locked = serviceCategories.find(
+                  (c) => c.value === defaultService
+                );
+                return locked ? (
+                  <div
+                    className={`rounded-xl border-2 p-4 ${locked.activeColour}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg bg-white/80 p-2 shadow-sm">
+                        {locked.icon}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">
+                          {locked.title}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {locked.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null;
+              })()
+            ) : (
+              /* No default — let the user pick */
+              <div className="grid gap-4 sm:grid-cols-3">
+                {serviceCategories.map((cat) => (
+                  <SelectionCard
+                    key={cat.value}
+                    selected={data.serviceType === cat.value}
+                    onSelect={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        serviceType: cat.value,
+                        servicePackage: "",
+                      }));
+                    }}
+                    title={cat.title}
+                    description={cat.description}
+                    items={cat.items}
+                    activeColour={cat.activeColour}
+                  />
+                ))}
+              </div>
+            )}
 
             {data.serviceType && subServiceOptions[data.serviceType] && (
               <Dropdown
