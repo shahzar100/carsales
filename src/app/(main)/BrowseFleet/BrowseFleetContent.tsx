@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CarInterface } from "@/lib/interfaces";
 import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import { filterCars } from "@/lib/utils/filterCars";
@@ -96,8 +96,8 @@ const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {filteredCars.length} vehicle{filteredCars.length !== 1 ? "s" : ""}{" "}
-              found
+              {filteredCars.length} vehicle
+              {filteredCars.length !== 1 ? "s" : ""} found
             </p>
             {totalPages > 1 && (
               <p className="text-xs text-gray-500">
@@ -180,7 +180,7 @@ const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
                       setCurrentPage(page as number);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className={`min-w-[40px] rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                    className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
                       currentPage === page
                         ? "bg-red-600 text-white shadow-md"
                         : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"

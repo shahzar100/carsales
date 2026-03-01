@@ -242,7 +242,7 @@ const BreakdownRecovery = () => {
           </p>
 
           <div className="mx-auto mb-10 grid max-w-3xl gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-white/[0.05] p-6">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-6">
               <div className="mb-2 text-2xl font-bold text-red-400">
                 From £60
               </div>
@@ -251,7 +251,7 @@ const BreakdownRecovery = () => {
               </div>
               <div className="mt-1 text-xs text-gray-500">Within 10 miles</div>
             </div>
-            <div className="rounded-xl border border-red-500/30 bg-white/[0.08] p-6 shadow-lg shadow-red-500/10">
+            <div className="rounded-xl border border-red-500/30 bg-white/8 p-6 shadow-lg shadow-red-500/10">
               <div className="mb-2 text-2xl font-bold text-red-400">
                 From £95
               </div>
@@ -260,7 +260,7 @@ const BreakdownRecovery = () => {
               </div>
               <div className="mt-1 text-xs text-gray-500">10–30 miles</div>
             </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.05] p-6">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-6">
               <div className="mb-2 text-2xl font-bold text-red-400">
                 Call Us
               </div>
