@@ -9,7 +9,7 @@
  */
 import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import AppointmentForm from "@/components/Admin/Form/AppointmentForm";
+import AppointmentForm from "@/components/Main/Form/AppointmentForm";
 
 describe("AppointmentForm Component", () => {
   beforeEach(() => {

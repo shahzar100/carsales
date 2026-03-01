@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
-import BookingForm from "./Booking/BookingForm";
+import CarViewingForm from "./Main/Form/CarViewingForm";
 import VehicleDetails from "./Shared/VehicleDetails";
 
 const CarViewing = () => {
@@ -44,15 +44,18 @@ const CarViewing = () => {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-4 p-6">
-      <h2 className="col-span-full mb-6 text-center text-3xl font-bold">
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
+      <h2 className="text-center text-3xl font-bold text-gray-900">
         Book Your Car Viewing
       </h2>
 
       {/* Car Details Section */}
       <VehicleDetails vehicle={viewingBooking.carDetails} />
 
-      <BookingForm />
+      {/* Multi-stage Booking Form */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <CarViewingForm />
+      </div>
     </div>
   );
 };

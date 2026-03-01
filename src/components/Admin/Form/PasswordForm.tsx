@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Form, { FormStep } from "./Form";
+import Form, { FormStep } from "../../Form/Form";
 import {
   FormInput,
   SummaryRow,
@@ -9,7 +9,7 @@ import {
   CopyableCode,
   InfoBanner,
   Badge,
-} from "./FormPrimitives";
+} from "../../Form/FormPrimitives";
 import { KeyRound, Search, ClipboardList, Mail } from "lucide-react";
 
 // ── Types ────────────────────────────────────────────────────

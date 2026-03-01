@@ -9,7 +9,7 @@
 import React from "react";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Form, { FormStep } from "@/components/Admin/Form/Form";
+import Form, { FormStep } from "@/components/Form/Form";
 
 // ── Helpers ──────────────────────────────────────────────────
 const buildSteps = (overrides: Partial<FormStep>[] = []): FormStep[] => {

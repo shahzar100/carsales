@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Form, { FormStep } from "./Form";
+import Form, { FormStep } from "../../Form/Form";
 import {
   SummaryRow,
   SummaryCard,
@@ -9,7 +9,7 @@ import {
   InfoBanner,
   SelectionCard,
   CopyableCode,
-} from "./FormPrimitives";
+} from "../../Form/FormPrimitives";
 import { UserRound, ShieldCheck, ClipboardList } from "lucide-react";
 
 // ── Form data shape ──────────────────────────────────────────

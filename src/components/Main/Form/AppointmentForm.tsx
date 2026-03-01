@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Form, { FormStep } from "./Form";
-import Dropdown from "./Dropdown";
+import Form, { FormStep } from "../../Form/Form";
+import Dropdown from "../../Form/Dropdown";
 import {
   FormInput,
   FormTextarea,
   SummaryRow,
   SummaryCard,
-} from "./FormPrimitives";
+} from "../../Form/FormPrimitives";
 import { UserRound, CalendarDays, Wrench, ClipboardList } from "lucide-react";
 
 // ── Form data shape ──────────────────────────────────────────

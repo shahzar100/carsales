@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Form, { FormStep } from "./Form";
-import Dropdown from "./Dropdown";
+import Form, { FormStep } from "../../Form/Form";
+import Dropdown from "../../Form/Dropdown";
 import { CarFormData } from "./MainForm";
 import {
   FormInput,
@@ -9,7 +9,7 @@ import {
   FormToggle,
   SummaryRow,
   SummaryCard,
-} from "./FormPrimitives";
+} from "../../Form/FormPrimitives";
 import { Car, DollarSign, Palette, ClipboardList } from "lucide-react";
 
 const currentYear = new Date().getFullYear();

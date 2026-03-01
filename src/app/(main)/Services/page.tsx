@@ -9,6 +9,7 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Services = () => {
   const mainServices = [
@@ -252,33 +253,19 @@ const Services = () => {
         </div>
       </div>
 
-      {/* Contact CTA Section */}
-      <div className="rounded-2xl bg-red-500 p-8 text-center text-white lg:p-12">
-        <h2 className="mb-4 text-3xl font-bold">Ready to Get Started?</h2>
-        <p className="mx-auto mb-8 max-w-2xl text-xl text-red-100">
-          Contact us today for a free quote or to schedule your service
-          appointment. We&apos;re here to keep your vehicle running and looking
-          its best.
-        </p>
-        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <Link
-            href="tel:(555)123-4567"
-            className="rounded-lg bg-white px-8 py-3 font-medium text-red-500 transition-colors duration-200 hover:bg-gray-100"
-          >
-            Call (555) 123-4567
-          </Link>
-          <Link
-            href="mailto:info@carsales.com"
-            className="rounded-lg border border-red-400 bg-red-600 px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-700"
-          >
-            Email Us
-          </Link>
-          <Link
-            href="/contact"
-            className="rounded-lg border border-red-400 bg-transparent px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
-          >
-            Visit Our Location
-          </Link>
+      {/* Book a Service */}
+      <div id="book" className="scroll-mt-8">
+        <div className="mb-6 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+            Book a Service
+          </h2>
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Ready to get started? Fill in the form below to schedule your
+            appointment.
+          </p>
+        </div>
+        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <ServiceBookingForm />
         </div>
       </div>
     </div>

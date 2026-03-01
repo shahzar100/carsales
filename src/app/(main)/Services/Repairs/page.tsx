@@ -11,10 +11,13 @@ import {
   ServiceHero,
   BackNavigation,
   ProcessFlow,
-  ContactSection,
   WhyChooseUs,
 } from "@/components/Services/Common";
-import { RepairServiceGrid, EmergencyBanner } from "@/components/Services/Repairs";
+import {
+  RepairServiceGrid,
+  EmergencyBanner,
+} from "@/components/Services/Repairs";
+import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Repairs = () => {
   const repairServices = [
@@ -118,66 +121,52 @@ const Repairs = () => {
     description:
       "Professional automotive repair services for all makes and models. Our certified technicians use state-of-the-art diagnostic equipment to get you back on the road safely and efficiently.",
     badges: [
-      { icon: CheckCircle, text: "ASE Certified Technicians", color: "text-green-500" },
-      { icon: Clock, text: "Same Day Service Available", color: "text-blue-500" },
+      {
+        icon: CheckCircle,
+        text: "ASE Certified Technicians",
+        color: "text-green-500",
+      },
+      {
+        icon: Clock,
+        text: "Same Day Service Available",
+        color: "text-blue-500",
+      },
       { icon: Shield, text: "Warranty on All Work", color: "text-purple-500" },
     ],
   };
 
-  const contactActions = [
-    {
-      type: "email" as const,
-      url: "mailto:info@carsales.com?subject=Auto Repair Service Request&body=Hi, I need auto repair services. Here are the details about my vehicle and the issues I'm experiencing:%0D%0A%0D%0AVehicle Make/Model/Year:%0D%0ASymptoms/Issues:%0D%0APreferred contact method:%0D%0A%0D%0APlease provide a quote and available appointment times.",
-      text: "Email for Quote",
-      style: "primary" as const,
-    },
-    {
-      type: "phone" as const,
-      url: "tel:(555)123-4567",
-      text: "Call Emergency Line",
-      style: "danger" as const,
-    },
-  ];
-
-  const secondaryActions = [
-    {
-      type: "link" as const,
-      url: "/contact",
-      text: "Visit Our Location",
-      style: "primary" as const,
-    },
-    {
-      type: "email" as const,
-      url: "mailto:info@carsales.com",
-      text: "General Inquiries",
-      style: "secondary" as const,
-    },
-  ];
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <BackNavigation href="/Services" text="Back to Services" />
-      
+
       <ServiceHero {...heroProps} />
-      
+
       <EmergencyBanner emergencyServices={emergencyServices} />
-      
+
       <RepairServiceGrid repairServices={repairServices} />
-      
+
       <ProcessFlow
         title="Our Repair Process"
         steps={repairProcess}
         accentColor="bg-green-100 text-green-600"
       />
-      
+
       <WhyChooseUs />
-      
-      <ContactSection
-        title="Need Auto Repair Services?"
-        subtitle="Get professional diagnosis and repair from our certified technicians. Contact us for a detailed quote and service appointment."
-        primaryActions={contactActions}
-        secondaryActions={secondaryActions}
-      />
+
+      {/* Book a Repair Service */}
+      <div id="book" className="scroll-mt-8">
+        <div className="mb-6 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+            Book Your Repair Service
+          </h2>
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Fill in the form below to schedule your repair appointment.
+          </p>
+        </div>
+        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <ServiceBookingForm defaultService="Repair" />
+        </div>
+      </div>
     </div>
   );
 };

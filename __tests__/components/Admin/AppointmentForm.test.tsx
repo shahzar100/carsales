@@ -10,7 +10,7 @@
 import React from "react";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import AppointmentForm from "@/components/Admin/Form/AppointmentForm";
+import AppointmentForm from "@/components/Main/Form/AppointmentForm";
 
 // Mock scrollIntoView (not available in jsdom, used by Dropdown)
 beforeAll(() => {

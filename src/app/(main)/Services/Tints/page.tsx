@@ -7,6 +7,7 @@ import {
   BenefitsGrid,
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
+import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Tints = () => {
   const tintOptions = [
@@ -124,7 +125,11 @@ const Tints = () => {
     description:
       "Protect your vehicle and enhance your driving experience with our premium window tinting services. Choose from multiple film types and tint levels to match your style and needs.",
     badges: [
-      { icon: CheckCircle, text: "Professional Installation", color: "text-green-500" },
+      {
+        icon: CheckCircle,
+        text: "Professional Installation",
+        color: "text-green-500",
+      },
       { icon: Clock, text: "2-4 Hour Service", color: "text-blue-500" },
       { icon: Shield, text: "Warranty Included", color: "text-purple-500" },
     ],
@@ -133,47 +138,37 @@ const Tints = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <BackNavigation href="/Services" text="Back to Services" />
-      
+
       <ServiceHero {...heroProps} />
-      
-      <BenefitsGrid 
-        benefits={benefits} 
-        title="Why Choose Window Tinting?" 
-        columns={4} 
+
+      <BenefitsGrid
+        benefits={benefits}
+        title="Why Choose Window Tinting?"
+        columns={4}
       />
-      
+
       <TintOptionsGrid tintOptions={tintOptions} />
-      
+
       <VLTGuide />
-      
+
       <ProcessFlow
         title="Our Installation Process"
         steps={installationProcess}
         accentColor="bg-purple-100 text-purple-600"
       />
 
-      {/* CTA Section */}
-      <div className="rounded-2xl bg-purple-500 p-8 text-center text-white lg:p-12">
-        <h2 className="mb-4 text-3xl font-bold">
-          Ready to Enhance Your Vehicle?
-        </h2>
-        <p className="mx-auto mb-8 max-w-2xl text-xl text-purple-100">
-          Get professional window tinting installed by our certified experts.
-          Contact us for a free quote today.
-        </p>
-        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <a
-            href="mailto:info@carsales.com?subject=Window Tinting Quote Request&body=Hi, I'd like to get a quote for window tinting. Please contact me to discuss options and pricing."
-            className="rounded-lg bg-white px-8 py-3 font-medium text-purple-500 transition-colors duration-200 hover:bg-gray-100"
-          >
-            Get Free Quote
-          </a>
-          <a
-            href="tel:(555)123-4567"
-            className="rounded-lg border border-purple-400 bg-purple-600 px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-purple-700"
-          >
-            Call (555) 123-4567
-          </a>
+      {/* Book Window Tinting */}
+      <div id="book" className="scroll-mt-8">
+        <div className="mb-6 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+            Book Your Window Tinting
+          </h2>
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Fill in the form below and we&apos;ll confirm your appointment.
+          </p>
+        </div>
+        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <ServiceBookingForm defaultService="Window Tint" />
         </div>
       </div>
     </div>

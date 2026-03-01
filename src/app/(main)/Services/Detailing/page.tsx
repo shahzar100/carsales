@@ -1,11 +1,9 @@
 "use client";
 import React from "react";
 import { Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
-import {
-  ServiceHero,
-  BackNavigation,
-} from "@/components/Services/Common";
+import { ServiceHero, BackNavigation } from "@/components/Services/Common";
 import { DetailingPackageGrid } from "@/components/Services/Detailing";
+import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Detailing = () => {
   const [selectedPackage, setSelectedPackage] = React.useState("silver");
@@ -88,44 +86,44 @@ const Detailing = () => {
     description:
       "Transform your vehicle with our premium detailing services. Choose your package below and book today.",
     badges: [
-      { icon: CheckCircle, text: "Eco-Friendly Products", color: "text-green-500" },
+      {
+        icon: CheckCircle,
+        text: "Eco-Friendly Products",
+        color: "text-green-500",
+      },
       { icon: Clock, text: "Same Day Service", color: "text-blue-500" },
-      { icon: Shield, text: "Satisfaction Guaranteed", color: "text-purple-500" },
+      {
+        icon: Shield,
+        text: "Satisfaction Guaranteed",
+        color: "text-purple-500",
+      },
     ],
   };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <BackNavigation href="/Services" text="Back to Services" />
-      
+
       <ServiceHero {...heroProps} />
-      
-      <DetailingPackageGrid 
+
+      <DetailingPackageGrid
         packages={detailingPackages}
         selectedPackage={selectedPackage}
         onSelectPackage={setSelectedPackage}
       />
 
-      {/* Contact Section */}
-      <div className="rounded-2xl bg-blue-500 p-8 text-center text-white lg:p-12">
-        <h2 className="mb-4 text-3xl font-bold">Ready to Detail Your Car?</h2>
-        <p className="mx-auto mb-8 max-w-2xl text-xl text-blue-100">
-          Book your professional car detailing service today. Our expert team
-          will make your vehicle look like new again.
-        </p>
-        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <a
-            href="mailto:info@carsales.com?subject=Car Detailing Booking&body=Hi, I'd like to book a car detailing service. Please provide available dates and package options."
-            className="rounded-lg bg-white px-8 py-3 font-medium text-blue-500 transition-colors duration-200 hover:bg-gray-100"
-          >
-            Book Now
-          </a>
-          <a
-            href="tel:(555)123-4567"
-            className="rounded-lg border border-blue-400 bg-blue-600 px-8 py-3 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
-          >
-            Call (555) 123-4567
-          </a>
+      {/* Book a Detailing Service */}
+      <div id="book" className="scroll-mt-8">
+        <div className="mb-6 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+            Book Your Detailing Service
+          </h2>
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Fill in the form below and we&apos;ll confirm your appointment.
+          </p>
+        </div>
+        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <ServiceBookingForm defaultService="Detailing" />
         </div>
       </div>
     </div>

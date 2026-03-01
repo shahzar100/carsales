@@ -17,22 +17,22 @@ beforeAll(() => {
 });
 
 // ── Mock child forms so we don't test them here ──────────────
-jest.mock("@/components/Admin/Form/CarForm", () => {
+jest.mock("@/components/Form/CarForm", () => {
   return function MockCarForm() {
     return <div data-testid="car-form">CarForm</div>;
   };
 });
-jest.mock("@/components/Admin/Form/AppointmentForm", () => {
+jest.mock("@/components/Form/AppointmentForm", () => {
   return function MockAppointmentForm() {
     return <div data-testid="appointment-form">AppointmentForm</div>;
   };
 });
-jest.mock("@/components/Admin/Form/UserForm", () => {
+jest.mock("@/components/Form/UserForm", () => {
   return function MockUserForm() {
     return <div data-testid="user-form">UserForm</div>;
   };
 });
-jest.mock("@/components/Admin/Form/PasswordForm", () => {
+jest.mock("@/components/Form/PasswordForm", () => {
   return function MockPasswordForm() {
     return <div data-testid="password-form">PasswordForm</div>;
   };
