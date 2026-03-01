@@ -5,16 +5,28 @@
    Consistent design tokens for the entire app
    ======================================== */
 
+/* ---- Theme colours ---- */
+
+:root {
+  --color-brand: #dc2626; /* red-600 */
+  --color-brand-dark: #b91c1c; /* red-700 */
+  --color-brand-darker: #991b1b; /* red-800 */
+  --color-brand-light: #fef2f2; /* red-50 */
+  --color-brand-muted: #fee2e2; /* red-100 */
+  --color-surface-dark: #0a0a0a; /* gray-950 */
+  --color-surface-darker: #000000;
+}
+
 /* ---- Typography ---- */
 
 /* Page title — the largest heading on any page (h1) */
 .page-title {
-  @apply text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl;
+  @apply text-2xl font-bold text-red-600 sm:text-3xl lg:text-4xl;
 }
 
 /* Section title — section headings within a page (h2) */
 .section-title {
-  @apply text-xl font-bold text-gray-900 sm:text-2xl;
+  @apply text-xl font-bold text-red-600 sm:text-2xl;
 }
 
 /* Card / subsection title (h3) */
@@ -60,11 +72,11 @@
 /* ---- Inputs ---- */
 
 .input {
-  @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+  @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 .input-lg {
-  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 .input-error {
@@ -74,11 +86,11 @@
 /* ---- Selects ---- */
 
 .select {
-  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 .select-lg {
-  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 /* ---- Cards ---- */
@@ -118,7 +130,7 @@
 }
 
 .badge-blue {
-  @apply bg-blue-50 text-blue-600;
+  @apply bg-red-50 text-red-600;
 }
 
 .badge-gray {
@@ -128,7 +140,7 @@
 /* ---- Tags (removable pills) ---- */
 
 .tag {
-  @apply inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600;
+  @apply inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600;
 }
 
 .tag-neutral {

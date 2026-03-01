@@ -2,7 +2,7 @@ import React from "react";
 
 // ── Accent colour tokens ────────────────────────────────────
 // Full class names so Tailwind JIT picks them up.
-export type AccentColor = "blue" | "purple" | "green";
+export type AccentColor = "red" | "crimson" | "dark";
 
 export const accentColors: Record<
   AccentColor,
@@ -17,35 +17,38 @@ export const accentColors: Record<
     highlightIcon: string;
   }
 > = {
-  blue: {
-    border: "border-blue-500",
-    badge: "bg-blue-500",
-    text: "text-blue-600",
-    hoverBorder: "hover:border-blue-300",
-    primaryBtn: "bg-blue-600 text-white hover:bg-blue-700",
-    secondaryBtn: "bg-blue-100 text-blue-700 hover:bg-blue-200",
-    highlight: "text-blue-700",
-    highlightIcon: "text-blue-500",
+  red: {
+    border: "border-red-500",
+    badge: "bg-red-600",
+    text: "text-red-400",
+    hoverBorder: "hover:border-red-500/60",
+    primaryBtn: "bg-red-600 text-white hover:bg-red-500",
+    secondaryBtn:
+      "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20",
+    highlight: "text-red-400",
+    highlightIcon: "text-red-400",
   },
-  purple: {
-    border: "border-purple-500",
-    badge: "bg-purple-500",
-    text: "text-purple-600",
-    hoverBorder: "hover:border-purple-300",
-    primaryBtn: "bg-purple-600 text-white hover:bg-purple-700",
-    secondaryBtn: "bg-purple-100 text-purple-700 hover:bg-purple-200",
-    highlight: "text-purple-700",
-    highlightIcon: "text-purple-500",
+  crimson: {
+    border: "border-red-600",
+    badge: "bg-red-700",
+    text: "text-red-400",
+    hoverBorder: "hover:border-red-600/60",
+    primaryBtn: "bg-red-700 text-white hover:bg-red-600",
+    secondaryBtn:
+      "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20",
+    highlight: "text-red-400",
+    highlightIcon: "text-red-400",
   },
-  green: {
-    border: "border-green-500",
-    badge: "bg-green-500",
-    text: "text-green-600",
-    hoverBorder: "hover:border-green-300",
-    primaryBtn: "bg-green-600 text-white hover:bg-green-700",
-    secondaryBtn: "bg-green-100 text-green-700 hover:bg-green-200",
-    highlight: "text-green-700",
-    highlightIcon: "text-green-500",
+  dark: {
+    border: "border-gray-600",
+    badge: "bg-gray-700",
+    text: "text-gray-300",
+    hoverBorder: "hover:border-gray-500",
+    primaryBtn: "bg-white text-gray-900 hover:bg-gray-100",
+    secondaryBtn:
+      "bg-white/10 text-gray-300 border border-white/10 hover:bg-white/15",
+    highlight: "text-gray-300",
+    highlightIcon: "text-gray-400",
   },
 };
 
@@ -78,7 +81,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
   extra,
   popular = false,
   popularLabel = "Most Popular",
-  accent = "blue",
+  accent = "red",
   children,
   footer,
 }) => {
@@ -86,40 +89,76 @@ const PackageCard: React.FC<PackageCardProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border-2 bg-white p-4 transition-all duration-300 sm:p-7 ${
+      className={`group relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 ${
         popular
-          ? `transform lg:scale-105 ${c.border} shadow-lg`
-          : `border-gray-200 ${c.hoverBorder} hover:shadow-md`
+          ? `border border-red-500/50 shadow-2xl shadow-red-500/20 lg:scale-105`
+          : `border border-white/[0.12] hover:-translate-y-1 hover:border-white/25 hover:shadow-xl hover:shadow-red-500/10`
       }`}
+      style={{
+        background: popular
+          ? "linear-gradient(160deg, rgba(220,38,38,0.20) 0%, rgba(220,38,38,0.08) 50%, rgba(30,5,5,0.95) 100%)"
+          : "linear-gradient(160deg, rgba(220,38,38,0.14) 0%, rgba(220,38,38,0.05) 50%, rgba(25,5,5,0.95) 100%)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+      }}
     >
-      {/* Popular badge */}
-      {popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 transform">
-          <span
-            className={`rounded-full ${c.badge} px-4 py-2 text-sm font-medium text-white`}
-          >
-            {popularLabel}
-          </span>
-        </div>
-      )}
+      {/* Glass shine overlay */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-red-600/[0.1] via-transparent to-transparent" />
 
-      {/* Header */}
-      <div className="mb-4 text-center">
-        <h3 className="heading-3 mb-0.5 text-center font-bold">{name}</h3>
-        {subtitle && (
-          <div className={`mb-1 text-base font-medium ${c.text}`}>
-            {subtitle}
+      {/* Card inner */}
+      <div className="relative flex flex-1 flex-col p-5 sm:p-7">
+        {/* Top accent line */}
+        <div
+          className={`absolute top-0 right-4 left-4 h-[2px] rounded-full ${
+            popular
+              ? "bg-gradient-to-r from-transparent via-red-500 to-transparent"
+              : "bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          }`}
+        />
+
+        {/* Popular badge */}
+        {popular && (
+          <div className="absolute -top-px left-1/2 -translate-x-1/2">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-b-lg ${c.badge} px-5 py-1.5 text-xs font-semibold tracking-wide text-white uppercase shadow-lg`}
+            >
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+              {popularLabel}
+            </span>
           </div>
         )}
-        <div className={`text-3xl font-bold ${c.text}`}>{price}</div>
-        {extra && <div className="text-xs text-gray-500">{extra}</div>}
+
+        {/* Header */}
+        <div className={`text-center ${popular ? "mt-4" : ""}`}>
+          <h3 className="text-lg font-bold tracking-tight text-white">
+            {name}
+          </h3>
+          {subtitle && (
+            <div className={`mt-1 text-sm font-medium ${c.text}`}>
+              {subtitle}
+            </div>
+          )}
+          <div
+            className={`mt-2 text-3xl font-extrabold tracking-tight ${c.text}`}
+          >
+            {price}
+          </div>
+          {extra && (
+            <div className="mt-1 text-xs font-medium text-gray-500">
+              {extra}
+            </div>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="my-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        {/* Body */}
+        <div className="flex-1">{children}</div>
+
+        {/* Footer */}
+        {footer && <div className="mt-5">{footer}</div>}
       </div>
-
-      {/* Body (features, info boxes, etc.) */}
-      <div className="flex-1">{children}</div>
-
-      {/* Optional footer */}
-      {footer && <div className="mt-4">{footer}</div>}
     </div>
   );
 };

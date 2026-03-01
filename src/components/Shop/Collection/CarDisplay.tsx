@@ -44,7 +44,7 @@ const CarDisplay: React.FC<CarDisplayProps> = ({ car }) => {
           {/* Additional Features - Mobile friendly additional info */}
           <div className="rounded-xl bg-white p-6 shadow-sm">
             <h3 className="heading-3 mb-4">Additional Information</h3>
-            <div className="rounded-lg border border-blue-200 bg-linear-to-r from-blue-50 to-green-50 p-4">
+            <div className="rounded-lg border border-red-200 bg-linear-to-r from-red-50 to-gray-50 p-4">
               <p className="text-sm text-gray-600">
                 This vehicle has been thoroughly inspected and comes with our
                 quality guarantee. Contact us to schedule a viewing or test

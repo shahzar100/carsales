@@ -38,7 +38,7 @@ export default function ServiceBookingsTab({
             placeholder="Search bookings..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:ring-2 focus:ring-red-500 focus:outline-none"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function ServiceBookingsTab({
                   <div className="flex gap-2">
                     <button
                       onClick={() => onViewDetails(booking)}
-                      className="flex items-center gap-1 rounded px-2 py-1 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-800"
+                      className="flex items-center gap-1 rounded px-2 py-1 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                       title="View Details"
                     >
                       <Eye className="h-3 w-3" />

@@ -56,14 +56,14 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               placeholder="Min price"
               value={filters.priceFrom || ""}
               onChange={(e) => handleFilterChange("priceFrom", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
             />
             <input
               type="number"
               placeholder="Max price"
               value={filters.priceTo || ""}
               onChange={(e) => handleFilterChange("priceTo", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
             />
           </div>
         </div>
@@ -74,7 +74,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.make || ""}
             onChange={(e) => handleFilterChange("make", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
           >
             <option value="">All brands</option>
             {brands.map((brand) => (
@@ -94,14 +94,14 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               placeholder="From year"
               value={filters.yearFrom || ""}
               onChange={(e) => handleFilterChange("yearFrom", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
             />
             <input
               type="number"
               placeholder="To year"
               value={filters.yearTo || ""}
               onChange={(e) => handleFilterChange("yearTo", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
             />
           </div>
         </div>
@@ -112,7 +112,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.fuelType || ""}
             onChange={(e) => handleFilterChange("fuelType", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
           >
             <option value="">All fuel types</option>
             {fuelTypes.map((fuel) => (
@@ -129,7 +129,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.color || ""}
             onChange={(e) => handleFilterChange("color", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
           >
             <option value="">All colors</option>
             {colors.map((color) => (

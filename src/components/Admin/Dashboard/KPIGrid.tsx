@@ -29,7 +29,7 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
       label="Total Cars"
       value={kpis.totalCars}
       icon={Car}
-      colour="bg-blue-100 text-blue-600"
+      colour="bg-red-100 text-red-600"
       subtext={`${kpis.availableCars} available · ${kpis.soldCars} sold · ${kpis.reservedCars} reserved`}
     />
     <StatCard
@@ -43,7 +43,7 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
       label="Service Bookings"
       value={kpis.totalServiceBookings}
       icon={Calendar}
-      colour="bg-purple-100 text-purple-600"
+      colour="bg-gray-100 text-gray-900"
       subtext={`${kpis.pendingServiceBookings} pending · ${kpis.confirmedServiceBookings} confirmed`}
       badge={
         kpis.pendingServiceBookings > 0 ? (

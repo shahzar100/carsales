@@ -8,7 +8,7 @@ export default function AdminLayout({
 }) {
   return (
     <AuthWrapper>
-      <div className="grid min-h-screen grid-rows-[auto_1fr] overflow-x-hidden">
+      <div className="grid min-h-screen grid-rows-[auto_1fr] overflow-x-hidden bg-gray-50">
         {/* Header */}
         <AdminNavigationTabs />
         {/* Content */}

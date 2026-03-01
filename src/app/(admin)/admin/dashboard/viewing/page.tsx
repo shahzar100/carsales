@@ -81,7 +81,7 @@ export default function ViewingBookingsPage() {
     const colors = {
       pending: "bg-yellow-100 text-yellow-800",
       confirmed: "bg-green-100 text-green-800",
-      completed: "bg-blue-100 text-blue-800",
+      completed: "bg-gray-100 text-gray-800",
       cancelled: "bg-red-100 text-red-800",
       available: "bg-green-100 text-green-800",
       sold: "bg-red-100 text-red-800",
@@ -148,7 +148,7 @@ export default function ViewingBookingsPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
           <p className="text-gray-600">Loading viewing bookings...</p>
         </div>
       </div>

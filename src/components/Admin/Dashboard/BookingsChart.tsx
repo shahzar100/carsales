@@ -58,13 +58,13 @@ const BookingsChart: React.FC<BookingsChartProps> = ({ data }) => (
           <Bar
             dataKey="services"
             name="Services"
-            fill="#8b5cf6"
+            fill="#dc2626"
             radius={[4, 4, 0, 0]}
           />
           <Bar
             dataKey="viewings"
             name="Viewings"
-            fill="#3b82f6"
+            fill="#1f2937"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

@@ -78,7 +78,7 @@ const Detailing = () => {
 
   const heroProps = {
     icon: Sparkles,
-    iconBgColor: "bg-blue-100 text-blue-600",
+    iconBgColor: "bg-red-50 text-red-600",
     title: "Professional Car Detailing",
     description:
       "Transform your vehicle with our premium detailing services. Choose your package below and book today.",
@@ -86,13 +86,13 @@ const Detailing = () => {
       {
         icon: CheckCircle,
         text: "Eco-Friendly Products",
-        color: "text-green-500",
+        color: "text-red-500",
       },
-      { icon: Clock, text: "Same Day Service", color: "text-blue-500" },
+      { icon: Clock, text: "Same Day Service", color: "text-gray-900" },
       {
         icon: Shield,
         text: "Satisfaction Guaranteed",
-        color: "text-purple-500",
+        color: "text-red-700",
       },
     ],
   };

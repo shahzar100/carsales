@@ -20,24 +20,24 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
       title: "Certified Expertise",
       description:
         "ASE certified technicians with years of experience on all vehicle makes and models.",
-      bgColor: "bg-blue-100",
-      textColor: "text-blue-600",
+      bgColor: "bg-red-50",
+      textColor: "text-red-600",
     },
     {
       icon: Shield,
       title: "Quality Guarantee",
       description:
         "All repairs backed by comprehensive warranty and satisfaction guarantee.",
-      bgColor: "bg-green-100",
-      textColor: "text-green-600",
+      bgColor: "bg-gray-100",
+      textColor: "text-gray-900",
     },
     {
       icon: Clock,
       title: "Fast Turnaround",
       description:
         "Efficient service with most repairs completed within 1-2 business days.",
-      bgColor: "bg-purple-100",
-      textColor: "text-purple-600",
+      bgColor: "bg-red-100",
+      textColor: "text-red-700",
     },
   ];
 

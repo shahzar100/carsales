@@ -22,7 +22,7 @@ const HeroSection = async () => {
               className={`${featuredCar?.make ? "mb-8 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl" : "mb-12 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
             >
               Find Your Perfect Car
-              <span className="mt-2 block text-blue-400">
+              <span className="mt-2 block text-red-500">
                 Book a Viewing Today
               </span>
             </h1>
@@ -41,7 +41,7 @@ const HeroSection = async () => {
             <div className="relative">
               <div className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-4 shadow-2xl sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
                 {/* Featured Badge */}
-                <div className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
+                <div className="inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white">
                   <Star size={16} />
                   Featured Car
                 </div>
@@ -76,7 +76,7 @@ const HeroSection = async () => {
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-green-400 sm:text-3xl">
+                    <span className="text-2xl font-bold text-red-400 sm:text-3xl">
                       £{featuredCar && featuredCar.price.toLocaleString()}
                     </span>
                     <span className="text-sm text-gray-400 sm:text-base">
@@ -88,11 +88,11 @@ const HeroSection = async () => {
                   {/* Features */}
                   <div className="grid grid-cols-2 gap-4 border-t border-gray-700 pt-4">
                     <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <Eye size={16} className="text-blue-400" />
+                      <Eye size={16} className="text-red-400" />
                       <span>Available for viewing</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <Clock size={16} className="text-green-400" />
+                      <Clock size={16} className="text-gray-400" />
                       <span>Book today</span>
                     </div>
                   </div>
@@ -121,7 +121,7 @@ const HeroSection = async () => {
         <div className="mt-12 flex w-full justify-center">
           <Link
             href="/BrowseFleet"
-            className="flex w-full max-w-md transform items-center justify-center gap-3 rounded-lg bg-blue-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl"
+            className="flex w-full max-w-md transform items-center justify-center gap-3 rounded-lg bg-red-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-red-700 hover:shadow-xl"
           >
             <Search size={24} />
             Browse Cars
@@ -133,7 +133,7 @@ const HeroSection = async () => {
           <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2">
-                <Car className="text-blue-400" size={32} />
+                <Car className="text-red-400" size={32} />
                 <span className="text-3xl font-bold">500+</span>
               </div>
               <p className="text-gray-300">Quality Vehicles</p>
@@ -141,7 +141,7 @@ const HeroSection = async () => {
 
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2">
-                <Calendar className="text-green-400" size={32} />
+                <Calendar className="text-red-300" size={32} />
                 <span className="text-3xl font-bold">24/7</span>
               </div>
               <p className="text-gray-300">Online Booking</p>

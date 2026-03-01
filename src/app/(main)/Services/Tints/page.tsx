@@ -5,6 +5,7 @@ import {
   BackNavigation,
   ProcessFlow,
   BenefitsGrid,
+  BlackRedSection,
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
@@ -120,7 +121,7 @@ const Tints = () => {
 
   const heroProps = {
     icon: Shield,
-    iconBgColor: "bg-purple-100 text-purple-600",
+    iconBgColor: "bg-red-100 text-red-700",
     title: "Professional Window Tinting",
     description:
       "Protect your vehicle and enhance your driving experience with our premium window tinting services. Choose from multiple film types and tint levels to match your style and needs.",
@@ -128,10 +129,10 @@ const Tints = () => {
       {
         icon: CheckCircle,
         text: "Professional Installation",
-        color: "text-green-500",
+        color: "text-red-500",
       },
-      { icon: Clock, text: "2-4 Hour Service", color: "text-blue-500" },
-      { icon: Shield, text: "Warranty Included", color: "text-purple-500" },
+      { icon: Clock, text: "2-4 Hour Service", color: "text-gray-900" },
+      { icon: Shield, text: "Warranty Included", color: "text-red-700" },
     ],
   };
 
@@ -141,21 +142,26 @@ const Tints = () => {
 
       <ServiceHero {...heroProps} />
 
-      <BenefitsGrid
-        benefits={benefits}
-        title="Why Choose Window Tinting?"
-        columns={4}
-      />
+      <BlackRedSection>
+        <BenefitsGrid
+          benefits={benefits}
+          title="Why Choose Window Tinting?"
+          columns={4}
+          dark
+        />
+      </BlackRedSection>
 
       <TintOptionsGrid tintOptions={tintOptions} />
 
       <VLTGuide />
 
-      <ProcessFlow
-        title="Our Installation Process"
-        steps={installationProcess}
-        accentColor="bg-purple-100 text-purple-600"
-      />
+      <BlackRedSection>
+        <ProcessFlow
+          title="Our Installation Process"
+          steps={installationProcess}
+          dark
+        />
+      </BlackRedSection>
 
       {/* Book Window Tinting */}
       <div id="book" className="scroll-mt-8">

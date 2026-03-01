@@ -35,21 +35,21 @@ const DetailingPackageGrid: React.FC<DetailingPackageGridProps> = ({
           price={pkg.price}
           extra={pkg.duration}
           popular={pkg.popular}
-          accent="blue"
+          accent="red"
         >
           <div className="space-y-3">
             <FeatureList
               features={pkg.exteriorFeatures}
               title="Exterior"
-              titleColor="text-blue-900"
+              titleColor="text-red-400"
               highlightPrefix="All services from"
-              accent="blue"
+              accent="red"
             />
             <FeatureList
               features={pkg.interiorFeatures}
               title="Interior"
               highlightPrefix="All services from"
-              accent="blue"
+              accent="red"
             />
           </div>
         </PackageCard>

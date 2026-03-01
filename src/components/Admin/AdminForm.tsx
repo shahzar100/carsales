@@ -60,7 +60,7 @@ const AdminForm = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-red-500 focus:outline-none"
                 placeholder="Enter your username"
               />
             </div>
@@ -82,7 +82,7 @@ const AdminForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-red-500 focus:outline-none"
                 placeholder="Enter your password"
               />
             </div>
@@ -100,7 +100,7 @@ const AdminForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg bg-red-600 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

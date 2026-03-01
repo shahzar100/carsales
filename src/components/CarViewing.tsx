@@ -28,7 +28,7 @@ const CarViewing = () => {
         </p>
         <Link
           href="/BrowseFleet"
-          className="inline-block rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
+          className="inline-block rounded-lg bg-red-600 px-6 py-3 text-white transition-colors hover:bg-red-700"
         >
           Browse Our Fleet
         </Link>

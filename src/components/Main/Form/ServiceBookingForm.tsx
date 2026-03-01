@@ -84,7 +84,7 @@ const serviceCategories = [
       "Ceramic Coating Available",
     ],
     icon: <Sparkles className="h-5 w-5" />,
-    activeColour: "border-blue-500 bg-blue-50/50",
+    activeColour: "border-red-500 bg-red-50/50",
   },
   {
     value: "Window Tint",
@@ -96,7 +96,7 @@ const serviceCategories = [
       "Lifetime Warranty Options",
     ],
     icon: <Shield className="h-5 w-5" />,
-    activeColour: "border-purple-500 bg-purple-50/50",
+    activeColour: "border-gray-500 bg-gray-50/50",
   },
   {
     value: "Repair",
@@ -108,7 +108,7 @@ const serviceCategories = [
       "Electrical & Transmission",
     ],
     icon: <Wrench className="h-5 w-5" />,
-    activeColour: "border-green-500 bg-green-50/50",
+    activeColour: "border-red-700 bg-red-50/50",
   },
 ];
 

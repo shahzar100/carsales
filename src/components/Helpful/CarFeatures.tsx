@@ -49,7 +49,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
                 onClick={() => onToggle(feature)}
                 className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                   isSelected
-                    ? "border-blue-500 bg-blue-50 text-blue-600 shadow-sm"
+                    ? "border-red-500 bg-red-50 text-red-600 shadow-sm"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                 }`}
               >

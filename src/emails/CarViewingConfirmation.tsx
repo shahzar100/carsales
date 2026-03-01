@@ -81,7 +81,7 @@ export const CarViewingConfirmation: React.FC<Props> = ({
           margin: "6px 0 0",
           fontSize: "18px",
           fontWeight: 600,
-          color: "#2563eb",
+          color: "#dc2626",
         }}
       >
         £{booking.carDetails.price.toLocaleString()}

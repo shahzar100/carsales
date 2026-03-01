@@ -12,6 +12,7 @@ import {
   BackNavigation,
   ProcessFlow,
   WhyChooseUs,
+  BlackRedSection,
 } from "@/components/Services/Common";
 import {
   RepairServiceGrid,
@@ -63,7 +64,7 @@ const Repairs = () => {
     {
       category: "Transmission & Drivetrain",
       icon: Wrench,
-      color: "bg-blue-500",
+      color: "bg-red-600",
       services: [
         "Transmission Service",
         "Clutch Replacement",
@@ -116,7 +117,7 @@ const Repairs = () => {
 
   const heroProps = {
     icon: Wrench,
-    iconBgColor: "bg-green-100 text-green-600",
+    iconBgColor: "bg-gray-100 text-gray-900",
     title: "Expert Auto Repair Services",
     description:
       "Professional automotive repair services for all makes and models. Our certified technicians use state-of-the-art diagnostic equipment to get you back on the road safely and efficiently.",
@@ -124,14 +125,14 @@ const Repairs = () => {
       {
         icon: CheckCircle,
         text: "ASE Certified Technicians",
-        color: "text-green-500",
+        color: "text-red-500",
       },
       {
         icon: Clock,
         text: "Same Day Service Available",
-        color: "text-blue-500",
+        color: "text-gray-900",
       },
-      { icon: Shield, text: "Warranty on All Work", color: "text-purple-500" },
+      { icon: Shield, text: "Warranty on All Work", color: "text-red-700" },
     ],
   };
 
@@ -145,11 +146,9 @@ const Repairs = () => {
 
       <RepairServiceGrid repairServices={repairServices} />
 
-      <ProcessFlow
-        title="Our Repair Process"
-        steps={repairProcess}
-        accentColor="bg-green-100 text-green-600"
-      />
+      <BlackRedSection>
+        <ProcessFlow title="Our Repair Process" steps={repairProcess} dark />
+      </BlackRedSection>
 
       <WhyChooseUs />
 

@@ -31,7 +31,7 @@ const TintOptionsGrid: React.FC<TintOptionsGridProps> = ({ tintOptions }) => {
           subtitle={`${option.type} Film`}
           price={option.price}
           popular={option.popular}
-          accent="purple"
+          accent="crimson"
         >
           <div className="space-y-3">
             <InfoBox
@@ -40,7 +40,7 @@ const TintOptionsGrid: React.FC<TintOptionsGridProps> = ({ tintOptions }) => {
                 { label: "Warranty:", value: option.warranty },
               ]}
             />
-            <FeatureList features={option.features} accent="purple" />
+            <FeatureList features={option.features} accent="crimson" />
           </div>
         </PackageCard>
       ))}

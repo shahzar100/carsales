@@ -111,7 +111,7 @@ const Form: React.FC<FormProps> = ({
                     disabled={!isClickable && !isActive}
                     className={`relative flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${
                       isActive
-                        ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200"
+                        ? "border-red-600 bg-red-600 text-white shadow-lg shadow-red-200"
                         : isCompleted
                           ? "cursor-pointer border-emerald-500 bg-emerald-500 text-white hover:shadow-md hover:shadow-emerald-200"
                           : "border-gray-300 bg-white text-gray-400"
@@ -130,7 +130,7 @@ const Form: React.FC<FormProps> = ({
                     <p
                       className={`hidden text-xs font-medium transition-colors duration-300 sm:block ${
                         isActive
-                          ? "text-blue-600"
+                          ? "text-red-600"
                           : isCompleted
                             ? "text-emerald-600"
                             : "text-gray-400"

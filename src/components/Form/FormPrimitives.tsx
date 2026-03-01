@@ -40,8 +40,7 @@ export const FormButton: React.FC<{
     "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60";
 
   const variants: Record<ButtonVariant, string> = {
-    primary:
-      "bg-blue-600 text-white shadow-sm hover:bg-blue-700 hover:shadow-md",
+    primary: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
     secondary: "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
     ghost: "cursor-not-allowed text-gray-300",
     success:
@@ -124,7 +123,7 @@ export const SubmitButton: React.FC<{
 type BadgeColour = "blue" | "amber" | "red" | "emerald" | "gray";
 
 const badgeColours: Record<BadgeColour, string> = {
-  blue: "bg-blue-100 text-blue-700",
+  blue: "bg-red-50 text-red-700",
   amber: "bg-amber-100 text-amber-700",
   red: "bg-red-100 text-red-700",
   emerald: "bg-emerald-100 text-emerald-700",
@@ -150,7 +149,7 @@ export const Badge: React.FC<{
 type BannerVariant = "info" | "warning" | "success" | "error";
 
 const bannerStyles: Record<BannerVariant, string> = {
-  info: "border-blue-100 bg-blue-50/50 text-blue-700",
+  info: "border-red-100 bg-red-50/50 text-red-700",
   warning: "border-amber-200 bg-amber-50 text-amber-700",
   success: "border-emerald-200 bg-emerald-50 text-emerald-700",
   error: "border-red-200 bg-red-50 text-red-700",
@@ -184,7 +183,7 @@ export const SelectionCard: React.FC<{
   title,
   description,
   items,
-  activeColour = "border-blue-500 bg-blue-50/50",
+  activeColour = "border-red-500 bg-red-50/50",
 }) => (
   <button
     type="button"
@@ -199,7 +198,7 @@ export const SelectionCard: React.FC<{
       <span className="text-sm font-semibold text-gray-900">{title}</span>
       <div
         className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
-          selected ? "border-blue-600 bg-blue-600" : "border-gray-300 bg-white"
+          selected ? "border-red-600 bg-red-600" : "border-gray-300 bg-white"
         }`}
       >
         {selected && <div className="h-2 w-2 rounded-full bg-white" />}
@@ -310,7 +309,7 @@ export const FormInput: React.FC<{
       min={min}
       max={max}
       disabled={disabled}
-      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
     />
   </div>
 );
@@ -336,7 +335,7 @@ export const FormTextarea: React.FC<{
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+      className="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
     />
   </div>
 );
@@ -361,7 +360,7 @@ export const FormToggle: React.FC<{
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-        checked ? "bg-blue-600" : "bg-gray-200"
+        checked ? "bg-red-600" : "bg-gray-200"
       }`}
     >
       <span

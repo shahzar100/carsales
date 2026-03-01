@@ -39,7 +39,7 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
               <div className="grid grid-cols-1 gap-3">
                 {category.services.map((service, idx) => (
                   <div key={idx} className="flex items-center">
-                    <CheckCircle className="mr-3 h-4 w-4 shrink-0 text-green-500" />
+                    <CheckCircle className="mr-3 h-4 w-4 shrink-0 text-red-500" />
                     <span className="text-gray-700">{service}</span>
                   </div>
                 ))}

@@ -13,7 +13,7 @@ interface RecentActivityTableProps {
 const statusBadge = (status: string) => {
   const styles: Record<string, string> = {
     pending: "bg-amber-100 text-amber-700",
-    confirmed: "bg-blue-100 text-blue-700",
+    confirmed: "bg-gray-100 text-gray-700",
     completed: "bg-emerald-100 text-emerald-700",
     cancelled: "bg-red-100 text-red-700",
   };
@@ -28,11 +28,11 @@ const statusBadge = (status: string) => {
 
 const typeBadge = (type: "service" | "viewing") =>
   type === "service" ? (
-    <span className="inline-flex items-center gap-1 text-purple-600">
+    <span className="inline-flex items-center gap-1 text-red-600">
       <Wrench className="h-3.5 w-3.5" /> Service
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 text-blue-600">
+    <span className="inline-flex items-center gap-1 text-gray-700">
       <Eye className="h-3.5 w-3.5" /> Viewing
     </span>
   );

@@ -39,7 +39,7 @@ const PageLoader = () => {
                 repeat: Infinity,
               }}
             >
-              <Car className="h-full w-full text-blue-600" />
+              <Car className="h-full w-full text-red-600" />
             </motion.div>
           </div>
         </div>
@@ -54,7 +54,7 @@ const PageLoader = () => {
         {/* Progress Bar */}
         <div className="mx-auto mt-6 h-2 w-64 overflow-hidden rounded-full bg-gray-200">
           <motion.div
-            className="h-full rounded-full bg-linear-to-r from-blue-500 to-purple-600"
+            className="h-full rounded-full bg-linear-to-r from-red-500 to-red-700"
             animate={{ width: ["0%", "100%"] }}
             transition={{
               duration: 1.5,

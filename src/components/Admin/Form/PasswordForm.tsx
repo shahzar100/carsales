@@ -133,7 +133,7 @@ const PasswordForm = () => {
                 "Includes a secure reset link",
                 "Link expires after 24 hours",
               ]}
-              activeColour="border-blue-500 bg-blue-50/50"
+              activeColour="border-gray-500 bg-gray-50/50"
             />
           </div>
         ),
@@ -168,7 +168,7 @@ const PasswordForm = () => {
                 type="button"
                 onClick={lookupUser}
                 disabled={!data.identifier.trim() || lookingUp}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {lookingUp ? (
                   <>

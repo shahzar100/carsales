@@ -226,7 +226,7 @@ export async function getDashboardData(
   // ── Car Inventory by Status ────────────────────────────
   const inventoryByStatus = [
     { name: "Available", value: availableCars, colour: "#22c55e" },
-    { name: "Sold", value: soldCars, colour: "#3b82f6" },
+    { name: "Sold", value: soldCars, colour: "#dc2626" },
     { name: "Reserved", value: reservedCars, colour: "#f59e0b" },
   ];
 

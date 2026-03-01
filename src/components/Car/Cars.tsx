@@ -112,7 +112,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Compact Specs */}
             <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Gauge className="h-3.5 w-3.5 shrink-0 text-blue-600" />
+                <Gauge className="h-3.5 w-3.5 shrink-0 text-red-600" />
                 <span className="truncate text-xs font-medium text-gray-700">
                   {formatMileage(car.mileage)}
                 </span>
@@ -130,7 +130,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 </span>
               </div>
               <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5">
-                <Car className="h-3.5 w-3.5 shrink-0 text-purple-600" />
+                <Car className="h-3.5 w-3.5 shrink-0 text-gray-900" />
                 <span className="truncate text-xs font-medium text-gray-700">
                   {car.year}
                 </span>
@@ -157,7 +157,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 <Edit className="h-3.5 w-3.5" />
                 Edit
               </button>
-              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-blue-700">
+              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-red-600 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-red-700">
                 <Eye className="h-3.5 w-3.5" />
                 View
               </button>

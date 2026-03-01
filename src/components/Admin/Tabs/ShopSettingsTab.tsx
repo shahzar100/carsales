@@ -31,7 +31,7 @@ export default function ShopSettingsTab({
                     businessName: e.target.value,
                   })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                 required
               />
             </div>
@@ -45,7 +45,7 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, phone: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                 required
               />
             </div>
@@ -61,7 +61,7 @@ export default function ShopSettingsTab({
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, email: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
               required
             />
           </div>
@@ -76,7 +76,7 @@ export default function ShopSettingsTab({
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, address: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
               required
             />
           </div>
@@ -92,7 +92,7 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, city: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                 required
               />
             </div>
@@ -106,7 +106,7 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, state: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                 required
               />
             </div>
@@ -120,7 +120,7 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, zipCode: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                 required
               />
             </div>
@@ -136,7 +136,7 @@ export default function ShopSettingsTab({
                 onShopInfoChange({ ...shopInfo, description: e.target.value })
               }
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
             />
           </div>
 
@@ -157,7 +157,7 @@ export default function ShopSettingsTab({
                         hours: { ...shopInfo.hours, [day]: e.target.value },
                       })
                     }
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
                   />
                 </div>
               ))}
@@ -166,7 +166,7 @@ export default function ShopSettingsTab({
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white hover:bg-blue-700"
+            className="w-full rounded-lg bg-red-600 py-3 font-medium text-white hover:bg-red-700"
           >
             Save Changes
           </button>

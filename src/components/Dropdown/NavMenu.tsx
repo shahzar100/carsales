@@ -50,7 +50,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
       </div>
       <button
         onClick={() => setMenu(!menu)}
-        className="cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-colors duration-200 hover:bg-gray-100 xl:hidden"
+        className="cursor-pointer rounded-lg border border-gray-700 p-3 text-gray-200 shadow-sm transition-colors duration-200 hover:bg-white/10 xl:hidden"
         aria-label="Toggle menu"
       >
         <Menu size={20} />
@@ -59,13 +59,16 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
         <>
           <div
             ref={menuRef}
-            className="fixed top-0 right-0 z-50 h-screen w-screen overflow-y-auto bg-white shadow-2xl"
+            className="fixed top-0 right-0 z-50 h-screen w-screen overflow-y-auto bg-black shadow-2xl"
           >
-            <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-6">
-              <h2 className="section-title"> {title} </h2>
+            <div className="flex items-center justify-between border-b border-gray-800 bg-gray-900 p-6">
+              <h2 className="text-xl font-bold text-white sm:text-2xl">
+                {" "}
+                {title}{" "}
+              </h2>
               <button
                 onClick={() => setMenu(false)}
-                className="rounded-full bg-white p-3 shadow-sm transition-colors duration-200 hover:bg-gray-200"
+                className="rounded-full bg-gray-800 p-3 text-gray-200 shadow-sm transition-colors duration-200 hover:bg-gray-700"
                 aria-label="Close menu"
               >
                 <X size={20} />

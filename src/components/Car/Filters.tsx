@@ -63,7 +63,7 @@ const Filters: React.FC<FiltersProps> = ({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-blue-600 shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-red-500 to-red-600 shadow-sm">
             <SlidersHorizontal size={16} className="text-white" />
           </div>
           <div>

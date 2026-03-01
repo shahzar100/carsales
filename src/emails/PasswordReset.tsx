@@ -73,7 +73,7 @@ export const PasswordReset: React.FC<Props> = ({
       >
         Or copy and paste this link into your browser:
         <br />
-        <a href={resetLink} style={{ color: "#2563eb" }}>
+        <a href={resetLink} style={{ color: "#dc2626" }}>
           {resetLink}
         </a>
       </Text>

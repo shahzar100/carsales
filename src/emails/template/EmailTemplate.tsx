@@ -27,9 +27,9 @@ import React from "react";
 
 // ── Brand colours (used across all emails) ───────────────────
 const brand = {
-  primary: "#2563eb",
-  primaryDark: "#1d4ed8",
-  accent: "#7c3aed",
+  primary: "#dc2626",
+  primaryDark: "#b91c1c",
+  accent: "#991b1b",
   success: "#059669",
   danger: "#dc2626",
   textDark: "#111827",
@@ -46,7 +46,7 @@ const headerGradients: Record<HeaderStyle, string> = {
   default: `linear-gradient(135deg, ${brand.primary} 0%, ${brand.accent} 100%)`,
   success: `linear-gradient(135deg, ${brand.success} 0%, #10b981 100%)`,
   danger: `linear-gradient(135deg, ${brand.danger} 0%, #ef4444 100%)`,
-  info: `linear-gradient(135deg, #0ea5e9 0%, ${brand.primary} 100%)`,
+  info: `linear-gradient(135deg, #1f2937 0%, ${brand.primary} 100%)`,
 };
 
 // ── Shared sub-components ────────────────────────────────────

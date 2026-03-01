@@ -9,7 +9,7 @@ interface StatCardProps {
   label: string;
   value: string | number;
   icon: LucideIcon;
-  /** Tailwind classes for the icon background, e.g. "bg-blue-100 text-blue-600" */
+  /** Tailwind classes for the icon background, e.g. "bg-red-100 text-red-600" */
   colour: string;
   /** Optional sub-text shown below the value */
   subtext?: string;

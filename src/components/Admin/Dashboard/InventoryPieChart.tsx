@@ -15,14 +15,14 @@ import { PieSlice } from "./types";
 // ═════════════════════════════════════════════════════════════
 
 const DEFAULT_COLOURS = [
-  "#3b82f6",
+  "#dc2626",
   "#10b981",
   "#f59e0b",
-  "#8b5cf6",
+  "#1f2937",
   "#ef4444",
   "#06b6d4",
   "#ec4899",
-  "#6366f1",
+  "#991b1b",
 ];
 
 interface InventoryPieChartProps {

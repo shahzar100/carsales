@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle } from "lucide-react";
+import { Check } from "lucide-react";
 import type { AccentColor } from "./PackageCard";
 import { accentColors } from "./PackageCard";
 
@@ -19,9 +19,9 @@ interface FeatureListProps {
 const FeatureList: React.FC<FeatureListProps> = ({
   features,
   title,
-  titleColor = "text-gray-900",
+  titleColor,
   highlightPrefix,
-  accent = "blue",
+  accent = "red",
 }) => {
   const c = accentColors[accent];
 
@@ -29,27 +29,33 @@ const FeatureList: React.FC<FeatureListProps> = ({
     <div>
       {title && (
         <h4
-          className={`mb-2 text-sm font-semibold tracking-wide uppercase ${titleColor}`}
+          className={`mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase ${
+            titleColor || c.text
+          }`}
         >
+          <span className="h-px flex-1 bg-white/10" />
           {title}
+          <span className="h-px flex-1 bg-white/10" />
         </h4>
       )}
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {features.map((feature, idx) => {
           const isHighlighted =
             highlightPrefix && feature.startsWith(highlightPrefix);
           return (
-            <div key={idx} className="flex items-start">
-              <CheckCircle
-                className={`mt-0.5 mr-2 h-4 w-4 shrink-0 ${
-                  isHighlighted ? c.highlightIcon : "text-green-500"
-                }`}
-              />
+            <div key={idx} className="flex items-start gap-2.5">
               <span
-                className={`text-sm ${
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
                   isHighlighted
-                    ? `font-medium italic ${c.highlight}`
-                    : "text-gray-700"
+                    ? "bg-red-500/20 text-red-400"
+                    : "bg-white/10 text-gray-400"
+                }`}
+              >
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+              </span>
+              <span
+                className={`text-sm leading-snug ${
+                  isHighlighted ? `font-medium ${c.highlight}` : "text-gray-300"
                 }`}
               >
                 {feature}

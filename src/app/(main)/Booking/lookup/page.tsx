@@ -146,7 +146,7 @@ export default function BookingLookupPage() {
         text: "Confirmed",
       },
       completed: {
-        color: "bg-blue-100 text-blue-800",
+        color: "bg-gray-100 text-gray-800",
         icon: <CheckCircle className="h-4 w-4" />,
         text: "Completed",
       },
@@ -190,14 +190,14 @@ export default function BookingLookupPage() {
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Enter your booking reference (e.g., BK-ABC123)"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:ring-2 focus:ring-red-500 focus:outline-none"
               />
               <Search className="absolute top-3.5 left-3 h-5 w-5 text-gray-400" />
             </div>
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Searching..." : "Search"}
             </button>
@@ -214,7 +214,7 @@ export default function BookingLookupPage() {
         {booking && (
           <div className="overflow-hidden rounded-lg bg-white shadow-md">
             {/* Header with Status */}
-            <div className="bg-linear-to-r from-blue-600 to-purple-600 p-6 text-white">
+            <div className="bg-linear-to-r from-gray-900 to-red-900 p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="mb-1 text-sm opacity-90">Booking Reference</p>
@@ -312,8 +312,8 @@ export default function BookingLookupPage() {
 
               {/* Action Note */}
               {booking.status !== "cancelled" && (
-                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                  <p className="text-sm text-blue-800">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+                  <p className="text-sm text-red-800">
                     If you need to cancel or reschedule your appointment, please
                     contact us at least 24 hours in advance.
                   </p>

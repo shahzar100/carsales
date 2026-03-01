@@ -14,7 +14,7 @@ const ShopButton: React.FC<ShopButtonProps> = ({
   icon: Icon,
   onClick,
   size,
-  color = "bg-blue-600 hover:bg-blue-700",
+  color = "bg-red-600 hover:bg-red-700",
   iconSize = 24,
 }) => {
   const [isSwapping, setIsSwapping] = useState(false);
@@ -42,7 +42,7 @@ const ShopButton: React.FC<ShopButtonProps> = ({
       onClick={handleButtonClick}
       className={`${
         size || "h-20 w-20"
-      } ${color} flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none`}
+      } ${color} flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none`}
       disabled={isDisabled}
       initial={{ scale: 1 }}
       animate={{ scale: isSwapping ? 1.2 : 1 }}

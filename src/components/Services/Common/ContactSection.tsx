@@ -22,8 +22,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({
   subtitle,
   primaryActions,
   secondaryActions,
-  backgroundColor = "bg-gray-900",
-  textColor = "text-white",
+  backgroundColor = "bg-white",
+  textColor = "text-gray-900",
 }) => {
   const getActionClasses = (style: string, isPrimary: boolean = true) => {
     const baseClasses =

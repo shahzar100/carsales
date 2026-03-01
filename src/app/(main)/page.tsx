@@ -2,6 +2,7 @@ import React from "react";
 import HeroSection from "@/components/HeroSection";
 import Link from "next/link";
 import { Car, Calendar, Shield, Award } from "lucide-react";
+import { BlackRedSection } from "@/components/Services/Common";
 
 export default function Home() {
   return (
@@ -23,8 +24,8 @@ export default function Home() {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                <Car className="text-blue-600" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <Car className="text-red-600" size={32} />
               </div>
               <h3 className="heading-4 mb-2">Quality Vehicles</h3>
               <p className="text-gray-600">
@@ -33,8 +34,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <Calendar className="text-green-600" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+                <Calendar className="text-red-500" size={32} />
               </div>
               <h3 className="heading-4 mb-2">Easy Booking</h3>
               <p className="text-gray-600">
@@ -43,8 +44,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
-                <Shield className="text-purple-600" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <Shield className="text-red-400" size={32} />
               </div>
               <h3 className="heading-4 mb-2">No Pressure</h3>
               <p className="text-gray-600">
@@ -53,8 +54,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
-                <Award className="text-yellow-600" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <Award className="text-gray-900" size={32} />
               </div>
               <h3 className="heading-4 mb-2">Expert Advice</h3>
               <p className="text-gray-600">
@@ -66,26 +67,28 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gray-900 py-20 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="section-title mb-4 text-white">
-            Ready to Find Your Next Car?
-          </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-gray-300">
-            Browse our extensive collection or book a viewing appointment today.
-            Our team is here to help you every step of the way.
-          </p>
+      <section>
+        <BlackRedSection>
+          <div className="text-center">
+            <h2 className="mb-4 text-2xl font-bold tracking-tight text-white md:text-3xl">
+              Ready to Find Your Next Car?
+            </h2>
+            <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-400">
+              Browse our extensive collection or book a viewing appointment
+              today. Our team is here to help you every step of the way.
+            </p>
 
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/BrowseFleet"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-8 py-4 font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              <Car size={24} />
-              View All Cars
-            </Link>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <Link
+                href="/BrowseFleet"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-8 py-4 font-semibold text-white transition-all hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
+              >
+                <Car size={24} />
+                View All Cars
+              </Link>
+            </div>
           </div>
-        </div>
+        </BlackRedSection>
       </section>
     </div>
   );

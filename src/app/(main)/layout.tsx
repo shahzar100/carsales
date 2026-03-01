@@ -10,7 +10,7 @@ export default function MainLayout({
     <>
       <Header />
       <main className="min-h-screen">{children}</main>
-      <footer className="w-full border-t bg-gray-50">
+      <footer className="w-full border-t border-gray-200 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
           {/* Main Footer Content */}
           <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">

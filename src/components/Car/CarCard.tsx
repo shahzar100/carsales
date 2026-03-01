@@ -53,7 +53,7 @@ const CarCard = ({
             onClick={() => setCarId(idx)}
             className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all ${
               idx === carId
-                ? "ring-2 ring-blue-600"
+                ? "ring-2 ring-red-600"
                 : "opacity-50 hover:opacity-100"
             }`}
           >

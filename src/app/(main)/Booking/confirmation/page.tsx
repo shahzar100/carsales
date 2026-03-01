@@ -22,7 +22,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
           </p>
           <Link
             href="/BrowseFleet"
-            className="inline-block rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
+            className="inline-block rounded-lg bg-red-600 px-6 py-3 text-white transition-colors hover:bg-red-700"
           >
             Browse Our Fleet
           </Link>
@@ -51,8 +51,8 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
         <div className="mb-6 rounded-lg bg-white p-6 shadow-lg">
           <div className="text-center">
             <p className="mb-2 text-sm text-gray-600">Your Booking Reference</p>
-            <div className="mb-4 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
-              <p className="font-mono text-xl font-bold tracking-wider text-blue-600 sm:text-2xl md:text-3xl">
+            <div className="mb-4 rounded-lg border-2 border-red-200 bg-red-50 p-4">
+              <p className="font-mono text-xl font-bold tracking-wider text-red-600 sm:text-2xl md:text-3xl">
                 {ref}
               </p>
             </div>
@@ -65,14 +65,14 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
         {/* Important Information */}
         <div className="mb-6 rounded-lg bg-white p-6 shadow-lg">
           <h2 className="section-title mb-4 flex items-center">
-            <Mail className="mr-2 h-5 w-5 text-blue-600" />
+            <Mail className="mr-2 h-5 w-5 text-red-600" />
             What Happens Next?
           </h2>
 
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                <span className="text-sm font-semibold text-blue-600">1</span>
+              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100">
+                <span className="text-sm font-semibold text-red-600">1</span>
               </div>
               <div>
                 <p className="font-medium text-gray-900">
@@ -87,8 +87,8 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
             </div>
 
             <div className="flex items-start space-x-3">
-              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                <span className="text-sm font-semibold text-blue-600">2</span>
+              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100">
+                <span className="text-sm font-semibold text-red-600">2</span>
               </div>
               <div>
                 <p className="font-medium text-gray-900">
@@ -102,8 +102,8 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
             </div>
 
             <div className="flex items-start space-x-3">
-              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                <span className="text-sm font-semibold text-blue-600">3</span>
+              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100">
+                <span className="text-sm font-semibold text-red-600">3</span>
               </div>
               <div>
                 <p className="font-medium text-gray-900">Arrive On Time</p>
@@ -119,7 +119,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <Link
             href={`/Booking/lookup?ref=${ref}`}
-            className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+            className="flex items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-700"
           >
             <Calendar size={20} />
             View Booking Details

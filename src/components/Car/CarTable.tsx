@@ -148,7 +148,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               paginatedCars.map((car, index) => (
                 <tr
                   key={car._id || index}
-                  className="group transition-all duration-200 hover:bg-blue-50/30"
+                  className="group transition-all duration-200 hover:bg-red-50/30"
                 >
                   {/* Vehicle Info with Image */}
                   <td className="px-5 py-5">
@@ -202,10 +202,10 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                   {/* Specs */}
                   <td className="px-4 py-5">
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 shadow-sm">
+                      <span className="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 shadow-sm">
                         {car.fuel}
                       </span>
-                      <span className="inline-flex items-center rounded-md border border-purple-200 bg-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700 shadow-sm">
+                      <span className="inline-flex items-center rounded-md border border-gray-300 bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 shadow-sm">
                         {car.transmission}
                       </span>
                       <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 shadow-sm">
@@ -297,7 +297,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
               <span className="text-sm font-medium text-gray-600">
                 Total Value:
               </span>
-              <span className="text-lg font-bold text-green-600">
+              <span className="text-lg font-bold text-red-600">
                 {formatPrice(
                   cars
                     .filter((c) => c.status === "available")
@@ -318,7 +318,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                     setItemsPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
@@ -365,7 +365,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                         onClick={() => setCurrentPage(page as number)}
                         className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
                           currentPage === page
-                            ? "bg-linear-to-br from-blue-500 to-blue-600 text-white shadow-md"
+                            ? "bg-linear-to-br from-red-500 to-red-600 text-white shadow-md"
                             : "bg-white text-gray-600 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"
                         }`}
                       >

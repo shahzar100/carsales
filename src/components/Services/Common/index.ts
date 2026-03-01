@@ -4,6 +4,7 @@ export { default as ProcessFlow } from "./ProcessFlow";
 export { default as ContactSection } from "./ContactSection";
 export { default as WhyChooseUs } from "./WhyChooseUs";
 export { default as BenefitsGrid } from "./BenefitsGrid";
+export { default as BlackRedSection } from "./BlackRedSection";
 export { default as PackageGrid } from "./PackageGrid";
 export { default as PackageCard } from "./PackageCard";
 export { default as FeatureList } from "./FeatureList";

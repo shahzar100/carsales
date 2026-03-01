@@ -39,7 +39,7 @@ const formatTime = (t: string) => {
 const statusDot = (status: string) => {
   const colours: Record<string, string> = {
     pending: "bg-amber-400",
-    confirmed: "bg-blue-400",
+    confirmed: "bg-gray-400",
     completed: "bg-emerald-400",
   };
   return (
@@ -89,9 +89,9 @@ const UpcomingAppointments: React.FC<UpcomingAppointmentsProps> = ({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 {item.type === "service" ? (
-                  <Wrench className="h-3.5 w-3.5 shrink-0 text-purple-500" />
+                  <Wrench className="h-3.5 w-3.5 shrink-0 text-red-500" />
                 ) : (
-                  <Eye className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+                  <Eye className="h-3.5 w-3.5 shrink-0 text-gray-500" />
                 )}
                 <p className="truncate text-sm font-medium text-gray-900">
                   {item.customer}

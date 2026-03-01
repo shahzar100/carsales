@@ -65,7 +65,7 @@ const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
           <Bar
             dataKey="count"
             name="Cars"
-            fill="#6366f1"
+            fill="#dc2626"
             radius={[0, 4, 4, 0]}
           />
         </BarChart>

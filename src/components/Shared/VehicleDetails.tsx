@@ -58,7 +58,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
           <div className="mt-4 grid grid-cols-2 gap-3 text-gray-800">
             {vehicle.mileage && (
               <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
-                <Gauge className="text-blue-500" size={16} />
+                <Gauge className="text-red-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Mileage</p>
                   <p className="text-sm font-medium">
@@ -70,7 +70,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
 
             {vehicle.fuel && (
               <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
-                <Fuel className="text-green-500" size={16} />
+                <Fuel className="text-gray-700" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Fuel Type</p>
                   <p className="text-sm font-medium">{vehicle.fuel}</p>
@@ -80,7 +80,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
 
             {vehicle.doors && (
               <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
-                <Hash className="text-purple-500" size={16} />
+                <Hash className="text-gray-500" size={16} />
                 <div>
                   <p className="text-xs text-gray-600">Doors</p>
                   <p className="text-sm font-medium">{vehicle.doors}</p>

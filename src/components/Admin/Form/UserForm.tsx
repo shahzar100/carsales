@@ -122,7 +122,7 @@ const UserForm = () => {
                 "View bookings",
                 "View customer info",
               ]}
-              activeColour="border-blue-500 bg-blue-50/50"
+              activeColour="border-gray-500 bg-gray-50/50"
             />
             <SelectionCard
               selected={data.role === "manager"}

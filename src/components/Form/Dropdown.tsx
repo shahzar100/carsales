@@ -138,8 +138,8 @@ const Dropdown: React.FC<DropdownProps> = ({
             : error
               ? "border-red-300 bg-white text-gray-900 ring-2 ring-red-100 focus:border-red-500 focus:ring-red-200"
               : isOpen
-                ? "border-blue-500 bg-white text-gray-900 ring-2 ring-blue-100"
-                : "border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                ? "border-red-500 bg-white text-gray-900 ring-2 ring-red-100"
+                : "border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
         } `}
       >
         <span className={selectedOption ? "text-gray-900" : "text-gray-500"}>
@@ -147,7 +147,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         </span>
         <ChevronDown
           className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-blue-500" : ""
+            isOpen ? "rotate-180 text-red-500" : ""
           }`}
         />
       </button>
@@ -188,7 +188,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                       option.disabled
                         ? "cursor-not-allowed text-gray-400"
                         : isHighlighted
-                          ? "bg-blue-50 text-blue-700"
+                          ? "bg-red-50 text-red-700"
                           : isSelected
                             ? "bg-gray-50 text-gray-900"
                             : "text-gray-700 hover:bg-gray-50"
@@ -197,7 +197,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     <span className={isSelected ? "font-medium" : ""}>
                       {option.label}
                     </span>
-                    {isSelected && <Check className="h-4 w-4 text-blue-600" />}
+                    {isSelected && <Check className="h-4 w-4 text-red-600" />}
                   </li>
                 );
               })

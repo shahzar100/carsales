@@ -21,9 +21,12 @@ export default function AdminNavigationTabs() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between gap-4 border-b bg-white px-4 py-3 shadow-sm">
-      <a href="/admin/dashboard" className="section-title">
-        Admin Dashboard
+    <nav className="sticky top-0 z-50 flex items-center justify-between gap-4 bg-black px-4 py-3 shadow-md">
+      <a
+        href="/admin/dashboard"
+        className="text-xl font-bold text-white sm:text-2xl"
+      >
+        Admin <span className="text-red-500">Dashboard</span>
       </a>
       {isLoggedIn && (
         <NavMenu title="Admin Menu">
@@ -35,9 +38,9 @@ export default function AdminNavigationTabs() {
               icon={link.icon}
             />
           ))}
-          <Button onClick={logout} variant="secondary" disabled={false}>
-            <LogOut className="h-4 w-4 text-red-500" />
-            <span className="hidden text-red-500 sm:inline">Logout</span>
+          <Button onClick={logout} variant="ghost" disabled={false}>
+            <LogOut className="h-4 w-4 text-red-400" />
+            <span className="hidden text-red-400 sm:inline">Logout</span>
           </Button>
         </NavMenu>
       )}

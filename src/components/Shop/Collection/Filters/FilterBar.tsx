@@ -278,7 +278,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             <Filter className="text-gray-600" size={20} />
             <span className="text-base font-medium text-gray-900">Filters</span>
             {hasActiveFilters && (
-              <span className="rounded-full bg-blue-500 px-2 py-1 text-xs text-white">
+              <span className="rounded-full bg-red-600 px-2 py-1 text-xs text-white">
                 Active
               </span>
             )}
@@ -348,7 +348,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
                 )}
                 <button
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="flex-1 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
+                  className="flex-1 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
                 >
                   Apply Filters
                 </button>
