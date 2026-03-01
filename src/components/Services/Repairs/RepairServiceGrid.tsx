@@ -16,8 +16,8 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
   repairServices,
 }) => {
   return (
-    <div className="mb-16">
-      <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
+    <div className="mb-8 md:mb-16">
+      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-12">
         Our Repair Services
       </h2>
       <div className="grid gap-8 md:grid-cols-2">
@@ -26,7 +26,7 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
           return (
             <div
               key={index}
-              className="rounded-xl border border-gray-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg"
+              className="rounded-xl border border-gray-200 bg-white p-4 transition-shadow duration-300 hover:shadow-lg sm:p-6 lg:p-8"
             >
               <div className="mb-6 flex items-center">
                 <div
@@ -34,7 +34,7 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
                 >
                   <IconComponent size={24} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">
                   {category.category}
                 </h3>
               </div>

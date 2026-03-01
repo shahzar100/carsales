@@ -55,7 +55,7 @@ const Item: React.FC<ItemProps> = ({ car }) => {
   };
 
   return (
-    <div className="group mx-auto min-w-lg overflow-hidden rounded-md border border-blue-500 bg-white hover:border-2 lg:mx-0 lg:max-w-full">
+    <div className="group mx-auto w-full max-w-lg overflow-hidden rounded-md border border-blue-500 bg-white hover:border-2 lg:mx-0 lg:max-w-full">
       <VehicleDetails vehicle={vehicleData} showTitle={false} />
 
       <div className="bg-gray-50 p-4">

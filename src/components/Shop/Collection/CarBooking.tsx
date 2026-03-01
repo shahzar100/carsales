@@ -58,7 +58,7 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
           </div>
 
           {/* Mobile: 3 Buttons in a Row */}
-          <div className="flex w-full gap-8 2xl:hidden">
+          <div className="flex w-full gap-2 sm:gap-4 2xl:hidden">
             <Link
               href={`/Booking/${car._id}`}
               onClick={handleBookingClick}

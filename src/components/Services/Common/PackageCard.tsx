@@ -86,9 +86,9 @@ const PackageCard: React.FC<PackageCardProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border-2 bg-white p-7 transition-all duration-300 ${
+      className={`relative flex flex-col rounded-2xl border-2 bg-white p-4 transition-all duration-300 sm:p-7 ${
         popular
-          ? `scale-105 transform ${c.border} shadow-lg`
+          ? `lg:scale-105 transform ${c.border} shadow-lg`
           : `border-gray-200 ${c.hoverBorder} hover:shadow-md`
       }`}
     >

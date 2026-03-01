@@ -184,7 +184,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     onMouseEnter={() =>
                       !option.disabled && setHighlightedIndex(index)
                     }
-                    className={`flex cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors duration-100 ${
+                    className={`flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors duration-100 ${
                       option.disabled
                         ? "cursor-not-allowed text-gray-400"
                         : isHighlighted

@@ -156,14 +156,14 @@ const Repairs = () => {
       {/* Book a Repair Service */}
       <div id="book" className="scroll-mt-8">
         <div className="mb-6 text-center">
-          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+          <h2 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
             Book Your Repair Service
           </h2>
           <p className="mx-auto max-w-2xl text-gray-600">
             Fill in the form below to schedule your repair appointment.
           </p>
         </div>
-        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
           <ServiceBookingForm defaultService="Repair" />
         </div>
       </div>

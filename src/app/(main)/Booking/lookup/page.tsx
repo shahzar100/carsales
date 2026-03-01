@@ -174,7 +174,7 @@ export default function BookingLookupPage() {
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
             Booking Lookup
           </h1>
           <p className="text-gray-600">
@@ -184,7 +184,7 @@ export default function BookingLookupPage() {
 
         {/* Search Box */}
         <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
               <input
                 type="text"

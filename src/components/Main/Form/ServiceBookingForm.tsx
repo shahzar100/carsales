@@ -274,7 +274,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
               })()
             ) : (
               /* No default — let the user pick */
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {serviceCategories.map((cat) => (
                   <SelectionCard
                     key={cat.value}

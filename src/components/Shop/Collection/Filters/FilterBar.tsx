@@ -311,7 +311,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
       {/* Mobile Filter Modal */}
       {isFilterModalOpen && (
         <div
-          className="bg-opacity-50 fixed inset-0 z-50 flex items-end overflow-y-auto bg-black lg:hidden"
+          className="fixed inset-0 z-50 flex items-end overflow-y-auto bg-black/50 lg:hidden"
           onClick={() => setIsFilterModalOpen(false)}
         >
           <div

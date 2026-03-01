@@ -156,7 +156,7 @@ export default function DateSelector() {
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-72 rounded-xl border border-gray-200 bg-white shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-gray-200 bg-white shadow-xl">
           {!showCustom ? (
             <>
               {/* Quick presets */}

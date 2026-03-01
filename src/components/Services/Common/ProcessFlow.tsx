@@ -18,11 +18,11 @@ const ProcessFlow: React.FC<ProcessFlowProps> = ({
   accentColor = "bg-green-100 text-green-600",
 }) => {
   return (
-    <div className="mb-16">
-      <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
+    <div className="mb-8 md:mb-16">
+      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-12">
         {title}
       </h2>
-      <div className="grid gap-6 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
         {steps.map((process, index) => (
           <div key={index} className="text-center">
             <div

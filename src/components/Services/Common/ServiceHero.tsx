@@ -29,13 +29,13 @@ const ServiceHero: React.FC<ServiceHeroProps> = ({
       >
         {Icon && <Icon size={40} />}
       </div>
-      <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
         {title}
       </h1>
-      <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600">
+      <p className="mx-auto mb-8 max-w-3xl text-lg text-gray-600 sm:text-xl">
         {description}
       </p>
-      <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-gray-500">
         {(badges || []).map((badge, index) => {
           if (!badge || !badge.icon) return null;
           const BadgeIcon = badge.icon;

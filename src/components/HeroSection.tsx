@@ -19,7 +19,7 @@ const HeroSection = async () => {
           >
             {/* Main Heading */}
             <h1
-              className={`${featuredCar?.make ? "mb-8 text-5xl leading-tight font-bold tracking-tight md:text-6xl lg:text-7xl" : "mb-12 text-6xl leading-tight font-bold tracking-tight md:text-7xl lg:text-8xl"}`}
+              className={`${featuredCar?.make ? "mb-8 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl" : "mb-12 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
             >
               Find Your Perfect Car
               <span className="mt-2 block text-blue-400">
@@ -97,7 +97,7 @@ const HeroSection = async () => {
                     </div>
                   </div>
 
-                  <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-4 lg:gap-8 xl:flex-row">
+                  <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-4 xl:flex-row">
                     {/* View Car Button */}
                     <Link
                       href={
@@ -121,7 +121,7 @@ const HeroSection = async () => {
         <div className="mt-12 flex w-full justify-center">
           <Link
             href="/BrowseFleet"
-            className="flex w-full transform items-center justify-center gap-3 rounded-lg bg-blue-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl"
+            className="flex w-full max-w-md transform items-center justify-center gap-3 rounded-lg bg-blue-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl"
           >
             <Search size={24} />
             Browse Cars

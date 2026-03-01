@@ -65,7 +65,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
               <h2 className="text-xl font-bold text-gray-900"> {title} </h2>
               <button
                 onClick={() => setMenu(false)}
-                className="rounded-full bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-gray-200"
+                className="rounded-full bg-white p-3 shadow-sm transition-colors duration-200 hover:bg-gray-200"
                 aria-label="Close menu"
               >
                 <X size={20} />

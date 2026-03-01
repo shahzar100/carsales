@@ -145,24 +145,24 @@ export default function MainLayout({
                 {process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing"}
                 . All rights reserved.
               </p>
-              <div className="mt-4 flex space-x-6 md:mt-0">
+              <div className="mt-4 flex space-x-4 md:mt-0">
                 <a
                   href="#"
-                  className="text-gray-400 transition-colors hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
                 >
                   <span className="sr-only">Facebook</span>
                   📘
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 transition-colors hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
                 >
                   <span className="sr-only">Twitter</span>
                   🐦
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 transition-colors hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
                 >
                   <span className="sr-only">Instagram</span>
                   📷

@@ -94,8 +94,8 @@ const Form: React.FC<FormProps> = ({
       className={`flex flex-col gap-6 ${className}`}
     >
       {/* Step Progress Indicator */}
-      <div className="relative">
-        <div className="flex items-center justify-between">
+      <div className="relative overflow-x-auto">
+        <div className="flex items-center justify-between min-w-0">
           {steps.map((step, index) => {
             const isActive = index === currentStep;
             const isCompleted = completedSteps.has(index);
@@ -128,7 +128,7 @@ const Form: React.FC<FormProps> = ({
 
                   <div className="text-center">
                     <p
-                      className={`text-xs font-medium transition-colors duration-300 ${
+                      className={`hidden text-xs font-medium transition-colors duration-300 sm:block ${
                         isActive
                           ? "text-blue-600"
                           : isCompleted
@@ -148,7 +148,7 @@ const Form: React.FC<FormProps> = ({
 
                 {/* Connector Line */}
                 {index < steps.length - 1 && (
-                  <div className="mx-2 mb-8 h-0.5 flex-1">
+                  <div className="mx-1 mb-4 h-0.5 flex-1 sm:mx-2 sm:mb-8">
                     <div className="relative h-full w-full rounded-full bg-gray-200">
                       <div
                         className="absolute top-0 left-0 h-full rounded-full bg-emerald-500 transition-all duration-500 ease-out"
@@ -166,7 +166,7 @@ const Form: React.FC<FormProps> = ({
       </div>
 
       {/* Step Content */}
-      <div className="min-h-50 rounded-xl border border-gray-100 bg-gray-50/50 p-6">
+      <div className="min-h-50 rounded-xl border border-gray-100 bg-gray-50/50 p-3 sm:p-6">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             {steps[currentStep].title}

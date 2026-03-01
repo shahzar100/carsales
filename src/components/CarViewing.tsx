@@ -44,8 +44,8 @@ const CarViewing = () => {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
-      <h2 className="text-center text-3xl font-bold text-gray-900">
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
+      <h2 className="text-center text-2xl font-bold text-gray-900 sm:text-3xl">
         Book Your Car Viewing
       </h2>
 
@@ -53,7 +53,7 @@ const CarViewing = () => {
       <VehicleDetails vehicle={viewingBooking.carDetails} />
 
       {/* Multi-stage Booking Form */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <CarViewingForm />
       </div>
     </div>

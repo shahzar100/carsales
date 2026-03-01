@@ -41,12 +41,12 @@ const VLTGuide: React.FC = () => {
   ];
 
   return (
-    <div className="mb-16">
-      <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
+    <div className="mb-8 md:mb-16">
+      <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl">
         Tint Darkness Guide (VLT)
       </h2>
-      <div className="rounded-2xl bg-gray-50 p-8">
-        <div className="grid gap-6 md:grid-cols-4">
+      <div className="rounded-2xl bg-gray-50 p-4 sm:p-8">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
           {vltOptions.map((option, index) => (
             <div key={index} className="text-center">
               <div

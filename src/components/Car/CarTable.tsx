@@ -97,9 +97,9 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
   };
 
   return (
-    <div className="overflow-visible rounded-lg border border-gray-200 bg-white shadow-md">
+    <div className="rounded-lg border border-gray-200 bg-white shadow-md">
       {/* Table */}
-      <div>
+      <div className="overflow-x-auto">
         <table className="min-h-96 w-full">
           <thead>
             <tr className="border-b-2 border-gray-200 bg-linear-to-r from-gray-50 to-gray-100">

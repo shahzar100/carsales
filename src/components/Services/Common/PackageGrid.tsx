@@ -12,13 +12,13 @@ const PackageGrid: React.FC<PackageGridProps> = ({
   columns = 3,
 }) => {
   return (
-    <div className="mb-12">
-      <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
+    <div className="mb-8 md:mb-12">
+      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 sm:text-3xl md:mb-8">
         {title}
       </h2>
       <div
         className={`grid gap-6 ${
-          columns === 2 ? "md:grid-cols-2" : "lg:grid-cols-3"
+          columns === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"
         }`}
       >
         {children}

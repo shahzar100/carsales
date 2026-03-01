@@ -99,7 +99,7 @@ const Page = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header Section */}
       <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold text-gray-900">
+        <h1 className="mb-4 text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
           Car Parts & Components
         </h1>
         <p className="mx-auto max-w-3xl text-lg text-gray-600">
@@ -113,7 +113,7 @@ const Page = () => {
       <CarPartsGrid parts={mockCarParts} />
 
       {/* Bottom Info Section */}
-      <div className="mt-16 rounded-lg bg-red-50 p-8 text-center">
+      <div className="mt-8 rounded-lg bg-red-50 p-4 text-center sm:p-8 md:mt-16">
         <h2 className="mb-4 text-2xl font-bold text-gray-900">
           How Part Reservation Works
         </h2>

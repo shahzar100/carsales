@@ -153,15 +153,15 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
 
             {/* Action Buttons */}
             <div className="flex gap-2 border-t border-gray-100 pt-3">
-              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-gray-800">
+              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-gray-800">
                 <Edit className="h-3.5 w-3.5" />
                 Edit
               </button>
-              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-blue-700">
+              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-blue-700">
                 <Eye className="h-3.5 w-3.5" />
                 View
               </button>
-              <button className="flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-red-600 transition-colors hover:bg-red-100">
+              <button className="flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-red-600 transition-colors hover:bg-red-100">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>

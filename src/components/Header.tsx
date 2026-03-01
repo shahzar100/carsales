@@ -15,7 +15,7 @@ const Header = () => {
           alt="Business Logo"
           width={100}
           height={100}
-          className="aspect-square"
+          className="aspect-square h-16 w-16 sm:h-20 sm:w-20 lg:h-[100px] lg:w-[100px]"
         />
       </Link>
 

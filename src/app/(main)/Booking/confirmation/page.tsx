@@ -56,7 +56,7 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
           <div className="text-center">
             <p className="mb-2 text-sm text-gray-600">Your Booking Reference</p>
             <div className="mb-4 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
-              <p className="font-mono text-3xl font-bold tracking-wider text-blue-600">
+              <p className="font-mono text-xl font-bold tracking-wider text-blue-600 sm:text-2xl md:text-3xl">
                 {ref}
               </p>
             </div>

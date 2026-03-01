@@ -33,7 +33,7 @@ const MainForm = () => {
 
   return (
     <div>
-      <div className="flex w-full flex-col gap-6 rounded-lg border p-8">
+      <div className="flex w-full flex-col gap-6 rounded-lg border p-4 sm:p-6 lg:p-8">
         <Dropdown
           label="Type"
           placeholder="Select Type"
