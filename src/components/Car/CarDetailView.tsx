@@ -410,7 +410,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
 
             {/* Right Column: Sticky Sidebar on Desktop */}
             <div className="hidden w-80 shrink-0 lg:block">
-              <div className="sticky top-20 space-y-6">
+              <div className="sticky top-36 space-y-6">
                 {/* Quick Summary */}
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
                   <h3 className="mb-4 text-sm font-bold tracking-wider text-gray-400 uppercase">
