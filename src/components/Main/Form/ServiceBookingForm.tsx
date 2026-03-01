@@ -19,6 +19,8 @@ import {
   CheckCircle,
   Sparkles,
   Shield,
+  MessageSquareQuote,
+  CalendarCheck,
 } from "lucide-react";
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -140,6 +142,7 @@ const subServiceOptions: Record<string, { value: string; label: string }[]> = {
 
 // ── Form data ────────────────────────────────────────────────
 interface ServiceFormData {
+  purpose: "quote" | "book";
   serviceType: string;
   servicePackage: string;
   serviceDetails: string;
@@ -169,6 +172,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
   onSubmit,
 }) => {
   const [data, setData] = useState<ServiceFormData>({
+    purpose: "book",
     serviceType: defaultService,
     servicePackage: "",
     serviceDetails: "",
@@ -205,6 +209,43 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
         },
         content: (
           <div className="space-y-5">
+            {/* Purpose toggle — Get Quote or Book Service */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                What would you like to do?
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setData((prev) => ({ ...prev, purpose: "quote" }))
+                  }
+                  className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                    data.purpose === "quote"
+                      ? "border-amber-500 bg-amber-50 text-amber-700 shadow-sm"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                  }`}
+                >
+                  <MessageSquareQuote className="h-4 w-4" />
+                  Get a Quote
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setData((prev) => ({ ...prev, purpose: "book" }))
+                  }
+                  className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                    data.purpose === "book"
+                      ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                  }`}
+                >
+                  <CalendarCheck className="h-4 w-4" />
+                  Book Service
+                </button>
+              </div>
+            </div>
+
             {defaultService ? (
               /* Locked to the page's service — show only the matching card */
               (() => {
@@ -433,24 +474,69 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
         icon: <ClipboardList className="h-5 w-5" />,
         content: submitted ? (
           <div className="space-y-5">
-            <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-6 text-center">
-              <CheckCircle className="mx-auto mb-3 h-12 w-12 text-emerald-500" />
-              <h4 className="mb-1 text-lg font-semibold text-emerald-800">
-                Service Booked!
+            <div
+              className={`rounded-xl border-2 p-6 text-center ${
+                data.purpose === "quote"
+                  ? "border-amber-200 bg-amber-50"
+                  : "border-emerald-200 bg-emerald-50"
+              }`}
+            >
+              <CheckCircle
+                className={`mx-auto mb-3 h-12 w-12 ${
+                  data.purpose === "quote"
+                    ? "text-amber-500"
+                    : "text-emerald-500"
+                }`}
+              />
+              <h4
+                className={`mb-1 text-lg font-semibold ${
+                  data.purpose === "quote"
+                    ? "text-amber-800"
+                    : "text-emerald-800"
+                }`}
+              >
+                {data.purpose === "quote"
+                  ? "Quote Request Submitted!"
+                  : "Service Booked!"}
               </h4>
-              <p className="text-sm text-emerald-700">
+              <p
+                className={`text-sm ${
+                  data.purpose === "quote"
+                    ? "text-amber-700"
+                    : "text-emerald-700"
+                }`}
+              >
                 Your reference number is{" "}
                 <span className="font-mono font-bold tracking-wider">
                   {bookingRef}
                 </span>
               </p>
-              <p className="mt-2 text-xs text-emerald-600">
-                A confirmation email has been sent to {data.email}
+              <p
+                className={`mt-2 text-xs ${
+                  data.purpose === "quote"
+                    ? "text-amber-600"
+                    : "text-emerald-600"
+                }`}
+              >
+                {data.purpose === "quote"
+                  ? `We'll send a quote to ${data.email} shortly`
+                  : `A confirmation email has been sent to ${data.email}`}
               </p>
             </div>
           </div>
         ) : (
           <div className="space-y-5">
+            <SummaryCard title="Request Type">
+              <SummaryRow
+                label="Type"
+                value={
+                  data.purpose === "quote"
+                    ? "Quote Request"
+                    : "Service Booking"
+                }
+              />
+            </SummaryCard>
+
             <SummaryCard title="Service Details">
               <SummaryRow label="Category" value={data.serviceType} />
               {data.servicePackage && (
@@ -471,10 +557,12 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
               )}
             </SummaryCard>
 
-            <SummaryCard title="Appointment">
-              <SummaryRow label="Date" value={formatDate(data.date)} />
-              <SummaryRow label="Time" value={formatTime(data.time)} />
-            </SummaryCard>
+            {data.purpose === "book" && (
+              <SummaryCard title="Appointment">
+                <SummaryRow label="Date" value={formatDate(data.date)} />
+                <SummaryRow label="Time" value={formatTime(data.time)} />
+              </SummaryCard>
+            )}
 
             <SummaryCard title="Contact">
               <SummaryRow label="Name" value={data.name} />
@@ -483,8 +571,17 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
             </SummaryCard>
 
             <InfoBanner variant="warning">
-              <strong>Please note:</strong> Contact us at least 24 hours in
-              advance if you need to reschedule or cancel your appointment.
+              {data.purpose === "quote" ? (
+                <>
+                  <strong>Please note:</strong> We aim to respond to all quote
+                  requests within 24 hours.
+                </>
+              ) : (
+                <>
+                  <strong>Please note:</strong> Contact us at least 24 hours in
+                  advance if you need to reschedule or cancel your appointment.
+                </>
+              )}
             </InfoBanner>
           </div>
         ),
@@ -497,6 +594,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
   const handleSubmit = async () => {
     if (onSubmit) {
       await onSubmit({
+        purpose: data.purpose,
         serviceType: data.serviceType,
         servicePackage: data.servicePackage,
         serviceDetails: data.serviceDetails,
@@ -513,44 +611,94 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
       return;
     }
 
-    const payload = {
-      customerInfo: {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-      },
-      serviceType: data.servicePackage
-        ? `${data.serviceType} — ${data.servicePackage}`
-        : data.serviceType,
-      serviceDetails: [
-        `Vehicle: ${data.vehicleYear} ${data.vehicleMake} ${data.vehicleModel}`,
-        data.vehicleReg ? `Reg: ${data.vehicleReg}` : "",
-        data.serviceDetails,
-      ]
-        .filter(Boolean)
-        .join("\n"),
-      appointmentDate: data.date,
-      appointmentTime: data.time,
-    };
+    if (data.purpose === "quote") {
+      // ── Quote path ──────────────────────────────────────
+      const payload = {
+        customerInfo: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        },
+        serviceType: data.servicePackage
+          ? `${data.serviceType} — ${data.servicePackage}`
+          : data.serviceType,
+        serviceDetails: data.serviceDetails || "",
+        vehicle: {
+          make: data.vehicleMake,
+          model: data.vehicleModel,
+          year: data.vehicleYear,
+          registration: data.vehicleReg || undefined,
+        },
+      };
 
-    const res = await fetch("/api/bookings/service", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      const res = await fetch("/api/bookings/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (!res.ok || !result.success) {
-      throw new Error(result.error || "Failed to book service");
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || "Failed to submit quote request");
+      }
+
+      setBookingRef(result.data.quoteReference);
+      setSubmitted(true);
+    } else {
+      // ── Booking path ────────────────────────────────────
+      const payload = {
+        customerInfo: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        },
+        serviceType: data.servicePackage
+          ? `${data.serviceType} — ${data.servicePackage}`
+          : data.serviceType,
+        serviceDetails: [
+          `Vehicle: ${data.vehicleYear} ${data.vehicleMake} ${data.vehicleModel}`,
+          data.vehicleReg ? `Reg: ${data.vehicleReg}` : "",
+          data.serviceDetails,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        appointmentDate: data.date,
+        appointmentTime: data.time,
+      };
+
+      const res = await fetch("/api/bookings/service", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || "Failed to book service");
+      }
+
+      setBookingRef(result.data.bookingReference);
+      setSubmitted(true);
     }
-
-    setBookingRef(result.data.bookingReference);
-    setSubmitted(true);
   };
 
+  // Filter out Date & Time step when purpose is "quote"
+  const activeSteps = useMemo(
+    () =>
+      data.purpose === "quote"
+        ? steps.filter((s) => s.title !== "Date & Time")
+        : steps,
+    [data.purpose, steps]
+  );
+
   return (
-    <Form steps={steps} onSubmit={handleSubmit} submitLabel="Book Service" />
+    <Form
+      steps={activeSteps}
+      onSubmit={handleSubmit}
+      submitLabel={data.purpose === "quote" ? "Submit Quote Request" : "Book Service"}
+    />
   );
 };
 

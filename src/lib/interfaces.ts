@@ -106,3 +106,24 @@ export interface AdminUser {
   resetTokenExpiry?: Date;
   updatedAt?: Date;
 }
+
+export interface Quote {
+  _id?: string;
+  quoteReference: string;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  serviceType: string;
+  serviceDetails?: string;
+  vehicle: {
+    make: string;
+    model: string;
+    year: number;
+    registration?: string;
+  };
+  status: "pending" | "responded" | "accepted" | "expired";
+  createdAt: Date;
+  updatedAt: Date;
+}

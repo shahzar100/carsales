@@ -36,14 +36,6 @@ const DetailingPackageGrid: React.FC<DetailingPackageGridProps> = ({
           extra={pkg.duration}
           popular={pkg.popular}
           accent="blue"
-          primaryCTA={{
-            label: `Book ${pkg.name}`,
-            href: `mailto:info@carsales.com?subject=Car Detailing Booking - ${pkg.name}&body=Hi, I'd like to book the ${pkg.name} detailing package (${pkg.price}). Please provide available dates and confirm the booking details.`,
-          }}
-          secondaryCTA={{
-            label: "Call for Details",
-            href: "tel:(555)123-4567",
-          }}
         >
           <div className="space-y-3">
             <FeatureList

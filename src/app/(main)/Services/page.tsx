@@ -174,19 +174,13 @@ const Services = () => {
                 </div>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="space-y-3">
+              {/* CTA Button */}
+              <div>
                 <Link
                   href={service.href}
                   className={`w-full ${service.buttonColor} block rounded-lg px-6 py-3 text-center font-medium text-white transition-colors duration-200`}
                 >
                   Learn More & Book
-                </Link>
-                <Link
-                  href={`mailto:info@carsales.com?subject=Inquiry about ${service.title}&body=Hi, I'm interested in learning more about your ${service.title} services. Please provide more details and pricing information.`}
-                  className="block w-full rounded-lg bg-gray-200 px-6 py-3 text-center font-medium text-gray-800 transition-colors duration-200 hover:bg-gray-300"
-                >
-                  Email Inquiry
                 </Link>
               </div>
             </div>

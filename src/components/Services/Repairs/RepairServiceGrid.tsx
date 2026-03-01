@@ -46,14 +46,6 @@ const RepairServiceGrid: React.FC<RepairServiceGridProps> = ({
                   </div>
                 ))}
               </div>
-              <div className="mt-6">
-                <a
-                  href={`mailto:info@carsales.com?subject=Repair Service Inquiry - ${category.category}&body=Hi, I need repair services for ${category.category}. Please provide a quote and available appointment times.`}
-                  className="block w-full rounded-lg bg-gray-900 px-6 py-3 text-center font-medium text-white transition-colors duration-200 hover:bg-gray-800"
-                >
-                  Get Quote for {category.category}
-                </a>
-              </div>
             </div>
           );
         })}

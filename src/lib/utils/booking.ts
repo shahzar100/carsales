@@ -6,6 +6,12 @@ export function generateBookingReference(): string {
   return `BK-${uuid}`;
 }
 
+export function generateQuoteReference(): string {
+  // Generate a unique quote reference in format: QT-XXXXXX
+  const uuid = uuidv4().replace(/-/g, "").substring(0, 6).toUpperCase();
+  return `QT-${uuid}`;
+}
+
 export function formatDate(date: string): string {
   const d = new Date(date);
   return d.toLocaleDateString("en-US", {

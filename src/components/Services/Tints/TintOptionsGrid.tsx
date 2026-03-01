@@ -32,14 +32,6 @@ const TintOptionsGrid: React.FC<TintOptionsGridProps> = ({ tintOptions }) => {
           price={option.price}
           popular={option.popular}
           accent="purple"
-          primaryCTA={{
-            label: "Get Quote",
-            href: `mailto:info@carsales.com?subject=Window Tinting Quote - ${option.name}&body=Hi, I'd like to get a quote for ${option.name} window tinting. Please provide pricing and availability.`,
-          }}
-          secondaryCTA={{
-            label: "Call for Details",
-            href: "tel:(555)123-4567",
-          }}
         >
           <div className="space-y-3">
             <InfoBox

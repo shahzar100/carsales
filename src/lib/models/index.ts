@@ -6,6 +6,7 @@ import {
   CarViewingBooking,
   ShopInfo,
   AdminUser,
+  Quote,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -15,6 +16,7 @@ export type {
   CarViewingBooking,
   ShopInfo,
   AdminUser,
+  Quote,
 };
 
 let carsCollection: Collection<CarInterface>;
@@ -23,6 +25,7 @@ let serviceAppointmentsCollection: Collection<ServiceAppointment>;
 let carViewingBookingsCollection: Collection<CarViewingBooking>;
 let shopInfoCollection: Collection<ShopInfo>;
 let adminUsersCollection: Collection<AdminUser>;
+let quotesCollection: Collection<Quote>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -149,4 +152,20 @@ export async function getAdminUsersCollection(): Promise<
     await adminUsersCollection.createIndex({ username: 1 }, { unique: true });
   }
   return adminUsersCollection;
+}
+
+export async function getQuotesCollection(): Promise<Collection<Quote>> {
+  if (!quotesCollection) {
+    const db = await getDb();
+    quotesCollection = db.collection<Quote>("quotes");
+
+    // Create indexes
+    await quotesCollection.createIndex(
+      { quoteReference: 1 },
+      { unique: true }
+    );
+    await quotesCollection.createIndex({ "customerInfo.email": 1 });
+    await quotesCollection.createIndex({ status: 1 });
+  }
+  return quotesCollection;
 }

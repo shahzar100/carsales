@@ -65,10 +65,6 @@ interface PackageCardProps {
   popularLabel?: string;
   /** Accent colour scheme (default "blue") */
   accent?: AccentColor;
-  /** Primary call-to-action */
-  primaryCTA: { label: string; href: string };
-  /** Secondary call-to-action (optional) */
-  secondaryCTA?: { label: string; href: string };
   /** Body content between header and CTAs (features, info boxes, etc.) */
   children: React.ReactNode;
 }
@@ -81,8 +77,6 @@ const PackageCard: React.FC<PackageCardProps> = ({
   popular = false,
   popularLabel = "Most Popular",
   accent = "blue",
-  primaryCTA,
-  secondaryCTA,
   children,
 }) => {
   const c = accentColors[accent];
@@ -116,28 +110,8 @@ const PackageCard: React.FC<PackageCardProps> = ({
         {extra && <div className="text-xs text-gray-500">{extra}</div>}
       </div>
 
-      {/* Body (features, info boxes, etc.) — grows to push CTAs down */}
+      {/* Body (features, info boxes, etc.) */}
       <div className="flex-1">{children}</div>
-
-      {/* CTA Buttons */}
-      <div className="mt-4 space-y-2">
-        <a
-          href={primaryCTA.href}
-          className={`block w-full rounded-lg px-6 py-3 text-center font-medium transition-colors duration-200 ${
-            popular ? c.primaryBtn : c.secondaryBtn
-          }`}
-        >
-          {primaryCTA.label}
-        </a>
-        {secondaryCTA && (
-          <a
-            href={secondaryCTA.href}
-            className="block w-full rounded-lg bg-gray-100 px-6 py-3 text-center font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200"
-          >
-            {secondaryCTA.label}
-          </a>
-        )}
-      </div>
     </div>
   );
 };
