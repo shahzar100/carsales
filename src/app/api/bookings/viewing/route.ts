@@ -5,8 +5,9 @@ import {
   getShopInfoCollection,
 } from "@/lib/models";
 import { generateBookingReference } from "@/lib/utils/booking";
-import { sendEmail } from "@/lib/email/client";
-import { createCarViewingBookingConfirmationEmail } from "@/lib/email/templates";
+import { sendEmail } from "@/emails/send";
+import { CarViewingConfirmation } from "@/emails/CarViewingConfirmation";
+import React from "react";
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,21 +84,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Send confirmation email
-    const emailHtml = createCarViewingBookingConfirmationEmail(
-      newBooking as CarViewingBooking,
-      {
-        businessName: shopInfo.businessName,
-        phone: shopInfo.phone,
-        email: shopInfo.email,
-        address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-      }
-    );
+    const emailShopInfo = {
+      businessName: shopInfo.businessName,
+      phone: shopInfo.phone,
+      email: shopInfo.email,
+      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+    };
 
     console.log("📧 Attempting to send confirmation email...");
     const emailResult = await sendEmail({
       to: body.customerInfo.email,
       subject: `🚗 Car Viewing Confirmation - ${bookingReference}`,
-      html: emailHtml,
+      react: React.createElement(CarViewingConfirmation, {
+        booking: newBooking as CarViewingBooking,
+        shopInfo: emailShopInfo,
+      }),
     });
 
     if (!emailResult.success) {

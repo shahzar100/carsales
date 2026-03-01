@@ -5,8 +5,8 @@ import { NextRequest } from "next/server";
 import { POST } from "@/app/api/bookings/service/route";
 import { getTestCollections, mockSendEmail } from "../../utils/testUtils";
 
-// Mock the email client
-jest.mock("@/lib/email/client", () => ({
+// Mock email sending
+jest.mock("@/emails/send", () => ({
   sendEmail: jest.fn().mockResolvedValue({ success: true }),
 }));
 

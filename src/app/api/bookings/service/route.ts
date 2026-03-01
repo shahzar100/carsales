@@ -5,8 +5,9 @@ import {
   getShopInfoCollection,
 } from "@/lib/models";
 import { generateBookingReference } from "@/lib/utils/booking";
-import { sendEmail } from "@/lib/email/client";
-import { createServiceBookingConfirmationEmail } from "@/lib/email/templates";
+import { sendEmail } from "@/emails/send";
+import { ServiceBookingConfirmation } from "@/emails/ServiceBookingConfirmation";
+import React from "react";
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,20 +78,20 @@ export async function POST(request: NextRequest) {
     };
 
     // Send confirmation email
-    const emailHtml = createServiceBookingConfirmationEmail(
-      newBooking as ServiceAppointment,
-      {
-        businessName: shopInfo.businessName,
-        phone: shopInfo.phone,
-        email: shopInfo.email,
-        address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-      }
-    );
+    const emailShopInfo = {
+      businessName: shopInfo.businessName,
+      phone: shopInfo.phone,
+      email: shopInfo.email,
+      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+    };
 
     await sendEmail({
       to: body.customerInfo.email,
       subject: `Service Booking Confirmation - ${bookingReference}`,
-      html: emailHtml,
+      react: React.createElement(ServiceBookingConfirmation, {
+        booking: newBooking as ServiceAppointment,
+        shopInfo: emailShopInfo,
+      }),
     });
 
     return NextResponse.json({

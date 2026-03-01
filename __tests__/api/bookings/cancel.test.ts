@@ -15,9 +15,9 @@ jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: mockIsAuthenticated,
 }));
 
-// Mock email client
+// Mock email sending
 const mockSendEmail = jest.fn();
-jest.mock("@/lib/email/client", () => ({
+jest.mock("@/emails/send", () => ({
   sendEmail: mockSendEmail,
 }));
 

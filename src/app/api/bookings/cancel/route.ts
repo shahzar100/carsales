@@ -5,8 +5,9 @@ import {
   getShopInfoCollection,
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
-import { sendEmail } from "@/lib/email/client";
-import { createBookingCancellationEmail } from "@/lib/email/templates";
+import { sendEmail } from "@/emails/send";
+import { BookingCancellation } from "@/emails/BookingCancellation";
+import React from "react";
 
 export async function POST(request: NextRequest) {
   try {
@@ -103,21 +104,21 @@ export async function POST(request: NextRequest) {
 
     // Send cancellation email
     const updatedBooking = { ...booking, cancellationReason: reason };
-    const emailHtml = createBookingCancellationEmail(
-      updatedBooking,
-      type as "service" | "viewing",
-      {
-        businessName: shopInfo.businessName,
-        phone: shopInfo.phone,
-        email: shopInfo.email,
-        address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-      }
-    );
+    const emailShopInfo = {
+      businessName: shopInfo.businessName,
+      phone: shopInfo.phone,
+      email: shopInfo.email,
+      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+    };
 
     await sendEmail({
       to: booking.customerInfo.email,
       subject: `Booking Cancellation - ${bookingReference}`,
-      html: emailHtml,
+      react: React.createElement(BookingCancellation, {
+        booking: updatedBooking,
+        bookingType: type as "service" | "viewing",
+        shopInfo: emailShopInfo,
+      }),
     });
 
     return NextResponse.json({

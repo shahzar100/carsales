@@ -3,10 +3,10 @@ import { NextRequest } from "next/server";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
 
-// Mock Resend for email testing
+// Mock email sending for testing
 export const mockSendEmail = jest.fn().mockResolvedValue({ success: true });
 
-jest.mock("@/lib/email/client", () => ({
+jest.mock("@/emails/send", () => ({
   sendEmail: mockSendEmail,
 }));
 

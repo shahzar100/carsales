@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { hashPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
-import { sendEmail } from "@/lib/email/client";
+import { sendEmail } from "@/emails/send";
+import React from "react";
+import { PasswordReset } from "@/emails/PasswordReset";
 
 // ── Password generator (same algo as user creation) ─────────
 function generateStrongPassword(): string {
@@ -25,50 +27,6 @@ function generateStrongPassword(): string {
 
   const raw = all.join("");
   return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}`;
-}
-
-// ── Password reset email template ───────────────────────────
-function buildReminderEmailHtml(username: string, resetToken: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const resetLink = `${baseUrl}/admin/reset-password?token=${resetToken}`;
-
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;background-color:#f4f4f4;">
-  <table role="presentation" width="100%" style="background-color:#f4f4f4;">
-    <tr><td style="padding:40px 20px;">
-      <table role="presentation" width="100%" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1);">
-        <tr><td style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:40px 30px;text-align:center;">
-          <h1 style="margin:0;color:#fff;font-size:24px;">Password Reset Request</h1>
-        </td></tr>
-        <tr><td style="padding:30px;">
-          <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 20px;">
-            Hi <strong>${username}</strong>, a password reset was requested for your admin account.
-          </p>
-          <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 25px;">
-            Click the button below to set a new password. This link will expire in <strong>24 hours</strong>.
-          </p>
-          <table role="presentation" width="100%"><tr><td style="text-align:center;">
-            <a href="${resetLink}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
-              Reset Password
-            </a>
-          </td></tr></table>
-          <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:25px 0 0;">
-            If you didn't request this, you can safely ignore this email. Your password will remain unchanged.
-          </p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:25px 0;">
-          <p style="color:#9ca3af;font-size:12px;margin:0;">
-            Or copy and paste this link into your browser:<br>
-            <a href="${resetLink}" style="color:#2563eb;word-break:break-all;">${resetLink}</a>
-          </p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
 }
 
 /**
@@ -146,7 +104,7 @@ export async function POST(request: NextRequest) {
     const emailResult = await sendEmail({
       to: user.email,
       subject: "Password Reset — Admin Panel",
-      html: buildReminderEmailHtml(username, resetToken),
+      react: React.createElement(PasswordReset, { username, resetToken }),
     });
 
     if (!emailResult.success) {
