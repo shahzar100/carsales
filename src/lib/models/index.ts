@@ -160,10 +160,7 @@ export async function getQuotesCollection(): Promise<Collection<Quote>> {
     quotesCollection = db.collection<Quote>("quotes");
 
     // Create indexes
-    await quotesCollection.createIndex(
-      { quoteReference: 1 },
-      { unique: true }
-    );
+    await quotesCollection.createIndex({ quoteReference: 1 }, { unique: true });
     await quotesCollection.createIndex({ "customerInfo.email": 1 });
     await quotesCollection.createIndex({ status: 1 });
   }

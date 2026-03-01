@@ -1,24 +1,30 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { Clock, CheckCircle, Star, Shield } from "lucide-react";
 import {
-  Sparkles,
-  Shield,
-  Wrench,
-  Clock,
-  CheckCircle,
-  Star,
-} from "lucide-react";
+  PackageGrid,
+  PackageCard,
+  FeatureList,
+  InfoBox,
+} from "@/components/Services/Common";
+import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 
 const Services = () => {
-  const mainServices = [
+  const mainServices: {
+    id: string;
+    title: string;
+    subtitle: string;
+    features: string[];
+    priceRange: string;
+    duration: string;
+    href: string;
+    accent: AccentColor;
+  }[] = [
     {
       id: "detailing",
       title: "Car Detailing",
-      description:
-        "Premium car detailing services to keep your vehicle looking pristine and protected.",
-      icon: Sparkles,
+      subtitle: "Premium interior & exterior care",
       features: [
         "Interior & Exterior Deep Clean",
         "Paint Protection & Waxing",
@@ -26,20 +32,15 @@ const Services = () => {
         "Engine Bay Cleaning",
         "Ceramic Coating Available",
       ],
-      priceRange: "£150 - £500",
+      priceRange: "£150 – £500",
       duration: "3-6 hours",
       href: "/Services/Detailing",
-      image: "/car.jpg",
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
-      buttonColor: "bg-blue-600 hover:bg-blue-700",
+      accent: "blue",
     },
     {
       id: "tints",
       title: "Window Tinting",
-      description:
-        "Professional window tinting for enhanced privacy, UV protection, and style.",
-      icon: Shield,
+      subtitle: "Privacy, UV protection & style",
       features: [
         "Premium Film Quality",
         "UV Ray Protection",
@@ -47,20 +48,15 @@ const Services = () => {
         "Privacy Enhancement",
         "Lifetime Warranty",
       ],
-      priceRange: "£200 - £800",
+      priceRange: "£200 – £800",
       duration: "2-4 hours",
       href: "/Services/Tints",
-      image: "/car.jpg",
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
-      buttonColor: "bg-purple-600 hover:bg-purple-700",
+      accent: "purple",
     },
     {
       id: "repairs",
       title: "Auto Repairs",
-      description:
-        "Expert automotive repair services for all makes and models with certified technicians.",
-      icon: Wrench,
+      subtitle: "Expert service for all makes & models",
       features: [
         "Engine Diagnostics",
         "Brake System Repair",
@@ -71,10 +67,7 @@ const Services = () => {
       priceRange: "Quote on Request",
       duration: "1-5 days",
       href: "/Services/Repairs",
-      image: "/car.jpg",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
-      buttonColor: "bg-green-600 hover:bg-green-700",
+      accent: "green",
     },
   ];
 
@@ -107,86 +100,45 @@ const Services = () => {
       </div>
 
       {/* Services Grid */}
-      <div className="mb-16 grid gap-8 lg:grid-cols-3">
-        {mainServices.map((service) => {
-          const IconComponent = service.icon;
-          return (
-            <div
-              key={service.id}
-              className={`${service.bgColor} group rounded-2xl border border-gray-200 p-8 transition-all duration-300 hover:shadow-lg`}
-            >
-              {/* Service Header */}
-              <div className="mb-6 text-center">
-                <div
-                  className={`inline-flex h-16 w-16 items-center justify-center ${service.iconColor} mb-4 rounded-full bg-white shadow-md transition-transform duration-300 group-hover:scale-110`}
-                >
-                  <IconComponent size={32} />
-                </div>
-                <h3 className="mb-2 text-2xl font-bold text-gray-900">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
-
-              {/* Service Image */}
-              <div className="relative mb-6 h-48 overflow-hidden rounded-lg bg-gray-200">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="bg-opacity-20 group-hover:bg-opacity-10 absolute inset-0 bg-black transition-all duration-300"></div>
-              </div>
-
-              {/* Features List */}
-              <div className="mb-6">
-                <h4 className="mb-3 font-semibold text-gray-900">
-                  What&apos;s Included:
-                </h4>
-                <ul className="space-y-2">
-                  {service.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle className="mt-0.5 mr-2 h-4 w-4 shrink-0 text-green-500" />
-                      <span className="text-sm text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Pricing & Duration */}
-              <div className="mb-6 border-t border-gray-200 pt-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">
-                    Price Range:
-                  </span>
-                  <span className="text-lg font-bold text-gray-900">
-                    {service.priceRange}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">
-                    Duration:
-                  </span>
-                  <span className="text-sm text-gray-700">
-                    {service.duration}
-                  </span>
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <div>
-                <Link
-                  href={service.href}
-                  className={`w-full ${service.buttonColor} block rounded-lg px-6 py-3 text-center font-medium text-white transition-colors duration-200`}
-                >
-                  Learn More & Book
-                </Link>
-              </div>
+      <PackageGrid title="Our Services">
+        {mainServices.map((service) => (
+          <PackageCard
+            key={service.id}
+            name={service.title}
+            subtitle={service.subtitle}
+            price={service.priceRange}
+            extra={service.duration}
+            accent={service.accent}
+            footer={
+              <Link
+                href={service.href}
+                className={`block w-full rounded-lg px-6 py-3 text-center font-medium text-white transition-colors duration-200 ${
+                  service.accent === "blue"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : service.accent === "purple"
+                      ? "bg-purple-600 hover:bg-purple-700"
+                      : "bg-green-600 hover:bg-green-700"
+                }`}
+              >
+                Learn More & Book
+              </Link>
+            }
+          >
+            <div className="space-y-3">
+              <FeatureList
+                features={service.features}
+                accent={service.accent}
+              />
+              <InfoBox
+                rows={[
+                  { label: "Price Range:", value: service.priceRange },
+                  { label: "Duration:", value: service.duration },
+                ]}
+              />
             </div>
-          );
-        })}
-      </div>
+          </PackageCard>
+        ))}
+      </PackageGrid>
 
       {/* Why Choose Us Section */}
       <div className="mb-16 rounded-2xl bg-gray-50 p-8 lg:p-12">

@@ -25,11 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (
-      !body.vehicle?.make ||
-      !body.vehicle?.model ||
-      !body.vehicle?.year
-    ) {
+    if (!body.vehicle?.make || !body.vehicle?.model || !body.vehicle?.year) {
       return NextResponse.json(
         { error: "Vehicle information is required" },
         { status: 400 }

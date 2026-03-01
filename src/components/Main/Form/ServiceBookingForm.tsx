@@ -530,9 +530,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
               <SummaryRow
                 label="Type"
                 value={
-                  data.purpose === "quote"
-                    ? "Quote Request"
-                    : "Service Booking"
+                  data.purpose === "quote" ? "Quote Request" : "Service Booking"
                 }
               />
             </SummaryCard>
@@ -697,7 +695,9 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
     <Form
       steps={activeSteps}
       onSubmit={handleSubmit}
-      submitLabel={data.purpose === "quote" ? "Submit Quote Request" : "Book Service"}
+      submitLabel={
+        data.purpose === "quote" ? "Submit Quote Request" : "Book Service"
+      }
     />
   );
 };

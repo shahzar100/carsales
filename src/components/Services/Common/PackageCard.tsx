@@ -67,6 +67,8 @@ interface PackageCardProps {
   accent?: AccentColor;
   /** Body content between header and CTAs (features, info boxes, etc.) */
   children: React.ReactNode;
+  /** Optional footer content (e.g. link button) rendered below the body */
+  footer?: React.ReactNode;
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({
@@ -78,6 +80,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
   popularLabel = "Most Popular",
   accent = "blue",
   children,
+  footer,
 }) => {
   const c = accentColors[accent];
 
@@ -104,7 +107,9 @@ const PackageCard: React.FC<PackageCardProps> = ({
       <div className="mb-4 text-center">
         <h3 className="mb-0.5 text-2xl font-bold text-gray-900">{name}</h3>
         {subtitle && (
-          <div className={`mb-1 text-base font-medium ${c.text}`}>{subtitle}</div>
+          <div className={`mb-1 text-base font-medium ${c.text}`}>
+            {subtitle}
+          </div>
         )}
         <div className={`text-3xl font-bold ${c.text}`}>{price}</div>
         {extra && <div className="text-xs text-gray-500">{extra}</div>}
@@ -112,6 +117,9 @@ const PackageCard: React.FC<PackageCardProps> = ({
 
       {/* Body (features, info boxes, etc.) */}
       <div className="flex-1">{children}</div>
+
+      {/* Optional footer */}
+      {footer && <div className="mt-4">{footer}</div>}
     </div>
   );
 };

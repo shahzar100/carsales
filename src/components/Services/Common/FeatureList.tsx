@@ -29,7 +29,7 @@ const FeatureList: React.FC<FeatureListProps> = ({
     <div>
       {title && (
         <h4
-          className={`mb-2 text-sm font-semibold uppercase tracking-wide ${titleColor}`}
+          className={`mb-2 text-sm font-semibold tracking-wide uppercase ${titleColor}`}
         >
           {title}
         </h4>
