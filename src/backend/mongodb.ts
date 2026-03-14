@@ -7,7 +7,11 @@ let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (!uri) {
-  throw new Error("Please define the MONGODB_URI");
+  throw new Error("Please define the MONGODB_URI environment variable");
+}
+
+if (uri.length < 20 || !uri.startsWith("mongodb")) {
+  throw new Error("MONGODB_URI appears to be invalid");
 }
 
 if (process.env.NODE_ENV === "development") {

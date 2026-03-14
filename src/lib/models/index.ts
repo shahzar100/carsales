@@ -77,12 +77,18 @@ export async function getFeaturedCar(): Promise<CarInterface | null> {
 export async function getCarsCollection(): Promise<Collection<CarInterface>> {
   if (!carsCollection) {
     const db = await getDb();
-    //not featured car
     carsCollection = db.collection<CarInterface>("cars");
 
-    // Create indexes
+    // Create indexes for performance
     await carsCollection.createIndex({ status: 1 });
     await carsCollection.createIndex({ make: 1, model: 1 });
+    await carsCollection.createIndex({ featured: 1 });
+    await carsCollection.createIndex({ price: 1 });
+    await carsCollection.createIndex({ year: -1 });
+    // Compound indexes for common queries
+    await carsCollection.createIndex({ status: 1, createdAt: -1 });
+    await carsCollection.createIndex({ status: 1, price: 1 });
+    await carsCollection.createIndex({ make: 1, status: 1 });
   }
   return carsCollection;
 }
@@ -96,7 +102,7 @@ export async function getServiceAppointmentsCollection(): Promise<
       "serviceAppointments"
     );
 
-    // Create indexes
+    // Create indexes for performance
     await serviceAppointmentsCollection.createIndex(
       { bookingReference: 1 },
       { unique: true }
@@ -105,6 +111,15 @@ export async function getServiceAppointmentsCollection(): Promise<
       "customerInfo.email": 1,
     });
     await serviceAppointmentsCollection.createIndex({ status: 1 });
+    // Compound indexes for common queries
+    await serviceAppointmentsCollection.createIndex({ 
+      appointmentDate: 1, 
+      status: 1 
+    });
+    await serviceAppointmentsCollection.createIndex({ 
+      status: 1, 
+      createdAt: -1 
+    });
   }
   return serviceAppointmentsCollection;
 }
@@ -117,18 +132,32 @@ export async function getCarViewingBookingsCollection(): Promise<
     carViewingBookingsCollection =
       db.collection<CarViewingBooking>("carViewingBookings");
 
-    // Create indexes
+    // Create indexes for performance
     await carViewingBookingsCollection.createIndex(
       { bookingReference: 1 },
       { unique: true }
     );
     await carViewingBookingsCollection.createIndex({ "customerInfo.email": 1 });
     await carViewingBookingsCollection.createIndex({ status: 1 });
+    await carViewingBookingsCollection.createIndex({ carId: 1 });
+    // Compound indexes for common queries
+    await carViewingBookingsCollection.createIndex({ 
+      appointmentDate: 1, 
+      status: 1 
+    });
+    await carViewingBookingsCollection.createIndex({ 
+      status: 1, 
+      createdAt: -1 
+    });
+    await carViewingBookingsCollection.createIndex({ 
+      carId: 1, 
+      status: 1 
+    });
   }
   return carViewingBookingsCollection;
 }
 
-export async function getBussinessInfoCollection(): Promise<
+export async function getBusinessInfoCollection(): Promise<
   Collection<ShopInfo>
 > {
   if (!shopInfoCollection) {
@@ -139,7 +168,8 @@ export async function getBussinessInfoCollection(): Promise<
 }
 
 // Alias for backwards compatibility
-export const getShopInfoCollection = getBussinessInfoCollection;
+export const getShopInfoCollection = getBusinessInfoCollection;
+export const getBussinessInfoCollection = getBusinessInfoCollection;
 
 export async function getAdminUsersCollection(): Promise<
   Collection<AdminUser>

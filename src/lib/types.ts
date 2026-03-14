@@ -1,17 +1,6 @@
-export interface Car {
-  _id: string;
-  make: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  fuel: string;
-  transmission: string;
-  doors: number;
-  colour: string;
-  status: string;
-  image?: string;
-}
+import { CarInterface, ServiceAppointment, CarViewingBooking, ShopInfo } from "@/lib/interfaces";
+
+export type { CarInterface as Car, ServiceAppointment, CarViewingBooking, ShopInfo };
 
 export interface Booking {
   _id: string;
@@ -31,20 +20,6 @@ export interface Booking {
     year: number;
     price: number;
   };
-}
-
-export interface ShopInfo {
-  businessName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  phone: string;
-  email: string;
-  hours: {
-    [key: string]: string;
-  };
-  description?: string;
 }
 
 export interface Notification {

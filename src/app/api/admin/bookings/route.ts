@@ -51,16 +51,13 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { bookingId, status, type } = body;
+    const { bookingId: _bookingId, status, type } = body;
 
-    // Debug logging
-    console.log("PUT request body:", { bookingId, status, type });
-
-    if (!bookingId || !status || !type) {
+    if (!_bookingId || !status || !type) {
       return NextResponse.json(
         {
           error: "Missing required fields: bookingId, status, type",
-          received: { bookingId, status, type },
+          received: { bookingId: _bookingId, status, type },
         },
         { status: 400 }
       );
@@ -95,9 +92,8 @@ export async function PUT(request: NextRequest) {
     // Convert bookingId to ObjectId
     let objectId;
     try {
-      objectId = new ObjectId(String(bookingId));
+      objectId = ObjectId.createFromHexString(String(_bookingId));
     } catch (err) {
-      console.error("Invalid booking ID format:", err);
       return NextResponse.json(
         { error: "Invalid booking ID format" },
         { status: 400 }

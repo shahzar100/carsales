@@ -5,34 +5,75 @@ import {
   getShopInfoCollection,
 } from "@/lib/models";
 import { generateBookingReference } from "@/lib/utils/booking";
+import {
+  validateEmail,
+  validatePhone,
+  sanitizeName,
+  validateFutureDate,
+  validateAppointmentTime,
+  checkRateLimit,
+} from "@/lib/utils/validation";
 import { sendEmail } from "@/emails/send";
 import { CarViewingConfirmation } from "@/emails/CarViewingConfirmation";
 import React from "react";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const rateLimit = checkRateLimit(`viewing-booking:${ip}`, 5, 60000);
+    
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
 
-    // Validate required fields
-    if (
-      !body.customerInfo?.name ||
-      !body.customerInfo?.email ||
-      !body.customerInfo?.phone
-    ) {
+    // Validate and sanitize customer info
+    if (!body.customerInfo?.name || !body.customerInfo?.email || !body.customerInfo?.phone) {
       return NextResponse.json(
         { error: "Customer information is required" },
         { status: 400 }
       );
     }
 
-    if (
-      !body.carId ||
-      !body.carDetails ||
-      !body.appointmentDate ||
-      !body.appointmentTime
-    ) {
+    const emailValidation = validateEmail(body.customerInfo.email);
+    if (!emailValidation.valid) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 }
+      );
+    }
+
+    const phoneValidation = validatePhone(body.customerInfo.phone);
+    if (!phoneValidation.valid) {
+      return NextResponse.json(
+        { error: "Invalid phone number" },
+        { status: 400 }
+      );
+    }
+
+    // Validate booking details
+    if (!body.carId || !body.carDetails || !body.appointmentDate || !body.appointmentTime) {
       return NextResponse.json(
         { error: "Booking details are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!validateFutureDate(body.appointmentDate)) {
+      return NextResponse.json(
+        { error: "Appointment date must be in the future and within one year" },
+        { status: 400 }
+      );
+    }
+
+    if (!validateAppointmentTime(body.appointmentTime)) {
+      return NextResponse.json(
+        { error: "Invalid appointment time" },
         { status: 400 }
       );
     }
@@ -51,9 +92,9 @@ export async function POST(request: NextRequest) {
         image: body.carDetails.image || "",
       },
       customerInfo: {
-        name: body.customerInfo.name,
-        email: body.customerInfo.email,
-        phone: body.customerInfo.phone,
+        name: sanitizeName(body.customerInfo.name),
+        email: emailValidation.sanitized,
+        phone: phoneValidation.sanitized,
       },
       appointmentDate: body.appointmentDate,
       appointmentTime: body.appointmentTime,
@@ -100,7 +141,6 @@ export async function POST(request: NextRequest) {
       address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
     };
 
-    console.log("📧 Attempting to send confirmation email...");
     const emailResult = await sendEmail({
       to: body.customerInfo.email,
       subject: `🚗 Car Viewing Confirmation - ${bookingReference}`,
@@ -115,9 +155,6 @@ export async function POST(request: NextRequest) {
         "⚠️ Email failed to send but booking was created:",
         emailResult.error
       );
-      // Don't fail the request if email fails - booking is still valid
-    } else {
-      console.log("✅ Confirmation email sent successfully");
     }
 
     return NextResponse.json({
