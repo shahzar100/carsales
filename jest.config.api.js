@@ -13,6 +13,7 @@ const customJestConfig = {
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^uuid$": "<rootDir>/__tests__/utils/__mocks__/uuid.ts",
   },
   collectCoverageFrom: [
     "src/app/api/**/*.{js,ts}",

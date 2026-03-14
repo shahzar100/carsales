@@ -15,6 +15,7 @@ const customJestConfig = {
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^uuid$": "<rootDir>/__tests__/utils/__mocks__/uuid.ts",
   },
   transformIgnorePatterns: [
     "/node_modules/",
