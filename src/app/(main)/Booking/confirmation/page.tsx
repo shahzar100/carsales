@@ -1,6 +1,12 @@
 import React from "react";
+import type { Metadata } from "next";
 import { CheckCircle, Calendar, Mail, Phone, Car } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Booking Confirmed",
+  robots: { index: false, follow: false },
+};
 
 interface PageProps {
   searchParams: Promise<{

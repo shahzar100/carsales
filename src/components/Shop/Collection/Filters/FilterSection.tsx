@@ -2,6 +2,9 @@
 import React from "react";
 import { useSearchContext } from "@/backend/SearchContext";
 import { Filter, X } from "lucide-react";
+import FilterSelect from "@/components/Helpful/FilterSelect";
+import RangeInput from "@/components/Helpful/RangeInput";
+import Button from "@/components/Helpful/Buttons/Button";
 
 interface FilterSectionProps {
   brands: string[];
@@ -20,125 +23,87 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     updateFilters({ [filterType]: value });
   };
 
-  const handleClearFilters = () => {
-    clearFilters();
-  };
-
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== ""
   );
 
   return (
-    <div className="h-fit rounded-lg bg-white p-6 shadow-md">
+    <div className="h-fit rounded-xl border border-gray-200 bg-white p-6 shadow-md">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="section-title flex items-center gap-2">
           <Filter size={20} />
           Filters
         </h2>
         {hasActiveFilters && (
-          <button
-            onClick={handleClearFilters}
-            className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800"
+          <Button
+            onClick={() => clearFilters()}
+            variant="ghost"
+            size="sm"
+            className="text-red-600 hover:text-red-800"
           >
             <X size={16} />
             Clear all
-          </button>
+          </Button>
         )}
       </div>
 
       <div className="space-y-6">
         {/* Price Range */}
-        <div>
-          <h3 className="mb-3 font-medium text-gray-700">Price Range</h3>
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="number"
-              placeholder="Min price"
-              value={filters.priceFrom || ""}
-              onChange={(e) => handleFilterChange("priceFrom", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-            />
-            <input
-              type="number"
-              placeholder="Max price"
-              value={filters.priceTo || ""}
-              onChange={(e) => handleFilterChange("priceTo", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-        </div>
+        <RangeInput
+          label="Price Range"
+          minValue={filters.priceFrom ? Number(filters.priceFrom) : null}
+          maxValue={filters.priceTo ? Number(filters.priceTo) : null}
+          onMinChange={(v) =>
+            handleFilterChange("priceFrom", v !== null ? String(v) : "")
+          }
+          onMaxChange={(v) =>
+            handleFilterChange("priceTo", v !== null ? String(v) : "")
+          }
+          minPlaceholder="Min price"
+          maxPlaceholder="Max price"
+        />
 
         {/* Brand */}
-        <div>
-          <h3 className="mb-3 font-medium text-gray-700">Brand</h3>
-          <select
-            value={filters.make || ""}
-            onChange={(e) => handleFilterChange("make", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-          >
-            <option value="">All brands</option>
-            {brands.map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterSelect
+          label="Brand"
+          value={filters.make || "all"}
+          onChange={(v) => handleFilterChange("make", v === "all" ? "" : v)}
+          options={brands.map((b) => ({ value: b, label: b }))}
+          placeholder="All brands"
+        />
 
         {/* Year Range */}
-        <div>
-          <h3 className="mb-3 font-medium text-gray-700">Year</h3>
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="number"
-              placeholder="From year"
-              value={filters.yearFrom || ""}
-              onChange={(e) => handleFilterChange("yearFrom", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-            />
-            <input
-              type="number"
-              placeholder="To year"
-              value={filters.yearTo || ""}
-              onChange={(e) => handleFilterChange("yearTo", e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-        </div>
+        <RangeInput
+          label="Year"
+          minValue={filters.yearFrom ? Number(filters.yearFrom) : null}
+          maxValue={filters.yearTo ? Number(filters.yearTo) : null}
+          onMinChange={(v) =>
+            handleFilterChange("yearFrom", v !== null ? String(v) : "")
+          }
+          onMaxChange={(v) =>
+            handleFilterChange("yearTo", v !== null ? String(v) : "")
+          }
+          minPlaceholder="From year"
+          maxPlaceholder="To year"
+        />
 
         {/* Fuel Type */}
-        <div>
-          <h3 className="mb-3 font-medium text-gray-700">Fuel Type</h3>
-          <select
-            value={filters.fuelType || ""}
-            onChange={(e) => handleFilterChange("fuelType", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-          >
-            <option value="">All fuel types</option>
-            {fuelTypes.map((fuel) => (
-              <option key={fuel} value={fuel}>
-                {fuel}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterSelect
+          label="Fuel Type"
+          value={filters.fuelType || "all"}
+          onChange={(v) => handleFilterChange("fuelType", v === "all" ? "" : v)}
+          options={fuelTypes.map((f) => ({ value: f, label: f }))}
+          placeholder="All fuel types"
+        />
 
         {/* Color */}
-        <div>
-          <h3 className="mb-3 font-medium text-gray-700">Color</h3>
-          <select
-            value={filters.color || ""}
-            onChange={(e) => handleFilterChange("color", e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-red-500"
-          >
-            <option value="">All colors</option>
-            {colors.map((color) => (
-              <option key={color} value={color}>
-                {color}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterSelect
+          label="Color"
+          value={filters.color || "all"}
+          onChange={(v) => handleFilterChange("color", v === "all" ? "" : v)}
+          options={colors.map((c) => ({ value: c, label: c }))}
+          placeholder="All colors"
+        />
       </div>
     </div>
   );

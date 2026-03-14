@@ -20,6 +20,7 @@ export default function ToastContainer() {
     <div
       className="pointer-events-none fixed top-4 right-4"
       style={{ zIndex: 999999 }} // Ensure maximum z-index
+      aria-live="polite"
     >
       <div className="pointer-events-auto">
         {toasts.map((toast) => (

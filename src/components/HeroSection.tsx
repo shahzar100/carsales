@@ -61,6 +61,7 @@ const HeroSection = async () => {
                   {/* Image Loading Fallback */}
                   <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-gray-800 opacity-0 transition-opacity">
                     <Car size={48} className="text-gray-600" />
+                    <span className="sr-only">Loading image</span>
                   </div>
                 </div>{" "}
                 {/* Car Details */}
@@ -92,7 +93,7 @@ const HeroSection = async () => {
                       <span>Available for viewing</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <Clock size={16} className="text-gray-400" />
+                      <Clock size={16} className="text-red-400" />
                       <span>Book today</span>
                     </div>
                   </div>
@@ -141,7 +142,7 @@ const HeroSection = async () => {
 
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2">
-                <Calendar className="text-red-300" size={32} />
+                <Calendar className="text-red-400" size={32} />
                 <span className="text-3xl font-bold">24/7</span>
               </div>
               <p className="text-gray-300">Online Booking</p>

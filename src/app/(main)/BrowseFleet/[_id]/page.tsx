@@ -1,10 +1,12 @@
 import React from "react";
+import type { Metadata } from "next";
 import { CarInterface } from "@/lib/interfaces";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
 import { ObjectId } from "mongodb";
 import CarDetailView from "@/components/Car/CarDetailView";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 interface PageProps {
   params: Promise<{
@@ -25,6 +27,36 @@ const getCar = async (id: string): Promise<CarInterface | null> => {
     return null;
   }
 };
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { _id } = await params;
+  const car = await getCar(_id);
+
+  if (!car) {
+    return {
+      title: "Vehicle Not Found",
+      description: "The vehicle you are looking for could not be found.",
+      robots: { index: false },
+    };
+  }
+
+  const title = `${car.year} ${car.make} ${car.model}`;
+  const description = `${car.year} ${car.make} ${car.model} — ${car.fuel}, ${car.transmission}, ${car.mileage.toLocaleString()} miles. ${car.colour}. Price: £${car.price.toLocaleString()}. Book a viewing today.`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/BrowseFleet/${_id}` },
+    openGraph: {
+      title,
+      description,
+      url: `/BrowseFleet/${_id}`,
+      images: car.image ? [{ url: car.image, alt: title }] : undefined,
+    },
+  };
+}
 
 const CarDetailsPage = async ({ params }: PageProps) => {
   const { _id } = await params;

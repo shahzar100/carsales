@@ -1,7 +1,21 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import CarPartsGrid, { CarPart } from "@/components/CarParts/CarPartsGrid";
 import { BlackRedSection } from "@/components/Services/Common";
+
+export const metadata: Metadata = {
+  title: "Car Parts & Accessories",
+  description:
+    "Browse quality car parts and accessories from top brands. New, used, and refurbished parts available. Reserve online and get expert installation at our location.",
+  alternates: { canonical: "/CarParts" },
+  openGraph: {
+    title: "Car Parts & Accessories",
+    description:
+      "Browse quality car parts and accessories from top brands. Reserve online and get expert installation.",
+    url: "/CarParts",
+  },
+};
 
 const mockCarParts: CarPart[] = [
   {

@@ -114,7 +114,7 @@ const Form: React.FC<FormProps> = ({
                         ? "border-red-600 bg-red-600 text-white shadow-lg shadow-red-200"
                         : isCompleted
                           ? "cursor-pointer border-emerald-500 bg-emerald-500 text-white hover:shadow-md hover:shadow-emerald-200"
-                          : "border-gray-300 bg-white text-gray-400"
+                          : "border-gray-200 bg-white text-gray-400"
                     }`}
                   >
                     {isCompleted && !isActive ? (
@@ -166,7 +166,7 @@ const Form: React.FC<FormProps> = ({
       </div>
 
       {/* Step Content */}
-      <div className="min-h-50 rounded-xl border border-gray-100 bg-gray-50/50 p-3 sm:p-6">
+      <div className="min-h-50 rounded-xl border border-gray-200 bg-gray-50/50 p-3 sm:p-6">
         <div className="mb-4">
           <h3 className="heading-3">{steps[currentStep].title}</h3>
           {steps[currentStep].description && (

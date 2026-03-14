@@ -42,6 +42,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import Button from "@/components/Helpful/Buttons/Button";
 
 interface Booking {
   bookingReference: string;
@@ -150,22 +151,22 @@ function BookingLookupContent() {
       [key: string]: { color: string; icon: React.ReactNode; text: string };
     } = {
       pending: {
-        color: "bg-yellow-100 text-yellow-800",
+        color: "bg-amber-100 text-amber-700",
         icon: <AlertCircle className="h-4 w-4" />,
         text: "Pending",
       },
       confirmed: {
-        color: "bg-green-100 text-green-800",
+        color: "bg-emerald-100 text-emerald-700",
         icon: <CheckCircle className="h-4 w-4" />,
         text: "Confirmed",
       },
       completed: {
-        color: "bg-gray-100 text-gray-800",
+        color: "bg-gray-100 text-gray-700",
         icon: <CheckCircle className="h-4 w-4" />,
         text: "Completed",
       },
       cancelled: {
-        color: "bg-red-100 text-red-800",
+        color: "bg-red-100 text-red-700",
         icon: <XCircle className="h-4 w-4" />,
         text: "Cancelled",
       },
@@ -204,17 +205,13 @@ function BookingLookupContent() {
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Enter your booking reference (e.g., BK-ABC123)"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               />
               <Search className="absolute top-3.5 left-3 h-5 w-5 text-gray-400" />
             </div>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            <Button onClick={handleSearch} loading={loading} size="lg">
               {loading ? "Searching..." : "Search"}
-            </button>
+            </Button>
           </div>
 
           {error && (
@@ -291,7 +288,7 @@ function BookingLookupContent() {
                         {booking.carDetails.year} {booking.carDetails.make}{" "}
                         {booking.carDetails.model}
                       </h4>
-                      <p className="mt-1 text-lg font-bold text-green-600">
+                      <p className="mt-1 text-lg font-bold text-red-600">
                         ${booking.carDetails.price.toLocaleString()}
                       </p>
                     </div>

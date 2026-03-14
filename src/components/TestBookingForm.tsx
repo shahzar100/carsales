@@ -31,6 +31,7 @@
  */
 
 import React, { useState } from "react";
+import Button from "@/components/Helpful/Buttons/Button";
 
 // Validation utilities
 const sanitizeInput = (input: string): string => {
@@ -192,7 +193,7 @@ export default function BookingForm({
             aria-invalid={!!errors.customerName}
             value={formData.customerName}
             onChange={(e) => handleInputChange("customerName", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
           />
           {errors.customerName && (
             <div
@@ -221,7 +222,7 @@ export default function BookingForm({
             aria-invalid={!!errors.email}
             value={formData.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
           />
           {errors.email && (
             <div
@@ -250,7 +251,7 @@ export default function BookingForm({
             aria-invalid={!!errors.phone}
             value={formData.phone}
             onChange={(e) => handleInputChange("phone", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
           />
           {errors.phone && (
             <div
@@ -282,7 +283,7 @@ export default function BookingForm({
             aria-invalid={!!errors.preferredDate}
             value={formData.preferredDate}
             onChange={(e) => handleInputChange("preferredDate", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
           />
           {errors.preferredDate && (
             <div
@@ -310,7 +311,7 @@ export default function BookingForm({
           maxLength={2000}
           value={formData.message}
           onChange={(e) => handleInputChange("message", e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none"
+          className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
         />
         <div className="mt-1 text-xs text-gray-500">
           {formData.message.length}/2000 characters
@@ -323,13 +324,9 @@ export default function BookingForm({
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" loading={isSubmitting} customWidth="w-full">
         {isSubmitting ? "Submitting..." : "Submit Booking"}
-      </button>
+      </Button>
     </form>
   );
 }

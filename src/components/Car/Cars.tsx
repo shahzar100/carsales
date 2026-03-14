@@ -12,6 +12,7 @@ import {
   Star,
   Eye,
 } from "lucide-react";
+import Button from "@/components/Helpful/Buttons/Button";
 
 interface CarsProps {
   car: CarInterface;
@@ -52,7 +53,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
     <>
       {/* Header */}
       <div className="flex w-full items-center justify-between gap-2">
-        <h1 className="heading-3 flex gap-1">
+        <h1 className="page-title flex gap-1">
           Car Inventory
           <span className="font-normal text-gray-500">({length})</span>
         </h1>
@@ -95,7 +96,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Title & Price */}
             <div className="mb-3 flex items-start justify-between gap-2">
               <div>
-                <h2 className="heading-3">
+                <h2 className="section-title">
                   {car.year} {car.make} {car.model}
                 </h2>
                 <p className="text-xs text-gray-500">
@@ -143,7 +144,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 {car.features.map((feature, idx) => (
                   <span
                     key={idx}
-                    className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600"
+                    className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600"
                   >
                     {feature}
                   </span>
@@ -153,17 +154,21 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
 
             {/* Action Buttons */}
             <div className="flex gap-2 border-t border-gray-100 pt-3">
-              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-gray-800">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1 bg-gray-900 text-white hover:bg-gray-800 hover:text-white"
+              >
                 <Edit className="h-3.5 w-3.5" />
                 Edit
-              </button>
-              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-red-600 px-3 py-2.5 text-xs font-medium text-white transition-colors hover:bg-red-700">
+              </Button>
+              <Button size="sm" className="flex-1">
                 <Eye className="h-3.5 w-3.5" />
                 View
-              </button>
-              <button className="flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-red-600 transition-colors hover:bg-red-100">
+              </Button>
+              <Button variant="danger" size="sm">
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

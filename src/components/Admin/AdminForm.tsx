@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Lock, User, AlertCircle } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import Button from "@/components/Helpful/Buttons/Button";
 
 const AdminForm = () => {
   const [username, setUsername] = useState("");
@@ -41,13 +42,13 @@ const AdminForm = () => {
   return (
     <div className="w-full">
       {/* Login Form */}
-      <div className="rounded-lg bg-white p-8 shadow-2xl">
+      <div className="rounded-xl bg-white p-8 shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username Field */}
           <div>
             <label
               htmlFor="username"
-              className="mb-2 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
             >
               Username
             </label>
@@ -59,7 +60,7 @@ const AdminForm = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 placeholder="Enter your username"
               />
             </div>
@@ -69,7 +70,7 @@ const AdminForm = () => {
           <div>
             <label
               htmlFor="password"
-              className="mb-2 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
             >
               Password
             </label>
@@ -81,7 +82,7 @@ const AdminForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 placeholder="Enter your password"
               />
             </div>
@@ -96,13 +97,14 @@ const AdminForm = () => {
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-red-600 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            loading={loading}
+            size="lg"
+            customWidth="w-full"
           >
             {loading ? "Signing in..." : "Sign In"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

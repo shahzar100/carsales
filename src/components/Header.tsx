@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 const Header = () => {
   return (
-    <nav className="sticky top-0 z-60 row-span-1 flex w-full items-center justify-between gap-2 bg-black p-4 shadow-md lg:px-6 lg:py-2">
+    <nav aria-label="Main navigation" className="sticky top-0 z-60 row-span-1 flex w-full items-center justify-between gap-2 bg-black p-4 shadow-md lg:px-6 lg:py-2">
       <Link
         className="rounded-full text-xl font-bold tracking-tight text-white"
         href="/"
@@ -22,9 +22,9 @@ const Header = () => {
       <NavMenu title="Menu">
         <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>
           <div className="w-full">
-            <h3 className="mb-4 text-sm font-bold tracking-wider text-gray-400 uppercase">
+            <p className="mb-4 text-[11px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
               Brands
-            </h3>
+            </p>
             <div className="grid grid-cols-2 gap-1 text-sm">
               <NavLink href="/BrowseFleet/Toyota" text="Toyota" />
               <NavLink href="/BrowseFleet/Honda" text="Honda" />

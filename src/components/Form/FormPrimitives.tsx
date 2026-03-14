@@ -37,11 +37,11 @@ export const FormButton: React.FC<{
   className = "",
 }) => {
   const base =
-    "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60";
+    "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-300";
 
   const variants: Record<ButtonVariant, string> = {
     primary: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
-    secondary: "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+    secondary: "text-gray-700 hover:text-red-500 hover:bg-red-100",
     ghost: "cursor-not-allowed text-gray-300",
     success:
       "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow-md",
@@ -136,7 +136,7 @@ export const Badge: React.FC<{
   icon?: React.ReactNode;
 }> = ({ children, colour = "gray", icon }) => (
   <span
-    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeColours[colour]}`}
+    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${badgeColours[colour]}`}
   >
     {icon}
     {children}
@@ -309,7 +309,7 @@ export const FormInput: React.FC<{
       min={min}
       max={max}
       disabled={disabled}
-      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+      className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
     />
   </div>
 );
@@ -335,7 +335,7 @@ export const FormTextarea: React.FC<{
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+      className="w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
     />
   </div>
 );

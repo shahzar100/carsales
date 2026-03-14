@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import FilterSection from "./FilterSection";
+import Button from "@/components/Helpful/Buttons/Button";
 
 export interface CarPart {
   id: number;
@@ -40,11 +41,11 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
   const getConditionBadgeClass = (condition: string) => {
     switch (condition) {
       case "New":
-        return "bg-green-100 text-green-800";
+        return "bg-emerald-100 text-emerald-700";
       case "Refurbished":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-700";
       default:
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-amber-100 text-amber-700";
     }
   };
 
@@ -74,10 +75,10 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
         {filteredParts.map((part) => (
           <div
             key={part.id}
-            className="rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
+            className="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
           >
             {/* Part Image */}
-            <div className="relative h-48 overflow-hidden rounded-t-lg bg-gray-100">
+            <div className="relative h-48 overflow-hidden rounded-t-xl bg-gray-100">
               <Image
                 src={part.image}
                 alt={part.name}
@@ -123,12 +124,9 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                     £{part.price}
                   </span>
                 </div>
-                <button
-                  onClick={() => handleReservePart(part.id)}
-                  className="rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-600"
-                >
+                <Button onClick={() => handleReservePart(part.id)} size="sm">
                   Reserve Part
-                </button>
+                </Button>
               </div>
             </div>
           </div>

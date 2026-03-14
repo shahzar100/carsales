@@ -1,8 +1,22 @@
 import React from "react";
+import type { Metadata } from "next";
 import { Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
 import { ServiceHero, BackNavigation } from "@/components/Services/Common";
 import { DetailingPackageGrid } from "@/components/Services/Detailing";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+
+export const metadata: Metadata = {
+  title: "Car Detailing Services",
+  description:
+    "Premium car detailing packages from £150. Interior and exterior deep clean, paint protection, ceramic coating, and leather treatment. Book your detailing today.",
+  alternates: { canonical: "/Services/Detailing" },
+  openGraph: {
+    title: "Car Detailing Services",
+    description:
+      "Premium car detailing packages from £150. Interior and exterior deep clean, paint protection, and more.",
+    url: "/Services/Detailing",
+  },
+};
 
 const Detailing = () => {
   const detailingPackages = [

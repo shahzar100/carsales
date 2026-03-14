@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { useBusinessInfo } from "@/backend/BusinessInfoContext";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Twitter,
+  Instagram,
+} from "lucide-react";
 
 export default function Footer() {
   const { businessInfo } = useBusinessInfo();
@@ -22,7 +30,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full border-t border-gray-200 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 text-black sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-7xl px-4 py-8 text-gray-700 sm:px-6 sm:py-12">
         {/* Main Footer Content */}
         <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
@@ -30,8 +38,8 @@ export default function Footer() {
             <h3 className="heading-3 mb-4">{name}</h3>
             <p className="mb-4 text-sm text-gray-700">{description}</p>
             <div className="space-y-2 text-sm text-gray-700">
-              <p>
-                📍{" "}
+              <p className="flex items-center gap-1.5">
+                <MapPin size={14} className="shrink-0 text-gray-400" />
                 <Link
                   href={`https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`}
                   target="_blank"
@@ -41,8 +49,8 @@ export default function Footer() {
                   {address}, {city}
                 </Link>
               </p>
-              <p>
-                📞{" "}
+              <p className="flex items-center gap-1.5">
+                <Phone size={14} className="shrink-0 text-gray-400" />
                 <a
                   href={`tel:${phone}`}
                   className="transition-colors hover:text-red-600"
@@ -50,8 +58,8 @@ export default function Footer() {
                   {phone}
                 </a>
               </p>
-              <p>
-                ✉️{" "}
+              <p className="flex items-center gap-1.5">
+                <Mail size={14} className="shrink-0 text-gray-400" />
                 <a
                   href={`mailto:${email}`}
                   className="transition-colors hover:text-red-600"
@@ -192,10 +200,10 @@ export default function Footer() {
                   href={social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Facebook</span>
-                  📘
+                  <Facebook size={20} />
                 </Link>
               )}
               {social?.twitter && (
@@ -203,10 +211,10 @@ export default function Footer() {
                   href={social.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Twitter</span>
-                  🐦
+                  <Twitter size={20} />
                 </Link>
               )}
               {social?.instagram && (
@@ -214,10 +222,10 @@ export default function Footer() {
                   href={social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Instagram</span>
-                  📷
+                  <Instagram size={20} />
                 </Link>
               )}
             </div>

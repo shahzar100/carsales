@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import { Shield, CheckCircle, Clock, Sun, Eye } from "lucide-react";
 import {
   ServiceHero,
@@ -9,6 +10,19 @@ import {
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+
+export const metadata: Metadata = {
+  title: "Window Tinting Services",
+  description:
+    "Professional window tinting with ceramic, carbon, and dyed film options from £200. 99% UV protection, heat reduction, and enhanced privacy. Warranty included.",
+  alternates: { canonical: "/Services/Tints" },
+  openGraph: {
+    title: "Window Tinting Services",
+    description:
+      "Professional window tinting with ceramic, carbon, and dyed film options from £200. Warranty included.",
+    url: "/Services/Tints",
+  },
+};
 
 const Tints = () => {
   const tintOptions = [

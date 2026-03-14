@@ -119,7 +119,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Label */}
       {label && (
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">
           {label}
           {required && <span className="ml-1 text-red-500">*</span>}
         </label>
@@ -132,14 +132,14 @@ const Dropdown: React.FC<DropdownProps> = ({
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
+        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left text-sm shadow-sm transition-all duration-200 ${
           disabled
             ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
             : error
               ? "border-red-300 bg-white text-gray-900 ring-2 ring-red-100 focus:border-red-500 focus:ring-red-200"
               : isOpen
                 ? "border-red-500 bg-white text-gray-900 ring-2 ring-red-100"
-                : "border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                : "border-gray-200 bg-white text-gray-900 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
         } `}
       >
         <span className={selectedOption ? "text-gray-900" : "text-gray-500"}>

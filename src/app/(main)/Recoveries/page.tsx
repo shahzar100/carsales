@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Truck,
@@ -19,6 +20,19 @@ import {
   ProcessFlow,
   BlackRedSection,
 } from "@/components/Services/Common";
+
+export const metadata: Metadata = {
+  title: "Vehicle Recovery Services",
+  description:
+    "24/7 breakdown recovery and roadside assistance across London and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
+  alternates: { canonical: "/Recoveries" },
+  openGraph: {
+    title: "Vehicle Recovery Services",
+    description:
+      "24/7 breakdown recovery and roadside assistance across London. Emergency towing, jump starts, and more from £60.",
+    url: "/Recoveries",
+  },
+};
 
 const BreakdownRecovery = () => {
   const recoveryServices = [

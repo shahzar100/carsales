@@ -2,6 +2,7 @@ import { CarInterface } from "@/lib/interfaces";
 import React, { useState } from "react";
 import Image from "next/image";
 import CarActions from "@/components/Admin/Navigation/CarActions";
+import Pagination from "@/components/Helpful/Pagination";
 
 interface CarTableProps {
   cars: CarInterface[];
@@ -41,13 +42,13 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
       "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide";
     switch (status) {
       case "available":
-        return `${baseStyles} bg-green-100 text-green-800 border border-green-200`;
+        return `${baseStyles} bg-emerald-100 text-emerald-700`;
       case "sold":
-        return `${baseStyles} bg-red-100 text-red-800 border border-red-200`;
+        return `${baseStyles} bg-red-100 text-red-700`;
       case "reserved":
-        return `${baseStyles} bg-yellow-100 text-yellow-800 border border-yellow-200`;
+        return `${baseStyles} bg-amber-100 text-amber-700`;
       default:
-        return `${baseStyles} bg-gray-100 text-gray-800 border border-gray-200`;
+        return `${baseStyles} bg-gray-100 text-gray-700`;
     }
   };
 
@@ -64,40 +65,8 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
     }
   }, [cars.length, itemsPerPage, currentPage, totalPages]);
 
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages: (number | string)[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(
-          1,
-          "...",
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages
-        );
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
-    return pages;
-  };
-
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-md">
+    <div className="rounded-xl border border-gray-200 bg-white shadow-md">
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-h-96 w-full">
@@ -159,7 +128,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                             src={"/tesla.webp"}
                             alt={`${car.make} ${car.model}`}
                             fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
@@ -202,13 +171,13 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                   {/* Specs */}
                   <td className="px-4 py-5">
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 shadow-sm">
+                      <span className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 shadow-sm">
                         {car.fuel}
                       </span>
-                      <span className="inline-flex items-center rounded-md border border-gray-300 bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 shadow-sm">
+                      <span className="inline-flex items-center rounded-full border border-gray-300 bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 shadow-sm">
                         {car.transmission}
                       </span>
-                      <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 shadow-sm">
+                      <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 shadow-sm">
                         {car.doors}dr
                       </span>
                     </div>
@@ -233,6 +202,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                     <div className="flex items-center justify-center gap-4">
                       {/* Featured Toggle */}
                       <button
+                        aria-label={car.featured ? "Remove from featured" : "Add to featured"}
                         className={`flex h-10 w-10 items-center justify-center rounded-xl text-xl shadow-sm transition-all duration-200 ${
                           car.featured
                             ? "bg-linear-to-br from-yellow-100 to-amber-100 ring-2 ring-yellow-300 hover:scale-110 hover:shadow-md"
@@ -309,83 +279,17 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-5 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-5 sm:flex-row">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <span className="font-medium">Show</span>
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                </select>
-                <span className="font-medium">per page</span>
-                <span className="mx-2 text-gray-300">|</span>
-                <span className="rounded-md bg-gray-100 px-3 py-1 text-gray-600">
-                  Showing{" "}
-                  <span className="font-semibold text-gray-800">
-                    {startIndex + 1}-{Math.min(endIndex, cars.length)}
-                  </span>{" "}
-                  of{" "}
-                  <span className="font-semibold text-gray-800">
-                    {cars.length}
-                  </span>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                {/* Previous Button */}
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-white"
-                >
-                  ← Prev
-                </button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center gap-1 px-2">
-                  {getPageNumbers().map((page, idx) =>
-                    page === "..." ? (
-                      <span
-                        key={`ellipsis-${idx}`}
-                        className="px-2 text-gray-400"
-                      >
-                        ···
-                      </span>
-                    ) : (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page as number)}
-                        className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
-                          currentPage === page
-                            ? "bg-linear-to-br from-red-500 to-red-600 text-white shadow-md"
-                            : "bg-white text-gray-600 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                {/* Next Button */}
-                <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-white"
-                >
-                  Next →
-                </button>
-              </div>
+            <div className="mt-5 border-t border-gray-200 pt-5">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+                totalItems={cars.length}
+                startIndex={startIndex}
+                endIndex={endIndex}
+              />
             </div>
           )}
         </div>

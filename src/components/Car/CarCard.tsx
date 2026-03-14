@@ -21,6 +21,7 @@ const CarCard = ({
         <button
           onClick={() => setCarId(carId - 1)}
           disabled={carId === 0}
+          aria-label="Previous car"
           className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
         >
           <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
@@ -40,6 +41,7 @@ const CarCard = ({
         <button
           onClick={() => setCarId(carId + 1)}
           disabled={carId === filteredCars.length - 1}
+          aria-label="Next car"
           className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
         >
           <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
@@ -51,7 +53,7 @@ const CarCard = ({
           <button
             key={c._id || idx}
             onClick={() => setCarId(idx)}
-            className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all ${
+            className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all duration-200 ${
               idx === carId
                 ? "ring-2 ring-red-600"
                 : "opacity-50 hover:opacity-100"

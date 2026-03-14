@@ -8,6 +8,7 @@ interface ShopButtonProps {
   size?: string;
   color?: string;
   iconSize?: number;
+  "aria-label"?: string;
 }
 
 const ShopButton: React.FC<ShopButtonProps> = ({
@@ -16,6 +17,7 @@ const ShopButton: React.FC<ShopButtonProps> = ({
   size,
   color = "bg-red-600 hover:bg-red-700",
   iconSize = 24,
+  "aria-label": ariaLabel,
 }) => {
   const [isSwapping, setIsSwapping] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -40,9 +42,10 @@ const ShopButton: React.FC<ShopButtonProps> = ({
   return (
     <motion.button
       onClick={handleButtonClick}
+      aria-label={ariaLabel}
       className={`${
         size || "h-20 w-20"
-      } ${color} flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none`}
+      } ${color} flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 hover:shadow-xl focus:ring-2 focus:ring-red-100 focus:ring-offset-2 focus:outline-none`}
       disabled={isDisabled}
       initial={{ scale: 1 }}
       animate={{ scale: isSwapping ? 1.2 : 1 }}

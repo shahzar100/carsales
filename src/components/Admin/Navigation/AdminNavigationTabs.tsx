@@ -1,5 +1,13 @@
 "use client";
-import { Car, Calendar, Eye, Settings, LogOut, PlusCircle } from "lucide-react";
+import {
+  Car,
+  Calendar,
+  Eye,
+  Settings,
+  LogOut,
+  PlusCircle,
+  Activity,
+} from "lucide-react";
 import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -18,6 +26,7 @@ export default function AdminNavigationTabs() {
     { href: "/admin/dashboard/viewing", text: "Car Viewings", icon: Eye },
     { href: "/admin/dashboard/shop", text: "Shop Settings", icon: Settings },
     { href: "/admin/dashboard/add", text: "Create New", icon: PlusCircle },
+    { href: "/admin/dashboard/status", text: "System Status", icon: Activity },
   ];
 
   return (
@@ -26,7 +35,7 @@ export default function AdminNavigationTabs() {
         href="/admin/dashboard"
         className="text-xl font-bold text-white sm:text-2xl"
       >
-        Admin <span className="text-red-500">Dashboard</span>
+        Admin <span className="text-red-600">Dashboard</span>
       </a>
       {isLoggedIn && (
         <NavMenu title="Admin Menu">
@@ -39,8 +48,8 @@ export default function AdminNavigationTabs() {
             />
           ))}
           <Button onClick={logout} variant="ghost" disabled={false}>
-            <LogOut className="h-4 w-4 text-red-400" />
-            <span className="hidden text-red-400 sm:inline">Logout</span>
+            <LogOut className="h-4 w-4 text-red-600" />
+            <span className="hidden text-red-600 sm:inline">Logout</span>
           </Button>
         </NavMenu>
       )}

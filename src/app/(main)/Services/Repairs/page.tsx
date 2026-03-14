@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Wrench,
@@ -19,6 +20,19 @@ import {
 } from "@/components/Services/Common";
 import { RepairServiceGrid } from "@/components/Services/Repairs";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+
+export const metadata: Metadata = {
+  title: "Car Repair Services",
+  description:
+    "Expert auto repair for all makes and models. Engine diagnostics, brakes, electrical systems, and transmission service. ASE certified technicians with warranty on all work.",
+  alternates: { canonical: "/Services/Repairs" },
+  openGraph: {
+    title: "Car Repair Services",
+    description:
+      "Expert auto repair for all makes and models. ASE certified technicians with warranty on all work.",
+    url: "/Services/Repairs",
+  },
+};
 
 const Repairs = () => {
   const repairServices = [

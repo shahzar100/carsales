@@ -1,9 +1,23 @@
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
 import Loading from "./Loading";
 import { CarInterface } from "@/lib/interfaces";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
 import BrowseFleetContent from "./BrowseFleetContent";
 import { Car, Shield, Clock } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Browse Our Fleet",
+  description:
+    "Explore our handpicked selection of quality vehicles. Filter by make, model, price, and more to find your perfect car. Book a viewing online today.",
+  alternates: { canonical: "/BrowseFleet" },
+  openGraph: {
+    title: "Browse Our Fleet",
+    description:
+      "Explore our handpicked selection of quality vehicles. Filter by make, model, price, and more.",
+    url: "/BrowseFleet",
+  },
+};
 
 const getCars = async (): Promise<CarInterface[]> => {
   try {

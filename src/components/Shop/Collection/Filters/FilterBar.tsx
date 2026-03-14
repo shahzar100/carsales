@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { useSearchContext } from "@/backend/SearchContext";
 import CustomDropdown from "./CustomDropdown";
+import Button from "@/components/Helpful/Buttons/Button";
 
 interface FilterBarProps {
   brands: string[];
@@ -278,7 +279,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
             <Filter className="text-gray-600" size={20} />
             <span className="text-base font-medium text-gray-900">Filters</span>
             {hasActiveFilters && (
-              <span className="rounded-full bg-red-600 px-2 py-1 text-xs text-white">
+              <span className="bg-red-600 px-2.5 py-0.5 text-xs font-semibold text-white rounded-full">
                 Active
               </span>
             )}
@@ -288,20 +289,22 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
       </div>
 
       {/* Desktop Filter Bar */}
-      <div className="hidden w-full flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:flex">
+      <div className="hidden w-full flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:flex">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-base font-medium text-gray-900">
             <Filter className="text-gray-600" size={16} />
             Filters
           </h2>
           {hasActiveFilters && (
-            <button
+            <Button
               onClick={clearFilters}
-              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-red-600 transition-colors hover:bg-red-50 hover:text-red-800"
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:bg-red-50 hover:text-red-800"
             >
               <X size={12} />
               Clear
-            </button>
+            </Button>
           )}
         </div>
 
@@ -326,6 +329,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
               <button
                 onClick={() => setIsFilterModalOpen(false)}
                 className="rounded-full p-2 transition-colors hover:bg-gray-100"
+                aria-label="Close filters"
               >
                 <X size={20} className="text-gray-500" />
               </button>
@@ -336,22 +340,25 @@ const FilterBar: React.FC<FilterBarProps> = ({ brands, fuelTypes, colors }) => {
 
               <div className="sticky bottom-0 flex gap-3 border-t border-gray-200 bg-white pt-4">
                 {hasActiveFilters && (
-                  <button
+                  <Button
                     onClick={() => {
                       clearFilters();
                       setIsFilterModalOpen(false);
                     }}
-                    className="flex-1 rounded-lg border border-red-200 px-4 py-3 font-medium text-red-600 transition-colors hover:bg-red-50"
+                    variant="outline"
+                    size="lg"
+                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
                   >
                     Clear All
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="flex-1 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
+                  size="lg"
+                  className="flex-1"
                 >
                   Apply Filters
-                </button>
+                </Button>
               </div>
             </div>
           </div>

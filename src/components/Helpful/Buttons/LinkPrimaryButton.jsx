@@ -6,7 +6,7 @@ const LinkPrimaryButton = (props) => {
   return (
     <Link
       href={props.href}
-      className={`${props.custom} rounded-md bg-blue-600 hover:bg-blue-700`}
+      className={`${props.custom} rounded-md bg-red-600 hover:bg-red-700`}
     >
       <Button
         onClick={props.onClick ? props.onClick : null}

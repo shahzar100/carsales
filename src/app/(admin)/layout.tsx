@@ -1,5 +1,14 @@
 import React from "react";
+import type { Metadata } from "next";
 import { AdminNavigationTabs, AuthWrapper } from "@/components/Admin";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+  },
+};
 
 export default function AdminLayout({
   children,

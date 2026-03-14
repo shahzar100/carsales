@@ -5,7 +5,8 @@ import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import { filterCars } from "@/lib/utils/filterCars";
 import Filters from "@/components/Car/Filters";
 import CarListCard from "@/components/Car/CarListCard";
-import { Car, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Car, Search } from "lucide-react";
+import Pagination from "@/components/Helpful/Pagination";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -46,38 +47,6 @@ const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
       setCurrentPage(1);
     }
   }, [currentPage, totalPages]);
-
-  // Page numbers generator
-  const getPageNumbers = () => {
-    const pages: (number | string)[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(
-          1,
-          "...",
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages
-        );
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
-    return pages;
-  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -134,77 +103,16 @@ const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 sm:flex-row sm:justify-between">
-          {/* Info */}
-          <p className="text-sm text-gray-500">
-            Showing{" "}
-            <span className="font-semibold text-gray-800">
-              {startIndex + 1}–{Math.min(endIndex, filteredCars.length)}
-            </span>{" "}
-            of{" "}
-            <span className="font-semibold text-gray-800">
-              {filteredCars.length}
-            </span>{" "}
-            vehicles
-          </p>
-
-          {/* Controls */}
-          <div className="flex items-center gap-1.5">
-            {/* Previous */}
-            <button
-              onClick={() => {
-                setCurrentPage((p) => Math.max(1, p - 1));
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              disabled={currentPage === 1}
-              className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Prev</span>
-            </button>
-
-            {/* Page Numbers */}
-            <div className="flex items-center gap-1 px-1">
-              {getPageNumbers().map((page, idx) =>
-                page === "..." ? (
-                  <span
-                    key={`ellipsis-${idx}`}
-                    className="px-1.5 text-gray-400"
-                  >
-                    ···
-                  </span>
-                ) : (
-                  <button
-                    key={page}
-                    onClick={() => {
-                      setCurrentPage(page as number);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
-                      currentPage === page
-                        ? "bg-red-600 text-white shadow-md"
-                        : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
-            </div>
-
-            {/* Next */}
-            <button
-              onClick={() => {
-                setCurrentPage((p) => Math.min(totalPages, p + 1));
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            scrollToTop
+            totalItems={filteredCars.length}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
         </div>
       )}
     </div>

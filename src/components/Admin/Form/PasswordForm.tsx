@@ -11,6 +11,7 @@ import {
   Badge,
 } from "../../Form/FormPrimitives";
 import { KeyRound, Search, ClipboardList, Mail } from "lucide-react";
+import Button from "@/components/Helpful/Buttons/Button";
 
 // ── Types ────────────────────────────────────────────────────
 type PasswordAction = "reset" | "reminder" | "";
@@ -164,24 +165,15 @@ const PasswordForm = () => {
                   required
                 />
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={lookupUser}
-                disabled={!data.identifier.trim() || lookingUp}
-                className="flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={!data.identifier.trim()}
+                loading={lookingUp}
               >
-                {lookingUp ? (
-                  <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Searching…
-                  </>
-                ) : (
-                  <>
-                    <Search className="h-4 w-4" />
-                    Look Up
-                  </>
-                )}
-              </button>
+                {!lookingUp && <Search className="h-4 w-4" />}
+                {lookingUp ? "Searching…" : "Look Up"}
+              </Button>
             </div>
 
             {lookupError && (

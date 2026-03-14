@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, CheckCircle, Star, Shield } from "lucide-react";
 import {
@@ -10,6 +11,19 @@ import {
 } from "@/components/Services/Common";
 import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+
+export const metadata: Metadata = {
+  title: "Our Services",
+  description:
+    "Professional auto services including car detailing, window tinting, and expert repairs. Certified technicians, same day service, and satisfaction guaranteed.",
+  alternates: { canonical: "/Services" },
+  openGraph: {
+    title: "Our Services",
+    description:
+      "Professional auto services including car detailing, window tinting, and expert repairs.",
+    url: "/Services",
+  },
+};
 
 const Services = () => {
   const mainServices: {

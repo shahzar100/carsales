@@ -98,6 +98,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
 
   return (
     <div
+      role="alert"
       className={`relative mb-3 w-full max-w-md transform rounded-lg p-4 transition-all duration-300 ease-in-out ${styles.container} ${
         isVisible
           ? "translate-x-0 scale-100 opacity-100"
@@ -148,6 +149,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         <div className="ml-4 shrink-0">
           <button
             onClick={handleRemove}
+            aria-label="Close notification"
             className="inline-flex text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:text-gray-600 focus:outline-none"
           >
             <X className="h-4 w-4" />

@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import Button from "./Button";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -23,26 +22,44 @@ const sizeClasses = {
 const Modal = ({ title, children, onClose, size = "lg" }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
 
+  const handleEscapeKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
   useEffect(() => {
     setMounted(true);
     document.body.style.overflowY = "hidden";
+    document.addEventListener("keydown", handleEscapeKey);
     return () => {
       document.body.style.overflowY = "";
+      document.removeEventListener("keydown", handleEscapeKey);
     };
-  }, []);
+  }, [handleEscapeKey]);
 
   if (!mounted) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className={`flex flex-col gap-4 overflow-y-auto rounded-lg border bg-white p-8 ${sizeClasses[size]}`}
       >
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold"> {title} </h2>
-          <Button disabled={false} onClick={onClose}>
+          <h2 id="modal-title" className="text-xl font-bold"> {title} </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="group transition-all duration-200 rounded-lg flex justify-center items-center gap-2 font-medium cursor-pointer bg-red-600 text-white hover:bg-red-700 py-2.5 px-5 text-sm"
+          >
             <X />
-          </Button>
+          </button>
         </div>
 
         {children}

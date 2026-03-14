@@ -1,5 +1,6 @@
 import React from "react";
 import { ShopInfo } from "@/lib/types";
+import Button from "@/components/Helpful/Buttons/Button";
 
 interface ShopSettingsTabProps {
   shopInfo: ShopInfo;
@@ -14,12 +15,12 @@ export default function ShopSettingsTab({
 }: ShopSettingsTabProps) {
   return (
     <div className="max-w-3xl">
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-xl font-bold">Shop Information</h2>
+      <div className="rounded-xl border bg-white p-6 shadow-sm">
+        <h2 className="mb-6 text-xl font-bold text-red-600">Shop Information</h2>
         <form onSubmit={onSave} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
                 Business Name
               </label>
               <input
@@ -31,12 +32,12 @@ export default function ShopSettingsTab({
                     businessName: e.target.value,
                   })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
                 Phone
               </label>
               <input
@@ -45,14 +46,14 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, phone: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -61,13 +62,13 @@ export default function ShopSettingsTab({
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, email: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
               Address
             </label>
             <input
@@ -76,14 +77,14 @@ export default function ShopSettingsTab({
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, address: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               required
             />
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
                 City
               </label>
               <input
@@ -92,12 +93,12 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, city: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
                 State
               </label>
               <input
@@ -106,12 +107,12 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, state: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
                 Zip Code
               </label>
               <input
@@ -120,14 +121,14 @@ export default function ShopSettingsTab({
                 onChange={(e) =>
                   onShopInfoChange({ ...shopInfo, zipCode: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
               Description
             </label>
             <textarea
@@ -136,7 +137,7 @@ export default function ShopSettingsTab({
                 onShopInfoChange({ ...shopInfo, description: e.target.value })
               }
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
             />
           </div>
 
@@ -157,7 +158,7 @@ export default function ShopSettingsTab({
                         hours: { ...shopInfo.hours, [day]: e.target.value },
                       })
                     }
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                    className="flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                   />
                 </div>
               ))}
@@ -168,7 +169,7 @@ export default function ShopSettingsTab({
             <h3 className="mb-3 text-lg font-semibold">Social Media</h3>
             <div className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
                   Facebook URL
                 </label>
                 <input
@@ -184,11 +185,11 @@ export default function ShopSettingsTab({
                     })
                   }
                   placeholder="https://facebook.com/yourbusiness"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
                   Twitter URL
                 </label>
                 <input
@@ -204,11 +205,11 @@ export default function ShopSettingsTab({
                     })
                   }
                   placeholder="https://twitter.com/yourbusiness"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
                   Instagram URL
                 </label>
                 <input
@@ -224,18 +225,15 @@ export default function ShopSettingsTab({
                     })
                   }
                   placeholder="https://instagram.com/yourbusiness"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-red-600 py-3 font-medium text-white hover:bg-red-700"
-          >
+          <Button type="submit" size="lg" customWidth="w-full">
             Save Changes
-          </button>
+          </Button>
         </form>
       </div>
     </div>
