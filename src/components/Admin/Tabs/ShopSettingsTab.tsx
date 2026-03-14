@@ -164,6 +164,72 @@ export default function ShopSettingsTab({
             </div>
           </div>
 
+          <div>
+            <h3 className="mb-3 text-lg font-semibold">Social Media</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Facebook URL
+                </label>
+                <input
+                  type="url"
+                  value={shopInfo.socialMedia?.facebook ?? ""}
+                  onChange={(e) =>
+                    onShopInfoChange({
+                      ...shopInfo,
+                      socialMedia: {
+                        ...shopInfo.socialMedia,
+                        facebook: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="https://facebook.com/yourbusiness"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Twitter URL
+                </label>
+                <input
+                  type="url"
+                  value={shopInfo.socialMedia?.twitter ?? ""}
+                  onChange={(e) =>
+                    onShopInfoChange({
+                      ...shopInfo,
+                      socialMedia: {
+                        ...shopInfo.socialMedia,
+                        twitter: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="https://twitter.com/yourbusiness"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Instagram URL
+                </label>
+                <input
+                  type="url"
+                  value={shopInfo.socialMedia?.instagram ?? ""}
+                  onChange={(e) =>
+                    onShopInfoChange({
+                      ...shopInfo,
+                      socialMedia: {
+                        ...shopInfo.socialMedia,
+                        instagram: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="https://instagram.com/yourbusiness"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
           <button
             type="submit"
             className="w-full rounded-lg bg-red-600 py-3 font-medium text-white hover:bg-red-700"
