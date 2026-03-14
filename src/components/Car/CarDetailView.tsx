@@ -177,7 +177,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
             {/* Image Gallery */}
             <div className="w-full lg:w-3/5">
               {/* Main Image */}
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-gray-100 shadow-lg">
+              <div className="relative aspect-16/10 overflow-hidden rounded-2xl bg-gray-100 shadow-lg">
                 <Image
                   src={allImages[activeImageIndex] || "/tesla.webp"}
                   alt={`${car.make} ${car.model}`}
@@ -269,7 +269,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
               </div>
 
               {/* Price Card */}
-              <div className="mb-6 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 shadow-lg">
+              <div className="mb-6 rounded-2xl bg-linear-to-br from-gray-900 to-gray-800 p-6 shadow-lg">
                 <p className="mb-1 text-sm font-medium text-gray-400">
                   Our Price
                 </p>
@@ -461,7 +461,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                 </Link>
 
                 {/* Guarantee Banner */}
-                <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-5 ring-1 ring-emerald-200/50">
+                <div className="rounded-2xl bg-linear-to-br from-emerald-50 to-emerald-100/50 p-5 ring-1 ring-emerald-200/50">
                   <div className="mb-3 flex items-center gap-2">
                     <Shield className="h-5 w-5 text-emerald-600" />
                     <h4 className="text-sm font-bold text-emerald-900">
