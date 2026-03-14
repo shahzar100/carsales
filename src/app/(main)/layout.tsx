@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import NavLink from "@/components/Dropdown/NavLink";
+import Link from "next/link";
 
 export default function MainLayout({
   children,
@@ -11,7 +11,7 @@ export default function MainLayout({
       <Header />
       <main className="min-h-screen">{children}</main>
       <footer className="w-full border-t border-gray-200 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+        <div className="mx-auto max-w-7xl px-4 py-8 text-black sm:px-6 sm:py-12">
           {/* Main Footer Content */}
           <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Company Info */}
@@ -19,14 +19,14 @@ export default function MainLayout({
               <h3 className="heading-3 mb-4">
                 {process.env.NEXT_PUBLIC_BUSINESS_NAME}
               </h3>
-              <p className="mb-4 text-sm text-gray-600">
+              <p className="mb-4 text-sm text-gray-700">
                 Browse our premium car collection with convenient viewing and
                 booking services.
               </p>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-gray-700">
                 <p>
                   📍{" "}
-                  <a
+                  <Link
                     href={`https://maps.google.com/?q=${encodeURIComponent(
                       `${
                         process.env.NEXT_PUBLIC_BUSINESS_ADDRESS ||
@@ -39,12 +39,12 @@ export default function MainLayout({
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-pointer transition-colors hover:text-red-500"
+                    className="transition-colors hover:text-red-600"
                   >
                     {process.env.NEXT_PUBLIC_BUSINESS_ADDRESS ||
                       "123 Auto Street"}
                     , {process.env.NEXT_PUBLIC_BUSINESS_CITY || "City"}
-                  </a>
+                  </Link>
                 </p>
                 <p>
                   📞{" "}
@@ -52,7 +52,7 @@ export default function MainLayout({
                     href={`tel:${
                       process.env.NEXT_PUBLIC_BUSINESS_PHONE || "+15551234567"
                     }`}
-                    className="cursor-pointer transition-colors hover:text-red-500"
+                    className="transition-colors hover:text-red-600"
                   >
                     {process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(555) 123-4567"}
                   </a>
@@ -64,7 +64,7 @@ export default function MainLayout({
                       process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
                       "info@carsales.com"
                     }`}
-                    className="cursor-pointer transition-colors hover:text-red-500"
+                    className="transition-colors hover:text-red-600"
                   >
                     {process.env.NEXT_PUBLIC_BUSINESS_EMAIL ||
                       "info@carsales.com"}
@@ -78,22 +78,52 @@ export default function MainLayout({
               <h4 className="heading-4 mb-4">Browse & Services</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <NavLink href="/BrowseFleet" text="Browse Fleet" />
+                  <Link
+                    href="/BrowseFleet"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Browse Fleet
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/Services" text="Services" />
+                  <Link
+                    href="/Services"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Services
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/Services/Repairs" text="Repairs" />
+                  <Link
+                    href="/Services/Repairs"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Repairs
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/Recoveries" text="Recoveries" />
+                  <Link
+                    href="/Recoveries"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Recoveries
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/CarParts" text="Car Parts" />
+                  <Link
+                    href="/CarParts"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Car Parts
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/AccidentClaims" text="Accident Claims" />
+                  <Link
+                    href="/AccidentClaims"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Accident Claims
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -103,13 +133,28 @@ export default function MainLayout({
               <h4 className="heading-4 mb-4">Support & Info</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <NavLink href="/FAQ" text="FAQ" dropdown={false} />
+                  <Link
+                    href="/FAQ"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    FAQ
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/AboutUs" text="About Us" />
+                  <Link
+                    href="/AboutUs"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    About Us
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/Enquiry" text="Contact Us" />
+                  <Link
+                    href="/Enquiry"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Contact Us
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -119,13 +164,28 @@ export default function MainLayout({
               <h4 className="heading-4 mb-4">Admin & Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <NavLink href="/admin/dashboard" text="Admin Dashboard" />
+                  <Link
+                    href="/admin/dashboard"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Admin Dashboard
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/privacy" text="Privacy Policy" />
+                  <Link
+                    href="/privacy"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Privacy Policy
+                  </Link>
                 </li>
                 <li>
-                  <NavLink href="/terms" text="Terms of Service" />
+                  <Link
+                    href="/terms"
+                    className="text-gray-700 transition-colors hover:text-red-600"
+                  >
+                    Terms of Service
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -134,33 +194,33 @@ export default function MainLayout({
           {/* Bottom Bar */}
           <div className="border-t border-gray-200 pt-6">
             <div className="flex flex-col items-center justify-between md:flex-row">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-700">
                 &copy; 2025{" "}
                 {process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing"}
                 . All rights reserved.
               </p>
               <div className="mt-4 flex space-x-4 md:mt-0">
-                <a
+                <Link
                   href="#"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Facebook</span>
                   📘
-                </a>
-                <a
+                </Link>
+                <Link
                   href="#"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Twitter</span>
                   🐦
-                </a>
-                <a
+                </Link>
+                <Link
                   href="#"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Instagram</span>
                   📷
-                </a>
+                </Link>
               </div>
             </div>
           </div>
