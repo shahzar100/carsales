@@ -51,7 +51,7 @@ export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
   const fetchBusinessInfo = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/bussinessinfo");
+      const response = await fetch("/api/businessinfo");
       const result = await response.json();
 
       if (result.success && result.data) {

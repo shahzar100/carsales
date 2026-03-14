@@ -224,8 +224,35 @@ const AppointmentForm = () => {
   );
 
   const handleSubmit = async () => {
-    console.log("Appointment submitted:", data);
-    // TODO: POST to /api/bookings or /api/admin/appointments
+    try {
+      const response = await fetch("/api/bookings/service", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerInfo: {
+            name: data.customerName,
+            email: data.customerEmail,
+            phone: data.customerPhone,
+          },
+          serviceType: data.serviceType,
+          serviceDetails: data.serviceDetails,
+          appointmentDate: data.appointmentDate,
+          appointmentTime: data.appointmentTime,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create appointment");
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (

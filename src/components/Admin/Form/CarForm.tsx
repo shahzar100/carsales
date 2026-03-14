@@ -271,8 +271,25 @@ const CarForm = () => {
   );
 
   const handleSubmit = async () => {
-    console.log("Car submitted:", carData);
-    // TODO: POST to /api/admin/cars
+    try {
+      const response = await fetch("/api/admin/cars", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(carData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to add car");
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
   return <Form steps={steps} onSubmit={handleSubmit} submitLabel="Add Car" />;

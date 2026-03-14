@@ -7,22 +7,52 @@ import {
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Get pagination parameters
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "50", 10);
+    const status = searchParams.get("status") || "all";
+    
+    // Validate pagination parameters
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(Math.max(1, limit), 100); // Max 100 items per page
+    const skip = (validPage - 1) * validLimit;
+
     const carsCollection = await getCarsCollection();
+    
+    // Build query filter
+    const filter: any = {};
+    if (status !== "all") {
+      filter.status = status;
+    }
+
+    // Get total count for pagination
+    const total = await carsCollection.countDocuments(filter);
+
+    // Get paginated cars
     const cars = await carsCollection
-      .find({})
+      .find(filter)
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(validLimit)
       .toArray();
 
     return NextResponse.json({
       success: true,
       data: cars.map((car) => serializeDocument(car)),
+      pagination: {
+        page: validPage,
+        limit: validLimit,
+        total,
+        pages: Math.ceil(total / validLimit),
+      },
     });
   } catch (error) {
     console.error("Error fetching cars:", error);
@@ -110,7 +140,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carsCollection.updateOne(
-      { _id: new ObjectId(String(_id)) as any },
+      { _id: ObjectId.createFromHexString(String(_id)) },
       { $set: updatedCar }
     );
 
@@ -150,7 +180,7 @@ export async function DELETE(request: NextRequest) {
 
     const carsCollection = await getCarsCollection();
     const result = await carsCollection.deleteOne({
-      _id: new ObjectId(String(id)) as any,
+      _id: ObjectId.createFromHexString(String(id)),
     });
 
     if (result.deletedCount === 0) {
