@@ -24,6 +24,13 @@ describe("UI Components - CRITICAL USABILITY TESTS", () => {
         disabled = false,
         onClick,
       } = props;
+
+      const sanitizeHref = (url: string) => {
+        if (!url) return "#";
+        if (/^(javascript|data|vbscript):/i.test(url.trim())) return "#";
+        return url;
+      };
+
       const handleClick = (e: React.MouseEvent) => {
         if (disabled) {
           e.preventDefault();
@@ -47,7 +54,7 @@ describe("UI Components - CRITICAL USABILITY TESTS", () => {
       if (href && !disabled) {
         return (
           <a
-            href={href}
+            href={sanitizeHref(href)}
             className={`${baseClasses} ${activeClasses} ${disabledClasses}`}
             onClick={handleClick}
             role="button"

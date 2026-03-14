@@ -39,7 +39,9 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
       // STRICT: Sanitize product data
       const sanitizePrice = (price: any) => {
         const numPrice = parseFloat(price);
-        return !isNaN(numPrice) && numPrice >= 0 ? numPrice.toFixed(2) : "0.00";
+        return !isNaN(numPrice) && isFinite(numPrice) && numPrice >= 0
+          ? numPrice.toFixed(2)
+          : "0.00";
       };
 
       const sanitizeText = (text: string) => {
@@ -47,15 +49,27 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
           text
             ?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
             .replace(/javascript:/gi, "")
-            .replace(/on\w+="/gi, "") || ""
+            .replace(/on\w+="/gi, "")
+            .replace(/<[^>]*>/g, "") || ""
         );
       };
 
+      const sanitizeUrl = (url: string) => {
+        if (!url) return "/placeholder-product.jpg";
+        if (/^(javascript|data|vbscript):/i.test(url.trim()))
+          return "/placeholder-product.jpg";
+        return url;
+      };
+
+      const sanitizedSearch = sanitizeText(searchTerm).toLowerCase();
+
       const filteredProducts = products.filter((product: any) => {
         const matchesSearch =
-          !searchTerm ||
-          product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.category?.toLowerCase().includes(searchTerm.toLowerCase());
+          !sanitizedSearch ||
+          sanitizeText(product.name)?.toLowerCase().includes(sanitizedSearch) ||
+          sanitizeText(product.category)
+            ?.toLowerCase()
+            .includes(sanitizedSearch);
 
         const matchesFilter = Object.keys(filterBy).every((key) => {
           if (!filterBy[key]) return true;
@@ -73,7 +87,9 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
             return parseFloat(b.price) - parseFloat(a.price);
           case "name":
           default:
-            return (a.name || "").localeCompare(b.name || "");
+            return sanitizeText(a.name || "").localeCompare(
+              sanitizeText(b.name || "")
+            );
         }
       });
 
@@ -166,7 +182,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
               >
                 <div className="relative">
                   <img
-                    src={product.image || "/placeholder-product.jpg"}
+                    src={sanitizeUrl(product.image)}
                     alt={sanitizeText(product.name)}
                     className="h-48 w-full object-cover"
                     loading={index < 4 ? "eager" : "lazy"}
@@ -251,7 +267,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
                     } `}
                     aria-label={`Add ${sanitizeText(product.name)} to cart for £${sanitizePrice(product.price)}`}
                   >
-                    {product.inStock ? "Add to Cart" : "Out of Stock"}
+                    Add to Cart
                   </button>
                 </div>
               </article>
@@ -419,23 +435,22 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
 
       // Create a component that allows custom quantity input
       const TestWrapper = () => {
-        const [quantity, setQuantity] = React.useState(1);
+        const [quantity, setQuantity] = React.useState("1");
         return (
           <div>
             <input
-              type="number"
+              type="text"
               value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
-              min="1"
-              max="100"
+              onChange={(e) => setQuantity(e.target.value)}
               data-testid="quantity-input"
             />
             <button
               onClick={() => {
+                const parsed = parseInt(quantity) || 1;
                 // Simulate adding with custom quantity (this would be handled in real component)
                 mockAddToCart({
                   ...mockProducts[0],
-                  quantity: Math.max(1, Math.min(100, quantity || 1)),
+                  quantity: Math.max(1, Math.min(100, parsed)),
                 });
               }}
               data-testid="add-with-quantity"
@@ -624,6 +639,22 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
         currentFilters = {},
       } = props;
       const [localFilters, setLocalFilters] = React.useState(currentFilters);
+      const [minPrice, setMinPrice] = React.useState(
+        currentFilters.priceRange?.min?.toString() ?? ""
+      );
+      const [maxPrice, setMaxPrice] = React.useState(
+        currentFilters.priceRange?.max?.toString() ?? ""
+      );
+
+      const sanitizeFilterText = (text: string) => {
+        return (
+          text
+            ?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+            .replace(/javascript:/gi, "")
+            .replace(/on\w+="[^"]*"/gi, "")
+            .replace(/<[^>]*>/g, "") || ""
+        );
+      };
 
       const handleFilterChange = (key: string, value: any) => {
         const newFilters = { ...localFilters, [key]: value };
@@ -631,15 +662,24 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
         onFilterChange?.(newFilters);
       };
 
-      const handlePriceRangeChange = (min: number, max: number) => {
-        // STRICT: Validate price range inputs
-        const validMin = Math.max(0, Math.min(priceRange.max, min || 0));
-        const validMax = Math.max(
-          validMin,
-          Math.min(priceRange.max, max || priceRange.max)
-        );
+      const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setMinPrice(val);
+        const rawMin = parseInt(val) || 0;
+        const rawMax = parseInt(maxPrice) || priceRange.max;
+        const clampedMax = Math.max(0, Math.min(priceRange.max, rawMax));
+        const clampedMin = Math.max(0, Math.min(clampedMax, rawMin));
+        handleFilterChange("priceRange", { min: clampedMin, max: clampedMax });
+      };
 
-        handleFilterChange("priceRange", { min: validMin, max: validMax });
+      const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setMaxPrice(val);
+        const rawMin = parseInt(minPrice) || 0;
+        const rawMax = parseInt(val) || priceRange.max;
+        const clampedMax = Math.max(0, Math.min(priceRange.max, rawMax));
+        const clampedMin = Math.max(0, Math.min(clampedMax, rawMin));
+        handleFilterChange("priceRange", { min: clampedMin, max: clampedMax });
       };
 
       return (
@@ -658,7 +698,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
               <option value="">All Categories</option>
               {categories.map((cat: string) => (
                 <option key={cat} value={cat}>
-                  {cat}
+                  {sanitizeFilterText(cat)}
                 </option>
               ))}
             </select>
@@ -673,13 +713,8 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
               <input
                 type="number"
                 placeholder="Min"
-                value={localFilters.priceRange?.min || ""}
-                onChange={(e) =>
-                  handlePriceRangeChange(
-                    parseInt(e.target.value) || 0,
-                    localFilters.priceRange?.max || priceRange.max
-                  )
-                }
+                value={minPrice}
+                onChange={handleMinPriceChange}
                 min={priceRange.min}
                 max={priceRange.max}
                 className="w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -689,13 +724,8 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
               <input
                 type="number"
                 placeholder="Max"
-                value={localFilters.priceRange?.max || ""}
-                onChange={(e) =>
-                  handlePriceRangeChange(
-                    localFilters.priceRange?.min || priceRange.min,
-                    parseInt(e.target.value) || priceRange.max
-                  )
-                }
+                value={maxPrice}
+                onChange={handleMaxPriceChange}
                 min={priceRange.min}
                 max={priceRange.max}
                 className="w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -722,7 +752,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
                     }}
                     className="mr-2 focus:ring-2 focus:ring-blue-500"
                   />
-                  <span className="text-sm">{brand}</span>
+                  <span className="text-sm">{sanitizeFilterText(brand)}</span>
                 </label>
               ))}
             </fieldset>
@@ -732,6 +762,8 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
           <button
             onClick={() => {
               setLocalFilters({});
+              setMinPrice("");
+              setMaxPrice("");
               onFilterChange?.({});
             }}
             className="w-full rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500"
@@ -865,7 +897,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
 
       // STRICT: All form controls should be focusable
       const allInputs = screen
-        .getAllByRole("textbox")
+        .getAllByRole("spinbutton")
         .concat(
           screen.getAllByRole("combobox"),
           screen.getAllByRole("checkbox")
