@@ -122,5 +122,29 @@ describe("/api/bookings/lookup", () => {
       expect(response.status).toBe(200);
       expect(data.data.type).toBe("service");
     });
+
+    it("should return 500 when an internal error occurs", async () => {
+      // Use jest.resetModules + doMock to override getter-only ESM exports
+      jest.resetModules();
+      jest.doMock("@/lib/models", () => {
+        const actual = jest.requireActual("@/lib/models");
+        return {
+          ...actual,
+          getServiceAppointmentsCollection: jest
+            .fn()
+            .mockRejectedValue(new Error("DB error")),
+        };
+      });
+      const { GET: mockedGET } = require("@/app/api/bookings/lookup/route");
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/lookup?ref=BK-TEST1"
+      );
+      const response = await mockedGET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Internal server error");
+    });
   });
 });

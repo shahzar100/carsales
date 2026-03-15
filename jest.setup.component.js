@@ -1,6 +1,9 @@
 // jest.setup.component.js - Setup for component tests only
 require("@testing-library/jest-dom");
 
+// Required for React 19 act() support
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
 // Mock Next.js router
 jest.mock("next/router", () => ({
   useRouter() {

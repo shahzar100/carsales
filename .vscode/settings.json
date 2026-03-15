@@ -1,4 +1,14 @@
 {
   "chat.agent.maxRequests": 30,
-  "chat.tools.terminal.enableAutoApprove": true
+  "chat.tools.terminal.enableAutoApprove": true,
+  "jest.virtualFolders": [
+    {
+      "name": "components",
+      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.js"
+    },
+    {
+      "name": "api",
+      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.api.js"
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { GET } from "@/app/api/bussinessinfo/route";
+import { GET } from "@/app/api/businessinfo/route";
 import { getTestCollections, createTestShopInfo } from "../utils/testUtils";
 
 describe("/api/shop", () => {
@@ -29,29 +29,34 @@ describe("/api/shop", () => {
       expect(data.data.phone).toBe(testShopInfo.phone);
     });
 
-    it("should return default shop info when no shop info exists in database", async () => {
+    it("should return null data when no shop info exists in database", async () => {
       const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.businessName).toBe(process.env.NEXT_BUSINESS_NAME);
-      expect(data.data.address).toBe(process.env.NEXT_BUSINESS_ADDRESS);
-      expect(data.data.phone).toBe(process.env.NEXT_BUSINESS_PHONE);
-      expect(data.data.email).toBe(process.env.NEXT_BUSINESS_EMAIL);
+      expect(data.data).toBeNull();
     });
 
     it("should handle database connection errors gracefully", async () => {
-      // Mock MongoDB to throw an error
-      const originalEnv = process.env.MONGODB_URI;
-      process.env.MONGODB_URI = "invalid-uri";
+      // Use jest.resetModules + doMock to override getter-only ESM exports
+      jest.resetModules();
+      jest.doMock("@/lib/models", () => {
+        const actual = jest.requireActual("@/lib/models");
+        return {
+          ...actual,
+          getBussinessInfoCollection: jest
+            .fn()
+            .mockRejectedValue(new Error("DB error")),
+        };
+      });
+      const { GET: mockedGET } = require("@/app/api/businessinfo/route");
 
-      const response = await GET();
+      const response = await mockedGET();
+      const data = await response.json();
 
       expect(response.status).toBe(500);
-
-      // Restore original environment
-      process.env.MONGODB_URI = originalEnv;
+      expect(data.error).toBe("Internal server error");
     });
   });
 });

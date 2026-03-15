@@ -10,16 +10,16 @@ import {
 } from "../../utils/testUtils";
 
 // Mock authentication
-const mockIsAuthenticated = jest.fn();
 jest.mock("@/lib/utils/auth", () => ({
-  isAuthenticated: mockIsAuthenticated,
+  isAuthenticated: jest.fn(),
 }));
+const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
 // Mock email sending
-const mockSendEmail = jest.fn();
 jest.mock("@/emails/send", () => ({
-  sendEmail: mockSendEmail,
+  sendEmail: jest.fn(),
 }));
+const { sendEmail: mockSendEmail } = require("@/emails/send");
 
 describe("/api/bookings/cancel", () => {
   beforeEach(() => {
@@ -276,6 +276,24 @@ describe("/api/bookings/cancel", () => {
 
       expect(response.status).toBe(400);
       expect(data.error).toBe("Invalid booking type");
+    });
+
+    it("should return 500 when an internal error occurs", async () => {
+      // Malformed JSON will cause request.json() to throw in the try block
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/cancel",
+        {
+          method: "POST",
+          body: "not valid json",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Internal server error");
     });
   });
 });

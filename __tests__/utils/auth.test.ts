@@ -299,4 +299,23 @@ describe("Authentication Utilities", () => {
       expect(result).toBe(false);
     });
   });
+
+  describe("Module-level production guard", () => {
+    it("should throw when SESSION_SECRET is missing in production", () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      const originalSessionSecret = process.env.SESSION_SECRET;
+
+      delete process.env.SESSION_SECRET;
+      process.env.NODE_ENV = "production";
+
+      expect(() => {
+        jest.isolateModules(() => {
+          require("@/lib/utils/auth");
+        });
+      }).toThrow("SESSION_SECRET environment variable must be set in production");
+
+      process.env.NODE_ENV = originalNodeEnv;
+      process.env.SESSION_SECRET = originalSessionSecret;
+    });
+  });
 });

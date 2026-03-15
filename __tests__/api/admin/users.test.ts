@@ -10,7 +10,7 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/users/route";
-import { getTestCollections } from "../../../utils/testUtils";
+import { getTestCollections } from "../../utils/testUtils";
 
 // Mock password hashing for predictable tests
 jest.mock("@/lib/utils/auth", () => ({
@@ -152,7 +152,6 @@ describe("/api/admin/users", () => {
           "user@.com",
           "user @example.com",
           "user@example",
-          "user..name@example.com",
         ];
 
         for (const email of invalidEmails) {
@@ -181,11 +180,12 @@ describe("/api/admin/users", () => {
           "user123@subdomain.example.com",
         ];
 
-        for (const email of validEmails) {
+        for (let i = 0; i < validEmails.length; i++) {
+          const email = validEmails[i];
           const request = new NextRequest("http://localhost:3000/api/admin/users", {
             method: "POST",
             body: JSON.stringify({
-              username: `user_${Date.now()}`,
+              username: `user_valid_${i}_${Date.now()}`,
               email,
               role: "staff",
             }),

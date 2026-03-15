@@ -2,6 +2,28 @@
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { MongoClient } = require("mongodb");
 
+// Mock @/backend/mongodb to use a lazy connection that defers until
+// MONGODB_URI is available (set in beforeAll after MongoMemoryServer starts)
+jest.mock("@/backend/mongodb", () => {
+  const { MongoClient } = require("mongodb");
+  let cachedClientPromise = null;
+
+  const lazyClientPromise = {
+    then(onFulfilled, onRejected) {
+      if (!cachedClientPromise) {
+        const client = new MongoClient(process.env.MONGODB_URI);
+        cachedClientPromise = client.connect();
+      }
+      return cachedClientPromise.then(onFulfilled, onRejected);
+    },
+    catch(onRejected) {
+      return this.then(undefined, onRejected);
+    },
+  };
+
+  return { __esModule: true, default: lazyClientPromise };
+});
+
 // Global test setup
 let mongod;
 let mongoUri;
@@ -36,10 +58,17 @@ beforeEach(async () => {
   if (mongoUri) {
     const client = new MongoClient(mongoUri);
     await client.connect();
-    const db = client.db("carsales");
-    const collections = await db.listCollections().toArray();
-    for (const collection of collections) {
-      await db.collection(collection.name).deleteMany({});
+    // Clean MMC database (main app data)
+    const mmcDb = client.db("MMC");
+    const mmcCollections = await mmcDb.listCollections().toArray();
+    for (const collection of mmcCollections) {
+      await mmcDb.collection(collection.name).deleteMany({});
+    }
+    // Clean Venue database (business info)
+    const venueDb = client.db("Venue");
+    const venueCollections = await venueDb.listCollections().toArray();
+    for (const collection of venueCollections) {
+      await venueDb.collection(collection.name).deleteMany({});
     }
     await client.close();
   }

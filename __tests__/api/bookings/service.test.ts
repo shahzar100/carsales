@@ -3,7 +3,7 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/bookings/service/route";
-import { getTestCollections, mockSendEmail } from "../../utils/testUtils";
+import { getTestCollections } from "../../utils/testUtils";
 
 // Mock email sending
 jest.mock("@/emails/send", () => ({
@@ -34,8 +34,8 @@ describe("/api/bookings/service", () => {
       },
       serviceType: "Oil Change",
       serviceDetails: "Regular maintenance",
-      appointmentDate: "2024-12-25",
-      appointmentTime: "10:00 AM",
+      appointmentDate: "2026-12-25",
+      appointmentTime: "10:00",
     };
 
     it("should create a new service booking successfully", async () => {
@@ -44,7 +44,10 @@ describe("/api/bookings/service", () => {
         {
           method: "POST",
           body: JSON.stringify(validBookingData),
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.1",
+          },
         }
       );
 
@@ -69,6 +72,7 @@ describe("/api/bookings/service", () => {
       await client.close();
 
       // Verify email was sent
+      const { sendEmail: mockSendEmail } = require("@/emails/send");
       expect(mockSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: "john@example.com",
@@ -92,7 +96,10 @@ describe("/api/bookings/service", () => {
         {
           method: "POST",
           body: JSON.stringify(invalidData),
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.2",
+          },
         }
       );
 
@@ -116,7 +123,10 @@ describe("/api/bookings/service", () => {
         {
           method: "POST",
           body: JSON.stringify(invalidData),
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.3",
+          },
         }
       );
 
@@ -133,7 +143,10 @@ describe("/api/bookings/service", () => {
         {
           method: "POST",
           body: JSON.stringify(validBookingData),
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.4",
+          },
         }
       );
 
@@ -144,11 +157,11 @@ describe("/api/bookings/service", () => {
       expect(data.success).toBe(true);
 
       // Verify email was called with default shop info
-      expect(mockSendEmail).toHaveBeenCalledWith(
+      const { sendEmail: mockSendEmailFn } = require("@/emails/send");
+      expect(mockSendEmailFn).toHaveBeenCalledWith(
         expect.objectContaining({
-          html: expect.stringContaining(
-            process.env.NEXT_BUSINESS_NAME || "Test Motor Company"
-          ),
+          to: "john@example.com",
+          subject: expect.stringContaining("BK-TEST123"),
         })
       );
     });
@@ -159,7 +172,10 @@ describe("/api/bookings/service", () => {
         {
           method: "POST",
           body: "invalid json",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.5",
+          },
         }
       );
 
@@ -168,6 +184,153 @@ describe("/api/bookings/service", () => {
 
       expect(response.status).toBe(500);
       expect(data.error).toBe("Internal server error");
+    });
+
+    it("should reject request with invalid email", async () => {
+      const invalidData = {
+        ...validBookingData,
+        customerInfo: {
+          name: "John Doe",
+          email: "not-an-email",
+          phone: "555-0123",
+        },
+      };
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify(invalidData),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.1.1",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Invalid email address");
+    });
+
+    it("should reject request with invalid phone number", async () => {
+      const invalidData = {
+        ...validBookingData,
+        customerInfo: {
+          name: "John Doe",
+          email: "john@example.com",
+          phone: "abc",
+        },
+      };
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify(invalidData),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.1.2",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Invalid phone number");
+    });
+
+    it("should reject request with past appointment date", async () => {
+      const invalidData = {
+        ...validBookingData,
+        appointmentDate: "2020-01-01",
+      };
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify(invalidData),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.1.3",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe(
+        "Appointment date must be in the future and within one year"
+      );
+    });
+
+    it("should reject request with invalid appointment time", async () => {
+      const invalidData = {
+        ...validBookingData,
+        appointmentTime: "13:00",
+      };
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify(invalidData),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.1.4",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Invalid appointment time");
+    });
+
+    it("should return 429 when rate limit is exceeded", async () => {
+      // Make 6 requests (limit is 5 per minute)
+      for (let i = 0; i < 5; i++) {
+        const req = new NextRequest(
+          "http://localhost:3000/api/bookings/service",
+          {
+            method: "POST",
+            body: JSON.stringify(validBookingData),
+            headers: {
+              "Content-Type": "application/json",
+              "x-forwarded-for": "192.168.1.100",
+            },
+          }
+        );
+        await POST(req);
+      }
+
+      // 6th request should be rate limited
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify(validBookingData),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "192.168.1.100",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(data.error).toBe("Too many requests. Please try again later.");
     });
   });
 });

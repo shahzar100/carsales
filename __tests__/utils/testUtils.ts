@@ -98,7 +98,7 @@ export const createTestShopInfo = (overrides = {}) => ({
 export const createTestAdminUser = async () => {
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
-  const db = client.db("carsales");
+  const db = client.db("MMC");
 
   const passwordHash = await bcrypt.hash("test-admin-password", 10);
   const adminUser = {
@@ -175,13 +175,14 @@ export const createUnauthenticatedRequest = (
 export const seedDatabase = async () => {
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
-  const db = client.db("carsales");
+  const db = client.db("MMC");
+  const venueDb = client.db("Venue");
 
   // Add test car
   await db.collection("cars").insertOne(createTestCar());
 
   // Add test shop info
-  await db.collection("shopInfo").insertOne(createTestShopInfo());
+  await venueDb.collection("MMC_Leeds").insertOne(createTestShopInfo());
 
   // Add test service appointment
   await db
@@ -200,14 +201,16 @@ export const seedDatabase = async () => {
 export const getTestCollections = async () => {
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
-  const db = client.db("carsales");
+  const db = client.db("MMC");
+  const venueDb = client.db("Venue");
 
   return {
     cars: db.collection("cars"),
-    shopInfo: db.collection("shopInfo"),
+    shopInfo: venueDb.collection("MMC_Leeds"),
     serviceAppointments: db.collection("serviceAppointments"),
     carViewingBookings: db.collection("carViewingBookings"),
     adminUsers: db.collection("adminUsers"),
+    quotes: db.collection("quotes"),
     client, // Return client so tests can close it
   };
 };

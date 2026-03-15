@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import ShareButton from "@/components/SEO/ShareButton";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -139,6 +140,10 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
 
   const statusConfig = getStatusConfig(car.status);
 
+  const carTitle = `${car.year} ${car.make} ${car.model}`;
+  const shareText = `Check out this ${carTitle} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles — ${formatPrice(car.price)}`;
+  const carUrl = typeof window !== "undefined" ? window.location.href : `/BrowseFleet/${car._id}`;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sticky Back Navigation */}
@@ -152,6 +157,13 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
             Back to Fleet
           </Link>
           <div className="flex items-center gap-3">
+            <ShareButton
+              url={carUrl}
+              title={carTitle}
+              text={shareText}
+              variant="outline"
+              size="sm"
+            />
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase ${statusConfig.color}`}
             >
@@ -459,6 +471,16 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                   <Calendar className="h-5 w-5" />
                   Book a Viewing
                 </Link>
+
+                {/* Share */}
+                <ShareButton
+                  url={carUrl}
+                  title={carTitle}
+                  text={shareText}
+                  variant="outline"
+                  size="lg"
+                  className="w-full [&>button]:w-full [&>button]:justify-center"
+                />
 
                 {/* Guarantee Banner */}
                 <div className="rounded-2xl bg-linear-to-br from-emerald-50 to-emerald-100/50 p-5 ring-1 ring-emerald-200/50">

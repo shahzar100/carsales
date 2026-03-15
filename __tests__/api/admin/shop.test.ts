@@ -3,13 +3,14 @@
  */
 import { NextRequest } from "next/server";
 import { GET, PUT } from "@/app/api/admin/shop/route";
+import * as models from "@/lib/models";
 import { getTestCollections, createTestShopInfo } from "../../utils/testUtils";
 
 // Mock authentication
-const mockIsAuthenticated = jest.fn();
 jest.mock("@/lib/utils/auth", () => ({
-  isAuthenticated: mockIsAuthenticated,
+  isAuthenticated: jest.fn(),
 }));
+const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
 describe("/api/admin/shop", () => {
   beforeEach(() => {
@@ -38,14 +39,14 @@ describe("/api/admin/shop", () => {
       expect(data.data.businessName).toBe(testShopInfo.businessName);
     });
 
-    it("should return default shop info when none exists", async () => {
+    it("should return null data when no shop info exists", async () => {
       const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.businessName).toBe(process.env.NEXT_BUSINESS_NAME);
+      expect(data.data).toBeNull();
     });
 
     it("should return 401 for unauthenticated user", async () => {
@@ -57,6 +58,17 @@ describe("/api/admin/shop", () => {
 
       expect(response.status).toBe(401);
       expect(data.error).toBe("Unauthorized");
+    });
+
+    it("should return 500 when GET throws an error", async () => {
+      mockIsAuthenticated.mockRejectedValue(new Error("DB connection failed"));
+
+      const request = new NextRequest("http://localhost:3000/api/admin/shop");
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Internal server error");
     });
   });
 
@@ -198,6 +210,43 @@ describe("/api/admin/shop", () => {
 
       expect(response.status).toBe(500);
       expect(data.error).toBe("Internal server error");
+    });
+
+    it("should return 500 when updateOne is not acknowledged", async () => {
+      const mockCollection = {
+        updateOne: jest.fn().mockResolvedValue({ acknowledged: false }),
+      };
+
+      // Use jest.resetModules + doMock to override the getter-only export
+      jest.resetModules();
+      jest.doMock("@/lib/models", () => {
+        const actual = jest.requireActual("@/lib/models");
+        return {
+          ...actual,
+          getBussinessInfoCollection: jest
+            .fn()
+            .mockResolvedValue(mockCollection),
+        };
+      });
+      // Re-mock auth since resetModules clears it
+      jest.doMock("@/lib/utils/auth", () => ({
+        isAuthenticated: jest.fn().mockResolvedValue(true),
+      }));
+      const { PUT: mockedPUT } = require("@/app/api/admin/shop/route");
+
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify(validShopData),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await mockedPUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Failed to update shop information");
+
+      jest.restoreAllMocks();
     });
   });
 });

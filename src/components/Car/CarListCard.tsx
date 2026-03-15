@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import CarActions from "@/components/Admin/Navigation/CarActions";
+import ShareButton from "@/components/SEO/ShareButton";
 
 interface CarListCardProps {
   car: CarInterface;
@@ -215,13 +216,22 @@ const CarListCard: React.FC<CarListCardProps> = ({
                   />
                   <span className="capitalize">{car.status}</span>
                 </div>
-                <Link
-                  href={`/BrowseFleet/${car._id}`}
-                  className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-[0.98]"
-                >
-                  <Eye className="h-4 w-4" />
-                  View Details
-                </Link>
+                <div className="flex items-center gap-2">
+                  <ShareButton
+                    url={`/BrowseFleet/${car._id}`}
+                    title={`${car.year} ${car.make} ${car.model}`}
+                    text={`Check out this ${car.year} ${car.make} ${car.model} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles — ${formatPrice(car.price)}`}
+                    variant="icon"
+                    size="sm"
+                  />
+                  <Link
+                    href={`/BrowseFleet/${car._id}`}
+                    className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-[0.98]"
+                  >
+                    <Eye className="h-4 w-4" />
+                    View Details
+                  </Link>
+                </div>
               </>
             )}
           </div>
