@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -23,7 +22,7 @@ const HeroSection = async () => {
   return (
     <section className="relative z-50 overflow-hidden bg-black text-white">
       {/* Ambient red glow — top-right */}
-      <div className="pointer-events-none absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-red-600/5 blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 right-0 h-125 w-125 rounded-full bg-red-600/5 blur-3xl" />
 
       <div className="container mx-auto px-4 py-14 sm:px-6 sm:py-20 lg:py-28">
         <div
@@ -72,10 +71,10 @@ const HeroSection = async () => {
           {/* Right Column - Featured Car */}
           {featuredCar?.make && (
             <div className="relative">
-              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.06] to-white/[0.02] shadow-2xl ring-1 shadow-black/40 ring-white/5">
+              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/2 shadow-2xl ring-1 shadow-black/40 ring-white/5">
                 {/* Car Image — full-bleed with overlay */}
                 <div className="group relative">
-                  <div className="relative aspect-[16/10] w-full">
+                  <div className="relative aspect-16/10 w-full">
                     <Image
                       src="/tesla.webp"
                       alt={`${featuredCar.make} ${featuredCar.model}`}
@@ -170,7 +169,7 @@ const HeroSection = async () => {
         {/* Stats Section */}
         <div className="mt-20">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+            <div className="bg-white/0.03 flex items-center justify-center gap-3 rounded-xl border border-white/5 px-6 py-5">
               <Car className="text-red-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">
@@ -182,7 +181,7 @@ const HeroSection = async () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+            <div className="bg-white/0.03 flex items-center justify-center gap-3 rounded-xl border border-white/5 px-6 py-5">
               <Calendar className="text-red-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">
@@ -192,7 +191,7 @@ const HeroSection = async () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/3 px-6 py-5">
               <Star className="text-yellow-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">

@@ -45,7 +45,7 @@ const Item: React.FC<ItemProps> = ({ car }) => {
   return (
     <div className="group flex h-full flex-col overflow-hidden rounded-2xl bg-gray-950 shadow-md transition-all duration-300 hover:shadow-xl hover:shadow-black/20">
       {/* Image */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden">
+      <div className="relative aspect-16/10 w-full overflow-hidden">
         <Image
           src={car.Image || "/tesla.webp"}
           alt={`${car.Brand} ${car.Name}`}

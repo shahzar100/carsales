@@ -62,7 +62,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ cars }) => {
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="min-w-[4rem] text-center text-sm text-gray-500">
+              <span className="min-w-16 text-center text-sm text-gray-500">
                 {car + 1} of {cars.length}
               </span>
               <button
