@@ -77,6 +77,14 @@ export async function GET() {
     );
   }
 
+  // Require explicit opt-in via environment variable
+  if (process.env.ENABLE_TEST_RUNNER !== "true") {
+    return NextResponse.json(
+      { error: "Test runner is not enabled" },
+      { status: 403 }
+    );
+  }
+
   const results: {
     component?: ReturnType<typeof mapJestOutput> | { error: string };
     api?: ReturnType<typeof mapJestOutput> | { error: string };

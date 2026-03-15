@@ -73,7 +73,7 @@ describe("/api/admin/shop", () => {
 
       expect(response.status).toBe(500);
       expect(data.error).toBe(
-        "Failed to retrieve business information: DB connection failed"
+        "Failed to retrieve business information"
       );
     });
   });

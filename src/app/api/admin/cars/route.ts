@@ -153,14 +153,22 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Validate update data with partial car schema
+    const parsed = carSchema.partial().safeParse(updateData);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parsed.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
     const carsCollection = await getCarsCollection();
 
     const updatedCar = {
-      ...updateData,
-      year: parseInt(updateData.year),
-      price: parseFloat(updateData.price),
-      mileage: parseInt(updateData.mileage),
-      doors: parseInt(updateData.doors),
+      ...parsed.data,
       updatedAt: new Date(),
     };
 

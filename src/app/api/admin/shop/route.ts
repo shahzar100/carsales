@@ -29,11 +29,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching shop info:", error);
-    const message =
-      error instanceof Error ? error.message : "Unknown server error";
     return NextResponse.json(
       {
-        error: `Failed to retrieve business information: ${message}`,
+        error: "Failed to retrieve business information",
       },
       { status: 500 }
     );
@@ -178,11 +176,9 @@ export async function PUT(request: NextRequest) {
       await updateBusinessInfo(shopInfo);
     } catch (dbError) {
       console.error("Database error while updating business info:", dbError);
-      const dbMessage =
-        dbError instanceof Error ? dbError.message : "Unknown database error";
       return NextResponse.json(
         {
-          error: `Database update failed: ${dbMessage}`,
+          error: "Database update failed",
         },
         { status: 500 }
       );
@@ -194,11 +190,9 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating shop info:", error);
-    const message =
-      error instanceof Error ? error.message : "Unknown server error";
     return NextResponse.json(
       {
-        error: `Unexpected error while saving business information: ${message}`,
+        error: "Unexpected error while saving business information",
       },
       { status: 500 }
     );

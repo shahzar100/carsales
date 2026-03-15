@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { hashPassword } from "@/lib/utils/auth";
+import { hashPassword, isAuthenticated } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 
 /**
@@ -39,6 +39,11 @@ const validRoles = ["staff", "manager", "admin"] as const;
 
 export async function POST(request: NextRequest) {
   try {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { username, email, role } = await request.json();
 
     // ── Validation ──────────────────────────────────────────

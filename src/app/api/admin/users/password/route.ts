@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import crypto from "crypto";
-import { hashPassword } from "@/lib/utils/auth";
+import { hashPassword, isAuthenticated } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { sendEmail } from "@/emails/send";
 import React from "react";
@@ -39,6 +39,11 @@ function generateStrongPassword(): string {
  */
 export async function POST(request: NextRequest) {
   try {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { action, username } = await request.json();
 
     // ── Validation ──────────────────────────────────────────
@@ -59,8 +64,18 @@ export async function POST(request: NextRequest) {
     const collection = await getAdminUsersCollection();
     const user = await collection.findOne({ username });
 
-    if (!user) {
+    // For "reset" action, we need to confirm user exists (admin-only route)
+    if (!user && action === "reset") {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // For "reminder" action, return generic success to prevent user enumeration
+    if (!user && action === "reminder") {
+      return NextResponse.json({
+        success: true,
+        message: "If an account with that username exists, a password reminder email has been sent",
+        emailSent: true,
+      });
     }
 
     // ── Reset Password ──────────────────────────────────────
@@ -84,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Password Reminder (email reset link) ────────────────
-    if (!user.email) {
+    if (!user!.email) {
       return NextResponse.json(
         {
           error:
@@ -95,11 +110,23 @@ export async function POST(request: NextRequest) {
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Store a SHA-256 hash of the token — never store plaintext tokens
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
 
     await collection.updateOne(
       { username },
-      { $set: { resetToken, resetTokenExpiry, updatedAt: new Date() } }
+      {
+        $set: {
+          resetToken: resetTokenHash,
+          resetTokenExpiry,
+          updatedAt: new Date(),
+        },
+      }
     );
 
     // Send reset email in the background — token is already saved in DB

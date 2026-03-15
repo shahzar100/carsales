@@ -31,8 +31,16 @@ export function middleware(request: NextRequest) {
         );
       }
 
-      // Ensure the origin matches the host
-      if (!origin.includes(host || "")) {
+      // Strict host comparison — parse origin URL to prevent substring bypass
+      try {
+        const originUrl = new URL(origin);
+        if (originUrl.host !== host) {
+          return NextResponse.json(
+            { error: "CSRF validation failed" },
+            { status: 403 }
+          );
+        }
+      } catch {
         return NextResponse.json(
           { error: "CSRF validation failed" },
           { status: 403 }

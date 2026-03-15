@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isAuthenticated } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 
 /**
@@ -8,6 +9,11 @@ import { getAdminUsersCollection } from "@/lib/models";
  */
 export async function GET(request: NextRequest) {
   try {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const q = request.nextUrl.searchParams.get("q")?.trim();
 
     if (!q) {

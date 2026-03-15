@@ -19,7 +19,10 @@ const serverSchema = z.object({
     ),
 
   // ── Session ───────────────────────────────────────────────
-  SESSION_SECRET: z.string().optional(),
+  SESSION_SECRET: z
+    .string()
+    .min(32, "SESSION_SECRET must be at least 32 characters")
+    .optional(),
 
   // ── Email / SMTP ──────────────────────────────────────────
   SMTP_HOST: z.string().optional(),
@@ -53,10 +56,10 @@ function validateServerEnv() {
     throw new Error("Invalid server environment variables");
   }
 
-  // Warn if SESSION_SECRET is missing in production
+  // Fail in production if SESSION_SECRET is missing
   if (!parsed.data.SESSION_SECRET && parsed.data.NODE_ENV === "production") {
-    console.warn(
-      "⚠️  SESSION_SECRET is not set — using fallback. Set it for production!"
+    throw new Error(
+      "SESSION_SECRET must be set in production (min 32 characters)"
     );
   }
 

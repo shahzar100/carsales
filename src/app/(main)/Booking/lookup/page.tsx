@@ -81,6 +81,7 @@ export default function BookingLookupPage() {
 function BookingLookupContent() {
   const searchParams = useSearchParams();
   const [reference, setReference] = useState(searchParams.get("ref") || "");
+  const [email, setEmail] = useState("");
   const [booking, setBooking] = useState<Booking | null>(null);
   const [bookingType, setBookingType] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -92,13 +93,18 @@ function BookingLookupContent() {
       return;
     }
 
+    if (!email.trim()) {
+      setError("Please enter the email address used when booking");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setBooking(null);
 
     try {
       const response = await fetch(
-        `/api/bookings/lookup?ref=${encodeURIComponent(reference)}`
+        `/api/bookings/lookup?ref=${encodeURIComponent(reference)}&email=${encodeURIComponent(email)}`
       );
       const result = await response.json();
 
@@ -113,13 +119,13 @@ function BookingLookupContent() {
     } finally {
       setLoading(false);
     }
-  }, [reference]);
+  }, [reference, email]);
 
   useEffect(() => {
-    if (searchParams.get("ref")) {
+    if (searchParams.get("ref") && email) {
       handleSearch();
     }
-  }, [searchParams, handleSearch]);
+  }, [searchParams, handleSearch, email]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -197,17 +203,26 @@ function BookingLookupContent() {
 
         {/* Search Box */}
         <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <div className="relative flex-1">
+          <div className="flex flex-col gap-3">
+            <div className="relative">
               <input
                 type="text"
                 value={reference}
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
-                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Enter your booking reference (e.g., BK-ABC123)"
                 className="w-full rounded-lg border border-gray-200 px-4 py-3 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               />
               <Search className="absolute top-3.5 left-3 h-5 w-5 text-gray-400" />
+            </div>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="Enter the email address used when booking"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+              />
             </div>
             <Button onClick={handleSearch} loading={loading} size="lg">
               {loading ? "Searching..." : "Search"}

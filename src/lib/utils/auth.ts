@@ -7,16 +7,21 @@ export interface SessionData {
   username?: string;
 }
 
-if (!process.env.SESSION_SECRET && process.env.NODE_ENV === "production") {
-  throw new Error(
-    "SESSION_SECRET environment variable must be set in production"
+if (!process.env.SESSION_SECRET) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET environment variable must be set in production"
+    );
+  }
+  console.warn(
+    "⚠️  SESSION_SECRET is not set — using fallback. Set it for all environments!"
   );
 }
 
 export const sessionOptions: SessionOptions = {
   password:
     process.env.SESSION_SECRET ||
-    "complex_password_at_least_32_characters_long",
+    "dev-only-fallback-secret-at-least-32chars!",
   cookieName: "carsales_admin_session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

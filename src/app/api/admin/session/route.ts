@@ -7,7 +7,7 @@ export async function GET() {
 
     return NextResponse.json({
       isLoggedIn: session.isLoggedIn || false,
-      username: session.username,
+      ...(session.isLoggedIn && { username: session.username }),
     });
   } catch (error) {
     console.error("Session check error:", error);

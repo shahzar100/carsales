@@ -15,11 +15,14 @@ import { getTestCollections } from "../../utils/testUtils";
 // Mock password hashing for predictable tests
 jest.mock("@/lib/utils/auth", () => ({
   hashPassword: jest.fn((pwd: string) => Promise.resolve(`hashed_${pwd}`)),
+  isAuthenticated: jest.fn(),
 }));
+const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
 describe("/api/admin/users", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
   });
 
   afterEach(async () => {

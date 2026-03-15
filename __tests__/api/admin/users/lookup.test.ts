@@ -13,9 +13,16 @@ import { GET } from "@/app/api/admin/users/lookup/route";
 import { getTestCollections } from "../../../utils/testUtils";
 import bcrypt from "bcryptjs";
 
+// Mock authentication
+jest.mock("@/lib/utils/auth", () => ({
+  isAuthenticated: jest.fn(),
+}));
+const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+
 describe("/api/admin/users/lookup", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
   });
 
   afterEach(async () => {

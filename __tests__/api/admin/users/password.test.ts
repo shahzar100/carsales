@@ -13,6 +13,16 @@ import { POST } from "@/app/api/admin/users/password/route";
 import { getTestCollections, flushWaitUntil } from "../../../utils/testUtils";
 import bcrypt from "bcryptjs";
 
+// Mock authentication and password hashing
+jest.mock("@/lib/utils/auth", () => ({
+  isAuthenticated: jest.fn(),
+  hashPassword: jest.fn((pwd: string) => {
+    const bcrypt = require("bcryptjs");
+    return bcrypt.hash(pwd, 10);
+  }),
+}));
+const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+
 // Mock email sending
 jest.mock("@/emails/send", () => ({
   sendEmail: jest.fn().mockResolvedValue({ success: true }),
@@ -27,6 +37,7 @@ jest.mock("@/emails/PasswordReset", () => ({
 describe("/api/admin/users/password", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
   });
 
   afterEach(async () => {
