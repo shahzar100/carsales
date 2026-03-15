@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import { useBusinessInfo } from "@/backend/BusinessInfoContext";
 import Form, { FormStep } from "../../Form/Form";
 import Dropdown from "../../Form/Dropdown";
 import {
@@ -112,33 +113,15 @@ const serviceCategories = [
   },
 ];
 
-// ── Sub-service options per category ─────────────────────────
-const subServiceOptions: Record<string, { value: string; label: string }[]> = {
-  Detailing: [
-    { value: "Bronze - Mini Valet", label: "Bronze — Mini Valet (£150)" },
-    {
-      value: "Silver - Full Inside",
-      label: "Silver — Mini Outside, Full Inside (£280)",
-    },
-    {
-      value: "Gold - Complete Premium",
-      label: "Gold — Complete Premium Service (£450)",
-    },
-  ],
-  "Window Tint": [
-    { value: "Dyed Film", label: "Dyed Film (£200 – £400)" },
-    { value: "Carbon Series", label: "Carbon Series (£300 – £600)" },
-    { value: "Ceramic Premium", label: "Ceramic Premium (£400 – £800)" },
-  ],
-  Repair: [
-    { value: "Engine & Performance", label: "Engine & Performance" },
-    { value: "Brakes & Safety", label: "Brakes & Safety" },
-    { value: "Electrical Systems", label: "Electrical Systems" },
-    { value: "Transmission & Drivetrain", label: "Transmission & Drivetrain" },
-    { value: "General Service", label: "General Service / MOT" },
-    { value: "Other", label: "Other (describe below)" },
-  ],
-};
+// ── Sub-service options per category (Repair is static) ──────
+const repairSubServices = [
+  { value: "Engine & Performance", label: "Engine & Performance" },
+  { value: "Brakes & Safety", label: "Brakes & Safety" },
+  { value: "Electrical Systems", label: "Electrical Systems" },
+  { value: "Transmission & Drivetrain", label: "Transmission & Drivetrain" },
+  { value: "General Service", label: "General Service / MOT" },
+  { value: "Other", label: "Other (describe below)" },
+];
 
 // ── Form data ────────────────────────────────────────────────
 interface ServiceFormData {
@@ -171,6 +154,24 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
   defaultService = "",
   onSubmit,
 }) => {
+  const { businessInfo } = useBusinessInfo();
+
+  const subServiceOptions: Record<string, { value: string; label: string }[]> =
+    useMemo(
+      () => ({
+        Detailing: (businessInfo?.detailingPackages ?? []).map((pkg) => ({
+          value: `${pkg.id} - ${pkg.subtitle}`,
+          label: `${pkg.name} — ${pkg.subtitle} (${pkg.price})`,
+        })),
+        "Window Tint": (businessInfo?.tintOptions ?? []).map((opt) => ({
+          value: opt.name,
+          label: `${opt.name} (${opt.price})`,
+        })),
+        Repair: repairSubServices,
+      }),
+      [businessInfo?.detailingPackages, businessInfo?.tintOptions]
+    );
+
   const [data, setData] = useState<ServiceFormData>({
     purpose: "book",
     serviceType: defaultService,

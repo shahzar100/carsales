@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
-  getShopInfoCollection,
 } from "@/lib/models";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { sendEmail } from "@/emails/send";
 import { BookingCancellation } from "@/emails/BookingCancellation";
@@ -77,31 +77,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Get shop info for email
-    const shopCollection = await getShopInfoCollection();
-    let shopInfo = await shopCollection.findOne({});
-
-    if (!shopInfo) {
-      shopInfo = {
-        _id: "default",
-        businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
-        address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
-        city: process.env.NEXT_BUSINESS_CITY || "City",
-        state: process.env.NEXT_BUSINESS_STATE || "State",
-        zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
-        phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
-        email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
-        hours: {
-          monday: "9:00 AM - 6:00 PM",
-          tuesday: "9:00 AM - 6:00 PM",
-          wednesday: "9:00 AM - 6:00 PM",
-          thursday: "9:00 AM - 6:00 PM",
-          friday: "9:00 AM - 6:00 PM",
-          saturday: "9:00 AM - 4:00 PM",
-          sunday: "Closed",
-        },
-        updatedAt: new Date(),
-      };
-    }
+    const shopInfo = await getBusinessInfo();
 
     // Send cancellation email
     const updatedBooking = { ...booking, cancellationReason: reason };

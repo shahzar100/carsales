@@ -4,6 +4,7 @@ import React from "react";
 import { Calendar, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
+import { useBusinessInfo } from "@/backend/BusinessInfoContext";
 
 interface CarData {
   _id: string;
@@ -24,6 +25,9 @@ interface CarBookingProps {
 
 const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
   const { updateViewingBooking } = useViewing();
+  const { businessInfo } = useBusinessInfo();
+  const phone = businessInfo?.phone;
+  const mapsUrl = businessInfo?.googleMapsUrl;
 
   const handleBookingClick = () => {
     updateViewingBooking({
@@ -68,14 +72,14 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
               <span>Book</span>
             </Link>
             <a
-              href="tel:01234567890"
+              href={`tel:${phone}`}
               className="flex w-full flex-col items-center justify-center rounded-lg border border-white/20 bg-white/10 px-2 py-3 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-red-300"
             >
               <Phone size={16} className="mb-1" />
               <span className="text-xs font-medium">Call</span>
             </a>
             <a
-              href="https://maps.google.com/maps?q=Premium+Car+Centre,+123+Motor+Way,+City+Centre"
+              href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex w-full flex-col items-center justify-center rounded-lg border border-white/20 bg-white/10 px-2 py-3 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-red-300"
@@ -119,14 +123,14 @@ const CarBooking: React.FC<CarBookingProps> = ({ car }) => {
             {/* Contact Options - Bottom */}
             <div className="grid grid-cols-2 gap-2">
               <a
-                href="tel:01234567890"
+                href={`tel:${phone}`}
                 className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-red-300"
               >
                 <Phone size={16} />
                 <span className="text-sm font-medium">Call Now</span>
               </a>
               <a
-                href="https://maps.google.com/maps?q=Premium+Car+Centre,+123+Motor+Way,+City+Centre"
+                href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/20 hover:text-red-300"

@@ -6,34 +6,13 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import type { ShopInfo } from "@/lib/interfaces";
 
-export interface BusinessInfo {
-  businessName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  phone: string;
-  email: string;
-  hours: {
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-  };
-  description?: string;
-  socialMedia?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-  };
-}
+// Re-export the ShopInfo type as BusinessInfo for backward compatibility
+export type BusinessInfo = ShopInfo;
 
 interface BusinessInfoContextType {
-  businessInfo: BusinessInfo | null;
+  businessInfo: ShopInfo | null;
   loading: boolean;
   refetch: () => Promise<void>;
 }
@@ -45,7 +24,7 @@ const BusinessInfoContext = createContext<BusinessInfoContextType | undefined>(
 export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
+  const [businessInfo, setBusinessInfo] = useState<ShopInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchBusinessInfo = async () => {

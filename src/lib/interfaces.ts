@@ -67,8 +67,69 @@ export interface CarViewingBooking {
   updatedAt: Date;
 }
 
+export interface BusinessHours {
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+}
+
+export interface HeroStat {
+  value: string;
+  label: string;
+}
+
+export interface DetailingPackage {
+  id: string;
+  name: string;
+  subtitle: string;
+  price: string;
+  duration: string;
+  description: string;
+  exteriorFeatures: string[];
+  interiorFeatures: string[];
+  popular: boolean;
+  includesPrevious: string | null;
+}
+
+export interface TintOption {
+  name: string;
+  type: string;
+  price: string;
+  vlt: string;
+  warranty: string;
+  description: string;
+  features: string[];
+  popular: boolean;
+}
+
+export interface RecoveryPricingTier {
+  name: string;
+  price: string;
+  distance: string;
+}
+
+export interface RecoveryInfo {
+  coverageAreas: string[];
+  pricingTiers: RecoveryPricingTier[];
+  responseTime: string;
+}
+
+export interface ServiceOverview {
+  id: string;
+  title: string;
+  subtitle: string;
+  priceRange: string;
+  duration: string;
+  features: string[];
+}
+
 export interface ShopInfo {
   _id?: string;
+  // Core business info
   businessName: string;
   address: string;
   city: string;
@@ -76,21 +137,31 @@ export interface ShopInfo {
   zipCode: string;
   phone: string;
   email: string;
-  hours: {
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-  };
+  bookingsEmail?: string;
+  googleMapsUrl?: string;
+  hours: BusinessHours;
   description?: string;
   socialMedia?: {
     facebook?: string;
     twitter?: string;
     instagram?: string;
   };
+
+  // Hero section stats
+  heroStats?: {
+    vehicles: HeroStat;
+    booking: HeroStat;
+    rating: HeroStat;
+  };
+
+  // Service packages
+  detailingPackages?: DetailingPackage[];
+  tintOptions?: TintOption[];
+  serviceOverviews?: ServiceOverview[];
+
+  // Recovery / Breakdown
+  recovery?: RecoveryInfo;
+
   updatedAt: Date;
 }
 

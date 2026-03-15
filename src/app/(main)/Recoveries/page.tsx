@@ -20,6 +20,7 @@ import {
   ProcessFlow,
   BlackRedSection,
 } from "@/components/Services/Common";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Vehicle Recovery Services",
@@ -34,7 +35,11 @@ export const metadata: Metadata = {
   },
 };
 
-const BreakdownRecovery = () => {
+const BreakdownRecovery = async () => {
+  const businessInfo = await getBusinessInfo();
+  const phone = businessInfo.phone;
+  const recovery = businessInfo.recovery!;
+
   const recoveryServices = [
     {
       icon: Truck,
@@ -112,21 +117,6 @@ const BreakdownRecovery = () => {
     },
   ];
 
-  const coverageAreas = [
-    "Central London",
-    "North London",
-    "South London",
-    "East London",
-    "West London",
-    "Greater London",
-    "Surrey",
-    "Kent",
-    "Essex",
-    "Hertfordshire",
-    "Berkshire",
-    "Buckinghamshire",
-  ];
-
   const heroProps = {
     icon: Truck,
     iconBgColor: "bg-red-100 text-red-700",
@@ -173,11 +163,11 @@ const BreakdownRecovery = () => {
             </div>
           </div>
           <a
-            href="tel:(555)123-4567"
+            href={`tel:${phone.replace(/\s/g, "")}`}
             className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-8 py-4 text-lg font-bold text-white transition-all hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
           >
             <Phone className="h-5 w-5" />
-            Call Now: (555) 123-4567
+            Call Now: {phone}
           </a>
         </div>
       </BlackRedSection>
@@ -232,15 +222,16 @@ const BreakdownRecovery = () => {
           whether we cover your area, give us a call.
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {coverageAreas.map((area, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700"
-            >
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-red-500" />
-              {area}
-            </div>
-          ))}
+          {recovery &&
+            recovery.coverageAreas.map((area, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700"
+              >
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-red-500" />
+                {area}
+              </div>
+            ))}
         </div>
       </div>
 
@@ -256,38 +247,32 @@ const BreakdownRecovery = () => {
           </p>
 
           <div className="mx-auto mb-10 grid max-w-3xl gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-              <div className="mb-2 text-2xl font-bold text-red-400">
-                From £60
-              </div>
-              <div className="text-sm font-medium text-white">
-                Local Recovery
-              </div>
-              <div className="mt-1 text-xs text-gray-500">Within 10 miles</div>
-            </div>
-            <div className="rounded-xl border border-red-500/30 bg-white/8 p-6 shadow-lg shadow-red-500/10">
-              <div className="mb-2 text-2xl font-bold text-red-400">
-                From £95
-              </div>
-              <div className="text-sm font-medium text-white">
-                Regional Recovery
-              </div>
-              <div className="mt-1 text-xs text-gray-500">10–30 miles</div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-              <div className="mb-2 text-2xl font-bold text-red-400">
-                Call Us
-              </div>
-              <div className="text-sm font-medium text-white">
-                Long Distance
-              </div>
-              <div className="mt-1 text-xs text-gray-500">30+ miles</div>
-            </div>
+            {recovery &&
+              recovery.pricingTiers.map((tier, index) => (
+                <div
+                  key={index}
+                  className={`rounded-xl p-6 ${
+                    index === 1
+                      ? "border border-red-500/30 bg-white/8 shadow-lg shadow-red-500/10"
+                      : "border border-white/10 bg-white/5"
+                  }`}
+                >
+                  <div className="mb-2 text-2xl font-bold text-red-400">
+                    {tier.price}
+                  </div>
+                  <div className="text-sm font-medium text-white">
+                    {tier.name}
+                  </div>
+                  <div className="mt-1 text-xs text-gray-500">
+                    {tier.distance}
+                  </div>
+                </div>
+              ))}
           </div>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
-              href="tel:(555)123-4567"
+              href={`tel:${phone.replace(/\s/g, "")}`}
               className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-8 py-4 font-semibold text-white transition-all hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
             >
               <Phone className="h-5 w-5" />
@@ -310,32 +295,33 @@ const BreakdownRecovery = () => {
           Common Questions
         </h2>
         <div className="mx-auto max-w-3xl space-y-4">
-          {[
-            {
-              q: "How quickly can you reach me?",
-              a: "Our average response time is 30-45 minutes within London. Times may vary depending on traffic and your exact location.",
-            },
-            {
-              q: "Do you recover all vehicle types?",
-              a: "We recover cars, vans, and light commercial vehicles. For larger vehicles, please call us to discuss your requirements.",
-            },
-            {
-              q: "What payment methods do you accept?",
-              a: "We accept cash, card, and bank transfer. Payment is taken upon completion of the recovery — no upfront charges.",
-            },
-            {
-              q: "Is my vehicle insured during recovery?",
-              a: "Yes, all vehicles are fully covered by our goods-in-transit insurance from the moment we take control of your vehicle.",
-            },
-          ].map((faq, index) => (
-            <div
-              key={index}
-              className="rounded-xl border border-gray-200 bg-white p-5"
-            >
-              <h3 className="mb-2 font-semibold text-gray-900">{faq.q}</h3>
-              <p className="text-sm leading-relaxed text-gray-600">{faq.a}</p>
-            </div>
-          ))}
+          {recovery &&
+            [
+              {
+                q: "How quickly can you reach me?",
+                a: `Our average response time is ${recovery.responseTime}. Times may vary depending on traffic and your exact location.`,
+              },
+              {
+                q: "Do you recover all vehicle types?",
+                a: "We recover cars, vans, and light commercial vehicles. For larger vehicles, please call us to discuss your requirements.",
+              },
+              {
+                q: "What payment methods do you accept?",
+                a: "We accept cash, card, and bank transfer. Payment is taken upon completion of the recovery — no upfront charges.",
+              },
+              {
+                q: "Is my vehicle insured during recovery?",
+                a: "Yes, all vehicles are fully covered by our goods-in-transit insurance from the moment we take control of your vehicle.",
+              },
+            ].map((faq, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-gray-200 bg-white p-5"
+              >
+                <h3 className="mb-2 font-semibold text-gray-900">{faq.q}</h3>
+                <p className="text-sm leading-relaxed text-gray-600">{faq.a}</p>
+              </div>
+            ))}
         </div>
       </div>
     </div>

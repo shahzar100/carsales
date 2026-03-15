@@ -10,6 +10,7 @@ import {
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Window Tinting Services",
@@ -24,63 +25,9 @@ export const metadata: Metadata = {
   },
 };
 
-const Tints = () => {
-  const tintOptions = [
-    {
-      name: "Ceramic Premium",
-      type: "Ceramic",
-      price: "£400-£800",
-      vlt: "5%, 20%, 35%, 50%",
-      warranty: "Lifetime",
-      description:
-        "Top-tier ceramic film with superior heat rejection and clarity",
-      features: [
-        "99% UV protection",
-        "Superior heat rejection (up to 80%)",
-        "No signal interference",
-        "Fade resistant",
-        "Scratch resistant",
-        "Lifetime warranty",
-      ],
-      popular: true,
-    },
-    {
-      name: "Carbon Series",
-      type: "Carbon",
-      price: "£300-£600",
-      vlt: "5%, 20%, 35%, 50%",
-      warranty: "10 Years",
-      description:
-        "Advanced carbon technology for excellent performance and durability",
-      features: [
-        "99% UV protection",
-        "Good heat rejection (up to 60%)",
-        "Non-metallic (no interference)",
-        "Matte finish appearance",
-        "Color stable",
-        "10-year warranty",
-      ],
-      popular: false,
-    },
-    {
-      name: "Dyed Film",
-      type: "Traditional",
-      price: "£200-£400",
-      vlt: "5%, 20%, 35%, 50%",
-      warranty: "5 Years",
-      description:
-        "Quality dyed film offering good privacy and basic heat rejection",
-      features: [
-        "95% UV protection",
-        "Basic heat rejection (up to 35%)",
-        "Good privacy",
-        "Cost-effective",
-        "Professional installation",
-        "5-year warranty",
-      ],
-      popular: false,
-    },
-  ];
+const Tints = async () => {
+  const businessInfo = await getBusinessInfo();
+  const tintOptions = businessInfo.tintOptions!;
 
   const benefits = [
     {

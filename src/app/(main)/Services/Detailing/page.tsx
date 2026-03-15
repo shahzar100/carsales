@@ -4,6 +4,7 @@ import { Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
 import { ServiceHero, BackNavigation } from "@/components/Services/Common";
 import { DetailingPackageGrid } from "@/components/Services/Detailing";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Car Detailing Services",
@@ -18,77 +19,9 @@ export const metadata: Metadata = {
   },
 };
 
-const Detailing = () => {
-  const detailingPackages = [
-    {
-      id: "bronze",
-      name: "Detailing Bronze",
-      subtitle: "Mini Valet",
-      price: "£150",
-      duration: "2-3 hours",
-      description: "Essential cleaning for your vehicle inside and out",
-      exteriorFeatures: [
-        "Citrus pre wash treatment",
-        "Snow foam",
-        "Contact wash",
-        "Towel and blow dry",
-        "Alloy wheels, tyres and arches deep cleaned",
-        "Tyre dressing",
-      ],
-      interiorFeatures: [
-        "Seats, mats and carpets vacuumed",
-        "High pressure blowout",
-        "All interior plastics and surfaces hot wiped",
-        "Steering wheel clean program",
-        "Windows cleaned inside and out",
-      ],
-      popular: false,
-      includesPrevious: null,
-    },
-    {
-      id: "silver",
-      name: "Detailing Silver",
-      subtitle: "Mini Outside, Full Inside",
-      price: "£280",
-      duration: "4-5 hours",
-      description:
-        "Enhanced exterior protection with comprehensive interior deep clean",
-      exteriorFeatures: [
-        "All services from Bronze",
-        "3 month high gloss ceramic protection",
-      ],
-      interiorFeatures: [
-        "All services from Bronze",
-        "All interior plastics and surfaces deep cleaned",
-        "Leather conditioner / fabric shampoo",
-        "All surfaces, plastics steam cleaned",
-      ],
-      popular: true,
-      includesPrevious: "Bronze",
-    },
-    {
-      id: "gold",
-      name: "Detailing Gold",
-      subtitle: "Complete Premium Service",
-      price: "£450",
-      duration: "6-8 hours",
-      description:
-        "Ultimate detailing package with full paint decontamination and deep interior extraction",
-      exteriorFeatures: [
-        "All services from Silver",
-        "Paint decontamination",
-        "Iron contaminant removal",
-        "Tar and glue contaminant removal",
-        "Clay bar treatment",
-      ],
-      interiorFeatures: [
-        "All services from Silver",
-        "Full extraction clean of seats, mats and carpets",
-      ],
-      popular: false,
-      includesPrevious: "Silver",
-    },
-  ];
+const Detailing = async () => {
+  const businessInfo = await getBusinessInfo();
+  const detailingPackages = businessInfo.detailingPackages!;
 
   const heroProps = {
     icon: Sparkles,

@@ -3,11 +3,14 @@ import { AlertCircle } from "lucide-react";
 
 interface EmergencyBannerProps {
   emergencyServices: string[];
+  phone: string;
 }
 
 const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
   emergencyServices,
+  phone,
 }) => {
+  const telHref = `tel:${phone.replace(/\s/g, "")}`;
   return (
     <>
       {/* Emergency Banner */}
@@ -26,7 +29,7 @@ const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
               <a
-                href="tel:(555)123-4567"
+                href={telHref}
                 className="rounded-lg bg-red-500 px-6 py-3 text-center font-medium text-white transition-colors duration-200 hover:bg-red-600"
               >
                 Call Emergency Line
@@ -60,11 +63,11 @@ const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
           </div>
           <div className="text-center">
             <a
-              href="tel:(555)123-4567"
+              href={telHref}
               className="inline-flex items-center rounded-lg bg-white px-4 py-3 text-base font-bold text-red-500 transition-colors duration-200 hover:bg-gray-100 sm:px-8 sm:text-lg"
             >
               <AlertCircle className="mr-2" size={24} />
-              Emergency: (555) 123-4567
+              Emergency: {phone}
             </a>
           </div>
         </div>

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getCarViewingBookingsCollection,
   CarViewingBooking,
-  getShopInfoCollection,
 } from "@/lib/models";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { generateBookingReference } from "@/lib/utils/booking";
 import {
   validateEmail,
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     // Rate limiting
     const ip = request.headers.get("x-forwarded-for") || "unknown";
     const rateLimit = checkRateLimit(`viewing-booking:${ip}`, 5, 60000);
-    
+
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
@@ -33,7 +33,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate and sanitize customer info
-    if (!body.customerInfo?.name || !body.customerInfo?.email || !body.customerInfo?.phone) {
+    if (
+      !body.customerInfo?.name ||
+      !body.customerInfo?.email ||
+      !body.customerInfo?.phone
+    ) {
       return NextResponse.json(
         { error: "Customer information is required" },
         { status: 400 }
@@ -57,7 +61,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate booking details
-    if (!body.carId || !body.carDetails || !body.appointmentDate || !body.appointmentTime) {
+    if (
+      !body.carId ||
+      !body.carDetails ||
+      !body.appointmentDate ||
+      !body.appointmentTime
+    ) {
       return NextResponse.json(
         { error: "Booking details are required" },
         { status: 400 }
@@ -107,31 +116,7 @@ export async function POST(request: NextRequest) {
     await viewingCollection.insertOne(newBooking as CarViewingBooking);
 
     // Get shop info for email
-    const shopCollection = await getShopInfoCollection();
-    let shopInfo = await shopCollection.findOne({});
-
-    if (!shopInfo) {
-      shopInfo = {
-        _id: "default",
-        businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
-        address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
-        city: process.env.NEXT_BUSINESS_CITY || "City",
-        state: process.env.NEXT_BUSINESS_STATE || "State",
-        zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
-        phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
-        email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
-        hours: {
-          monday: "9:00 AM - 6:00 PM",
-          tuesday: "9:00 AM - 6:00 PM",
-          wednesday: "9:00 AM - 6:00 PM",
-          thursday: "9:00 AM - 6:00 PM",
-          friday: "9:00 AM - 6:00 PM",
-          saturday: "9:00 AM - 4:00 PM",
-          sunday: "Closed",
-        },
-        updatedAt: new Date(),
-      };
-    }
+    const shopInfo = await getBusinessInfo();
 
     // Send confirmation email
     const emailShopInfo = {

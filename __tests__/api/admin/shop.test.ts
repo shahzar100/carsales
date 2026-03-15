@@ -39,14 +39,17 @@ describe("/api/admin/shop", () => {
       expect(data.data.businessName).toBe(testShopInfo.businessName);
     });
 
-    it("should return null data when no shop info exists", async () => {
+    it("should return seed data when no shop info exists", async () => {
       const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data).toBeNull();
+      // Auto-seeding should populate the collection with default data
+      expect(data.data).not.toBeNull();
+      expect(data.data.businessName).toBeDefined();
+      expect(data.data.phone).toBeDefined();
     });
 
     it("should return 401 for unauthenticated user", async () => {

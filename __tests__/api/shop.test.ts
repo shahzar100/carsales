@@ -29,27 +29,24 @@ describe("/api/shop", () => {
       expect(data.data.phone).toBe(testShopInfo.phone);
     });
 
-    it("should return null data when no shop info exists in database", async () => {
+    it("should return seed data when no shop info exists in database", async () => {
       const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data).toBeNull();
+      // Auto-seeding should populate the collection with default data
+      expect(data.data).not.toBeNull();
+      expect(data.data.businessName).toBeDefined();
+      expect(data.data.phone).toBeDefined();
     });
 
     it("should handle database connection errors gracefully", async () => {
-      // Use jest.resetModules + doMock to override getter-only ESM exports
+      // Use jest.resetModules + doMock to override getBusinessInfo
       jest.resetModules();
-      jest.doMock("@/lib/models", () => {
-        const actual = jest.requireActual("@/lib/models");
-        return {
-          ...actual,
-          getBussinessInfoCollection: jest
-            .fn()
-            .mockRejectedValue(new Error("DB error")),
-        };
-      });
+      jest.doMock("@/lib/utils/businessInfo", () => ({
+        getBusinessInfo: jest.fn().mockRejectedValue(new Error("DB error")),
+      }));
       const { GET: mockedGET } = require("@/app/api/businessinfo/route");
 
       const response = await mockedGET();

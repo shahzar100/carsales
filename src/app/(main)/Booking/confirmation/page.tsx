@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { CheckCircle, Calendar, Mail, Phone, Car } from "lucide-react";
 import Link from "next/link";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Booking Confirmed",
@@ -17,6 +18,7 @@ interface PageProps {
 
 const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
   const { ref, email } = await searchParams;
+  const businessInfo = await getBusinessInfo();
 
   if (!ref) {
     return (
@@ -151,18 +153,18 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <a
-              href="tel:(555) 123-4567"
+              href={`tel:${businessInfo.phone}`}
               className="flex items-center gap-2 font-medium text-yellow-800 hover:text-yellow-900"
             >
               <Phone size={16} />
-              (555) 123-4567
+              {businessInfo.phone}
             </a>
             <a
-              href="mailto:bookings@carsalesviewing.com"
+              href={`mailto:${businessInfo.bookingsEmail || businessInfo.email}`}
               className="flex items-center gap-2 font-medium text-yellow-800 hover:text-yellow-900"
             >
               <Mail size={16} />
-              bookings@carsalesviewing.com
+              {businessInfo.bookingsEmail || businessInfo.email}
             </a>
           </div>
         </div>

@@ -14,17 +14,17 @@ import {
 export default function Footer() {
   const { businessInfo } = useBusinessInfo();
 
-  const name = businessInfo?.businessName || "Car Sales & Viewing";
-  const address = businessInfo?.address || "123 Auto Street";
-  const city = businessInfo?.city || "City";
-  const state = businessInfo?.state || "";
-  const zip = businessInfo?.zipCode || "";
-  const phone = businessInfo?.phone || "+15551234567";
-  const email = businessInfo?.email || "info@carsales.com";
-  const description =
-    businessInfo?.description ||
-    "Browse our premium car collection with convenient viewing and booking services.";
-  const social = businessInfo?.socialMedia;
+  if (!businessInfo) return null;
+
+  const name = businessInfo.businessName;
+  const address = businessInfo.address;
+  const city = businessInfo.city;
+  const state = businessInfo.state;
+  const zip = businessInfo.zipCode;
+  const phone = businessInfo.phone;
+  const email = businessInfo.email;
+  const description = businessInfo.description;
+  const social = businessInfo.socialMedia;
 
   const fullAddress = `${address}, ${city}, ${state} ${zip}`.trim();
 

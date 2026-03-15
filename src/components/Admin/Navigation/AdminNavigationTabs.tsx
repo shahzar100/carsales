@@ -24,7 +24,7 @@ export default function AdminNavigationTabs() {
       icon: Calendar,
     },
     { href: "/admin/dashboard/viewing", text: "Car Viewings", icon: Eye },
-    { href: "/admin/dashboard/shop", text: "Shop Settings", icon: Settings },
+    { href: "/admin/dashboard/shop", text: "Business Info", icon: Settings },
     { href: "/admin/dashboard/add", text: "Create New", icon: PlusCircle },
     { href: "/admin/dashboard/status", text: "System Status", icon: Activity },
   ];

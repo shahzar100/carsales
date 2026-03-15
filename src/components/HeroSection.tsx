@@ -1,12 +1,25 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Calendar, Car, Clock, Eye, Search, Star } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  Car,
+  Clock,
+  Eye,
+  Search,
+  Star,
+} from "lucide-react";
 import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 const HeroSection = async () => {
-  const featuredCar = await getFeaturedCar();
+  const [featuredCar, businessInfo] = await Promise.all([
+    getFeaturedCar(),
+    getBusinessInfo(),
+  ]);
+  const stats = businessInfo.heroStats;
   return (
     <section className="relative z-50 overflow-hidden bg-black text-white">
       {/* Ambient red glow — top-right */}
@@ -47,7 +60,10 @@ const HeroSection = async () => {
                 >
                   <Search size={16} />
                   Browse All Cars
-                  <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                  <ArrowRight
+                    size={14}
+                    className="transition-transform duration-200 group-hover:translate-x-0.5"
+                  />
                 </Link>
               </div>
             )}
@@ -56,7 +72,7 @@ const HeroSection = async () => {
           {/* Right Column - Featured Car */}
           {featuredCar?.make && (
             <div className="relative">
-              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.06] to-white/[0.02] shadow-2xl shadow-black/40 ring-1 ring-white/5">
+              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.06] to-white/[0.02] shadow-2xl ring-1 shadow-black/40 ring-white/5">
                 {/* Car Image — full-bleed with overlay */}
                 <div className="group relative">
                   <div className="relative aspect-[16/10] w-full">
@@ -135,14 +151,19 @@ const HeroSection = async () => {
         </div>
 
         {/* CTA Button — centered (no featured car, or mobile) */}
-        <div className={`mt-10 flex w-full justify-center ${featuredCar?.make ? "lg:hidden" : ""}`}>
+        <div
+          className={`mt-10 flex w-full justify-center ${featuredCar?.make ? "lg:hidden" : ""}`}
+        >
           <Link
             href="/BrowseFleet"
             className="group inline-flex items-center gap-2 rounded-lg bg-red-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-600/20 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
           >
             <Search size={18} />
             Browse Cars
-            <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+            <ArrowRight
+              size={16}
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
 
@@ -152,24 +173,32 @@ const HeroSection = async () => {
             <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
               <Car className="text-red-500" size={24} />
               <div>
-                <span className="text-2xl font-bold">500+</span>
-                <p className="text-sm text-gray-500">Quality Vehicles</p>
+                <span className="text-2xl font-bold">
+                  {stats?.vehicles?.value}
+                </span>
+                <p className="text-sm text-gray-500">
+                  {stats?.vehicles?.label}
+                </p>
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
               <Calendar className="text-red-500" size={24} />
               <div>
-                <span className="text-2xl font-bold">24/7</span>
-                <p className="text-sm text-gray-500">Online Booking</p>
+                <span className="text-2xl font-bold">
+                  {stats?.booking?.value}
+                </span>
+                <p className="text-sm text-gray-500">{stats?.booking?.label}</p>
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
               <Star className="text-yellow-500" size={24} />
               <div>
-                <span className="text-2xl font-bold">4.9</span>
-                <p className="text-sm text-gray-500">Customer Rating</p>
+                <span className="text-2xl font-bold">
+                  {stats?.rating?.value}
+                </span>
+                <p className="text-sm text-gray-500">{stats?.rating?.label}</p>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ShopSettingsTab, ShopInfo } from "@/components/Admin";
+import BusinessInfoForm from "@/components/Admin/Tabs/BusinessInfoForm";
+import type { ShopInfo } from "@/lib/interfaces";
 import { useToast } from "@/hooks/useToast";
 
 export default function ShopSettingsPage() {
@@ -40,10 +41,10 @@ export default function ShopSettingsPage() {
       if (response.ok) {
         toast.success(
           "Settings Updated",
-          "Shop information has been updated successfully"
+          "Business information has been updated successfully"
         );
       } else {
-        toast.error("Update Failed", "Failed to update shop information");
+        toast.error("Update Failed", "Failed to update business information");
       }
     } catch (error) {
       toast.error("Error", String(error));
@@ -55,7 +56,7 @@ export default function ShopSettingsPage() {
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
-          <p className="text-gray-600">Loading shop settings...</p>
+          <p className="text-gray-600">Loading business settings...</p>
         </div>
       </div>
     );
@@ -64,14 +65,14 @@ export default function ShopSettingsPage() {
   if (!shopInfo) {
     return (
       <div className="py-8 text-center">
-        <p className="text-gray-600">No shop information found.</p>
+        <p className="text-gray-600">No business information found.</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <ShopSettingsTab
+    <div className="mx-auto max-w-4xl">
+      <BusinessInfoForm
         shopInfo={shopInfo}
         onShopInfoChange={setShopInfo}
         onSave={handleSaveShopInfo}

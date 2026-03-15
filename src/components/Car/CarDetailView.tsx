@@ -4,6 +4,7 @@ import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
 import { useViewing } from "@/backend/ViewingContext";
+import { useBusinessInfo } from "@/backend/BusinessInfoContext";
 import {
   Fuel,
   Gauge,
@@ -28,6 +29,9 @@ interface CarDetailViewProps {
 }
 
 const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
+  const { businessInfo } = useBusinessInfo();
+  const phone = businessInfo?.phone;
+  const mapsUrl = businessInfo?.googleMapsUrl;
   const { updateViewingBooking } = useViewing();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -142,7 +146,10 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
 
   const carTitle = `${car.year} ${car.make} ${car.model}`;
   const shareText = `Check out this ${carTitle} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles — ${formatPrice(car.price)}`;
-  const carUrl = typeof window !== "undefined" ? window.location.href : `/BrowseFleet/${car._id}`;
+  const carUrl =
+    typeof window !== "undefined"
+      ? window.location.href
+      : `/BrowseFleet/${car._id}`;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -309,14 +316,14 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                 </Link>
                 <div className="grid grid-cols-2 gap-3">
                   <a
-                    href="tel:01234567890"
+                    href={`tel:${phone}`}
                     className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50"
                   >
                     <Phone className="h-4 w-4 text-gray-500" />
                     Call Us
                   </a>
                   <a
-                    href="https://maps.google.com"
+                    href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50"

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getServiceAppointmentsCollection,
   ServiceAppointment,
-  getShopInfoCollection,
 } from "@/lib/models";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { generateBookingReference } from "@/lib/utils/booking";
 import {
   validateEmail,
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     // Rate limiting - max 5 requests per minute per IP
     const ip = request.headers.get("x-forwarded-for") || "unknown";
     const rateLimit = checkRateLimit(`service-booking:${ip}`, 5, 60000);
-    
+
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
@@ -34,7 +34,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate and sanitize customer info
-    if (!body.customerInfo?.name || !body.customerInfo?.email || !body.customerInfo?.phone) {
+    if (
+      !body.customerInfo?.name ||
+      !body.customerInfo?.email ||
+      !body.customerInfo?.phone
+    ) {
       return NextResponse.json(
         { error: "Customer information is required" },
         { status: 400 }
@@ -101,28 +105,7 @@ export async function POST(request: NextRequest) {
     await serviceCollection.insertOne(newBooking as ServiceAppointment);
 
     // Get shop info for email
-    const shopCollection = await getShopInfoCollection();
-    const dbShopInfo = await shopCollection.findOne({});
-
-    const shopInfo = dbShopInfo || {
-      businessName: process.env.NEXT_BUSINESS_NAME || "Car Sales & Viewing",
-      address: process.env.NEXT_BUSINESS_ADDRESS || "123 Auto Street",
-      city: process.env.NEXT_BUSINESS_CITY || "City",
-      state: process.env.NEXT_BUSINESS_STATE || "State",
-      zipCode: process.env.NEXT_BUSINESS_ZIP || "12345",
-      phone: process.env.NEXT_BUSINESS_PHONE || "(555) 123-4567",
-      email: process.env.NEXT_BUSINESS_EMAIL || "info@carsales.com",
-      hours: {
-        monday: "9:00 AM - 6:00 PM",
-        tuesday: "9:00 AM - 6:00 PM",
-        wednesday: "9:00 AM - 6:00 PM",
-        thursday: "9:00 AM - 6:00 PM",
-        friday: "9:00 AM - 6:00 PM",
-        saturday: "10:00 AM - 4:00 PM",
-        sunday: "Closed",
-      },
-      updatedAt: new Date(),
-    };
+    const shopInfo = await getBusinessInfo();
 
     // Send confirmation email
     const emailShopInfo = {

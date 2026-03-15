@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getBussinessInfoCollection,
-  ShopInfo,
-  serializeDocument,
-} from "@/lib/models";
+import { getBussinessInfoCollection, serializeDocument } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import type { ShopInfo } from "@/lib/interfaces";
 
 export async function GET() {
   try {
@@ -13,12 +11,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const shopCollection = await getBussinessInfoCollection();
-    const shopInfo = await shopCollection.findOne({});
+    const businessInfo = await getBusinessInfo();
 
     return NextResponse.json({
       success: true,
-      data: shopInfo ? serializeDocument(shopInfo) : null,
+      data: businessInfo,
     });
   } catch (error) {
     console.error("Error fetching shop info:", error);
@@ -43,13 +40,20 @@ export async function PUT(request: NextRequest) {
       businessName: body.businessName,
       address: body.address,
       city: body.city,
-      state: body.state,
-      zipCode: body.zipCode,
+      state: body.state || "",
+      zipCode: body.zipCode || "",
       phone: body.phone,
       email: body.email,
+      bookingsEmail: body.bookingsEmail || "",
+      googleMapsUrl: body.googleMapsUrl || "",
       hours: body.hours,
       description: body.description || "",
       socialMedia: body.socialMedia || {},
+      heroStats: body.heroStats,
+      detailingPackages: body.detailingPackages,
+      tintOptions: body.tintOptions,
+      serviceOverviews: body.serviceOverviews,
+      recovery: body.recovery,
       updatedAt: new Date(),
     };
 

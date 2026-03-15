@@ -11,6 +11,7 @@ import {
 } from "@/components/Services/Common";
 import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Our Services",
@@ -25,66 +26,19 @@ export const metadata: Metadata = {
   },
 };
 
-const Services = () => {
-  const mainServices: {
-    id: string;
-    title: string;
-    subtitle: string;
-    features: string[];
-    priceRange: string;
-    duration: string;
-    href: string;
-    accent: AccentColor;
-  }[] = [
-    {
-      id: "detailing",
-      title: "Car Detailing",
-      subtitle: "Premium interior & exterior care",
-      features: [
-        "Interior & Exterior Deep Clean",
-        "Paint Protection & Waxing",
-        "Leather Treatment",
-        "Engine Bay Cleaning",
-        "Ceramic Coating Available",
-      ],
-      priceRange: "£150 – £500",
-      duration: "3-6 hours",
-      href: "/Services/Detailing",
-      accent: "red",
-    },
-    {
-      id: "tints",
-      title: "Window Tinting",
-      subtitle: "Privacy, UV protection & style",
-      features: [
-        "Premium Film Quality",
-        "UV Ray Protection",
-        "Heat Reduction",
-        "Privacy Enhancement",
-        "Lifetime Warranty",
-      ],
-      priceRange: "£200 – £800",
-      duration: "2-4 hours",
-      href: "/Services/Tints",
-      accent: "crimson",
-    },
-    {
-      id: "repairs",
-      title: "Auto Repairs",
-      subtitle: "Expert service for all makes & models",
-      features: [
-        "Engine Diagnostics",
-        "Brake System Repair",
-        "Transmission Service",
-        "Electrical Systems",
-        "Preventive Maintenance",
-      ],
-      priceRange: "Quote on Request",
-      duration: "1-5 days",
-      href: "/Services/Repairs",
-      accent: "dark",
-    },
-  ];
+const serviceRoutes: Record<string, { href: string; accent: AccentColor }> = {
+  detailing: { href: "/Services/Detailing", accent: "red" },
+  tints: { href: "/Services/Tints", accent: "crimson" },
+  repairs: { href: "/Services/Repairs", accent: "dark" },
+};
+
+const Services = async () => {
+  const businessInfo = await getBusinessInfo();
+  const mainServices = (businessInfo.serviceOverviews ?? []).map((svc) => ({
+    ...svc,
+    href: serviceRoutes[svc.id]?.href ?? "/Services",
+    accent: serviceRoutes[svc.id]?.accent ?? ("red" as AccentColor),
+  }));
 
   return (
     <div>
