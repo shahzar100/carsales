@@ -1,0 +1,124 @@
+name: Monthly Dependency Update
+
+on:
+  schedule:
+    # Runs at 09:00 UTC on the 1st of every month
+    - cron: "0 9 1 * *"
+  workflow_dispatch: # Allow manual trigger for testing
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  invoke-checking-agent:
+    name: Delegate to Checking Agent
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect outdated packages
+        id: outdated
+        run: |
+          # Capture human-readable table (exit code non-zero when packages are outdated — suppress it)
+          OUTDATED_TABLE=$(npm outdated 2>/dev/null || true)
+
+          # Capture JSON for counting
+          OUTDATED_JSON=$(npm outdated --json 2>/dev/null || echo "{}")
+          COUNT=$(echo "$OUTDATED_JSON" | node -e \
+            "let d=''; process.stdin.on('data',c=>d+=c).on('end',()=>console.log(Object.keys(JSON.parse(d||'{}')).length));" \
+            2>/dev/null || echo "0")
+
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+          # Store the table for use in the issue body (multi-line safe)
+          {
+            echo 'outdated_table<<EOF'
+            echo "$OUTDATED_TABLE"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+          echo "## Outdated Packages ($COUNT found)" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" -gt 0 ]; then
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "$OUTDATED_TABLE" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✅ All packages are up to date." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Create Copilot agent task
+        if: steps.outdated.outputs.count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTDATED_TABLE: ${{ steps.outdated.outputs.outdated_table }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MONTH_YEAR=$(date +'%B %Y')
+
+          gh issue create \
+            --title "chore(deps): monthly dependency update — ${MONTH_YEAR}" \
+            --body "## 📦 Monthly Dependency Update — ${MONTH_YEAR}
+
+          This task was created automatically by the **Monthly Dependency Update** workflow on \`$(date -u +'%Y-%m-%d %H:%M UTC')\`.
+
+          ### Outdated Packages
+
+          \`\`\`
+          ${OUTDATED_TABLE}
+          \`\`\`
+
+          ---
+
+          ### Instructions for Copilot
+
+          Please handle this task using **two agents in sequence**:
+
+          #### Step 1 — DependencyUpdater agent
+          Run the **DependencyUpdater** agent (see \`.github/agents/DependencyUpdater.agent.md\`) with the command:
+          > **\"Update all\"**
+
+          The agent will:
+          - Verify the baseline (TypeScript + full test suite) before touching anything
+          - Upgrade each outdated package listed above one at a time (patch → minor → major)
+          - Treat coupled package groups (React, Next.js, Jest, Tailwind, etc.) as a single unit
+          - Run \`npx tsc --noEmit\` + both Jest configs after every upgrade
+          - Roll back any upgrade that breaks the build or tests
+          - Open a PR with only the verified safe upgrades
+
+          #### Step 2 — Checking agent
+          After the DependencyUpdater agent completes (whether or not any packages were upgraded), run the **Checking** agent (see \`.github/agents/Checking.agent.md\`) with the command:
+          > **\"Run all checks\"**
+
+          The agent will:
+          - Run TypeScript, ESLint, and the full test suite
+          - Scan for incomplete work, broken imports, and structural issues
+          - Report code quality improvements and security concerns
+          - Attach the full audit report to the PR opened in Step 1 (or as a comment on this issue if no PR was created)
+
+          ---
+
+          *Triggered by workflow run: ${RUN_URL}*" \
+            --assignee "@copilot" \
+            --label "dependencies,automated"
+
+          echo "## Agent Task Created" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ A Copilot agent task has been created and assigned to \`@copilot\`." >> "$GITHUB_STEP_SUMMARY"
+          echo "The **DependencyUpdater** agent will upgrade packages safely, then the **Checking** agent will audit the codebase." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: No outdated packages
+        if: steps.outdated.outputs.count == 0
+        run: |
+          echo "## Result" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ All packages are already up to date — no agent task needed." >> "$GITHUB_STEP_SUMMARY"
