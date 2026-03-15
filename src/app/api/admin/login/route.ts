@@ -1,9 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, verifyPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
+
+// 5 login attempts per 15-minute window per IP
+const loginLimiter = createRateLimiter("login", {
+  maxRequests: 5,
+  windowMs: 15 * 60 * 1000,
+});
 
 export async function POST(request: NextRequest) {
   try {
+    // ── Rate limiting ──────────────────────────────────────
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    const { allowed, remaining, resetIn } = loginLimiter.check(ip);
+
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil(resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     const { username, password } = await request.json();
 
     if (!username || !password) {
@@ -43,6 +69,9 @@ export async function POST(request: NextRequest) {
     session.isLoggedIn = true;
     session.username = admin.username;
     await session.save();
+
+    // Reset rate limiter on successful login
+    loginLimiter.reset(ip);
 
     return NextResponse.json({
       success: true,

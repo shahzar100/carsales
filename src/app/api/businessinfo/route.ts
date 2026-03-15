@@ -5,10 +5,17 @@ export async function GET() {
   try {
     const businessInfo = await getBusinessInfo();
 
-    return NextResponse.json({
-      success: true,
-      data: businessInfo,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: businessInfo,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching business info:", error);
     return NextResponse.json(

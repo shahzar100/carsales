@@ -16,7 +16,9 @@ export default function ShopSettingsTab({
   return (
     <div className="max-w-3xl">
       <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-xl font-bold text-red-600">Shop Information</h2>
+        <h2 className="mb-6 text-xl font-bold text-red-600">
+          Shop Information
+        </h2>
         <form onSubmit={onSave} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
@@ -151,7 +153,9 @@ export default function ShopSettingsTab({
                   </label>
                   <input
                     type="text"
-                    value={shopInfo.hours[day] ?? ""}
+                    value={
+                      shopInfo.hours[day as keyof typeof shopInfo.hours] ?? ""
+                    }
                     onChange={(e) =>
                       onShopInfoChange({
                         ...shopInfo,
@@ -209,7 +213,7 @@ export default function ShopSettingsTab({
                 />
               </div>
               <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
                   Instagram URL
                 </label>
                 <input

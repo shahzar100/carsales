@@ -8,6 +8,14 @@ export { CarViewingConfirmation } from "./CarViewingConfirmation";
 export { BookingCancellation } from "./BookingCancellation";
 export { PasswordReset } from "./PasswordReset";
 
+// ── Review invite templates ─────────────────────────────────
+export { ReviewInviteService } from "./ReviewInviteService";
+export { ReviewInviteViewing } from "./ReviewInviteViewing";
+export { ReviewInviteRepair } from "./ReviewInviteRepair";
+export { ReviewInviteRecovery } from "./ReviewInviteRecovery";
+export { ReviewInviteDetailing } from "./ReviewInviteDetailing";
+export { ReviewInviteTinting } from "./ReviewInviteTinting";
+
 // ── Shared components (for custom one-off emails) ────────────
 export {
   EmailTemplate,

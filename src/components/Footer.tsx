@@ -23,10 +23,15 @@ export default function Footer() {
   const zip = businessInfo.zipCode;
   const phone = businessInfo.phone;
   const email = businessInfo.email;
+  const bookingsEmail = businessInfo.bookingsEmail;
   const description = businessInfo.description;
   const social = businessInfo.socialMedia;
+  const googleMapsUrl = businessInfo.googleMapsUrl;
 
   const fullAddress = `${address}, ${city}, ${state} ${zip}`.trim();
+  const mapsHref =
+    googleMapsUrl ||
+    `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`;
 
   return (
     <footer className="w-full border-t border-gray-200 bg-gray-50">
@@ -41,7 +46,7 @@ export default function Footer() {
               <p className="flex items-center gap-1.5">
                 <MapPin size={14} className="shrink-0 text-gray-400" />
                 <Link
-                  href={`https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`}
+                  href={mapsHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-red-600"
@@ -67,6 +72,17 @@ export default function Footer() {
                   {email}
                 </a>
               </p>
+              {bookingsEmail && bookingsEmail !== email && (
+                <p className="flex items-center gap-1.5">
+                  <Mail size={14} className="shrink-0 text-gray-400" />
+                  <a
+                    href={`mailto:${bookingsEmail}`}
+                    className="transition-colors hover:text-red-600"
+                  >
+                    {bookingsEmail}
+                  </a>
+                </p>
+              )}
             </div>
           </div>
 

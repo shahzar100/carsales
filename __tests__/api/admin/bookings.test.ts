@@ -43,7 +43,10 @@ describe("/api/admin/bookings", () => {
       await carViewingBookings.insertOne(createTestCarViewingBooking());
       await client.close();
 
-      const response = await GET();
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/bookings"
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -53,7 +56,10 @@ describe("/api/admin/bookings", () => {
     });
 
     it("should return empty arrays when no bookings exist", async () => {
-      const response = await GET();
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/bookings"
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -65,7 +71,10 @@ describe("/api/admin/bookings", () => {
     it("should return 401 for unauthenticated requests", async () => {
       mockIsAuthenticated.mockResolvedValue(false);
 
-      const response = await GET();
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/bookings"
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(401);

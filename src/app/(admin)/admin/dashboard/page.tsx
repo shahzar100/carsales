@@ -3,15 +3,17 @@ import { isAuthenticated } from "@/lib/utils/auth";
 import { getDashboardData } from "@/components/Admin/Dashboard/getDashboardData";
 import {
   KPIGrid,
-  BookingsChart,
-  BookingsByDayChart,
-  InventoryPieChart,
-  PriceDistributionChart,
-  PopularCarsChart,
-  ServiceTypeChart,
   RecentActivityTable,
   UpcomingAppointments,
 } from "@/components/Admin/Dashboard";
+import {
+  LazyBookingsChart,
+  LazyBookingsByDayChart,
+  LazyInventoryPieChart,
+  LazyPriceDistributionChart,
+  LazyPopularCarsChart,
+  LazyServiceTypeChart,
+} from "@/components/Admin/Dashboard/LazyCharts";
 import RefreshButton from "@/components/Admin/Dashboard/RefreshButton";
 import UpdatedAt from "@/components/Admin/Dashboard/UpdatedAt";
 import DateSelector from "@/components/Admin/Dashboard/DateSelector";
@@ -61,29 +63,29 @@ export default async function DashboardPage({
 
       {/* ── Main charts — bookings over time ────────────────── */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <BookingsChart data={data.charts.bookingsByMonth} />
-        <BookingsByDayChart data={data.charts.bookingsByDay} />
+        <LazyBookingsChart data={data.charts.bookingsByMonth} />
+        <LazyBookingsByDayChart data={data.charts.bookingsByDay} />
       </div>
 
       {/* ── Pie / donut charts row ──────────────────────────── */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <InventoryPieChart
+        <LazyInventoryPieChart
           data={data.charts.inventoryByFuel}
           title="Fuel Type"
           subtitle="Inventory breakdown by fuel"
         />
-        <InventoryPieChart
+        <LazyInventoryPieChart
           data={data.charts.inventoryByStatus}
           title="Stock Status"
           subtitle="Inventory breakdown by status"
         />
-        <ServiceTypeChart data={data.charts.serviceTypeBreakdown} />
+        <LazyServiceTypeChart data={data.charts.serviceTypeBreakdown} />
       </div>
 
       {/* ── Bar charts row ──────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <PriceDistributionChart data={data.charts.priceDistribution} />
-        <PopularCarsChart data={data.charts.popularCars} />
+        <LazyPriceDistributionChart data={data.charts.priceDistribution} />
+        <LazyPopularCarsChart data={data.charts.popularCars} />
       </div>
 
       {/* ── Activity tables ─────────────────────────────────── */}

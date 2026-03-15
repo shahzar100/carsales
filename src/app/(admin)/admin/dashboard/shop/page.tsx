@@ -19,9 +19,19 @@ export default function ShopSettingsPage() {
     try {
       const response = await fetch("/api/admin/shop");
       const data = await response.json();
-      if (data.success) setShopInfo(data.data);
+      if (data.success) {
+        setShopInfo(data.data);
+      } else {
+        toast.error(
+          "Load Failed",
+          data.error || "Could not load business settings from the server"
+        );
+      }
     } catch {
-      console.error("Error fetching settings:");
+      toast.error(
+        "Connection Error",
+        "Could not connect to the server to load business settings"
+      );
     } finally {
       setLoading(false);
     }
@@ -38,16 +48,32 @@ export default function ShopSettingsPage() {
         body: JSON.stringify(shopInfo),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         toast.success(
           "Settings Updated",
           "Business information has been updated successfully"
         );
       } else {
-        toast.error("Update Failed", "Failed to update business information");
+        const title =
+          response.status === 400
+            ? "Validation Error"
+            : response.status === 401
+              ? "Unauthorized"
+              : "Update Failed";
+        toast.error(
+          title,
+          data.error || "An unknown error occurred while saving"
+        );
       }
     } catch (error) {
-      toast.error("Error", String(error));
+      toast.error(
+        "Network Error",
+        error instanceof Error
+          ? `Could not reach the server: ${error.message}`
+          : "Could not reach the server — check your connection and try again"
+      );
     }
   };
 

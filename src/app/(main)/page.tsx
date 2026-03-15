@@ -6,8 +6,7 @@ import { Car, Calendar, Shield, Award } from "lucide-react";
 import { BlackRedSection } from "@/components/Services/Common";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-const businessName =
-  process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
+const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "MMC Leeds";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
@@ -33,11 +32,26 @@ export default function Home() {
       "Quality car sales, vehicle viewings, and professional auto services including detailing, window tinting, repairs, and breakdown recovery.",
     currenciesAccepted: "GBP",
     makesOffer: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Car Sales" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Car Detailing" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window Tinting" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Auto Repairs" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Breakdown Recovery" } },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Car Sales" },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Car Detailing" },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Window Tinting" },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Auto Repairs" },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Breakdown Recovery" },
+      },
     ],
   };
 
@@ -92,7 +106,7 @@ export default function Home() {
 
             <div className="p-6 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                <Award className="text-gray-900" size={32} />
+                <Award className="text-red-400" size={32} />
               </div>
               <h3 className="heading-4 mb-2">Expert Advice</h3>
               <p className="text-gray-600">

@@ -23,6 +23,12 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     updateFilters({ [filterType]: value });
   };
 
+  /** Extract a single string from a filter value that may be string | string[]. */
+  const filterString = (value: string | string[] | undefined): string => {
+    if (Array.isArray(value)) return value[0] ?? "all";
+    return value || "all";
+  };
+
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== ""
   );
@@ -66,7 +72,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         {/* Brand */}
         <FilterSelect
           label="Brand"
-          value={filters.make || "all"}
+          value={filterString(filters.make)}
           onChange={(v) => handleFilterChange("make", v === "all" ? "" : v)}
           options={brands.map((b) => ({ value: b, label: b }))}
           placeholder="All brands"
@@ -90,7 +96,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         {/* Fuel Type */}
         <FilterSelect
           label="Fuel Type"
-          value={filters.fuelType || "all"}
+          value={filterString(filters.fuelType)}
           onChange={(v) => handleFilterChange("fuelType", v === "all" ? "" : v)}
           options={fuelTypes.map((f) => ({ value: f, label: f }))}
           placeholder="All fuel types"
@@ -99,7 +105,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         {/* Color */}
         <FilterSelect
           label="Color"
-          value={filters.color || "all"}
+          value={filterString(filters.color)}
           onChange={(v) => handleFilterChange("color", v === "all" ? "" : v)}
           options={colors.map((c) => ({ value: c, label: c }))}
           placeholder="All colors"

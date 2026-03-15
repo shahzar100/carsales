@@ -130,7 +130,7 @@ describe("/api/admin/cars", () => {
       await client.close();
     });
 
-    it("should accept request with missing optional fields", async () => {
+    it("should return 400 when required fields are missing", async () => {
       const invalidCarData = {
         make: "",
         model: "",
@@ -146,9 +146,9 @@ describe("/api/admin/cars", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      // Route does not validate required fields, it creates the car with provided data
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Validation failed");
+      expect(data.details).toBeDefined();
     });
 
     it("should return 401 for unauthenticated user", async () => {

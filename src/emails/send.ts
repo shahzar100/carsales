@@ -44,6 +44,11 @@ async function getTransporter(): Promise<nodemailer.Transporter> {
       secure: port === 465,
       auth: { user, pass },
     });
+  } else if (process.env.NODE_ENV === "production") {
+    // In production, SMTP config is required — fail loudly
+    throw new Error(
+      "SMTP_HOST, SMTP_USER, and SMTP_PASS must be set in production"
+    );
   } else {
     // Development — use Ethereal test account
     const testAccount = await nodemailer.createTestAccount();
@@ -56,7 +61,7 @@ async function getTransporter(): Promise<nodemailer.Transporter> {
         pass: testAccount.pass,
       },
     });
-    console.log("📧 Using Ethereal test account:", testAccount.user);
+    console.log("Using Ethereal test account:", testAccount.user);
   }
 
   return transporter;
@@ -70,10 +75,9 @@ export async function sendEmail({
 }: SendEmailOptions): Promise<SendEmailResult> {
   try {
     const fromEmail = process.env.EMAIL_FROM || "noreply@yourdomain.com";
-    const fromName = process.env.EMAIL_FROM_NAME || "Car Sales";
+    const fromName = process.env.EMAIL_FROM_NAME || "MMC Leeds";
 
-    console.log(`📧 Sending email to: ${to}`);
-    console.log(`📧 Subject: ${subject}`);
+    console.log(`Sending email — subject: ${subject}`);
 
     // Render React component to HTML
     const html = await render(react);
@@ -97,13 +101,13 @@ export async function sendEmail({
     // Log Ethereal preview URL in development
     const previewUrl = nodemailer.getTestMessageUrl(result);
     if (previewUrl) {
-      console.log("📧 Preview URL:", previewUrl);
+      console.log("Preview URL:", previewUrl);
     }
 
-    console.log("✅ Email sent successfully:", result.messageId);
+    console.log("Email sent successfully:", result.messageId);
     return { success: true, data: result };
   } catch (error) {
-    console.error("❌ Email sending failed:", error);
+    console.error("Email sending failed:", error);
     return { success: false, error };
   }
 }

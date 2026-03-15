@@ -7,31 +7,53 @@ import {
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId, Document } from "mongodb";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(
+      Math.max(1, parseInt(searchParams.get("limit") || "50", 10)),
+      200
+    );
+    const skip = (page - 1) * limit;
+
     const serviceCollection = await getServiceAppointmentsCollection();
     const viewingCollection = await getCarViewingBookingsCollection();
 
-    const serviceBookings = await serviceCollection
-      .find({})
-      .sort({ createdAt: -1 })
-      .toArray();
-
-    const viewingBookings = await viewingCollection
-      .find({})
-      .sort({ createdAt: -1 })
-      .toArray();
+    const [serviceBookings, viewingBookings, totalService, totalViewing] =
+      await Promise.all([
+        serviceCollection
+          .find({})
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
+        viewingCollection
+          .find({})
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
+        serviceCollection.countDocuments({}),
+        viewingCollection.countDocuments({}),
+      ]);
 
     return NextResponse.json({
       success: true,
       data: {
-        serviceBookings: serviceBookings.map(b => serializeDocument(b)),
-        viewingBookings: viewingBookings.map(b => serializeDocument(b)),
+        serviceBookings: serviceBookings.map((b) => serializeDocument(b)),
+        viewingBookings: viewingBookings.map((b) => serializeDocument(b)),
+      },
+      pagination: {
+        page,
+        limit,
+        totalService,
+        totalViewing,
       },
     });
   } catch (error) {
@@ -110,14 +132,18 @@ export async function PUT(request: NextRequest) {
       findOne: (filter: Document) => Promise<Document | null>;
     };
 
+    // Build the $set payload — add completedAt when marking as completed
+    const $set: Record<string, unknown> = {
+      status,
+      updatedAt: new Date(),
+    };
+    if (status === "completed") {
+      $set.completedAt = new Date();
+    }
+
     const result = await genericCollection.updateOne(
       { _id: objectId },
-      {
-        $set: {
-          status: status,
-          updatedAt: new Date(),
-        },
-      }
+      { $set }
     );
 
     if (result.matchedCount === 0) {
@@ -135,6 +161,7 @@ export async function PUT(request: NextRequest) {
     const updatedBooking = await genericCollection.findOne({
       _id: objectId,
     });
+
     return NextResponse.json({
       success: true,
       message: `Booking status updated to ${status}`,

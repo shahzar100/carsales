@@ -59,7 +59,9 @@ describe("/api/admin/shop", () => {
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data.error).toBe(
+        "Authentication required to access business settings"
+      );
     });
 
     it("should return 500 when GET throws an error", async () => {
@@ -70,7 +72,9 @@ describe("/api/admin/shop", () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe("Internal server error");
+      expect(data.error).toBe(
+        "Failed to retrieve business information: DB connection failed"
+      );
     });
   });
 
@@ -197,7 +201,9 @@ describe("/api/admin/shop", () => {
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data.error).toBe(
+        "Authentication required to update business settings"
+      );
     });
 
     it("should handle malformed JSON gracefully", async () => {
@@ -210,8 +216,10 @@ describe("/api/admin/shop", () => {
       const response = await PUT(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe("Internal server error");
+      expect(response.status).toBe(400);
+      expect(data.error).toBe(
+        "Invalid JSON in request body — could not parse the data"
+      );
     });
 
     it("should return 500 when update throws an error", async () => {
@@ -243,7 +251,7 @@ describe("/api/admin/shop", () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe("Internal server error");
+      expect(data.error).toContain("Database update failed");
 
       jest.restoreAllMocks();
     });

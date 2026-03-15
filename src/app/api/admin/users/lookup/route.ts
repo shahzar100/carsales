@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
 
     const collection = await getAdminUsersCollection();
 
-    // Try matching by username first, then by email (case-insensitive)
-    const user = await collection.findOne({
-      $or: [
-        { username: { $regex: `^${q}$`, $options: "i" } },
-        { email: { $regex: `^${q}$`, $options: "i" } },
-      ],
-    });
+    // Use collation for case-insensitive exact match — avoids regex injection
+    const user = await collection.findOne(
+      {
+        $or: [{ username: q }, { email: q }],
+      },
+      { collation: { locale: "en", strength: 2 } }
+    );
 
     if (!user) {
       return NextResponse.json(

@@ -200,7 +200,7 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({
   subtitle,
   headerStyle = "default",
   children,
-  businessName = "Car Sales",
+  businessName = "MMC Leeds",
   businessAddress,
 }) => (
   <Html>

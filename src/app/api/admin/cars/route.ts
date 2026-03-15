@@ -6,6 +6,33 @@ import {
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
+import { z } from "zod";
+
+// ── Car validation schema ────────────────────────────────────
+const carSchema = z.object({
+  make: z.string().min(1, "Make is required").max(100),
+  model: z.string().min(1, "Model is required").max(100),
+  year: z.coerce
+    .number()
+    .int()
+    .min(1900, "Year must be 1900 or later")
+    .max(new Date().getFullYear() + 2, "Year too far in the future"),
+  price: z.coerce.number().positive("Price must be positive"),
+  mileage: z.coerce.number().int().min(0, "Mileage cannot be negative"),
+  fuel: z.enum(["Petrol", "Diesel", "Electric", "Hybrid"]),
+  transmission: z.enum(["Manual", "Automatic", "CVT"]),
+  doors: z.coerce.number().int().min(1).max(10),
+  colour: z.string().min(1, "Colour is required").max(50),
+  image: z.string().optional().default(""),
+  images: z.array(z.string()).optional().default([]),
+  description: z.string().optional().default(""),
+  features: z.array(z.string()).optional().default([]),
+  status: z
+    .enum(["available", "sold", "reserved"])
+    .optional()
+    .default("available"),
+  featured: z.boolean().optional().default(false),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,14 +46,14 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     const status = searchParams.get("status") || "all";
-    
+
     // Validate pagination parameters
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100); // Max 100 items per page
     const skip = (validPage - 1) * validLimit;
 
     const carsCollection = await getCarsCollection();
-    
+
     // Build query filter
     const filter: any = {};
     if (status !== "all") {
@@ -71,26 +98,24 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    const parsed = carSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parsed.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
     const carsCollection = await getCarsCollection();
 
     const newCar: Omit<CarInterface, "_id"> = {
-      make: body.make,
-      model: body.model,
-      year: parseInt(body.year),
-      price: parseFloat(body.price),
-      mileage: parseInt(body.mileage),
-      fuel: body.fuel,
-      transmission: body.transmission,
-      doors: parseInt(body.doors),
-      colour: body.colour,
-      image: body.image || "",
-      images: body.images || [],
-      description: body.description || "",
-      features: body.features || [],
-      status: body.status || "available",
+      ...parsed.data,
       createdAt: new Date(),
       updatedAt: new Date(),
-      featured: body.featured || false,
     };
 
     const result = await carsCollection.insertOne(newCar as CarInterface);
@@ -140,7 +165,9 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carsCollection.updateOne(
-      { _id: ObjectId.createFromHexString(String(_id)) },
+      {
+        _id: ObjectId.createFromHexString(String(_id)),
+      } as unknown as Parameters<typeof carsCollection.updateOne>[0],
       { $set: updatedCar }
     );
 
@@ -181,7 +208,7 @@ export async function DELETE(request: NextRequest) {
     const carsCollection = await getCarsCollection();
     const result = await carsCollection.deleteOne({
       _id: ObjectId.createFromHexString(String(id)),
-    });
+    } as unknown as Parameters<typeof carsCollection.deleteOne>[0]);
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });

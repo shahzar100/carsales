@@ -24,15 +24,15 @@ const CORE_SEED: Omit<
   ShopInfo,
   "_id" | "detailingPackages" | "tintOptions" | "serviceOverviews" | "recovery"
 > = {
-  businessName: "Car Sales & Viewing",
-  address: "123 Auto Street",
-  city: "City",
-  state: "",
-  zipCode: "",
-  phone: "(555) 123-4567",
-  email: "info@carsales.com",
-  bookingsEmail: "bookings@carsales.com",
-  googleMapsUrl: "https://maps.google.com",
+  businessName: "MMC Leeds",
+  address: "Roseville Road",
+  city: "Leeds",
+  state: "West Yorkshire",
+  zipCode: "LS8 5DT",
+  phone: "0113 468 9292",
+  email: "info@mmcleeds.co.uk",
+  bookingsEmail: "bookings@mmcleeds.co.uk",
+  googleMapsUrl: "https://maps.google.com/?q=Roseville+Road,+Leeds,+LS8+5DT",
   hours: {
     monday: "9:00 AM - 6:00 PM",
     tuesday: "9:00 AM - 6:00 PM",
@@ -348,6 +348,13 @@ export async function updateBusinessInfo(
 ): Promise<void> {
   const updates: Promise<unknown>[] = [];
 
+  // Strip _id from any object/array before writing to MongoDB
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stripId = <T extends Record<string, any>>(obj: T): Omit<T, "_id"> => {
+    const { _id, ...rest } = obj;
+    return rest as Omit<T, "_id">;
+  };
+
   // Core fields
   const {
     detailingPackages,
@@ -374,7 +381,7 @@ export async function updateBusinessInfo(
     updates.push(
       coll.deleteMany({}).then(() => {
         if (detailingPackages.length > 0) {
-          return coll.insertMany(detailingPackages);
+          return coll.insertMany(detailingPackages.map(stripId));
         }
       })
     );
@@ -385,7 +392,7 @@ export async function updateBusinessInfo(
     updates.push(
       coll.deleteMany({}).then(() => {
         if (tintOptions.length > 0) {
-          return coll.insertMany(tintOptions);
+          return coll.insertMany(tintOptions.map(stripId));
         }
       })
     );
@@ -396,15 +403,19 @@ export async function updateBusinessInfo(
     updates.push(
       coll.deleteMany({}).then(() => {
         if (serviceOverviews.length > 0) {
-          return coll.insertMany(serviceOverviews);
+          return coll.insertMany(serviceOverviews.map(stripId));
         }
       })
     );
   }
 
   if (recovery !== undefined) {
+    const { _id: _recoveryId, ...recoveryFields } =
+      recovery as unknown as Record<string, unknown>;
     const coll = await getRecoveryInfoCollection();
-    updates.push(coll.updateOne({}, { $set: recovery }, { upsert: true }));
+    updates.push(
+      coll.updateOne({}, { $set: recoveryFields }, { upsert: true })
+    );
   }
 
   await Promise.all(updates);

@@ -34,6 +34,8 @@ export interface ServiceAppointment {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   cancellationReason?: string;
   cancelledAt?: Date;
+  completedAt?: Date;
+  reviewInviteSentAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -63,6 +65,8 @@ export interface CarViewingBooking {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   cancellationReason?: string;
   cancelledAt?: Date;
+  completedAt?: Date;
+  reviewInviteSentAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

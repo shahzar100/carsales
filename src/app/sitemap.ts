@@ -68,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return {
         url: `${baseUrl}/BrowseFleet/${serialized._id}`,
         lastModified: serialized.updatedAt
-          ? new Date(serialized.updatedAt as string)
+          ? new Date(String(serialized.updatedAt))
           : new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.6,

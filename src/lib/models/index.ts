@@ -121,6 +121,10 @@ export async function getServiceAppointmentsCollection(): Promise<
       { key: { status: 1 } },
       { key: { appointmentDate: 1, status: 1 } },
       { key: { status: 1, createdAt: -1 } },
+      // Compound index for cron review-invite query
+      {
+        key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
+      },
     ]);
   }
   return serviceAppointmentsCollection;
@@ -142,6 +146,10 @@ export async function getCarViewingBookingsCollection(): Promise<
       { key: { appointmentDate: 1, status: 1 } },
       { key: { status: 1, createdAt: -1 } },
       { key: { carId: 1, status: 1 } },
+      // Compound index for cron review-invite query
+      {
+        key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
+      },
     ]);
   }
   return carViewingBookingsCollection;
@@ -211,6 +219,7 @@ export async function getAdminUsersCollection(): Promise<
 
     await adminUsersCollection.createIndexes([
       { key: { username: 1 }, unique: true },
+      { key: { email: 1 } },
     ]);
   }
   return adminUsersCollection;

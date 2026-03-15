@@ -1,14 +1,23 @@
 import { MongoClient } from "mongodb";
 
+/**
+ * MongoDB connection optimised for Vercel serverless functions.
+ *
+ * In serverless environments each invocation may spin up a new
+ * process, but the Node.js runtime is often reused ("warm start").
+ * Caching the connection promise on `globalThis` ensures we
+ * re-use the same connection across warm invocations instead of
+ * opening a new pool every time.
+ *
+ * This pattern is used in BOTH development and production.
+ */
+
 const uri = process.env.MONGODB_URI;
 const options = {
   maxPoolSize: 10,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
 };
-
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
 
 if (!uri) {
   throw new Error("Please define the MONGODB_URI environment variable");
@@ -18,21 +27,18 @@ if (uri.length < 20 || !uri.startsWith("mongodb")) {
   throw new Error("MONGODB_URI appears to be invalid");
 }
 
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable to preserve the connection
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
-  }
-  clientPromise = global._mongoClientPromise;
-} else {
-  // In production mode, create a new connection
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
-
 declare global {
+  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
+
+// Cache the promise on globalThis so it survives across
+// serverless warm starts in both dev and production.
+if (!global._mongoClientPromise) {
+  const client = new MongoClient(uri, options);
+  global._mongoClientPromise = client.connect();
+}
+
+const clientPromise: Promise<MongoClient> = global._mongoClientPromise;
 
 export default clientPromise;
