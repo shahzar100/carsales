@@ -30,10 +30,10 @@ const FeaturedCarBookingButton: React.FC<{ car: CarInterface }> = ({ car }) => {
     <Link
       href={`/Booking/${car._id}`}
       onClick={setCarForViewing}
-      className="flex w-full transform items-center justify-center gap-3 rounded-lg border-2 border-white bg-transparent px-6 py-5 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-black hover:shadow-xl"
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
     >
-      <Calendar size={24} />
-      Schedule Booking
+      <Calendar size={16} />
+      Book Viewing
     </Link>
   );
 };

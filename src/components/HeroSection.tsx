@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Calendar, Car, Clock, Eye, Search, Star } from "lucide-react";
+import { ArrowRight, Calendar, Car, Clock, Eye, Search, Star } from "lucide-react";
 import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
@@ -9,9 +9,12 @@ const HeroSection = async () => {
   const featuredCar = await getFeaturedCar();
   return (
     <section className="relative z-50 overflow-hidden bg-black text-white">
-      <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
+      {/* Ambient red glow — top-right */}
+      <div className="pointer-events-none absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-red-600/5 blur-3xl" />
+
+      <div className="container mx-auto px-4 py-14 sm:px-6 sm:py-20 lg:py-28">
         <div
-          className={`mx-auto grid max-w-7xl items-center gap-6 sm:gap-8 ${featuredCar?.make ? "lg:grid-cols-2" : "lg:grid-cols-1"} lg:gap-12`}
+          className={`mx-auto grid max-w-7xl items-center gap-8 sm:gap-10 ${featuredCar?.make ? "lg:grid-cols-2" : "lg:grid-cols-1"} lg:gap-16`}
         >
           {/* Left Column - Content */}
           <div
@@ -19,94 +22,107 @@ const HeroSection = async () => {
           >
             {/* Main Heading */}
             <h1
-              className={`${featuredCar?.make ? "mb-8 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl" : "mb-12 text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
+              className={`${featuredCar?.make ? "mb-6 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" : "mb-10 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
             >
               Find Your Perfect Car
-              <span className="mt-2 block text-red-500">
+              <span className="mt-2 block bg-linear-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
                 Book a Viewing Today
               </span>
             </h1>
             {/* Subtitle */}
             <p
-              className={`${featuredCar?.make ? "max-w-3xl" : "mx-auto max-w-4xl"} text-lg leading-relaxed text-gray-300 md:text-xl`}
+              className={`${featuredCar?.make ? "max-w-xl" : "mx-auto max-w-2xl"} text-base leading-relaxed text-gray-400 sm:text-lg`}
             >
               Browse our premium collection of vehicles and schedule convenient
               viewing appointments. Experience quality cars with expert
               guidance.
             </p>
+
+            {/* CTA Button — below subtitle on desktop when featured car exists */}
+            {featuredCar?.make && (
+              <div className="mt-8 hidden lg:block">
+                <Link
+                  href="/BrowseFleet"
+                  className="group inline-flex items-center gap-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
+                >
+                  <Search size={16} />
+                  Browse All Cars
+                  <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Featured Car */}
           {featuredCar?.make && (
             <div className="relative">
-              <div className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-4 shadow-2xl sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
-                {/* Featured Badge */}
-                <div className="inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white">
-                  <Star size={16} />
-                  Featured Car
-                </div>
-                {/* Car Image */}
+              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.06] to-white/[0.02] shadow-2xl shadow-black/40 ring-1 ring-white/5">
+                {/* Car Image — full-bleed with overlay */}
                 <div className="group relative">
-                  <div className="relative aspect-video w-full rounded-lg">
-                    {/* Main Image */}
+                  <div className="relative aspect-[16/10] w-full">
                     <Image
                       src="/tesla.webp"
                       alt={`${featuredCar.make} ${featuredCar.model}`}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                       priority
                     />
+                    {/* Bottom gradient fade into card */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/80 to-transparent" />
                   </div>
 
-                  {/* Image Loading Fallback */}
-                  <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-gray-800 opacity-0 transition-opacity">
-                    <Car size={48} className="text-gray-600" />
-                    <span className="sr-only">Loading image</span>
+                  {/* Featured Badge — overlaid on image */}
+                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-red-600/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                    <Star size={12} />
+                    Featured
                   </div>
-                </div>{" "}
+                </div>
+
                 {/* Car Details */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h3 className="text-xl font-bold text-white sm:text-2xl">
-                    {featuredCar
-                      ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
-                      : "2023 BMW X5"}
-                  </h3>
-                  <p className="text-gray-400">
-                    {featuredCar &&
-                      `${featuredCar.doors} Door • ${featuredCar.fuel} • ${featuredCar.colour}`}
-                  </p>
+                <div className="space-y-4 p-5 sm:p-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-white sm:text-xl">
+                      {featuredCar
+                        ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
+                        : "2023 BMW X5"}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {featuredCar &&
+                        `${featuredCar.doors} Door  •  ${featuredCar.fuel}  •  ${featuredCar.colour}`}
+                    </p>
+                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-red-400 sm:text-3xl">
+                  <div className="flex items-end justify-between">
+                    <span className="text-2xl font-bold text-white">
                       £{featuredCar && featuredCar.price.toLocaleString()}
                     </span>
-                    <span className="text-sm text-gray-400 sm:text-base">
+                    <span className="text-sm text-gray-500">
                       {featuredCar &&
                         `${featuredCar.mileage.toLocaleString()} miles`}
                     </span>
                   </div>
 
-                  {/* Features */}
-                  <div className="grid grid-cols-2 gap-4 border-t border-gray-700 pt-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <Eye size={16} className="text-red-400" />
-                      <span>Available for viewing</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <Clock size={16} className="text-red-400" />
-                      <span>Book today</span>
-                    </div>
+                  {/* Quick info pills */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
+                      <Eye size={12} className="text-red-400" />
+                      Available for viewing
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
+                      <Clock size={12} className="text-red-400" />
+                      Book today
+                    </span>
                   </div>
 
-                  <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-4 xl:flex-row">
-                    {/* View Car Button */}
+                  {/* Action Buttons */}
+                  <div className="flex w-full gap-3 pt-1">
                     <Link
                       href={
                         featuredCar
                           ? `/BrowseFleet/${featuredCar._id}`
                           : "/BrowseFleet"
                       }
-                      className="flex w-full items-center justify-center rounded-lg border border-gray-700 bg-gray-800 px-6 py-3 text-center font-semibold text-white transition-colors hover:border-gray-600 hover:bg-gray-700"
+                      className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:border-white/20 hover:bg-white/10"
                     >
                       View Details
                     </Link>
@@ -118,48 +134,47 @@ const HeroSection = async () => {
           )}
         </div>
 
-        {/* CTA Button - After Featured Car */}
-        <div className="mt-12 flex w-full justify-center">
+        {/* CTA Button — centered (no featured car, or mobile) */}
+        <div className={`mt-10 flex w-full justify-center ${featuredCar?.make ? "lg:hidden" : ""}`}>
           <Link
             href="/BrowseFleet"
-            className="flex w-full max-w-md transform items-center justify-center gap-3 rounded-lg bg-red-600 px-10 py-5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-red-700 hover:shadow-xl"
+            className="group inline-flex items-center gap-2 rounded-lg bg-red-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-600/20 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
           >
-            <Search size={24} />
+            <Search size={18} />
             Browse Cars
+            <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
         </div>
 
-        {/* Stats Section - Moved Below */}
+        {/* Stats Section */}
         <div className="mt-20">
-          <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2">
-                <Car className="text-red-400" size={32} />
-                <span className="text-3xl font-bold">500+</span>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+              <Car className="text-red-500" size={24} />
+              <div>
+                <span className="text-2xl font-bold">500+</span>
+                <p className="text-sm text-gray-500">Quality Vehicles</p>
               </div>
-              <p className="text-gray-300">Quality Vehicles</p>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2">
-                <Calendar className="text-red-400" size={32} />
-                <span className="text-3xl font-bold">24/7</span>
+            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+              <Calendar className="text-red-500" size={24} />
+              <div>
+                <span className="text-2xl font-bold">24/7</span>
+                <p className="text-sm text-gray-500">Online Booking</p>
               </div>
-              <p className="text-gray-300">Online Booking</p>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2">
-                <Star className="text-yellow-400" size={32} />
-                <span className="text-3xl font-bold">4.9</span>
+            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-6 py-5">
+              <Star className="text-yellow-500" size={24} />
+              <div>
+                <span className="text-2xl font-bold">4.9</span>
+                <p className="text-sm text-gray-500">Customer Rating</p>
               </div>
-              <p className="text-gray-300">Customer Rating</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Background Pattern */}
     </section>
   );
 };
