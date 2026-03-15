@@ -1,8 +1,9 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Cog, CheckCircle, Clock, Shield } from "lucide-react";
 import CarPartsGrid, { CarPart } from "@/components/CarParts/CarPartsGrid";
-import { BlackRedSection } from "@/components/Services/Common";
+import { BlackRedSection, ServiceHero } from "@/components/Services/Common";
 
 export const metadata: Metadata = {
   title: "Car Parts & Accessories",
@@ -112,15 +113,25 @@ const mockCarParts: CarPart[] = [
 const Page = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-12 text-center">
-        <h1 className="page-title mb-4">Car Parts & Components</h1>
-        <p className="description mx-auto max-w-3xl">
-          Browse our extensive collection of quality car parts. Reserve your
-          parts today and complete your purchase at our location with expert
-          installation available.
-        </p>
-      </div>
+      <ServiceHero
+        icon={Cog}
+        iconBgColor="bg-red-50 text-red-600"
+        title="Car Parts & Components"
+        description="Browse our extensive collection of quality car parts. Reserve your parts today and complete your purchase at our location with expert installation available."
+        badges={[
+          {
+            icon: CheckCircle,
+            text: "Quality Assured",
+            color: "text-red-500",
+          },
+          { icon: Clock, text: "Fast Availability", color: "text-gray-900" },
+          {
+            icon: Shield,
+            text: "Expert Installation",
+            color: "text-red-700",
+          },
+        ]}
+      />
 
       {/* Car Parts Grid with Integrated Filters */}
       <CarPartsGrid parts={mockCarParts} />

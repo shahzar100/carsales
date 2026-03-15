@@ -1,13 +1,14 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, CheckCircle, Star, Shield } from "lucide-react";
+import { Clock, CheckCircle, Star, Shield, Wrench } from "lucide-react";
 import {
   PackageGrid,
   PackageCard,
   FeatureList,
   InfoBox,
   BlackRedSection,
+  ServiceHero,
 } from "@/components/Services/Common";
 import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
@@ -41,143 +42,126 @@ const Services = async () => {
   }));
 
   return (
-    <div>
-      {/* Hero Section */}
-      <div className="py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mb-0 text-center">
-            <h1 className="page-title mb-6">Professional Auto Services</h1>
-            <p className="description mx-auto mb-8 max-w-3xl text-gray-600">
-              From premium detailing to expert repairs, we provide comprehensive
-              automotive services to keep your vehicle in peak condition. All
-              services backed by our satisfaction guarantee.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500 sm:gap-6">
-              <div className="flex items-center gap-1">
-                <CheckCircle className="h-5 w-5 text-red-500" />
-                Certified Technicians
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-5 w-5 text-gray-400" />
-                Same Day Service
-              </div>
-              <div className="flex items-center gap-1">
-                <Star className="h-5 w-5 text-yellow-500" />
-                5-Star Rated
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      <ServiceHero
+        icon={Wrench}
+        iconBgColor="bg-red-50 text-red-600"
+        title="Professional Auto Services"
+        description="From premium detailing to expert repairs, we provide comprehensive automotive services to keep your vehicle in peak condition. All services backed by our satisfaction guarantee."
+        badges={[
+          {
+            icon: CheckCircle,
+            text: "Certified Technicians",
+            color: "text-red-500",
+          },
+          { icon: Clock, text: "Same Day Service", color: "text-gray-900" },
+          { icon: Star, text: "5-Star Rated", color: "text-red-700" },
+        ]}
+      />
 
       {/* Services Grid */}
-      <div className="py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <PackageGrid title="Our Services">
-            {mainServices.map((service) => (
-              <PackageCard
-                key={service.id}
-                name={service.title}
-                subtitle={service.subtitle}
-                price={service.priceRange}
-                extra={service.duration}
-                accent={service.accent}
-                footer={
-                  <Link
-                    href={service.href}
-                    className={`block w-full rounded-xl px-6 py-3 text-center text-sm font-semibold tracking-wide text-white transition-all duration-200 ${
-                      service.accent === "red"
-                        ? "bg-red-600 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
-                        : service.accent === "crimson"
-                          ? "bg-red-700 hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/25"
-                          : "bg-white/10 hover:bg-white/20"
-                    }`}
-                  >
-                    Learn More & Book
-                  </Link>
-                }
+      <PackageGrid title="Our Services">
+        {mainServices.map((service) => (
+          <PackageCard
+            key={service.id}
+            name={service.title}
+            subtitle={service.subtitle}
+            price={service.priceRange}
+            extra={service.duration}
+            accent={service.accent}
+            footer={
+              <Link
+                href={service.href}
+                className={`block w-full rounded-xl px-6 py-3 text-center text-sm font-semibold tracking-wide text-white transition-all duration-200 ${
+                  service.accent === "red"
+                    ? "bg-red-600 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
+                    : service.accent === "crimson"
+                      ? "bg-red-700 hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/25"
+                      : "bg-white/10 hover:bg-white/20"
+                }`}
               >
-                <div className="space-y-3">
-                  <FeatureList
-                    features={service.features}
-                    accent={service.accent}
-                  />
-                  <InfoBox
-                    rows={[
-                      { label: "Price Range:", value: service.priceRange },
-                      { label: "Duration:", value: service.duration },
-                    ]}
-                  />
-                </div>
-              </PackageCard>
-            ))}
-          </PackageGrid>
-        </div>
-      </div>
-      <div className="py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mb-0 rounded-2xl p-8 lg:p-12">
-            <div className="mb-12 text-center">
-              <h2 className="section-title mb-4">Why Choose Our Services?</h2>
-              <p className="description mx-auto max-w-2xl text-gray-600">
-                We combine years of experience with state-of-the-art equipment
-                to deliver exceptional results that exceed your expectations.
+                Learn More & Book
+              </Link>
+            }
+          >
+            <div className="space-y-3">
+              <FeatureList
+                features={service.features}
+                accent={service.accent}
+              />
+              <InfoBox
+                rows={[
+                  { label: "Price Range:", value: service.priceRange },
+                  { label: "Duration:", value: service.duration },
+                ]}
+              />
+            </div>
+          </PackageCard>
+        ))}
+      </PackageGrid>
+
+      {/* Why Choose Us */}
+      <div className="mt-8 mb-12 md:mt-16">
+        <div className="text-center">
+          <div className="mb-12 text-center">
+            <h2 className="section-title mb-4">Why Choose Our Services?</h2>
+            <p className="description mx-auto max-w-2xl text-gray-600">
+              We combine years of experience with state-of-the-art equipment to
+              deliver exceptional results that exceed your expectations.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
+                <CheckCircle size={24} />
+              </div>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                Quality Guarantee
+              </h3>
+              <p className="text-sm text-gray-600">
+                100% satisfaction guaranteed on all services
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
-                  <CheckCircle size={24} />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-gray-900">
-                  Quality Guarantee
-                </h3>
-                <p className="text-sm text-gray-600">
-                  100% satisfaction guaranteed on all services
-                </p>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
+                <Clock size={24} />
               </div>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                Fast Turnaround
+              </h3>
+              <p className="text-sm text-gray-600">
+                Quick and efficient service without compromising quality
+              </p>
+            </div>
 
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
-                  <Clock size={24} />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-gray-900">
-                  Fast Turnaround
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Quick and efficient service without compromising quality
-                </p>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
+                <Star size={24} />
               </div>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                Expert Team
+              </h3>
+              <p className="text-sm text-gray-600">
+                Certified professionals with years of experience
+              </p>
+            </div>
 
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
-                  <Star size={24} />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-gray-900">
-                  Expert Team
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Certified professionals with years of experience
-                </p>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
+                <Shield size={24} />
               </div>
-
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
-                  <Shield size={24} />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-gray-900">
-                  Fully Insured
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Complete coverage for your peace of mind
-                </p>
-              </div>
+              <h3 className="mb-2 text-base font-semibold text-gray-900">
+                Fully Insured
+              </h3>
+              <p className="text-sm text-gray-600">
+                Complete coverage for your peace of mind
+              </p>
             </div>
           </div>
         </div>
       </div>
-
       {/* Book a Service */}
       <BlackRedSection>
         <div id="book" className="scroll-mt-8">
