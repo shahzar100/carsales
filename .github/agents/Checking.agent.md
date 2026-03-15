@@ -55,6 +55,24 @@ When the user asks you to check the codebase, follow these steps **in order**:
 3. Run `npm test -- --ci --passWithNoTests 2>&1` to find failing tests.
 4. Check for any `get_errors` diagnostics in open files.
 
+### Step 1b — Dependency Health Check
+
+Run `npm outdated` to discover packages that are behind their declared semver range or behind the latest release. For each outdated package, record:
+
+- **Package name**
+- **Current version** (installed)
+- **Wanted version** (latest compatible with the semver range in `package.json`)
+- **Latest version** (absolute latest on npm)
+- **Upgrade type** (`patch` / `minor` / `major`)
+
+Report these under the **✨ Improvements** category with severity:
+- 🔴 **Critical** — package has a known CVE or security advisory at the current version.
+- 🟠 **High** — major-version upgrade available (breaking changes likely).
+- 🟡 **Medium** — minor-version upgrade available.
+- 🔵 **Low** — patch-version upgrade only.
+
+If the audit was triggered by the **Monthly Dependency Update** workflow and the **DependencyUpdater** agent has already run, verify that the packages listed in the task issue have been upgraded or have a documented rollback reason. Flag any that were left unresolved.
+
 ### Step 2 — Scan for Incomplete Work
 
 Search across the codebase for:
@@ -142,5 +160,6 @@ The user can ask you to focus on a specific area:
 - **"Check admin"** → Focus on `src/app/(admin)/`, `src/app/api/admin/`, `src/components/Admin/`
 - **"Check bookings"** → Focus on `src/app/api/bookings/`, `src/app/(main)/Booking/`, `__tests__/api/bookings/`
 - **"Check types"** → Focus on `src/lib/interfaces.ts`, `src/lib/types.ts`, `src/contexts/types.ts`
-- **"Run all checks"** → Execute the full audit workflow (Steps 1–5)
+- **"Check dependencies"** → Run Step 1b only — report all outdated packages with severity ratings
+- **"Run all checks"** → Execute the full audit workflow (Steps 1–5, including dependency health)
 - **"Fix critical"** → Automatically fix all 🔴 Critical issues found

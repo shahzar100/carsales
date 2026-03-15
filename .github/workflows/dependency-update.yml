@@ -7,19 +7,17 @@ on:
   workflow_dispatch: # Allow manual trigger for testing
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  issues: write
 
 jobs:
-  update-dependencies:
-    name: Check and Upgrade npm Packages
+  invoke-checking-agent:
+    name: Delegate to Checking Agent
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,232 +28,97 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check for outdated packages
+      - name: Collect outdated packages
         id: outdated
         run: |
-          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          npm outdated || true
-          npm outdated --json > /tmp/outdated.json || true
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          # Capture human-readable table (exit code non-zero when packages are outdated — suppress it)
+          OUTDATED_TABLE=$(npm outdated 2>/dev/null || true)
 
-          # Count outdated packages
-          COUNT=$(node -e "
-            const data = require('/tmp/outdated.json');
-            console.log(Object.keys(data).length);
-          " 2>/dev/null || echo "0")
-          echo "outdated_count=$COUNT" >> $GITHUB_OUTPUT
-          echo "Found $COUNT outdated package(s)"
+          # Capture JSON for counting
+          OUTDATED_JSON=$(npm outdated --json 2>/dev/null || echo "{}")
+          COUNT=$(echo "$OUTDATED_JSON" | node -e \
+            "let d=''; process.stdin.on('data',c=>d+=c).on('end',()=>console.log(Object.keys(JSON.parse(d||'{}')).length));" \
+            2>/dev/null || echo "0")
 
-      - name: Run baseline tests
-        id: baseline
-        run: |
-          echo "## Baseline Verification" >> $GITHUB_STEP_SUMMARY
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
-          # TypeScript check
-          npx tsc --noEmit && echo "- ✅ TypeScript: OK" >> $GITHUB_STEP_SUMMARY || echo "- ❌ TypeScript: Errors found" >> $GITHUB_STEP_SUMMARY
+          # Store the table for use in the issue body (multi-line safe)
+          {
+            echo 'outdated_table<<EOF'
+            echo "$OUTDATED_TABLE"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
 
-          # Component tests
-          npx jest --config jest.config.js --no-coverage --passWithNoTests && \
-            echo "- ✅ Component tests: Passed" >> $GITHUB_STEP_SUMMARY || \
-            echo "- ❌ Component tests: Failed" >> $GITHUB_STEP_SUMMARY
-
-          # API tests
-          npx jest --config jest.config.api.js --no-coverage --passWithNoTests && \
-            echo "- ✅ API tests: Passed" >> $GITHUB_STEP_SUMMARY || \
-            echo "- ❌ API tests: Failed" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upgrade packages safely
-        id: upgrade
-        run: |
-          UPGRADED_PACKAGES=""
-          FAILED_PACKAGES=""
-          SKIPPED_PACKAGES=""
-
-          # Read outdated packages sorted by type: patch, minor, major
-          node -e "
-            const data = require('/tmp/outdated.json');
-            const semver = (v) => v.split('.').map(Number);
-            const upgradeType = (current, latest) => {
-              const [cMaj, cMin] = semver(current.replace(/[^0-9.]/g, ''));
-              const [lMaj, lMin] = semver(latest.replace(/[^0-9.]/g, ''));
-              if (lMaj > cMaj) return 'major';
-              if (lMin > cMin) return 'minor';
-              return 'patch';
-            };
-            const packages = Object.entries(data).map(([name, info]) => ({
-              name,
-              current: info.current || 'unknown',
-              wanted: info.wanted || info.latest,
-              latest: info.latest,
-              type: upgradeType(info.current || '0.0.0', info.latest || '0.0.0'),
-              location: info.location || 'dependencies'
-            }));
-            // Sort: patch first, then minor, then major
-            const order = { patch: 0, minor: 1, major: 2 };
-            packages.sort((a, b) => order[a.type] - order[b.type]);
-            // Write to file for bash to iterate
-            const lines = packages.map(p => [p.name, p.current, p.wanted, p.latest, p.type].join('\t')).join('\n');
-            require('fs').writeFileSync('/tmp/upgrade_list.tsv', lines);
-            console.log('Packages to process: ' + packages.length);
-          " 2>/dev/null || echo "" > /tmp/upgrade_list.tsv
-
-          echo "## Upgrade Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Package | From | To | Type | Result |" >> $GITHUB_STEP_SUMMARY
-          echo "| ------- | ---- | -- | ---- | ------ |" >> $GITHUB_STEP_SUMMARY
-
-          # Coupled groups — upgrade together
-          declare -A COUPLED_GROUPS
-          COUPLED_GROUPS["react"]="react react-dom @types/react @types/react-dom"
-          COUPLED_GROUPS["react-dom"]="react react-dom @types/react @types/react-dom"
-          COUPLED_GROUPS["@types/react"]="react react-dom @types/react @types/react-dom"
-          COUPLED_GROUPS["@types/react-dom"]="react react-dom @types/react @types/react-dom"
-          COUPLED_GROUPS["next"]="next eslint-config-next"
-          COUPLED_GROUPS["eslint-config-next"]="next eslint-config-next"
-          COUPLED_GROUPS["jest"]="jest jest-environment-jsdom jest-environment-node ts-jest @types/jest"
-          COUPLED_GROUPS["jest-environment-jsdom"]="jest jest-environment-jsdom jest-environment-node ts-jest @types/jest"
-          COUPLED_GROUPS["jest-environment-node"]="jest jest-environment-jsdom jest-environment-node ts-jest @types/jest"
-          COUPLED_GROUPS["ts-jest"]="jest jest-environment-jsdom jest-environment-node ts-jest @types/jest"
-          COUPLED_GROUPS["@types/jest"]="jest jest-environment-jsdom jest-environment-node ts-jest @types/jest"
-          COUPLED_GROUPS["tailwindcss"]="tailwindcss @tailwindcss/postcss postcss autoprefixer"
-          COUPLED_GROUPS["@tailwindcss/postcss"]="tailwindcss @tailwindcss/postcss postcss autoprefixer"
-          COUPLED_GROUPS["postcss"]="tailwindcss @tailwindcss/postcss postcss autoprefixer"
-          COUPLED_GROUPS["autoprefixer"]="tailwindcss @tailwindcss/postcss postcss autoprefixer"
-          COUPLED_GROUPS["react-email"]="react-email @react-email/components @react-email/preview-server"
-          COUPLED_GROUPS["@react-email/components"]="react-email @react-email/components @react-email/preview-server"
-          COUPLED_GROUPS["@react-email/preview-server"]="react-email @react-email/components @react-email/preview-server"
-          COUPLED_GROUPS["eslint"]="eslint @eslint/eslintrc eslint-config-next"
-          COUPLED_GROUPS["@eslint/eslintrc"]="eslint @eslint/eslintrc eslint-config-next"
-
-          PROCESSED_GROUPS=""
-
-          # Save original package state
-          cp package.json /tmp/package.json.bak
-          cp package-lock.json /tmp/package-lock.json.bak
-
-          while IFS=$'\t' read -r PKG_NAME CURRENT WANTED LATEST UPGRADE_TYPE; do
-            [ -z "$PKG_NAME" ] && continue
-
-            # Check if this package belongs to a coupled group already processed
-            GROUP_KEY="${COUPLED_GROUPS[$PKG_NAME]:-}"
-            if [ -n "$GROUP_KEY" ]; then
-              # Check if this group was already processed
-              if echo "$PROCESSED_GROUPS" | grep -qF "|${GROUP_KEY}|"; then
-                echo "| \`$PKG_NAME\` | $CURRENT | $LATEST | $UPGRADE_TYPE | ⏭️ (group already processed) |" >> $GITHUB_STEP_SUMMARY
-                continue
-              fi
-              PROCESSED_GROUPS="$PROCESSED_GROUPS|${GROUP_KEY}|"
-              INSTALL_PKGS="${GROUP_KEY}"
-            else
-              INSTALL_PKGS="$PKG_NAME"
-            fi
-
-            # Build install command with @latest for each package in the set
-            INSTALL_CMD=""
-            for P in $INSTALL_PKGS; do
-              INSTALL_CMD="$INSTALL_CMD ${P}@latest"
-            done
-
-            echo "Attempting upgrade: $INSTALL_CMD"
-
-            # Save state before upgrade
-            cp package.json /tmp/package.json.pre
-            cp package-lock.json /tmp/package-lock.json.pre
-
-            # Attempt the upgrade
-            if npm install $INSTALL_CMD --save-exact 2>&1; then
-              # Run verification suite
-              VERIFY_OK=true
-
-              npx tsc --noEmit 2>&1 || VERIFY_OK=false
-              if $VERIFY_OK; then
-                npx jest --config jest.config.js --no-coverage --passWithNoTests 2>&1 || VERIFY_OK=false
-              fi
-              if $VERIFY_OK; then
-                npx jest --config jest.config.api.js --no-coverage --passWithNoTests 2>&1 || VERIFY_OK=false
-              fi
-
-              if $VERIFY_OK; then
-                NEW_VERSION=$(node -e "const p=require('./package.json'); const d={...p.dependencies,...p.devDependencies}; console.log(d['${PKG_NAME}']||'latest')" 2>/dev/null || echo "latest")
-                UPGRADED_PACKAGES="$UPGRADED_PACKAGES $PKG_NAME"
-                echo "| \`$PKG_NAME\` | $CURRENT | $NEW_VERSION | $UPGRADE_TYPE | ✅ Upgraded |" >> $GITHUB_STEP_SUMMARY
-              else
-                echo "Upgrade failed verification — rolling back $INSTALL_CMD"
-                cp /tmp/package.json.pre package.json
-                cp /tmp/package-lock.json.pre package-lock.json
-                npm install --prefer-offline 2>&1 || npm install 2>&1
-                FAILED_PACKAGES="$FAILED_PACKAGES $PKG_NAME"
-                echo "| \`$PKG_NAME\` | $CURRENT | $LATEST | $UPGRADE_TYPE | ⏪ Rolled back (test/TS failure) |" >> $GITHUB_STEP_SUMMARY
-              fi
-            else
-              echo "npm install failed — rolling back $INSTALL_CMD"
-              cp /tmp/package.json.pre package.json
-              cp /tmp/package-lock.json.pre package-lock.json
-              npm install --prefer-offline 2>&1 || npm install 2>&1
-              FAILED_PACKAGES="$FAILED_PACKAGES $PKG_NAME"
-              echo "| \`$PKG_NAME\` | $CURRENT | $LATEST | $UPGRADE_TYPE | ⏪ Rolled back (install failure) |" >> $GITHUB_STEP_SUMMARY
-            fi
-
-          done < /tmp/upgrade_list.tsv
-
-          # Export results for later steps
-          echo "upgraded_packages=$UPGRADED_PACKAGES" >> $GITHUB_OUTPUT
-          echo "failed_packages=$FAILED_PACKAGES" >> $GITHUB_OUTPUT
-
-          # Determine if any changes were made
-          if git diff --quiet package.json package-lock.json; then
-            echo "changes_made=false" >> $GITHUB_OUTPUT
+          echo "## Outdated Packages ($COUNT found)" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" -gt 0 ]; then
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "$OUTDATED_TABLE" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "changes_made=true" >> $GITHUB_OUTPUT
+            echo "✅ All packages are up to date." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Final verification
-        if: steps.upgrade.outputs.changes_made == 'true'
+      - name: Create Copilot agent task
+        if: steps.outdated.outputs.count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTDATED_TABLE: ${{ steps.outdated.outputs.outdated_table }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          echo "## Final Verification" >> $GITHUB_STEP_SUMMARY
+          MONTH_YEAR=$(date +'%B %Y')
 
-          npx tsc --noEmit && \
-            echo "- ✅ TypeScript: OK" >> $GITHUB_STEP_SUMMARY || \
-            echo "- ❌ TypeScript: Errors found" >> $GITHUB_STEP_SUMMARY
+          gh issue create \
+            --title "chore(deps): monthly dependency update — ${MONTH_YEAR}" \
+            --body "## 📦 Monthly Dependency Update — ${MONTH_YEAR}
 
-          npx jest --config jest.config.js --no-coverage --passWithNoTests && \
-            echo "- ✅ Component tests: Passed" >> $GITHUB_STEP_SUMMARY || \
-            echo "- ❌ Component tests: Failed" >> $GITHUB_STEP_SUMMARY
+          This task was created automatically by the **Monthly Dependency Update** workflow on \`$(date -u +'%Y-%m-%d %H:%M UTC')\`.
 
-          npx jest --config jest.config.api.js --no-coverage --passWithNoTests && \
-            echo "- ✅ API tests: Passed" >> $GITHUB_STEP_SUMMARY || \
-            echo "- ❌ API tests: Failed" >> $GITHUB_STEP_SUMMARY
+          ### Outdated Packages
 
-      - name: Create Pull Request
-        if: steps.upgrade.outputs.changes_made == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(deps): safe monthly npm dependency updates"
-          branch: "chore/monthly-dependency-update-${{ github.run_number }}"
-          delete-branch: true
-          title: "chore(deps): safe monthly npm dependency updates"
-          body: |
-            ## 📦 Monthly Dependency Update
+          \`\`\`
+          ${OUTDATED_TABLE}
+          \`\`\`
 
-            This PR was automatically generated by the **Monthly Dependency Update** workflow.
-            Each package was upgraded individually, the full test suite and TypeScript compiler
-            were verified after every change, and any upgrade that caused a failure was rolled back.
+          ---
 
-            ### Upgraded Packages
-            ${{ steps.upgrade.outputs.upgraded_packages }}
+          ### Instructions for Copilot
 
-            ### Packages Rolled Back (failed verification)
-            ${{ steps.upgrade.outputs.failed_packages }}
+          Please handle this task using **two agents in sequence**:
 
-            ---
-            *Review the [workflow run summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for the full upgrade log.*
-          labels: |
-            dependencies
-            automated
+          #### Step 1 — DependencyUpdater agent
+          Run the **DependencyUpdater** agent (see \`.github/agents/DependencyUpdater.agent.md\`) with the command:
+          > **\"Update all\"**
 
-      - name: No changes summary
-        if: steps.upgrade.outputs.changes_made == 'false'
+          The agent will:
+          - Verify the baseline (TypeScript + full test suite) before touching anything
+          - Upgrade each outdated package listed above one at a time (patch → minor → major)
+          - Treat coupled package groups (React, Next.js, Jest, Tailwind, etc.) as a single unit
+          - Run \`npx tsc --noEmit\` + both Jest configs after every upgrade
+          - Roll back any upgrade that breaks the build or tests
+          - Open a PR with only the verified safe upgrades
+
+          #### Step 2 — Checking agent
+          After the DependencyUpdater agent completes (whether or not any packages were upgraded), run the **Checking** agent (see \`.github/agents/Checking.agent.md\`) with the command:
+          > **\"Run all checks\"**
+
+          The agent will:
+          - Run TypeScript, ESLint, and the full test suite
+          - Scan for incomplete work, broken imports, and structural issues
+          - Report code quality improvements and security concerns
+          - Attach the full audit report to the PR opened in Step 1 (or as a comment on this issue if no PR was created)
+
+          ---
+
+          *Triggered by workflow run: ${RUN_URL}*" \
+            --assignee "@copilot" \
+            --label "dependencies,automated"
+
+          echo "## Agent Task Created" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ A Copilot agent task has been created and assigned to \`@copilot\`." >> "$GITHUB_STEP_SUMMARY"
+          echo "The **DependencyUpdater** agent will upgrade packages safely, then the **Checking** agent will audit the codebase." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: No outdated packages
+        if: steps.outdated.outputs.count == 0
         run: |
-          echo "## Result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All packages are already up to date — no changes made." >> $GITHUB_STEP_SUMMARY
+          echo "## Result" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ All packages are already up to date — no agent task needed." >> "$GITHUB_STEP_SUMMARY"
