@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
+import { ipAddress } from "@vercel/functions";
 import {
   getServiceAppointmentsCollection,
   ServiceAppointment,
@@ -21,7 +23,7 @@ import React from "react";
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting - max 5 requests per minute per IP
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const ip = ipAddress(request) || "unknown";
     const rateLimit = checkRateLimit(`service-booking:${ip}`, 5, 60000);
 
     if (!rateLimit.allowed) {
@@ -104,25 +106,38 @@ export async function POST(request: NextRequest) {
 
     await serviceCollection.insertOne(newBooking as ServiceAppointment);
 
-    // Get shop info for email
-    const shopInfo = await getBusinessInfo();
+    // Send confirmation email in the background after responding
+    waitUntil(
+      (async () => {
+        try {
+          const shopInfo = await getBusinessInfo();
+          const emailShopInfo = {
+            businessName: shopInfo.businessName,
+            phone: shopInfo.phone,
+            email: shopInfo.email,
+            address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+          };
 
-    // Send confirmation email
-    const emailShopInfo = {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    };
+          const emailResult = await sendEmail({
+            to: body.customerInfo.email,
+            subject: `Service Booking Confirmation - ${bookingReference}`,
+            react: React.createElement(ServiceBookingConfirmation, {
+              booking: newBooking as ServiceAppointment,
+              shopInfo: emailShopInfo,
+            }),
+          });
 
-    await sendEmail({
-      to: body.customerInfo.email,
-      subject: `Service Booking Confirmation - ${bookingReference}`,
-      react: React.createElement(ServiceBookingConfirmation, {
-        booking: newBooking as ServiceAppointment,
-        shopInfo: emailShopInfo,
-      }),
-    });
+          if (!emailResult.success) {
+            console.warn(
+              "⚠️ Email failed to send but booking was created:",
+              emailResult.error
+            );
+          }
+        } catch (emailError) {
+          console.error("Error sending service booking email:", emailError);
+        }
+      })()
+    );
 
     return NextResponse.json({
       success: true,

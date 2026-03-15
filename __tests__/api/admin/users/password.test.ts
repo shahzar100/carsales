@@ -10,7 +10,7 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/users/password/route";
-import { getTestCollections } from "../../../utils/testUtils";
+import { getTestCollections, flushWaitUntil } from "../../../utils/testUtils";
 import bcrypt from "bcryptjs";
 
 // Mock email sending
@@ -120,6 +120,10 @@ describe("/api/admin/users/password", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.emailSent).toBe(true);
+
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
+
       expect(mockSendEmail).toHaveBeenCalledTimes(1);
       expect(mockSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -155,7 +159,7 @@ describe("/api/admin/users/password", () => {
       expect(data.error).toContain("no email");
     });
 
-    it("should return 500 when email sending fails", async () => {
+    it("should succeed even when email fails (fire-and-forget via waitUntil)", async () => {
       mockSendEmail.mockResolvedValueOnce({ success: false });
 
       const { adminUsers, client } = await getTestCollections();
@@ -180,8 +184,10 @@ describe("/api/admin/users/password", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toContain("Failed to send email");
+      // With waitUntil, the response succeeds even if the email fails
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.emailSent).toBe(true);
     });
 
     it("should store reset token in database", async () => {

@@ -7,6 +7,7 @@ import {
   getTestCollections,
   createTestServiceAppointment,
   createTestCarViewingBooking,
+  flushWaitUntil,
 } from "../../utils/testUtils";
 
 // Mock authentication
@@ -78,6 +79,9 @@ describe("/api/bookings/cancel", () => {
       );
       expect(cancelledBooking?.cancelledAt).toBeDefined();
       await newClient.close();
+
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
 
       // Verify cancellation email was sent
       expect(mockSendEmail).toHaveBeenCalledWith(

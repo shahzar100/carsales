@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBussinessInfoCollection, serializeDocument } from "@/lib/models";
+import { serializeDocument } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
-import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import { getBusinessInfo, updateBusinessInfo } from "@/lib/utils/businessInfo";
 import type { ShopInfo } from "@/lib/interfaces";
 
 export async function GET() {
@@ -34,9 +34,8 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const shopCollection = await getBussinessInfoCollection();
 
-    const shopInfo: Omit<ShopInfo, "_id"> = {
+    const shopInfo: Partial<ShopInfo> = {
       businessName: body.businessName,
       address: body.address,
       city: body.city,
@@ -54,26 +53,14 @@ export async function PUT(request: NextRequest) {
       tintOptions: body.tintOptions,
       serviceOverviews: body.serviceOverviews,
       recovery: body.recovery,
-      updatedAt: new Date(),
     };
 
-    const result = await shopCollection.updateOne(
-      {},
-      { $set: shopInfo },
-      { upsert: true }
-    );
+    await updateBusinessInfo(shopInfo);
 
-    if (result.acknowledged) {
-      return NextResponse.json({
-        success: true,
-        data: serializeDocument(shopInfo),
-      });
-    } else {
-      return NextResponse.json(
-        { error: "Failed to update shop information" },
-        { status: 500 }
-      );
-    }
+    return NextResponse.json({
+      success: true,
+      data: serializeDocument(shopInfo),
+    });
   } catch (error) {
     console.error("Error updating shop info:", error);
     return NextResponse.json(

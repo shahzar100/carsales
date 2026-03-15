@@ -3,7 +3,6 @@
  */
 import { NextRequest } from "next/server";
 import { GET, PUT } from "@/app/api/admin/shop/route";
-import * as models from "@/lib/models";
 import { getTestCollections, createTestShopInfo } from "../../utils/testUtils";
 
 // Mock authentication
@@ -215,26 +214,23 @@ describe("/api/admin/shop", () => {
       expect(data.error).toBe("Internal server error");
     });
 
-    it("should return 500 when updateOne is not acknowledged", async () => {
-      const mockCollection = {
-        updateOne: jest.fn().mockResolvedValue({ acknowledged: false }),
-      };
-
-      // Use jest.resetModules + doMock to override the getter-only export
+    it("should return 500 when update throws an error", async () => {
+      // Use jest.resetModules + doMock to override updateBusinessInfo
       jest.resetModules();
-      jest.doMock("@/lib/models", () => {
-        const actual = jest.requireActual("@/lib/models");
-        return {
-          ...actual,
-          getBussinessInfoCollection: jest
-            .fn()
-            .mockResolvedValue(mockCollection),
-        };
-      });
+      jest.doMock("@/lib/utils/businessInfo", () => ({
+        getBusinessInfo: jest.fn().mockRejectedValue(new Error("DB error")),
+        updateBusinessInfo: jest
+          .fn()
+          .mockRejectedValue(new Error("DB write error")),
+      }));
       // Re-mock auth since resetModules clears it
       jest.doMock("@/lib/utils/auth", () => ({
         isAuthenticated: jest.fn().mockResolvedValue(true),
       }));
+      jest.doMock("@/lib/models", () => {
+        const actual = jest.requireActual("@/lib/models");
+        return actual;
+      });
       const { PUT: mockedPUT } = require("@/app/api/admin/shop/route");
 
       const request = new NextRequest("http://localhost:3000/api/admin/shop", {
@@ -247,7 +243,7 @@ describe("/api/admin/shop", () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe("Failed to update shop information");
+      expect(data.error).toBe("Internal server error");
 
       jest.restoreAllMocks();
     });

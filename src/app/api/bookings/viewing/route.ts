@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
+import { ipAddress } from "@vercel/functions";
 import {
   getCarViewingBookingsCollection,
   CarViewingBooking,
@@ -20,7 +22,7 @@ import React from "react";
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const ip = ipAddress(request) || "unknown";
     const rateLimit = checkRateLimit(`viewing-booking:${ip}`, 5, 60000);
 
     if (!rateLimit.allowed) {
@@ -115,32 +117,38 @@ export async function POST(request: NextRequest) {
 
     await viewingCollection.insertOne(newBooking as CarViewingBooking);
 
-    // Get shop info for email
-    const shopInfo = await getBusinessInfo();
+    // Send confirmation email in the background after responding
+    waitUntil(
+      (async () => {
+        try {
+          const shopInfo = await getBusinessInfo();
+          const emailShopInfo = {
+            businessName: shopInfo.businessName,
+            phone: shopInfo.phone,
+            email: shopInfo.email,
+            address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+          };
 
-    // Send confirmation email
-    const emailShopInfo = {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    };
+          const emailResult = await sendEmail({
+            to: body.customerInfo.email,
+            subject: `🚗 Car Viewing Confirmation - ${bookingReference}`,
+            react: React.createElement(CarViewingConfirmation, {
+              booking: newBooking as CarViewingBooking,
+              shopInfo: emailShopInfo,
+            }),
+          });
 
-    const emailResult = await sendEmail({
-      to: body.customerInfo.email,
-      subject: `🚗 Car Viewing Confirmation - ${bookingReference}`,
-      react: React.createElement(CarViewingConfirmation, {
-        booking: newBooking as CarViewingBooking,
-        shopInfo: emailShopInfo,
-      }),
-    });
-
-    if (!emailResult.success) {
-      console.warn(
-        "⚠️ Email failed to send but booking was created:",
-        emailResult.error
-      );
-    }
+          if (!emailResult.success) {
+            console.warn(
+              "⚠️ Email failed to send but booking was created:",
+              emailResult.error
+            );
+          }
+        } catch (emailError) {
+          console.error("Error sending car viewing email:", emailError);
+        }
+      })()
+    );
 
     return NextResponse.json({
       success: true,

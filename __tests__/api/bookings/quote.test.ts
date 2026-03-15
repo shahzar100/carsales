@@ -10,7 +10,11 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/bookings/quote/route";
-import { getTestCollections, createTestShopInfo } from "../../utils/testUtils";
+import {
+  getTestCollections,
+  createTestShopInfo,
+  flushWaitUntil,
+} from "../../utils/testUtils";
 
 // Mock email sending
 jest.mock("@/emails/send", () => ({
@@ -123,6 +127,9 @@ describe("/api/bookings/quote", () => {
 
       await POST(request);
 
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
+
       expect(mockSendEmail).toHaveBeenCalledTimes(1);
       expect(mockSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -164,6 +171,9 @@ describe("/api/bookings/quote", () => {
       );
 
       await POST(request);
+
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
 
       expect(mockSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({

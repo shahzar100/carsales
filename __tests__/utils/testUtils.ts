@@ -3,6 +3,20 @@ import { NextRequest } from "next/server";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
 
+/**
+ * Flush all promises passed to waitUntil() so background work
+ * (e.g. email sends) completes before assertions run.
+ */
+export const flushWaitUntil = async () => {
+  const { waitUntil } = require("@vercel/functions");
+  const calls: [Promise<unknown>][] = waitUntil.mock.calls;
+  await Promise.all(
+    calls.map(([promise]: [Promise<unknown>]) =>
+      Promise.resolve(promise).catch(() => {})
+    )
+  );
+};
+
 // Mock email sending for testing
 export const mockSendEmail = jest.fn().mockResolvedValue({ success: true });
 
@@ -176,13 +190,12 @@ export const seedDatabase = async () => {
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
   const db = client.db("MMC");
-  const venueDb = client.db("Venue");
 
   // Add test car
   await db.collection("cars").insertOne(createTestCar());
 
   // Add test shop info
-  await venueDb.collection("MMC_Leeds").insertOne(createTestShopInfo());
+  await db.collection("businessInfo").insertOne(createTestShopInfo());
 
   // Add test service appointment
   await db
@@ -202,11 +215,14 @@ export const getTestCollections = async () => {
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
   const db = client.db("MMC");
-  const venueDb = client.db("Venue");
 
   return {
     cars: db.collection("cars"),
-    shopInfo: venueDb.collection("MMC_Leeds"),
+    shopInfo: db.collection("businessInfo"),
+    detailingPackages: db.collection("detailingPackages"),
+    tintOptions: db.collection("tintOptions"),
+    serviceOverviews: db.collection("serviceOverviews"),
+    recoveryInfo: db.collection("recoveryInfo"),
     serviceAppointments: db.collection("serviceAppointments"),
     carViewingBookings: db.collection("carViewingBookings"),
     adminUsers: db.collection("adminUsers"),

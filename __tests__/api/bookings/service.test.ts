@@ -3,7 +3,7 @@
  */
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/bookings/service/route";
-import { getTestCollections } from "../../utils/testUtils";
+import { getTestCollections, flushWaitUntil } from "../../utils/testUtils";
 
 // Mock email sending
 jest.mock("@/emails/send", () => ({
@@ -70,6 +70,9 @@ describe("/api/bookings/service", () => {
       expect(savedBooking?.customerInfo.name).toBe("John Doe");
       expect(savedBooking?.serviceType).toBe("Oil Change");
       await client.close();
+
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
 
       // Verify email was sent
       const { sendEmail: mockSendEmail } = require("@/emails/send");
@@ -155,6 +158,9 @@ describe("/api/bookings/service", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
+
+      // Flush background email send (waitUntil)
+      await flushWaitUntil();
 
       // Verify email was called with default shop info
       const { sendEmail: mockSendEmailFn } = require("@/emails/send");

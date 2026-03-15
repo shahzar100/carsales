@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
@@ -76,27 +77,41 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Get shop info for email
-    const shopInfo = await getBusinessInfo();
+    // Send cancellation email in the background after responding
+    const customerEmail = booking.customerInfo.email;
+    waitUntil(
+      (async () => {
+        try {
+          const shopInfo = await getBusinessInfo();
+          const updatedBooking = { ...booking, cancellationReason: reason };
+          const emailShopInfo = {
+            businessName: shopInfo.businessName,
+            phone: shopInfo.phone,
+            email: shopInfo.email,
+            address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+          };
 
-    // Send cancellation email
-    const updatedBooking = { ...booking, cancellationReason: reason };
-    const emailShopInfo = {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    };
+          const emailResult = await sendEmail({
+            to: customerEmail,
+            subject: `Booking Cancellation - ${bookingReference}`,
+            react: React.createElement(BookingCancellation, {
+              booking: updatedBooking,
+              bookingType: type as "service" | "viewing",
+              shopInfo: emailShopInfo,
+            }),
+          });
 
-    await sendEmail({
-      to: booking.customerInfo.email,
-      subject: `Booking Cancellation - ${bookingReference}`,
-      react: React.createElement(BookingCancellation, {
-        booking: updatedBooking,
-        bookingType: type as "service" | "viewing",
-        shopInfo: emailShopInfo,
-      }),
-    });
+          if (!emailResult.success) {
+            console.warn(
+              "⚠️ Cancellation email failed to send:",
+              emailResult.error
+            );
+          }
+        } catch (emailError) {
+          console.error("Error sending cancellation email:", emailError);
+        }
+      })()
+    );
 
     return NextResponse.json({
       success: true,

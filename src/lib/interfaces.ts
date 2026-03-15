@@ -87,6 +87,7 @@ export interface DetailingPackage {
   name: string;
   subtitle: string;
   price: string;
+  priceInPence?: number;
   duration: string;
   description: string;
   exteriorFeatures: string[];
@@ -99,6 +100,8 @@ export interface TintOption {
   name: string;
   type: string;
   price: string;
+  priceMinInPence?: number;
+  priceMaxInPence?: number;
   vlt: string;
   warranty: string;
   description: string;

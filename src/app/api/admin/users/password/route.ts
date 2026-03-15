@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import crypto from "crypto";
 import { hashPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
@@ -101,18 +102,27 @@ export async function POST(request: NextRequest) {
       { $set: { resetToken, resetTokenExpiry, updatedAt: new Date() } }
     );
 
-    const emailResult = await sendEmail({
-      to: user.email,
-      subject: "Password Reset — Admin Panel",
-      react: React.createElement(PasswordReset, { username, resetToken }),
-    });
+    // Send reset email in the background — token is already saved in DB
+    waitUntil(
+      (async () => {
+        try {
+          const emailResult = await sendEmail({
+            to: user.email,
+            subject: "Password Reset — Admin Panel",
+            react: React.createElement(PasswordReset, { username, resetToken }),
+          });
 
-    if (!emailResult.success) {
-      return NextResponse.json(
-        { error: "Failed to send email. Please try again." },
-        { status: 500 }
-      );
-    }
+          if (!emailResult.success) {
+            console.warn(
+              "⚠️ Password reset email failed to send:",
+              emailResult.error
+            );
+          }
+        } catch (emailError) {
+          console.error("Error sending password reset email:", emailError);
+        }
+      })()
+    );
 
     return NextResponse.json({
       success: true,

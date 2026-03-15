@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
+import { ipAddress } from "@vercel/functions";
 import { getQuotesCollection, Quote } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { generateQuoteReference } from "@/lib/utils/booking";
@@ -16,7 +18,7 @@ import React from "react";
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const ip = ipAddress(request) || "unknown";
     const rateLimit = checkRateLimit(`quote:${ip}`, 3, 60000);
 
     if (!rateLimit.allowed) {
@@ -97,32 +99,38 @@ export async function POST(request: NextRequest) {
 
     await quotesCollection.insertOne(newQuote as Quote);
 
-    // Get shop info for email
-    const shopInfo = await getBusinessInfo();
+    // Send confirmation email in the background after responding
+    waitUntil(
+      (async () => {
+        try {
+          const shopInfo = await getBusinessInfo();
+          const emailShopInfo = {
+            businessName: shopInfo.businessName,
+            phone: shopInfo.phone,
+            email: shopInfo.email,
+            address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+          };
 
-    // Send confirmation email
-    const emailShopInfo = {
-      businessName: shopInfo.businessName,
-      phone: shopInfo.phone,
-      email: shopInfo.email,
-      address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
-    };
+          const emailResult = await sendEmail({
+            to: newQuote.customerInfo.email,
+            subject: `Quote Request ${quoteReference} - ${shopInfo.businessName}`,
+            react: React.createElement(QuoteConfirmation, {
+              quote: newQuote as Quote,
+              shopInfo: emailShopInfo,
+            }),
+          });
 
-    const emailResult = await sendEmail({
-      to: newQuote.customerInfo.email,
-      subject: `Quote Request ${quoteReference} - ${shopInfo.businessName}`,
-      react: React.createElement(QuoteConfirmation, {
-        quote: newQuote as Quote,
-        shopInfo: emailShopInfo,
-      }),
-    });
-
-    if (!emailResult.success) {
-      console.warn(
-        "⚠️ Email failed to send but quote was created:",
-        emailResult.error
-      );
-    }
+          if (!emailResult.success) {
+            console.warn(
+              "⚠️ Email failed to send but quote was created:",
+              emailResult.error
+            );
+          }
+        } catch (emailError) {
+          console.error("Error sending quote confirmation email:", emailError);
+        }
+      })()
+    );
 
     return NextResponse.json({
       success: true,

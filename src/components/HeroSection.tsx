@@ -12,6 +12,7 @@ import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import HeroFeaturedCarWrapper from "./HeroFeaturedCarWrapper";
 
 const HeroSection = async () => {
   const [featuredCar, businessInfo] = await Promise.all([
@@ -70,6 +71,7 @@ const HeroSection = async () => {
 
           {/* Right Column - Featured Car */}
           {featuredCar?.make && (
+            <HeroFeaturedCarWrapper>
             <div className="relative">
               <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/2 shadow-2xl ring-1 shadow-black/40 ring-white/5">
                 {/* Car Image — full-bleed with overlay */}
@@ -146,6 +148,7 @@ const HeroSection = async () => {
                 </div>
               </div>
             </div>
+            </HeroFeaturedCarWrapper>
           )}
         </div>
 

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchContext } from "@/backend/SearchContext";
 import FilterBar from "./Filters/FilterBar";
 import ItemGrid from "./ItemGrid";
+import { useSkeleton } from "@/hooks/useSkeleton";
+import { ShopItemSkeletonGrid } from "@/components/UI/Skeleton";
+import { SkeletonWrapper } from "@/components/UI/Skeleton";
 
 interface Car {
   _id: string;
@@ -25,6 +28,7 @@ const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
   const [isClient, setIsClient] = useState(false);
   const [filteredCars, setFilteredCars] = useState<Car[]>(cars);
   const { filters } = useSearchContext();
+  const isLoading = useSkeleton(1000, 3000);
 
   useEffect(() => {
     setIsClient(true);
@@ -101,7 +105,12 @@ const CarFleetShop: React.FC<CarFleetShopProps> = ({ cars }) => {
           </p>
 
           {/* Car Grid */}
-          <ItemGrid cars={filteredCars} />
+          <SkeletonWrapper
+            isLoading={isLoading}
+            skeleton={<ShopItemSkeletonGrid count={6} />}
+          >
+            <ItemGrid cars={filteredCars} />
+          </SkeletonWrapper>
         </div>
       )}
     </>

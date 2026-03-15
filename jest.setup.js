@@ -2,6 +2,17 @@
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { MongoClient } = require("mongodb");
 
+// Mock @vercel/functions for testing
+// - waitUntil: no-op (the IIFE promise runs anyway); use flushWaitUntil() in
+//   tests that need to assert on background work.
+// - ipAddress: extracts the first IP from x-forwarded-for, mirroring Vercel.
+jest.mock("@vercel/functions", () => ({
+  waitUntil: jest.fn(),
+  ipAddress: jest.fn(
+    (req) => req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null
+  ),
+}));
+
 // Mock @/backend/mongodb to use a lazy connection that defers until
 // MONGODB_URI is available (set in beforeAll after MongoMemoryServer starts)
 jest.mock("@/backend/mongodb", () => {

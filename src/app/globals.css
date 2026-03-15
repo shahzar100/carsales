@@ -172,3 +172,40 @@
 .range-separator {
   @apply text-xs font-medium text-gray-300;
 }
+
+/* ---- Skeleton shimmer ---- */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 0%,
+    #e5e7eb 40%,
+    #f3f4f6 50%,
+    #e5e7eb 60%,
+    #e5e7eb 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-shimmer-dark {
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 60%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
