@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
     if (!user && action === "reminder") {
       return NextResponse.json({
         success: true,
-        message: "If an account with that username exists, a password reminder email has been sent",
+        message:
+          "If an account with that username exists, a password reminder email has been sent",
         emailSent: true,
       });
     }
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Password Reminder (email reset link) ────────────────
-    if (!user!.email) {
+    if (!user || !user.email) {
       return NextResponse.json(
         {
           error:

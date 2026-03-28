@@ -20,8 +20,7 @@ if (!process.env.SESSION_SECRET) {
 
 export const sessionOptions: SessionOptions = {
   password:
-    process.env.SESSION_SECRET ||
-    "dev-only-fallback-secret-at-least-32chars!",
+    process.env.SESSION_SECRET || "dev-only-fallback-secret-at-least-32chars!",
   cookieName: "carsales_admin_session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

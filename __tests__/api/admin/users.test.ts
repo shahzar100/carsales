@@ -1,8 +1,8 @@
 /**
  * @jest-environment node
- * 
+ *
  * Tests for admin users API (src/app/api/admin/users/route.ts)
- * 
+ *
  * Standards coverage:
  * - 🔒 Security: User creation validation, duplicate prevention, password generation
  * - 📋 Functional: User management operations
@@ -34,13 +34,16 @@ describe("/api/admin/users", () => {
   describe("🔒 Security Standards - Input Validation", () => {
     describe("POST - Username validation", () => {
       it("should reject missing username", async () => {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            email: "test@example.com",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: "test@example.com",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -50,14 +53,17 @@ describe("/api/admin/users", () => {
       });
 
       it("should reject null username", async () => {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: null,
-            email: "test@example.com",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: null,
+              email: "test@example.com",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -67,14 +73,17 @@ describe("/api/admin/users", () => {
       });
 
       it("should reject username shorter than 3 characters", async () => {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "ab",
-            email: "test@example.com",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: "ab",
+              email: "test@example.com",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -94,14 +103,17 @@ describe("/api/admin/users", () => {
         ];
 
         for (const username of invalidUsernames) {
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username,
-              email: "test@example.com",
-              role: "staff",
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username,
+                email: "test@example.com",
+                role: "staff",
+              }),
+            }
+          );
 
           const response = await POST(request);
           const data = await response.json();
@@ -112,17 +124,25 @@ describe("/api/admin/users", () => {
       });
 
       it("should accept valid usernames", async () => {
-        const validUsernames = ["user123", "test_user", "USER_NAME", "user_123_test"];
+        const validUsernames = [
+          "user123",
+          "test_user",
+          "USER_NAME",
+          "user_123_test",
+        ];
 
         for (const username of validUsernames) {
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username,
-              email: `${username}@example.com`,
-              role: "staff",
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username,
+                email: `${username}@example.com`,
+                role: "staff",
+              }),
+            }
+          );
 
           const response = await POST(request);
           expect(response.status).toBe(200);
@@ -132,13 +152,16 @@ describe("/api/admin/users", () => {
 
     describe("POST - Email validation", () => {
       it("should reject missing email", async () => {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "testuser",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: "testuser",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -158,14 +181,17 @@ describe("/api/admin/users", () => {
         ];
 
         for (const email of invalidEmails) {
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username: "testuser",
-              email,
-              role: "staff",
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username: "testuser",
+                email,
+                role: "staff",
+              }),
+            }
+          );
 
           const response = await POST(request);
           const data = await response.json();
@@ -185,14 +211,17 @@ describe("/api/admin/users", () => {
 
         for (let i = 0; i < validEmails.length; i++) {
           const email = validEmails[i];
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username: `user_valid_${i}_${Date.now()}`,
-              email,
-              role: "staff",
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username: `user_valid_${i}_${Date.now()}`,
+                email,
+                role: "staff",
+              }),
+            }
+          );
 
           const response = await POST(request);
           expect(response.status).toBe(200);
@@ -202,13 +231,16 @@ describe("/api/admin/users", () => {
 
     describe("POST - Role validation", () => {
       it("should reject missing role", async () => {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "testuser",
-            email: "test@example.com",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: "testuser",
+              email: "test@example.com",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -221,14 +253,17 @@ describe("/api/admin/users", () => {
         const invalidRoles = ["superadmin", "user", "guest", "moderator", ""];
 
         for (const role of invalidRoles) {
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username: "testuser",
-              email: "test@example.com",
-              role,
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username: "testuser",
+                email: "test@example.com",
+                role,
+              }),
+            }
+          );
 
           const response = await POST(request);
           const data = await response.json();
@@ -242,14 +277,17 @@ describe("/api/admin/users", () => {
         const validRoles = ["staff", "manager", "admin"];
 
         for (const role of validRoles) {
-          const request = new NextRequest("http://localhost:3000/api/admin/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username: `user_${role}`,
-              email: `${role}@example.com`,
-              role,
-            }),
-          });
+          const request = new NextRequest(
+            "http://localhost:3000/api/admin/users",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                username: `user_${role}`,
+                email: `${role}@example.com`,
+                role,
+              }),
+            }
+          );
 
           const response = await POST(request);
           const data = await response.json();
@@ -263,7 +301,7 @@ describe("/api/admin/users", () => {
     describe("POST - Duplicate prevention", () => {
       it("should prevent duplicate usernames", async () => {
         const { adminUsers } = await getTestCollections();
-        
+
         // Create first user
         await adminUsers.insertOne({
           username: "existinguser",
@@ -274,14 +312,17 @@ describe("/api/admin/users", () => {
         });
 
         // Attempt to create user with same username
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "existinguser",
-            email: "different@example.com",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: "existinguser",
+              email: "different@example.com",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -292,7 +333,7 @@ describe("/api/admin/users", () => {
 
       it("should prevent duplicate emails", async () => {
         const { adminUsers } = await getTestCollections();
-        
+
         // Create first user
         await adminUsers.insertOne({
           username: "firstuser",
@@ -303,14 +344,17 @@ describe("/api/admin/users", () => {
         });
 
         // Attempt to create user with same email
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "differentuser",
-            email: "duplicate@example.com",
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: "differentuser",
+              email: "duplicate@example.com",
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -361,7 +405,7 @@ describe("/api/admin/users", () => {
 
     it("should save user to database with correct fields", async () => {
       const { adminUsers } = await getTestCollections();
-      
+
       const request = new NextRequest("http://localhost:3000/api/admin/users", {
         method: "POST",
         body: JSON.stringify({
@@ -374,7 +418,7 @@ describe("/api/admin/users", () => {
       await POST(request);
 
       const savedUser = await adminUsers.findOne({ username: "dbtest" });
-      
+
       expect(savedUser).toBeDefined();
       expect(savedUser?.username).toBe("dbtest");
       expect(savedUser?.email).toBe("dbtest@example.com");
@@ -386,7 +430,7 @@ describe("/api/admin/users", () => {
     it("should hash password before storing", async () => {
       const { adminUsers } = await getTestCollections();
       const { hashPassword } = require("@/lib/utils/auth");
-      
+
       const request = new NextRequest("http://localhost:3000/api/admin/users", {
         method: "POST",
         body: JSON.stringify({
@@ -400,7 +444,7 @@ describe("/api/admin/users", () => {
       const data = await response.json();
 
       const savedUser = await adminUsers.findOne({ username: "hashtest" });
-      
+
       // Password should not be stored in plain text
       expect(savedUser?.passwordHash).not.toBe(data.password);
       // Hash function should have been called
@@ -423,21 +467,26 @@ describe("/api/admin/users", () => {
       const data = await response.json();
 
       // Password should be in format: xxxx-xxxx-xxxx-xxxx
-      expect(data.password).toMatch(/^[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}$/);
+      expect(data.password).toMatch(
+        /^[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}$/
+      );
     });
 
     it("should generate unique passwords for each user", async () => {
       const passwords = new Set();
 
       for (let i = 0; i < 10; i++) {
-        const request = new NextRequest("http://localhost:3000/api/admin/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: `user${i}`,
-            email: `user${i}@example.com`,
-            role: "staff",
-          }),
-        });
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/users",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: `user${i}`,
+              email: `user${i}@example.com`,
+              role: "staff",
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -465,7 +514,7 @@ describe("/api/admin/users", () => {
 
     it("should provide specific error for duplicate username", async () => {
       const { adminUsers } = await getTestCollections();
-      
+
       await adminUsers.insertOne({
         username: "duplicate",
         email: "first@example.com",
@@ -492,7 +541,7 @@ describe("/api/admin/users", () => {
 
     it("should provide specific error for duplicate email", async () => {
       const { adminUsers } = await getTestCollections();
-      
+
       await adminUsers.insertOne({
         username: "first",
         email: "duplicate@example.com",
