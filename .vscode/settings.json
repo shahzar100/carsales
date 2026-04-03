@@ -1,6 +1,11 @@
 {
   "chat.agent.maxRequests": 30,
   "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "runTests": true,
+    "runInTerminal": true,
+    "awaitTerminal": true
+  },
   "jest.virtualFolders": [
     {
       "name": "components",

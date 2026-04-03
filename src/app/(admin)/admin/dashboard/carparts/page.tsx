@@ -1,0 +1,424 @@
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
+import { PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
+import Button from "@/components/Helpful/Buttons/Button";
+import Modal from "@/components/Helpful/Buttons/Modal";
+import { useToast } from "@/contexts/ToastContext";
+import { CarPartInterface } from "@/lib/interfaces";
+
+export default function CarPartsManagement() {
+  const [parts, setParts] = useState<CarPartInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<CarPartInterface | null>(
+    null
+  );
+  const [deleting, setDeleting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const toast = useToast();
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    brand: "",
+    category: "",
+    price: "",
+    image: "",
+    condition: "New" as "New" | "Used" | "Refurbished",
+    compatibility: "",
+    description: "",
+    inStock: true,
+  });
+
+  const fetchParts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/carparts");
+      if (!res.ok) throw new Error("Failed to fetch car parts");
+      const data = await res.json();
+      setParts(data);
+    } catch {
+      toast.error("Failed to load car parts");
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchParts();
+  }, [fetchParts]);
+
+  const handleAddPart = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSubmitting(true);
+      const res = await fetch("/api/admin/carparts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to add part");
+      toast.success("Car part added successfully");
+      setShowAddForm(false);
+      setFormData({
+        name: "",
+        brand: "",
+        category: "",
+        price: "",
+        image: "",
+        condition: "New",
+        compatibility: "",
+        description: "",
+        inStock: true,
+      });
+      fetchParts();
+    } catch {
+      toast.error("Failed to add car part");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeletePart = async () => {
+    if (!deleteTarget?._id) return;
+    try {
+      setDeleting(true);
+      const res = await fetch(`/api/admin/carparts?id=${deleteTarget._id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete part");
+      toast.success("Car part deleted successfully");
+      setDeleteTarget(null);
+      fetchParts();
+    } catch {
+      toast.error("Failed to delete car part");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-red-600" />
+          <span className="text-lg text-gray-600">Loading car parts...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Car Parts Management
+          </h1>
+          <p className="text-sm text-gray-500">
+            {parts.length} parts in inventory
+          </p>
+        </div>
+        <Button onClick={() => setShowAddForm(true)}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Part
+        </Button>
+      </div>
+
+      {/* Add Part Form Modal */}
+      {showAddForm && (
+        <Modal title="Add New Part" onClose={() => setShowAddForm(false)}>
+          <form onSubmit={handleAddPart} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Brand
+                </label>
+                <input
+                  type="text"
+                  value={formData.brand}
+                  onChange={(e) =>
+                    setFormData({ ...formData, brand: e.target.value })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Category
+                </label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: e.target.value })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Condition
+                </label>
+                <select
+                  value={formData.condition}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      condition: e.target.value as
+                        | "New"
+                        | "Used"
+                        | "Refurbished",
+                    })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                >
+                  <option value="New">New</option>
+                  <option value="Used">Used</option>
+                  <option value="Refurbished">Refurbished</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Compatibility
+              </label>
+              <input
+                type="text"
+                value={formData.compatibility}
+                onChange={(e) =>
+                  setFormData({ ...formData, compatibility: e.target.value })
+                }
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Image URL
+              </label>
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="inStock"
+                checked={formData.inStock}
+                onChange={(e) =>
+                  setFormData({ ...formData, inStock: e.target.checked })
+                }
+              />
+              <label
+                htmlFor="inStock"
+                className="text-sm font-medium text-gray-700"
+              >
+                In Stock
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddForm(false)}
+                type="button"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" loading={submitting}>
+                Add Part
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <Modal title="Confirm Deletion" onClose={() => setDeleteTarget(null)}>
+          <div className="space-y-4">
+            <p className="text-gray-700">
+              Are you sure you want to delete{" "}
+              <strong>{deleteTarget.name}</strong>?
+            </p>
+            <p className="text-sm text-red-600">
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteTarget(null)}
+                type="button"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleDeletePart}
+                loading={deleting}
+              >
+                Delete Part
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Content — hidden when delete confirmation is active */}
+      {!deleteTarget && (
+        <>
+          {parts.length === 0 ? (
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12">
+              <p className="mb-4 text-lg font-medium text-gray-500">
+                No Parts Yet
+              </p>
+              <p className="mb-6 text-sm text-gray-400">
+                Add your first car part to get started.
+              </p>
+              <Button onClick={() => setShowAddForm(true)}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add First Part
+              </Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Brand
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Category
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Price
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Condition
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      In Stock
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {parts.map((part) => (
+                    <tr key={part._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                        {part.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {part.brand}
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {part.category}
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        £{part.price}
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                            part.condition === "New"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : part.condition === "Refurbished"
+                                ? "bg-gray-100 text-gray-700"
+                                : "bg-amber-100 text-amber-700"
+                          }`}
+                        >
+                          {part.condition}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        <span
+                          className={`font-medium ${
+                            part.inStock ? "text-emerald-600" : "text-red-600"
+                          }`}
+                        >
+                          <span className="sr-only">Status: </span>
+                          {part.inStock ? "In Stock" : "Out of Stock"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => setDeleteTarget(part)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

@@ -12,7 +12,7 @@ import { NextRequest } from "next/server";
 import { GET } from "@/app/api/admin/session/route";
 
 // Mock session management
-const mockSession = {
+const mockSession: { isLoggedIn: any; username: any } = {
   isLoggedIn: false,
   username: undefined,
 };

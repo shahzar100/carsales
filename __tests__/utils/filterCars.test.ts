@@ -27,6 +27,7 @@ describe("Car Filtering Utilities", () => {
       doors: 4,
       colour: "White",
       status: "available",
+      featured: false,
       features: ["Navigation", "Leather Seats"],
       description: "Well maintained",
       image: "camry.jpg",
@@ -45,6 +46,7 @@ describe("Car Filtering Utilities", () => {
       doors: 4,
       colour: "Black",
       status: "available",
+      featured: false,
       features: ["Bluetooth", "Cruise Control"],
       description: "Sporty and efficient",
       image: "civic.jpg",
@@ -63,6 +65,7 @@ describe("Car Filtering Utilities", () => {
       doors: 5,
       colour: "Blue",
       status: "sold",
+      featured: false,
       features: ["Navigation", "Leather Seats", "Sunroof"],
       description: "Luxury SUV",
       image: "x5.jpg",
@@ -81,6 +84,7 @@ describe("Car Filtering Utilities", () => {
       doors: 4,
       colour: "White",
       status: "available",
+      featured: false,
       features: ["Bluetooth"],
       description: "Eco-friendly option",
       image: "corolla.jpg",
@@ -99,6 +103,7 @@ describe("Car Filtering Utilities", () => {
       doors: 2,
       colour: "Red",
       status: "available",
+      featured: false,
       features: ["Navigation", "Premium Sound"],
       description: "Sports car",
       image: "mustang.jpg",
@@ -126,7 +131,7 @@ describe("Car Filtering Utilities", () => {
     jest.clearAllMocks();
   });
 
-  describe("📋 Functional Standards - Search Functionality", () => {
+  describe("\ud83d\udccb Functional Standards - Search Functionality", () => {
     it("should return all cars with empty search term", () => {
       const result = filterCars(testCars, defaultFilters);
       expect(result.length).toBe(5);
@@ -197,7 +202,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Status Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Status Filter", () => {
     it("should filter by available status", () => {
       const filters = { ...defaultFilters, statusFilter: "available" };
       const result = filterCars(testCars, filters);
@@ -222,7 +227,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Make Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Make Filter", () => {
     it("should filter by specific make", () => {
       const filters = { ...defaultFilters, make: "Toyota" };
       const result = filterCars(testCars, filters);
@@ -246,7 +251,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Year Range Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Year Range Filter", () => {
     it("should filter by minimum year", () => {
       const filters = { ...defaultFilters, yearMin: 2023 };
       const result = filterCars(testCars, filters);
@@ -281,7 +286,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Price Range Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Price Range Filter", () => {
     it("should filter by minimum price", () => {
       const filters = { ...defaultFilters, priceMin: 40000 };
       const result = filterCars(testCars, filters);
@@ -317,7 +322,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Mileage Range Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Mileage Range Filter", () => {
     it("should filter by minimum mileage", () => {
       const filters = { ...defaultFilters, mileageMin: 20000 };
       const result = filterCars(testCars, filters);
@@ -349,7 +354,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Doors Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Doors Filter", () => {
     it("should filter by number of doors", () => {
       const filters = { ...defaultFilters, doors: "4" };
       const result = filterCars(testCars, filters);
@@ -374,7 +379,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Colour Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Colour Filter", () => {
     it("should filter by specific colour", () => {
       const filters = { ...defaultFilters, colour: "White" };
       const result = filterCars(testCars, filters);
@@ -391,7 +396,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Features Filter", () => {
+  describe("\ud83d\udccb Functional Standards - Features Filter", () => {
     it("should filter by single feature", () => {
       const filters = { ...defaultFilters, features: ["Navigation"] };
       const result = filterCars(testCars, filters);
@@ -438,7 +443,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("📋 Functional Standards - Combined Filters", () => {
+  describe("\ud83d\udccb Functional Standards - Combined Filters", () => {
     it("should apply multiple filters simultaneously", () => {
       const filters: FilterState = {
         ...defaultFilters,
@@ -483,7 +488,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("🔒 Security Standards - XSS Prevention", () => {
+  describe("\ud83d\udd12 Security Standards - XSS Prevention", () => {
     it("should handle script tags in search term", () => {
       const filters = {
         ...defaultFilters,
@@ -538,7 +543,7 @@ describe("Car Filtering Utilities", () => {
     });
   });
 
-  describe("⚡ Performance Standards", () => {
+  describe("\u26a1 Performance Standards", () => {
     it("should handle large datasets efficiently", () => {
       const largeCars = Array.from({ length: 1000 }, (_, i) => ({
         ...testCars[0],

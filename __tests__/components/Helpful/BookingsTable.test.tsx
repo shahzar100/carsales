@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import BookingsTable from "@/components/Helpful/BookingsTable";
-import { Booking } from "@/lib/types";
+
 
 // Mock Button
 jest.mock("@/components/Helpful/Buttons/Button", () => {
@@ -16,7 +16,7 @@ jest.mock("@/components/Helpful/Buttons/Button", () => {
   };
 });
 
-const mockViewingBooking: Booking = {
+const mockViewingBooking = {
   _id: "1",
   bookingReference: "VW-001",
   type: "viewing",
@@ -26,7 +26,7 @@ const mockViewingBooking: Booking = {
     email: "john@test.com",
     phone: "07123456789",
   },
-  appointmentDate: new Date("2025-01-15"),
+  appointmentDate: "2025-01-15",
   appointmentTime: "10:00 AM",
   carId: "car1",
   carDetails: {
@@ -43,7 +43,7 @@ const mockViewingBooking: Booking = {
   createdAt: new Date(),
 };
 
-const mockServiceBooking: Booking = {
+const mockServiceBooking = {
   _id: "2",
   bookingReference: "SB-002",
   type: "service",
@@ -53,7 +53,7 @@ const mockServiceBooking: Booking = {
     email: "jane@test.com",
     phone: "07111222333",
   },
-  appointmentDate: new Date("2025-02-01"),
+  appointmentDate: "2025-02-01",
   appointmentTime: "2:00 PM",
   serviceType: "Full Service",
   createdAt: new Date(),

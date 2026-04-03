@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     const booking = serviceBooking || viewingBooking;
 
     // Verify email matches — return generic error to prevent enumeration
-    const bookingEmail = booking?.customerInfo?.email || booking?.email;
+    const bookingEmail = booking?.customerInfo?.email;
     if (!booking || bookingEmail?.toLowerCase() !== email.toLowerCase()) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }

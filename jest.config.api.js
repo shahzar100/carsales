@@ -24,4 +24,15 @@ const customJestConfig = {
   testTimeout: 30000,
 };
 
-module.exports = createJestConfig(customJestConfig);
+// Post-process the resolved config to override next/jest transformIgnorePatterns
+// which blocks bson/mongodb ESM modules from being transformed
+const jestConfigFn = createJestConfig(customJestConfig);
+
+module.exports = async () => {
+  const config = await jestConfigFn();
+  config.transformIgnorePatterns = [
+    "/node_modules/(?!(bson|mongodb|geist)/)",
+    "^.+\\.module\\.(css|sass|scss)$",
+  ];
+  return config;
+};

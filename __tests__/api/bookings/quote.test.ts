@@ -8,19 +8,14 @@
  * - 🔒 Security: Input validation, rate limiting, XSS sanitisation
  * - 🎯 Usability: Proper error messages for invalid input
  */
-import { NextRequest } from "next/server";
-import { POST } from "@/app/api/bookings/quote/route";
 import {
   getTestCollections,
   createTestShopInfo,
   flushWaitUntil,
+  mockSendEmail,
 } from "../../utils/testUtils";
-
-// Mock email sending
-jest.mock("@/emails/send", () => ({
-  sendEmail: jest.fn().mockResolvedValue({ success: true }),
-}));
-const { sendEmail: mockSendEmail } = require("@/emails/send");
+import { NextRequest } from "next/server";
+import { POST } from "@/app/api/bookings/quote/route";
 
 // Mock QuoteConfirmation email component
 jest.mock("@/emails/QuoteConfirmation", () => ({
@@ -67,11 +62,14 @@ describe("/api/bookings/quote", () => {
   });
 
   afterEach(async () => {
+    // Drain any pending background work (waitUntil IIFEs) so they don't
+    // leak into subsequent tests and inflate call counts.
+    await flushWaitUntil();
     const { client } = await getTestCollections();
     await client.close();
   });
 
-  // ── Happy Path ──────────────────────────────────────────
+  // -- Happy Path ----------------------------------------------------------
 
   describe("POST - Happy Path", () => {
     it("should create a quote and return reference", async () => {
@@ -183,7 +181,7 @@ describe("/api/bookings/quote", () => {
     });
   });
 
-  // ── Rate Limiting ───────────────────────────────────────
+  // -- Rate Limiting -------------------------------------------------------
 
   describe("Rate Limiting", () => {
     it("should return 429 when rate limit is exceeded", async () => {
@@ -205,7 +203,7 @@ describe("/api/bookings/quote", () => {
     });
   });
 
-  // ── Input Validation ────────────────────────────────────
+  // -- Input Validation ----------------------------------------------------
 
   describe("Input Validation", () => {
     it("should return 400 when customer info is missing", async () => {
@@ -329,7 +327,7 @@ describe("/api/bookings/quote", () => {
     });
   });
 
-  // ── Security ────────────────────────────────────────────
+  // -- Security ------------------------------------------------------------
 
   describe("Security", () => {
     it("should sanitize customer name from XSS", async () => {

@@ -420,33 +420,34 @@ Planning → Dev (fix bugs) → Planning (resume planning)
    The codebase is clean. You can proceed with planning.
    ```
 
-### Role 2: Feature Builder (called by Design Agent)
+### Role 2: Feature Builder (called by TestCreator Agent)
 
-After the Design Agent produces design documents:
+After the TestCreator Agent writes tests (TDD: tests exist before your code):
 
 ```
-Planning → TestCreator → Design → Dev (YOU ARE HERE) → Tester
+Planning → Design → TestCreator → Dev (YOU ARE HERE) → Tester
 ```
 
 1. **Read the plan document** at `plans/<feature-name>.plan.md`.
 2. **Read the design document** at `plans/<feature-name>.design.md`.
-3. **Read `src/app/globals.css`** to know available global classes; create new ones as specified by the design doc.
-4. **Identify independent work streams** in the plan and spin up sub-agents in parallel:
+3. **Read the test files** written by the TestCreator Agent — tests define the specification your code must satisfy.
+4. **Read `src/app/globals.css`** to know available global classes; create new ones as specified by the design doc.
+5. **Identify independent work streams** in the plan and spin up sub-agents in parallel:
    - Sub-agent for backend (types → models → utils → API routes)
    - Sub-agent for frontend (global classes → Server Components → Client Components)
-5. **Assemble pages** after parallel work completes.
-6. **Validate against standards:**
+6. **Assemble pages** after parallel work completes.
+7. **Validate against standards:**
    - Call `@UXUIStandards` to verify all UI components follow the design system.
    - Call `@SEOStandards` to verify all public-facing pages meet SEO requirements.
    - Fix any violations reported.
-7. **Run tests continuously** as you build — tests were written by the TestCreator Agent and should start passing as you implement.
-8. **Fix any test failures** encountered during implementation.
-9. **After all tasks are complete**, hand off to the Tester Agent:
-   ```
-   @Tester — Implementation is complete for the plan at `plans/<feature-name>.plan.md`.
-   All features have been built following the design specifications.
-   Run the full test suite and produce a health report.
-   ```
+8. **Run tests continuously** as you build — tests were written by the TestCreator Agent and should start passing as you implement.
+9. **Fix any test failures** encountered during implementation.
+10. **After all tasks are complete**, hand off to the Tester Agent:
+    ```
+    @Tester — Implementation is complete for the plan at `plans/<feature-name>.plan.md`.
+    All features have been built following the design specifications.
+    Run the full test suite and produce a health report.
+    ```
 
 ---
 

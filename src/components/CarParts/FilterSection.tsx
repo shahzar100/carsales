@@ -3,6 +3,9 @@ import React from "react";
 import CustomDropdown from "./CustomDropdown";
 
 interface FilterSectionProps {
+  brands?: string[];
+  categories?: string[];
+  conditionFilters?: string[];
   selectedBrand: string;
   selectedCategory: string;
   selectedCondition: string;
@@ -12,6 +15,9 @@ interface FilterSectionProps {
 }
 
 const FilterSection: React.FC<FilterSectionProps> = ({
+  brands = [],
+  categories = [],
+  conditionFilters = [],
   selectedBrand,
   selectedCategory,
   selectedCondition,
@@ -21,33 +27,17 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 }) => {
   const brandOptions = [
     { value: "", label: "All Brands" },
-    { value: "BMW", label: "BMW" },
-    { value: "Honda", label: "Honda" },
-    { value: "Toyota", label: "Toyota" },
-    { value: "Audi", label: "Audi" },
-    { value: "Ford", label: "Ford" },
-    { value: "Mercedes", label: "Mercedes" },
-    { value: "Nissan", label: "Nissan" },
-    { value: "Volkswagen", label: "Volkswagen" },
+    ...brands.map((b) => ({ value: b, label: b })),
   ];
 
   const categoryOptions = [
     { value: "", label: "All Categories" },
-    { value: "Brakes", label: "Brakes" },
-    { value: "Engine", label: "Engine" },
-    { value: "Body", label: "Body" },
-    { value: "Lighting", label: "Lighting" },
-    { value: "Exhaust", label: "Exhaust" },
-    { value: "Cooling", label: "Cooling" },
-    { value: "Wheels", label: "Wheels" },
+    ...categories.map((c) => ({ value: c, label: c })),
   ];
 
   const conditionOptions = [
     { value: "", label: "All Conditions" },
-    { value: "New", label: "New" },
-    { value: "Used - Excellent", label: "Used - Excellent" },
-    { value: "Used - Good", label: "Used - Good" },
-    { value: "Refurbished", label: "Refurbished" },
+    ...conditionFilters.map((c) => ({ value: c, label: c })),
   ];
 
   return (

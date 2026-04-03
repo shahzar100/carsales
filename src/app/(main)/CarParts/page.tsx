@@ -2,8 +2,10 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Cog, CheckCircle, Clock, Shield } from "lucide-react";
-import CarPartsGrid, { CarPart } from "@/components/CarParts/CarPartsGrid";
+import CarPartsGrid from "@/components/CarParts/CarPartsGrid";
 import { BlackRedSection, ServiceHero } from "@/components/Services/Common";
+import { CarPartInterface } from "@/lib/interfaces";
+import { getCarPartsCollection, serializeDocument } from "@/lib/models";
 
 export const metadata: Metadata = {
   title: "Car Parts & Accessories",
@@ -18,99 +20,15 @@ export const metadata: Metadata = {
   },
 };
 
-const mockCarParts: CarPart[] = [
-  {
-    id: 1,
-    name: "BMW M3 Brake Pads",
-    brand: "BMW",
-    category: "Brakes",
-    price: 149.99,
-    image: "/car.jpg",
-    condition: "New",
-    compatibility: "BMW M3 2019-2023",
-    description:
-      "High-performance ceramic brake pads for superior stopping power.",
-  },
-  {
-    id: 2,
-    name: "Honda Civic Headlight Assembly",
-    brand: "Honda",
-    category: "Lighting",
-    price: 245.0,
-    image: "/car.jpg",
-    condition: "New",
-    compatibility: "Honda Civic 2016-2021",
-    description: "OEM replacement headlight with LED technology.",
-  },
-  {
-    id: 3,
-    name: "Toyota Camry Air Filter",
-    brand: "Toyota",
-    category: "Engine",
-    price: 24.99,
-    image: "/car.jpg",
-    condition: "New",
-    compatibility: "Toyota Camry 2018-2024",
-    description: "High-efficiency air filter for optimal engine performance.",
-  },
-  {
-    id: 4,
-    name: "Audi A4 Side Mirror",
-    brand: "Audi",
-    category: "Body",
-    price: 189.5,
-    image: "/car.jpg",
-    condition: "Used - Good",
-    compatibility: "Audi A4 2017-2022",
-    description: "Driver side mirror with integrated turn signal.",
-  },
-  {
-    id: 5,
-    name: "Ford F-150 Tailgate Handle",
-    brand: "Ford",
-    category: "Body",
-    price: 89.99,
-    image: "/car.jpg",
-    condition: "New",
-    compatibility: "Ford F-150 2015-2020",
-    description: "Durable replacement tailgate handle with chrome finish.",
-  },
-  {
-    id: 6,
-    name: "Mercedes C-Class Radiator",
-    brand: "Mercedes",
-    category: "Cooling",
-    price: 320.0,
-    image: "/car.jpg",
-    condition: "Refurbished",
-    compatibility: "Mercedes C-Class 2014-2019",
-    description: "Aluminum radiator with enhanced cooling capacity.",
-  },
-  {
-    id: 7,
-    name: "Nissan Altima Exhaust Pipe",
-    brand: "Nissan",
-    category: "Exhaust",
-    price: 156.75,
-    image: "/car.jpg",
-    condition: "New",
-    compatibility: "Nissan Altima 2019-2023",
-    description: "Stainless steel exhaust pipe for improved performance.",
-  },
-  {
-    id: 8,
-    name: "Volkswagen Golf Wheel Hub",
-    brand: "Volkswagen",
-    category: "Wheels",
-    price: 67.5,
-    image: "/car.jpg",
-    condition: "Used - Excellent",
-    compatibility: "VW Golf 2016-2022",
-    description: "Front wheel hub assembly with bearing included.",
-  },
-];
+const Page = async () => {
+  const getCarParts = async (): Promise<CarPartInterface[]> => {
+    const carPartsCollection = await getCarPartsCollection();
+    const parts = await carPartsCollection.find({}).toArray();
+    return parts.map((part) => serializeDocument(part));
+  };
 
-const Page = () => {
+  const parts = await getCarParts();
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <ServiceHero
@@ -134,7 +52,7 @@ const Page = () => {
       />
 
       {/* Car Parts Grid with Integrated Filters */}
-      <CarPartsGrid parts={mockCarParts} />
+      <CarPartsGrid parts={parts} />
 
       {/* Bottom Info Section */}
       <BlackRedSection className="mt-8 md:mt-16">

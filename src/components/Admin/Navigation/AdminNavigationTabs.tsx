@@ -7,6 +7,7 @@ import {
   LogOut,
   PlusCircle,
   Activity,
+  Cog,
 } from "lucide-react";
 import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
@@ -18,6 +19,7 @@ export default function AdminNavigationTabs() {
 
   const links = [
     { href: "/admin/dashboard/cars", text: "Cars", icon: Car },
+    { href: "/admin/dashboard/carparts", text: "Car Parts", icon: Cog },
     {
       href: "/admin/dashboard/service",
       text: "Service Bookings",

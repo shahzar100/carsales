@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import CarShareCard, { CarShareModal } from "@/components/SEO/CarShareCard";
+import { CarInterface } from "@/lib/interfaces";
 
 // Mock next/image
 jest.mock("next/image", () => {
@@ -17,7 +18,7 @@ jest.mock("@/components/SEO/ShareButton", () => {
   };
 });
 
-const mockCar = {
+const mockCar: CarInterface = {
   _id: "car1",
   make: "Toyota",
   model: "Camry",
@@ -28,12 +29,13 @@ const mockCar = {
   transmission: "Automatic",
   doors: 4,
   colour: "Red",
-  status: "available" as const,
+  status: "available",
   featured: false,
   image: "/car.jpg",
   features: [],
   description: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
   images: [],
 };
 
@@ -45,7 +47,7 @@ describe("CarShareCard", () => {
 
   it("renders formatted price", () => {
     render(<CarShareCard car={mockCar} />);
-    expect(screen.getByText("£25,000")).toBeInTheDocument();
+    expect(screen.getByText("\u00a325,000")).toBeInTheDocument();
   });
 
   it("renders car specs", () => {
@@ -81,7 +83,7 @@ describe("CarShareCard", () => {
 
   it("shows colour and doors in body", () => {
     render(<CarShareCard car={mockCar} />);
-    expect(screen.getByText("Red • 4 doors")).toBeInTheDocument();
+    expect(screen.getByText("Red \u2022 4 doors")).toBeInTheDocument();
   });
 });
 

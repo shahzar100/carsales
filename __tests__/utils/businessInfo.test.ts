@@ -18,25 +18,25 @@ describe("businessInfo utility", () => {
       const result = await getBusinessInfo();
 
       expect(result.detailingPackages).toBeDefined();
-      expect(result.detailingPackages.length).toBe(3);
-      expect(result.detailingPackages[0].id).toBe("bronze");
-      expect(result.detailingPackages[1].id).toBe("silver");
-      expect(result.detailingPackages[2].id).toBe("gold");
+      expect(result.detailingPackages!.length).toBe(3);
+      expect(result.detailingPackages![0].id).toBe("bronze");
+      expect(result.detailingPackages![1].id).toBe("silver");
+      expect(result.detailingPackages![2].id).toBe("gold");
     });
 
     it("returns tint options", async () => {
       const result = await getBusinessInfo();
 
       expect(result.tintOptions).toBeDefined();
-      expect(result.tintOptions.length).toBe(3);
-      expect(result.tintOptions[0].type).toBe("Ceramic");
+      expect(result.tintOptions!.length).toBe(3);
+      expect(result.tintOptions![0].type).toBe("Ceramic");
     });
 
     it("returns service overviews", async () => {
       const result = await getBusinessInfo();
 
       expect(result.serviceOverviews).toBeDefined();
-      expect(result.serviceOverviews.length).toBeGreaterThanOrEqual(3);
+      expect(result.serviceOverviews!.length).toBeGreaterThanOrEqual(3);
     });
 
     it("returns recovery info", async () => {
@@ -63,8 +63,8 @@ describe("businessInfo utility", () => {
       const second = await getBusinessInfo();
 
       expect(first.businessName).toBe(second.businessName);
-      expect(first.detailingPackages.length).toBe(
-        second.detailingPackages.length
+      expect(first.detailingPackages!.length).toBe(
+        second.detailingPackages!.length
       );
     });
   });
@@ -89,7 +89,7 @@ describe("businessInfo utility", () => {
           id: "custom",
           name: "Custom Package",
           subtitle: "Custom",
-          price: "£100",
+          price: "\u00a3100",
           priceInPence: 10000,
           duration: "1 hour",
           description: "Test",
@@ -105,19 +105,31 @@ describe("businessInfo utility", () => {
       });
 
       const result = await getBusinessInfo();
-      expect(result.detailingPackages.length).toBe(1);
-      expect(result.detailingPackages[0].id).toBe("custom");
+      expect(result.detailingPackages!.length).toBe(1);
+      expect(result.detailingPackages![0].id).toBe("custom");
     });
 
     it("updates tint options", async () => {
       await getBusinessInfo();
 
       await updateBusinessInfo({
-        tintOptions: [] as any,
+        tintOptions: [
+          {
+            name: "Test Tint",
+            type: "Test",
+            price: "\u00a399",
+            vlt: "50%",
+            warranty: "Lifetime",
+            description: "Test tint option",
+            features: ["UV Protection"],
+            popular: false,
+          },
+        ] as any,
       });
 
       const result = await getBusinessInfo();
-      expect(result.tintOptions.length).toBe(0);
+      expect(result.tintOptions!.length).toBe(1);
+      expect(result.tintOptions![0].name).toBe("Test Tint");
     });
 
     it("updates recovery info", async () => {
@@ -126,7 +138,7 @@ describe("businessInfo utility", () => {
       await updateBusinessInfo({
         recovery: {
           coverageAreas: ["Test Area"],
-          pricingTiers: [{ name: "Test", price: "£50", distance: "5 miles" }],
+          pricingTiers: [{ name: "Test", price: "\u00a350", distance: "5 miles" }],
           responseTime: "10 mins",
         } as any,
       });

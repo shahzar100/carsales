@@ -45,7 +45,7 @@ describe("Authentication Utilities", () => {
     mockSession.username = undefined;
   });
 
-  describe("🔒 Security Standards - Password Hashing", () => {
+  describe("\ud83d\udd12 Security Standards - Password Hashing", () => {
     describe("hashPassword", () => {
       it("should hash a password securely", async () => {
         const password = "SecurePassword123!";
@@ -87,7 +87,7 @@ describe("Authentication Utilities", () => {
       });
 
       it("should handle unicode characters", async () => {
-        const unicodePassword = "パスワード123密码🔒";
+        const unicodePassword = "\u30d1\u30b9\u30ef\u30fc\u30c9123\u5bc6\u7801\ud83d\udd12";
         const hash = await hashPassword(unicodePassword);
         expect(hash).toBeDefined();
         expect(await bcrypt.compare(unicodePassword, hash)).toBe(true);
@@ -148,7 +148,7 @@ describe("Authentication Utilities", () => {
     });
   });
 
-  describe("🔒 Security Standards - Session Management", () => {
+  describe("\ud83d\udd12 Security Standards - Session Management", () => {
     describe("getSession", () => {
       const originalEnv = process.env.NODE_ENV;
 
@@ -244,7 +244,7 @@ describe("Authentication Utilities", () => {
     });
   });
 
-  describe("📋 Functional Correctness Standards", () => {
+  describe("\ud83d\udccb Functional Correctness Standards", () => {
     it("should complete full password hash and verify cycle", async () => {
       const originalPassword = "MySecurePassword123!";
 
@@ -306,7 +306,11 @@ describe("Authentication Utilities", () => {
       const originalSessionSecret = process.env.SESSION_SECRET;
 
       delete process.env.SESSION_SECRET;
-      process.env.NODE_ENV = "production";
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: "production",
+        writable: true,
+        configurable: true,
+      });
 
       expect(() => {
         jest.isolateModules(() => {
@@ -314,7 +318,11 @@ describe("Authentication Utilities", () => {
         });
       }).toThrow("SESSION_SECRET environment variable must be set in production");
 
-      process.env.NODE_ENV = originalNodeEnv;
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: originalNodeEnv,
+        writable: true,
+        configurable: true,
+      });
       process.env.SESSION_SECRET = originalSessionSecret;
     });
   });

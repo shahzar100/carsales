@@ -38,7 +38,7 @@ describe("CarViewing", () => {
     mockUseViewing.mockReturnValue({
       viewingBooking: { carDetails: null },
       updateViewingBooking: jest.fn(),
-    } as ReturnType<typeof useViewing>);
+    } as unknown as ReturnType<typeof useViewing>);
 
     render(<CarViewing />);
     expect(screen.getByText("No Car Selected")).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("CarViewing", () => {
     mockUseViewing.mockReturnValue({
       viewingBooking: { carDetails: null },
       updateViewingBooking: jest.fn(),
-    } as ReturnType<typeof useViewing>);
+    } as unknown as ReturnType<typeof useViewing>);
 
     render(<CarViewing />);
     expect(screen.getByText("Browse Our Fleet")).toHaveAttribute(
@@ -73,7 +73,7 @@ describe("CarViewing", () => {
         },
       },
       updateViewingBooking: jest.fn(),
-    } as ReturnType<typeof useViewing>);
+    } as unknown as ReturnType<typeof useViewing>);
 
     render(<CarViewing />);
     expect(screen.getByText("Book Your Car Viewing")).toBeInTheDocument();

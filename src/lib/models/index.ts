@@ -11,6 +11,7 @@ import {
   TintOption,
   ServiceOverview,
   RecoveryInfo,
+  CarPartInterface,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -21,6 +22,7 @@ export type {
   ShopInfo,
   AdminUser,
   Quote,
+  CarPartInterface,
 };
 
 // ── Cached collection handles ────────────────────────────────
@@ -36,6 +38,7 @@ let detailingPackagesCollection: Collection<DetailingPackage>;
 let tintOptionsCollection: Collection<TintOption>;
 let serviceOverviewsCollection: Collection<ServiceOverview>;
 let recoveryInfoCollection: Collection<RecoveryInfo>;
+let carPartsCollection: Collection<CarPartInterface>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -238,4 +241,22 @@ export async function getQuotesCollection(): Promise<Collection<Quote>> {
     ]);
   }
   return quotesCollection;
+}
+
+// ── Car Parts ────────────────────────────────────────────────
+export async function getCarPartsCollection(): Promise<
+  Collection<CarPartInterface>
+> {
+  if (!carPartsCollection) {
+    const db = await getDb();
+    carPartsCollection = db.collection<CarPartInterface>("carParts");
+
+    await carPartsCollection.createIndexes([
+      { key: { category: 1 } },
+      { key: { brand: 1 } },
+      { key: { condition: 1 } },
+      { key: { price: 1 } },
+    ]);
+  }
+  return carPartsCollection;
 }

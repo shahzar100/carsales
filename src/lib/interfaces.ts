@@ -205,3 +205,18 @@ export interface Quote {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface CarPartInterface {
+  _id?: string;
+  name: string;
+  brand: string;
+  category: string;
+  price: number;
+  image?: string;
+  condition: "New" | "Used" | "Refurbished";
+  compatibility: string;
+  description: string;
+  inStock: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

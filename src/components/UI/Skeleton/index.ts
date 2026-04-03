@@ -13,10 +13,6 @@ export {
   default as CarListCardSkeleton,
   CarListCardSkeletonGrid,
 } from "./CarListCardSkeleton";
-export {
-  default as ShopItemSkeleton,
-  ShopItemSkeletonGrid,
-} from "./ShopItemSkeleton";
 export { default as CarDetailSkeleton } from "./CarDetailSkeleton";
 export { default as HeroFeaturedCarSkeleton } from "./HeroFeaturedCarSkeleton";
 export {
