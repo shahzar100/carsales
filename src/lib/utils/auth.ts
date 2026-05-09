@@ -5,7 +5,14 @@ import { cookies } from "next/headers";
 export interface SessionData {
   isLoggedIn: boolean;
   username?: string;
+  role?: string;
 }
+
+const ROLE_HIERARCHY: Record<string, number> = {
+  staff: 1,
+  manager: 2,
+  admin: 3,
+};
 
 if (!process.env.SESSION_SECRET) {
   if (process.env.NODE_ENV === "production") {
@@ -50,4 +57,16 @@ export async function verifyPassword(
 export async function isAuthenticated(): Promise<boolean> {
   const session = await getSession();
   return session.isLoggedIn === true;
+}
+
+/**
+ * Returns true if the current session has at least the given role level.
+ * Role hierarchy: staff (1) < manager (2) < admin (3)
+ */
+export async function hasMinimumRole(minRole: string): Promise<boolean> {
+  const session = await getSession();
+  if (!session.isLoggedIn) return false;
+  const userLevel = ROLE_HIERARCHY[session.role ?? ""] ?? 0;
+  const requiredLevel = ROLE_HIERARCHY[minRole] ?? 0;
+  return userLevel >= requiredLevel;
 }
