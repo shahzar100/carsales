@@ -4,6 +4,7 @@ import { Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
 import { ServiceHero, BackNavigation } from "@/components/Services/Common";
 import { DetailingPackageGrid } from "@/components/Services/Detailing";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
@@ -46,6 +47,21 @@ const Detailing = async () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Car Detailing Services",
+          description:
+            "Premium car detailing packages from £150. Interior and exterior deep clean, paint protection, ceramic coating, and leather treatment.",
+          provider: {
+            "@type": "AutoDealer",
+            name: businessInfo.businessName,
+          },
+          areaServed: { "@type": "City", name: businessInfo.city },
+          priceRange: "£150 – £500",
+        }}
+      />
       <BackNavigation href="/Services" text="Back to Services" />
 
       <ServiceHero {...heroProps} />

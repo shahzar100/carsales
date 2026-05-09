@@ -20,6 +20,7 @@ import {
   ProcessFlow,
   BlackRedSection,
 } from "@/components/Services/Common";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
@@ -144,6 +145,21 @@ const BreakdownRecovery = async () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Vehicle Recovery Services",
+          description:
+            "24/7 breakdown recovery and roadside assistance across London and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
+          provider: {
+            "@type": "AutoDealer",
+            name: businessInfo.businessName,
+          },
+          areaServed: { "@type": "City", name: businessInfo.city },
+          priceRange: "From £60",
+        }}
+      />
       <ServiceHero {...heroProps} />
 
       {/* Emergency Call Banner */}

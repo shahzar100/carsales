@@ -10,6 +10,7 @@ import {
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
@@ -99,6 +100,21 @@ const Tints = async () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Window Tinting Services",
+          description:
+            "Professional window tinting with ceramic, carbon, and dyed film options from £200. 99% UV protection, heat reduction, and enhanced privacy. Warranty included.",
+          provider: {
+            "@type": "AutoDealer",
+            name: businessInfo.businessName,
+          },
+          areaServed: { "@type": "City", name: businessInfo.city },
+          priceRange: "£200 – £500",
+        }}
+      />
       <BackNavigation href="/Services" text="Back to Services" />
 
       <ServiceHero {...heroProps} />
