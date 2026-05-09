@@ -50,6 +50,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (body.category && /[${}]/.test(String(body.category))) {
+      return NextResponse.json(
+        { error: "Invalid category value" },
+        { status: 400 }
+      );
+    }
+
     const carPartsCollection = await getCarPartsCollection();
 
     const newPart: Omit<CarPartInterface, "_id"> = {
@@ -96,9 +103,9 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { _id, ...updateData } = body;
 
-    if (!_id) {
+    if (!_id || !ObjectId.isValid(String(_id))) {
       return NextResponse.json(
-        { error: "Car part ID is required" },
+        { error: "Invalid or missing car part ID" },
         { status: 400 }
       );
     }
@@ -147,9 +154,9 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!id || !ObjectId.isValid(String(id))) {
       return NextResponse.json(
-        { error: "Car part ID is required" },
+        { error: "Invalid or missing car part ID" },
         { status: 400 }
       );
     }

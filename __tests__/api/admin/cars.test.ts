@@ -65,12 +65,17 @@ describe("/api/admin/cars", () => {
 
     it("should filter cars by status parameter", async () => {
       const { cars, client } = await getTestCollections();
-      const availableCar = createTestCar({ make: "Toyota", status: "available" });
+      const availableCar = createTestCar({
+        make: "Toyota",
+        status: "available",
+      });
       const soldCar = createTestCar({ make: "Honda", status: "sold" });
       await cars.insertMany([availableCar, soldCar]);
       await client.close();
 
-      const request = new NextRequest("http://localhost:3000/api/admin/cars?status=available");
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/cars?status=available"
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -78,6 +83,31 @@ describe("/api/admin/cars", () => {
       expect(data.data).toHaveLength(1);
       expect(data.data[0].make).toBe("Toyota");
     });
+
+    it("returns 400 for invalid status query param", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/cars?status=malicious_value"
+      );
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/Invalid status value/i);
+    });
+
+    it.each(["available", "sold", "reserved"])(
+      "accepts valid status query param: %s",
+      async (validStatus) => {
+        const request = new NextRequest(
+          `http://localhost:3000/api/admin/cars?status=${validStatus}`
+        );
+        const response = await GET(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(data.success).toBe(true);
+      }
+    );
 
     it("should return 500 when database throws error", async () => {
       // Force an error by making isAuthenticated throw
@@ -282,7 +312,7 @@ describe("/api/admin/cars", () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Car ID is required");
+      expect(data.error).toBe("Invalid or missing car ID");
     });
 
     it("should return 401 for unauthenticated PUT request", async () => {
@@ -352,7 +382,7 @@ describe("/api/admin/cars", () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Car ID is required");
+      expect(data.error).toBe("Invalid or missing car ID");
     });
 
     it("should return 404 when trying to delete non-existent car", async () => {

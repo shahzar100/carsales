@@ -47,6 +47,14 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     const status = searchParams.get("status") || "all";
 
+    const VALID_STATUSES = ["available", "sold", "reserved"] as const;
+    if (status !== "all" && !VALID_STATUSES.includes(status as typeof VALID_STATUSES[number])) {
+      return NextResponse.json(
+        { error: "Invalid status value" },
+        { status: 400 }
+      );
+    }
+
     // Validate pagination parameters
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100); // Max 100 items per page
@@ -55,7 +63,7 @@ export async function GET(request: NextRequest) {
     const carsCollection = await getCarsCollection();
 
     // Build query filter
-    const filter: any = {};
+    const filter: { status?: string } = {};
     if (status !== "all") {
       filter.status = status;
     }
@@ -146,9 +154,9 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { _id, ...updateData } = body;
 
-    if (!_id) {
+    if (!_id || !ObjectId.isValid(String(_id))) {
       return NextResponse.json(
-        { error: "Car ID is required" },
+        { error: "Invalid or missing car ID" },
         { status: 400 }
       );
     }
@@ -206,9 +214,9 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!id || !ObjectId.isValid(String(id))) {
       return NextResponse.json(
-        { error: "Car ID is required" },
+        { error: "Invalid or missing car ID" },
         { status: 400 }
       );
     }

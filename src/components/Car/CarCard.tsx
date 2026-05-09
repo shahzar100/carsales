@@ -60,7 +60,7 @@ const CarCard = ({
             }`}
           >
             <Image
-              src={"/tesla.webp"}
+              src={c.image || "/tesla.webp"}
               alt={`${c.make} ${c.model}`}
               fill
               className="object-cover"

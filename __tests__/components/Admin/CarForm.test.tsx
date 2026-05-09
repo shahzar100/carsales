@@ -207,7 +207,10 @@ describe("CarForm Component", () => {
       setInput("e.g. Midnight Blue", "Alpine White");
       await user.click(screen.getByText("Next"));
 
-      // Step 4 — review
+      // Step 4 — Photos (skip through)
+      await user.click(screen.getByText("Next"));
+
+      // Step 5 — review
       expect(
         screen.getByRole("heading", { name: "Review & Submit" })
       ).toBeInTheDocument();

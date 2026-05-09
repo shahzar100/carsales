@@ -68,7 +68,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
           {/* Image Section */}
           <div className="relative aspect-4/3 w-full md:aspect-auto lg:w-1/2">
             <Image
-              src={"/tesla.webp"}
+              src={car.image || "/tesla.webp"}
               alt={`${car.make} ${car.model}`}
               fill
               className="object-cover"

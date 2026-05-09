@@ -78,7 +78,7 @@ const HeroSection = async () => {
                   <div className="group relative">
                     <div className="relative aspect-16/10 w-full">
                       <Image
-                        src="/tesla.webp"
+                        src={featuredCar.image || "/tesla.webp"}
                         alt={`${featuredCar.make} ${featuredCar.model}`}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-105"

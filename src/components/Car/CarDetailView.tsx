@@ -205,7 +205,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
               {/* Main Image */}
               <div className="relative aspect-16/10 overflow-hidden rounded-2xl bg-gray-100 shadow-lg">
                 <Image
-                  src={"/tesla.webp"}
+                  src={allImages[activeImageIndex] || "/tesla.webp"}
                   alt={`${car.make} ${car.model}`}
                   fill
                   className="object-cover"

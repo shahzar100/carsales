@@ -125,7 +125,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                       <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-200">
                         {car.image ? (
                           <Image
-                            src={"/tesla.webp"}
+                            src={car.image}
                             alt={`${car.make} ${car.model}`}
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"

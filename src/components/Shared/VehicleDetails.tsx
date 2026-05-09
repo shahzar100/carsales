@@ -35,7 +35,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="relative h-54 w-full lg:h-80 lg:w-1/2">
           <Image
-            src={"/tesla.webp"}
+            src={vehicle.image || "/tesla.webp"}
             alt={`${vehicle.make} ${vehicle.model}`}
             fill
             className="object-cover"

@@ -72,7 +72,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
         {/* Image Section */}
         <div className="relative aspect-16/10 w-full shrink-0 sm:aspect-auto sm:h-auto sm:w-64 md:w-72 lg:w-80">
           <Image
-            src={"/tesla.webp"}
+            src={car.image || "/tesla.webp"}
             alt={`${car.make} ${car.model}`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
