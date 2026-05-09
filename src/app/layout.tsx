@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SearchContextProvider } from "@/backend/SearchContext";
 import { ViewingProvider } from "@/backend/ViewingContext";
 import { BusinessInfoProvider } from "@/backend/BusinessInfoContext";
 import { NavigationProvider } from "@/backend/NavigationContext";
@@ -63,14 +62,12 @@ export default function RootLayout({
       <body className="min-h-screen overflow-x-hidden antialiased">
         <ToastProvider>
           <NavigationProvider>
-            <SearchContextProvider>
-              <ViewingProvider>
-                <BusinessInfoProvider>
-                  <PageLoader />
-                  {children}
-                </BusinessInfoProvider>
-              </ViewingProvider>
-            </SearchContextProvider>
+            <ViewingProvider>
+              <BusinessInfoProvider>
+                <PageLoader />
+                {children}
+              </BusinessInfoProvider>
+            </ViewingProvider>
           </NavigationProvider>
           <ToastContainer />
         </ToastProvider>
