@@ -15,7 +15,6 @@ import {
   getCarViewingBookingsCollection,
 } from "@/lib/models";
 import { sendReviewInviteEmail } from "@/lib/utils/reviewInvite";
-import type { ServiceAppointment, CarViewingBooking } from "@/lib/interfaces";
 
 // ── How long after completion to wait before sending (ms) ────
 const DELAY_MS = 24 * 60 * 60 * 1000; // 24 hours

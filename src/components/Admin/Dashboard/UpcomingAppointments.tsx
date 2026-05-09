@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityItem } from "./types";
-import { Calendar, Wrench, Eye, ArrowRight } from "lucide-react";
+import { Calendar, Wrench, Eye } from "lucide-react";
 
 // ═════════════════════════════════════════════════════════════
 // UpcomingAppointments — compact card list of next 7 days

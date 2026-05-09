@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   Truck,
   Phone,
-  CheckCircle,
   Clock,
   Shield,
   MapPin,

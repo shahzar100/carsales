@@ -15,11 +15,7 @@ import {
   Wrench,
   Heart,
 } from "lucide-react";
-import {
-  ServiceHero,
-  ProcessFlow,
-  BlackRedSection,
-} from "@/components/Services/Common";
+import { ProcessFlow, BlackRedSection } from "@/components/Services/Common";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 const businessName =

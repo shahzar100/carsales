@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ChevronDown, LucideIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 interface NavButtonProps {
   text: string;
