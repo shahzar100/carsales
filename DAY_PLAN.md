@@ -41,9 +41,9 @@ Two streams of work run alongside the Days because they're handover-specific, no
 
 ---
 
-## Day 2 — Delete the rot
+## Day 2 — Delete the rot ✅
 
-**Branch:** `chore/delete-dead-code`
+**Branch:** `chore/delete-dead-code` (commit `9883b5aa`, 2026-05-09)
 **Goal:** Shrink the surface area before refactoring it. No point migrating dead code to new patterns.
 
 Twelve dead source files (audit §1.1–1.6, §1.10), two macOS Finder duplicate test files (`*.test 2.tsx`, §1.11), the test files for the dead `Helpful/{Grid,GridItem,Input}` components (§1.7), and the dead state / unused imports flagged by lint (§1.15).
@@ -51,6 +51,14 @@ Twelve dead source files (audit §1.1–1.6, §1.10), two macOS Finder duplicate
 Also: move `agent/` (1132 LOC of dev-time AI fixer tooling, §1.14) out of the product tree to `tools/agent/` and exclude from `tsconfig` and `eslint`. It has nothing to do with the car sales product.
 
 **Expected outcome:** lint count drops from 235 → ~150. Source tree ~600 LOC lighter. `npm test` no longer runs duplicate suites.
+
+**Actual outcome (2026-05-09):**
+- Lint: 235 → **186** problems (140 errors, 46 warnings). Remaining errors are mostly `react/no-unescaped-entities` in email templates and `no-require-imports`/`no-explicit-any` in tests — both flagged by audit §6.3 as a separate cleanup, not Day 2 scope.
+- Source tree: 33 files changed, **+9 / −2,594 lines**.
+- 6 test files deleted (incl. the two `*.test 2.tsx` macOS duplicates) — `npm test` no longer runs duplicate suites.
+- `agent/` moved to `tools/agent/` and excluded from `tsconfig.json` and `eslint.config.mjs`.
+- One Day 3 prerequisite intentionally left in place: `JsonLd` import in `BrowseFleet/[_id]/page.tsx` — Day 3 will render it rather than removing the import.
+- Pre-existing `tsc` errors in `admin/cars/route.ts` and `admin/users/route.ts` are unchanged (not Day 2 scope).
 
 ---
 
