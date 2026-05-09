@@ -34,7 +34,6 @@ export const metadata: Metadata = {
 export default async function Enquiry() {
   const businessInfo = await getBusinessInfo();
 
-  const name = businessInfo.businessName;
   const phone = businessInfo.phone;
   const email = businessInfo.email;
   const bookingsEmail = businessInfo.bookingsEmail;

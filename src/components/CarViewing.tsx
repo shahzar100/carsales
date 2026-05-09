@@ -8,7 +8,6 @@ import VehicleDetails from "./Shared/VehicleDetails";
 const CarViewing = () => {
   const { viewingBooking } = useViewing();
   const [isClient, setIsClient] = useState(false);
-  const [isTransitioning] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -18,8 +17,8 @@ const CarViewing = () => {
     return <div className="p-8 text-center">Loading...</div>;
   }
 
-  // If no car details and not transitioning, show the "no car selected" message
-  if (!viewingBooking.carDetails && !isTransitioning) {
+  // If no car details, show the "no car selected" message
+  if (!viewingBooking.carDetails) {
     return (
       <div className="p-8 text-center">
         <h2 className="section-title mb-4">No Car Selected</h2>
@@ -34,11 +33,6 @@ const CarViewing = () => {
         </Link>
       </div>
     );
-  }
-
-  // If transitioning or no car details during transition, show loading
-  if (!viewingBooking.carDetails) {
-    return <div className="p-8 text-center">Loading...</div>;
   }
 
   return (

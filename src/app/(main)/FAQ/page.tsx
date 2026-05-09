@@ -71,7 +71,6 @@ function FAQAccordion({ items }: { items: FAQItem[] }) {
 export default async function FAQ() {
   const businessInfo = await getBusinessInfo();
 
-  const name = businessInfo.businessName;
   const phone = businessInfo.phone;
   const email = businessInfo.email;
 

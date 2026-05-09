@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityItem } from "./types";
-import { Calendar, Wrench, Eye, Clock } from "lucide-react";
+import { Wrench, Eye, Clock } from "lucide-react";
 
 // ═════════════════════════════════════════════════════════════
 // RecentActivityTable — latest bookings across all types
