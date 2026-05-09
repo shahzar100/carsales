@@ -12,6 +12,7 @@ import {
 } from "@/components/Services/Common";
 import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
@@ -43,6 +44,20 @@ const Services = async () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Professional Auto Services",
+          description:
+            "Professional auto services including car detailing, window tinting, and expert repairs. Certified technicians, same day service, and satisfaction guaranteed.",
+          provider: {
+            "@type": "AutoDealer",
+            name: businessInfo.businessName,
+          },
+          areaServed: { "@type": "City", name: businessInfo.city },
+        }}
+      />
       <ServiceHero
         icon={Wrench}
         iconBgColor="bg-red-50 text-red-600"

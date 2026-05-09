@@ -11,9 +11,9 @@ export default function AdminAuthPage() {
     if (isLoggedIn) {
       router.push("/admin/dashboard");
     }
-  }, []);
+  }, [isLoggedIn, router]);
   return (
-    <div className="bg-linear-to-brpx-4 flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
       <div className="w-full max-w-md">
         {/* Logo/Title */}
         <div className="mb-8 text-center">

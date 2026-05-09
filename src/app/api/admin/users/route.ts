@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { hashPassword, isAuthenticated } from "@/lib/utils/auth";
+import { hashPassword, hasMinimumRole } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
+
+// 10 user-creation attempts per hour per IP
+const userCreateLimiter = createRateLimiter("admin-user-create", {
+  maxRequests: 10,
+  windowMs: 60 * 60 * 1000,
+});
 
 /**
  * Generate a cryptographically strong random password.
@@ -39,12 +46,46 @@ const validRoles = ["staff", "manager", "admin"] as const;
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // ── Rate limiting ──────────────────────────────────────
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    const { allowed, remaining, resetIn } = userCreateLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil(resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
     }
 
-    const { username, email, role } = await request.json();
+    // ── Role check: manager or admin only ──────────────────
+    const authorized = await hasMinimumRole("manager");
+    if (!authorized) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    void remaining; // consumed for rate-limit header only
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+    const { username, email, role } = body as {
+      username?: string;
+      email?: string;
+      role?: string;
+    };
 
     // ── Validation ──────────────────────────────────────────
     if (!username || typeof username !== "string") {

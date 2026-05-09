@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Form, { FormStep } from "../../Form/Form";
 import Dropdown from "../../Form/Dropdown";
 import { CarFormData } from "./MainForm";
@@ -10,7 +10,14 @@ import {
   SummaryRow,
   SummaryCard,
 } from "@/components/Form/FormPrimitives";
-import { Car, DollarSign, Palette, ClipboardList } from "lucide-react";
+import ImageUploader from "@/components/Admin/ImageUploader";
+import {
+  Car,
+  DollarSign,
+  Palette,
+  ImagePlus,
+  ClipboardList,
+} from "lucide-react";
 
 const currentYear = new Date().getFullYear();
 
@@ -57,11 +64,54 @@ const CarForm = () => {
     status: "",
     description: "",
     featured: false,
+    image: "",
+    images: [],
   });
 
-  const update = (field: keyof CarFormData, value: string | boolean) => {
+  const update = (
+    field: keyof CarFormData,
+    value: string | boolean | string[]
+  ) => {
     setCarData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const allImages = useMemo(() => {
+    const imgs: string[] = [];
+    if (carData.image) imgs.push(carData.image);
+    imgs.push(...carData.images);
+    return imgs;
+  }, [carData.image, carData.images]);
+
+  const handleImageUpload = useCallback(
+    (url: string) => {
+      if (!carData.image) {
+        update("image", url);
+      } else {
+        update("images", [...carData.images, url]);
+      }
+    },
+    [carData.image, carData.images]
+  );
+
+  const handleImageRemove = useCallback(
+    (url: string) => {
+      if (url === carData.image) {
+        // Promote first additional image to main, or clear
+        const [next, ...rest] = carData.images;
+        setCarData((prev) => ({
+          ...prev,
+          image: next || "",
+          images: rest,
+        }));
+      } else {
+        update(
+          "images",
+          carData.images.filter((u) => u !== url)
+        );
+      }
+    },
+    [carData.image, carData.images]
+  );
 
   // ── Step definitions ─────────────────────────────────────
   const steps: FormStep[] = useMemo(
@@ -195,7 +245,30 @@ const CarForm = () => {
         ),
       },
 
-      // ── Step 4: Review & Submit ──────────────────────────
+      // ── Step 4: Photos ───────────────────────────────────
+      {
+        title: "Photos",
+        description: "Upload images of the vehicle",
+        icon: <ImagePlus className="h-5 w-5" />,
+        content: (
+          <div className="space-y-2">
+            <p className="text-sm text-gray-500">
+              The first image will be the main listing photo. You can upload up
+              to 10 images.
+            </p>
+            <ImageUploader
+              folder="cars"
+              onUpload={handleImageUpload}
+              onRemove={handleImageRemove}
+              existingImages={allImages}
+              maxImages={10}
+              multiple
+            />
+          </div>
+        ),
+      },
+
+      // ── Step 5: Review & Submit ──────────────────────────
       {
         title: "Review & Submit",
         description: "Review all details before submitting",
@@ -262,12 +335,16 @@ const CarForm = () => {
                 label="Featured"
                 value={carData.featured ? "Yes" : "No"}
               />
+              <SummaryRow
+                label="Photos"
+                value={`${allImages.length} image${allImages.length !== 1 ? "s" : ""}`}
+              />
             </SummaryCard>
           </div>
         ),
       },
     ],
-    [carData]
+    [carData, allImages, handleImageUpload, handleImageRemove]
   );
 
   const handleSubmit = async () => {

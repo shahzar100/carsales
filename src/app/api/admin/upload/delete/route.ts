@@ -1,0 +1,63 @@
+import { NextRequest, NextResponse } from "next/server";
+import { isAuthenticated } from "@/lib/utils/auth";
+import { deleteS3Object } from "@/lib/utils/s3";
+
+const ALLOWED_PREFIXES = ["cars/", "parts/"];
+
+export async function POST(request: NextRequest) {
+  try {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
+    const { key } = body as { key?: unknown };
+
+    if (!key || typeof key !== "string" || key.trim() === "") {
+      return NextResponse.json({ error: "key is required" }, { status: 400 });
+    }
+
+    if (!ALLOWED_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      return NextResponse.json(
+        { error: "Invalid key prefix" },
+        { status: 400 }
+      );
+    }
+
+    // Check for path traversal in both raw and URL-decoded forms
+    const decodedKey = decodeURIComponent(key);
+    if (key.includes("..") || decodedKey.includes("..")) {
+      return NextResponse.json(
+        { error: "Invalid key: path traversal detected" },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteS3Object(key);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Failed to delete image" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("POST /api/admin/upload/delete error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

@@ -20,6 +20,8 @@ import {
 } from "@/components/Services/Common";
 import { RepairServiceGrid } from "@/components/Services/Repairs";
 import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
+import { JsonLd } from "@/components/SEO/JsonLd";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 export const metadata: Metadata = {
   title: "Car Repair Services",
@@ -34,7 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
-const Repairs = () => {
+const Repairs = async () => {
+  const businessInfo = await getBusinessInfo();
   const repairServices = [
     {
       category: "Engine & Performance",
@@ -143,6 +146,20 @@ const Repairs = () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Car Repair Services",
+          description:
+            "Expert auto repair for all makes and models. Engine diagnostics, brakes, electrical systems, and transmission service. ASE certified technicians with warranty on all work.",
+          provider: {
+            "@type": "AutoDealer",
+            name: businessInfo.businessName,
+          },
+          areaServed: { "@type": "City", name: businessInfo.city },
+        }}
+      />
       <BackNavigation href="/Services" text="Back to Services" />
 
       <ServiceHero {...heroProps} />

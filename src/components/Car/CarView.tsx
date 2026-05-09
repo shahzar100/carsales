@@ -9,12 +9,6 @@ import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import { filterCars } from "@/lib/utils/filterCars";
 import CarCard from "./CarCard";
 import CarListCard from "./CarListCard";
-import { useSkeleton } from "@/hooks/useSkeleton";
-import {
-  CarCardSkeleton,
-  CarListCardSkeletonGrid,
-} from "@/components/UI/Skeleton";
-import { SkeletonWrapper } from "@/components/UI/Skeleton";
 
 const CarViewContent = ({
   cars,
@@ -26,7 +20,6 @@ const CarViewContent = ({
   const [viewType, setViewType] = useState<"table" | "card" | "list">("card");
   const [carId, setCarId] = useState<number>(0);
   const { state } = useFilters();
-  const isLoading = useSkeleton(1000, 3000);
 
   // Switch to card view on smaller screens
   useEffect(() => {
@@ -89,36 +82,21 @@ const CarViewContent = ({
             </Button>
           </div>
           {viewType === "card" && (
-            <SkeletonWrapper
-              isLoading={isLoading}
-              skeleton={<CarCardSkeleton />}
-            >
-              <CarCard
-                filteredCars={filteredCars}
-                carId={carId}
-                setCarId={setCarId}
-              />
-            </SkeletonWrapper>
+            <CarCard
+              filteredCars={filteredCars}
+              carId={carId}
+              setCarId={setCarId}
+            />
           )}
           {filteredCars.length > 0 && viewType === "table" && (
-            <SkeletonWrapper
-              isLoading={isLoading}
-              skeleton={<CarCardSkeleton />}
-            >
-              <CarTable cars={filteredCars} />
-            </SkeletonWrapper>
+            <CarTable cars={filteredCars} />
           )}
           {filteredCars.length > 0 && viewType === "list" && (
-            <SkeletonWrapper
-              isLoading={isLoading}
-              skeleton={<CarListCardSkeletonGrid count={3} />}
-            >
-              <div className="flex flex-col gap-4">
-                {filteredCars.map((car) => (
-                  <CarListCard key={car._id} car={car} variant="admin" />
-                ))}
-              </div>
-            </SkeletonWrapper>
+            <div className="flex flex-col gap-4">
+              {filteredCars.map((car) => (
+                <CarListCard key={car._id} car={car} variant="admin" />
+              ))}
+            </div>
           )}
         </>
       )}

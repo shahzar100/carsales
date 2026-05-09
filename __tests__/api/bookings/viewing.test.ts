@@ -364,5 +364,28 @@ describe("/api/bookings/viewing", () => {
       expect(response.status).toBe(500);
       expect(data.error).toBe("Internal server error");
     });
+
+    it("returns 400 for malformed JSON body", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/viewing",
+        {
+          method: "POST",
+          body: "{",
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.0.99",
+          },
+        }
+      );
+      jest
+        .spyOn(request, "json")
+        .mockRejectedValueOnce(new SyntaxError("Bad JSON"));
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/Invalid JSON/i);
+    });
   });
 });

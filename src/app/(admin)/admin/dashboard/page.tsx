@@ -30,7 +30,7 @@ export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
   const authenticated = await isAuthenticated();
-  if (!authenticated) redirect("/admin");
+  if (!authenticated) redirect("/admin/login");
 
   const params = await searchParams;
 

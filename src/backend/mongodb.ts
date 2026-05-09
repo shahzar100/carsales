@@ -36,7 +36,11 @@ declare global {
 // serverless warm starts in both dev and production.
 if (!global._mongoClientPromise) {
   const client = new MongoClient(uri, options);
-  global._mongoClientPromise = client.connect();
+  global._mongoClientPromise = client.connect().catch((err: unknown) => {
+    console.error("[MongoDB] Initial connection failed:", err);
+    global._mongoClientPromise = undefined;
+    throw err;
+  });
 }
 
 const clientPromise: Promise<MongoClient> = global._mongoClientPromise;

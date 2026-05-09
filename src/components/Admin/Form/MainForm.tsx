@@ -19,6 +19,8 @@ export interface CarFormData {
   status: string;
   description: string;
   featured: boolean;
+  image: string;
+  images: string[];
 }
 
 const MainForm = () => {

@@ -32,7 +32,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
 
     // Validate and sanitize customer info
     if (

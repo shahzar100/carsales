@@ -253,6 +253,40 @@ describe("/api/admin/carparts", () => {
       expect(response.status).toBe(500);
       expect(data.error).toBe("Internal server error");
     });
+
+    it("returns 400 when category contains MongoDB operator characters", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "POST",
+          body: JSON.stringify({ ...validCarPartData, category: "{$where: 1}" }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/Invalid category/i);
+    });
+
+    it("returns 400 when category contains $ sign", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "POST",
+          body: JSON.stringify({ ...validCarPartData, category: "$where" }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/Invalid category/i);
+    });
   });
 
   // ── PUT — Update an existing car part ──────────────────────

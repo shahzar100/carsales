@@ -163,6 +163,9 @@ jest.mock("lucide-react", () => {
     AlertTriangle: createIcon("AlertTriangle"),
     Loader2: createIcon("Loader2"),
     CheckCircle: createIcon("CheckCircle"),
+      Upload: createIcon("Upload"),
+      AlertCircle: createIcon("AlertCircle"),
+    ImagePlus: createIcon("ImagePlus"),
   };
 });
 

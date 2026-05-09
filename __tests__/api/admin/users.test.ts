@@ -12,17 +12,32 @@ import { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/users/route";
 import { getTestCollections } from "../../utils/testUtils";
 
-// Mock password hashing for predictable tests
+// Mock password hashing and auth for predictable tests
 jest.mock("@/lib/utils/auth", () => ({
   hashPassword: jest.fn((pwd: string) => Promise.resolve(`hashed_${pwd}`)),
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
+
+// Mock rate limiter to prevent test interference from in-memory state
+jest.mock("@/lib/utils/rateLimit", () => ({
+  createRateLimiter: () => ({
+    check: jest
+      .fn()
+      .mockReturnValue({ allowed: true, remaining: 9, resetIn: 0 }),
+    reset: jest.fn(),
+  }),
+}));
 
 describe("/api/admin/users", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true); // Default to manager/admin role
   });
 
   afterEach(async () => {
@@ -575,7 +590,7 @@ describe("/api/admin/users", () => {
       });
 
       const response = await POST(request);
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
     });
 
     it("should handle empty request body", async () => {

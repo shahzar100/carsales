@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
+import { PlusCircle, Trash2, Loader2 } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
 import Modal from "@/components/Helpful/Buttons/Modal";
+import ImageUploader from "@/components/Admin/ImageUploader";
 import { useToast } from "@/contexts/ToastContext";
 import { CarPartInterface } from "@/lib/interfaces";
 
@@ -35,8 +36,9 @@ export default function CarPartsManagement() {
       setLoading(true);
       const res = await fetch("/api/admin/carparts");
       if (!res.ok) throw new Error("Failed to fetch car parts");
-      const data = await res.json();
-      setParts(data);
+      const json = await res.json();
+      // API returns { success: true, data: CarPartInterface[] } — unwrap it
+      setParts(Array.isArray(json) ? json : json.data || []);
     } catch {
       toast.error("Failed to load car parts");
     } finally {
@@ -244,15 +246,14 @@ export default function CarPartsManagement() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Image URL
+                Image
               </label>
-              <input
-                type="text"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+              <ImageUploader
+                folder="parts"
+                onUpload={(url) => setFormData({ ...formData, image: url })}
+                onRemove={() => setFormData({ ...formData, image: "" })}
+                existingImages={formData.image ? [formData.image] : []}
+                maxImages={1}
               />
             </div>
             <div className="flex items-center gap-2">

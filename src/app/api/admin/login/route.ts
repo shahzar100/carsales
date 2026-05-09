@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     session.isLoggedIn = true;
     session.username = admin.username;
+    session.role = admin.role as string | undefined;
     await session.save();
 
     // Reset rate limiter on successful login
