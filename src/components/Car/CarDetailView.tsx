@@ -23,6 +23,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import ShareButton from "@/components/SEO/ShareButton";
+import { CarShareModal } from "@/components/SEO/CarShareCard";
+import { Share2 } from "lucide-react";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -479,14 +481,19 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                   Book a Viewing
                 </Link>
 
-                {/* Share */}
-                <ShareButton
-                  url={carUrl}
-                  title={carTitle}
-                  text={shareText}
-                  variant="outline"
-                  size="lg"
-                  className="w-full [&>button]:w-full [&>button]:justify-center"
+                {/* Rich share preview — opens CarShareCard in a modal */}
+                <CarShareModal
+                  car={car}
+                  trigger={
+                    <button
+                      type="button"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-base font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50"
+                      aria-label="Share this listing"
+                    >
+                      <Share2 className="h-5 w-5" />
+                      Share this listing
+                    </button>
+                  }
                 />
 
                 {/* Guarantee Banner */}

@@ -47,15 +47,15 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
-// Mock environment variables
-process.env.NEXT_PUBLIC_SITE_URL = "http://localhost:3000";
-process.env.NEXT_BUSINESS_NAME = "Test Motor Company";
-process.env.NEXT_BUSINESS_ADDRESS = "Test Street 123";
-process.env.NEXT_BUSINESS_CITY = "Test City";
-process.env.NEXT_BUSINESS_STATE = "Test State";
-process.env.NEXT_BUSINESS_ZIP = "12345";
-process.env.NEXT_BUSINESS_PHONE = "555-123-4567";
-process.env.NEXT_BUSINESS_EMAIL = "test@testmotor.com";
+// Mock environment variables (extras specific to component tests; the core
+// set required by src/lib/env.ts is pre-populated in jest.env.setup.js).
+process.env.NEXT_BUSINESS_ADDRESS =
+  process.env.NEXT_BUSINESS_ADDRESS || "Test Street 123";
+process.env.NEXT_BUSINESS_CITY =
+  process.env.NEXT_BUSINESS_CITY || "Test City";
+process.env.NEXT_BUSINESS_STATE =
+  process.env.NEXT_BUSINESS_STATE || "Test State";
+process.env.NEXT_BUSINESS_ZIP = process.env.NEXT_BUSINESS_ZIP || "12345";
 
 // Mock browser APIs only when running in jsdom (not in node environment)
 if (typeof window !== "undefined") {

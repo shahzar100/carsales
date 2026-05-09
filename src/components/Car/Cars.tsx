@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import {
@@ -23,6 +24,27 @@ interface CarsProps {
 }
 
 const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
+  const router = useRouter();
+
+  // Navigate to the public-facing detail page (in a new tab so the admin
+  // doesn't lose their place in the inventory list).
+  const handleView = () => {
+    if (!car._id) return;
+    window.open(
+      `/BrowseFleet/${car._id}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  // Open the admin "quick edit" page for this car.
+  const handleEdit = () => {
+    if (!car._id) return;
+    router.push(`/admin/dashboard/cars/edit/${car._id}`);
+  };
+
+  // Delete is intentionally left unwired here — Day 4 builds the shared
+  // <ConfirmDialog> primitive, which the delete flow needs.
   const getStatusColor = (status: string) => {
     switch (status) {
       case "available":
@@ -158,11 +180,18 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 variant="secondary"
                 size="sm"
                 className="flex-1 bg-gray-900 text-white hover:bg-gray-800 hover:text-white"
+                onClick={handleEdit}
+                disabled={!car._id}
               >
                 <Edit className="h-3.5 w-3.5" />
                 Edit
               </Button>
-              <Button size="sm" className="flex-1">
+              <Button
+                size="sm"
+                className="flex-1"
+                onClick={handleView}
+                disabled={!car._id}
+              >
                 <Eye className="h-3.5 w-3.5" />
                 View
               </Button>

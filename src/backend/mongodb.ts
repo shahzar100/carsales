@@ -1,5 +1,7 @@
 import { MongoClient } from "mongodb";
 
+import { serverEnv } from "@/lib/env";
+
 /**
  * MongoDB connection optimised for Vercel serverless functions.
  *
@@ -10,22 +12,18 @@ import { MongoClient } from "mongodb";
  * opening a new pool every time.
  *
  * This pattern is used in BOTH development and production.
+ *
+ * `MONGODB_URI` is read via the validated `serverEnv` so an invalid
+ * or missing value fails at boot time (in `instrumentation.ts`) with
+ * a clear error rather than crashing here on first request.
  */
 
-const uri = process.env.MONGODB_URI;
+const uri = serverEnv.MONGODB_URI;
 const options = {
   maxPoolSize: 10,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
 };
-
-if (!uri) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
-
-if (uri.length < 20 || !uri.startsWith("mongodb")) {
-  throw new Error("MONGODB_URI appears to be invalid");
-}
 
 declare global {
   // eslint-disable-next-line no-var

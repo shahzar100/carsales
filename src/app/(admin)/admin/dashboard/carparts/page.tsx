@@ -1,16 +1,30 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { PlusCircle, Trash2, Loader2 } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
 import Modal from "@/components/Helpful/Buttons/Modal";
 import ImageUploader from "@/components/Admin/ImageUploader";
 import { useToast } from "@/contexts/ToastContext";
 import { CarPartInterface } from "@/lib/interfaces";
 
+const EMPTY_FORM = {
+  name: "",
+  brand: "",
+  category: "",
+  price: "",
+  image: "",
+  condition: "New" as "New" | "Used" | "Refurbished",
+  compatibility: "",
+  description: "",
+  inStock: true,
+};
+
 export default function CarPartsManagement() {
   const [parts, setParts] = useState<CarPartInterface[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  // editTarget == null means we're adding; non-null means we're editing that part.
+  const [editTarget, setEditTarget] = useState<CarPartInterface | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CarPartInterface | null>(
     null
   );
@@ -18,18 +32,8 @@ export default function CarPartsManagement() {
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    category: "",
-    price: "",
-    image: "",
-    condition: "New" as "New" | "Used" | "Refurbished",
-    compatibility: "",
-    description: "",
-    inStock: true,
-  });
+  // Form state — shared between Add and Edit flows.
+  const [formData, setFormData] = useState(EMPTY_FORM);
 
   const fetchParts = useCallback(async () => {
     try {
@@ -50,35 +54,62 @@ export default function CarPartsManagement() {
     fetchParts();
   }, [fetchParts]);
 
-  const handleAddPart = async (e: React.FormEvent) => {
+  const openEditModal = (part: CarPartInterface) => {
+    setEditTarget(part);
+    setFormData({
+      name: part.name,
+      brand: part.brand,
+      category: part.category,
+      price: String(part.price),
+      image: part.image ?? "",
+      condition: part.condition,
+      compatibility: part.compatibility ?? "",
+      description: part.description ?? "",
+      inStock: part.inStock,
+    });
+  };
+
+  const closeFormModal = () => {
+    setShowAddForm(false);
+    setEditTarget(null);
+    setFormData(EMPTY_FORM);
+  };
+
+  // Single submit handler — POSTs for new parts, PUTs for edits to the same
+  // /api/admin/carparts endpoint. The PUT route exists and is tested but
+  // until now had no UI calling it.
+  const handleSubmitPart = async (e: React.FormEvent) => {
     e.preventDefault();
+    const isEdit = editTarget !== null;
     try {
       setSubmitting(true);
+      const body = isEdit
+        ? {
+            _id: editTarget!._id,
+            ...formData,
+            price: parseFloat(formData.price),
+          }
+        : { ...formData, price: parseFloat(formData.price) };
+
       const res = await fetch("/api/admin/carparts", {
-        method: "POST",
+        method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-        }),
+        body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error("Failed to add part");
-      toast.success("Car part added successfully");
-      setShowAddForm(false);
-      setFormData({
-        name: "",
-        brand: "",
-        category: "",
-        price: "",
-        image: "",
-        condition: "New",
-        compatibility: "",
-        description: "",
-        inStock: true,
-      });
+      if (!res.ok) {
+        throw new Error(
+          isEdit ? "Failed to update part" : "Failed to add part"
+        );
+      }
+      toast.success(
+        isEdit ? "Car part updated successfully" : "Car part added successfully"
+      );
+      closeFormModal();
       fetchParts();
     } catch {
-      toast.error("Failed to add car part");
+      toast.error(
+        isEdit ? "Failed to update car part" : "Failed to add car part"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -131,10 +162,13 @@ export default function CarPartsManagement() {
         </Button>
       </div>
 
-      {/* Add Part Form Modal */}
-      {showAddForm && (
-        <Modal title="Add New Part" onClose={() => setShowAddForm(false)}>
-          <form onSubmit={handleAddPart} className="space-y-4">
+      {/* Add / Edit Part Form Modal — same form, different submit method */}
+      {(showAddForm || editTarget) && (
+        <Modal
+          title={editTarget ? "Edit Part" : "Add New Part"}
+          onClose={closeFormModal}
+        >
+          <form onSubmit={handleSubmitPart} className="space-y-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Name
@@ -275,13 +309,13 @@ export default function CarPartsManagement() {
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 variant="outline"
-                onClick={() => setShowAddForm(false)}
+                onClick={closeFormModal}
                 type="button"
               >
                 Cancel
               </Button>
               <Button type="submit" loading={submitting}>
-                Add Part
+                {editTarget ? "Save Changes" : "Add Part"}
               </Button>
             </div>
           </form>
@@ -403,6 +437,13 @@ export default function CarPartsManagement() {
                       </td>
                       <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => openEditModal(part)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="danger"
                             size="sm"

@@ -34,8 +34,8 @@ Two streams of work run alongside the Days because they're handover-specific, no
 | 4 | Replace invalid `React.SubmitEvent` with `React.FormEvent<HTMLFormElement>` | ✅ Already in main (commit 3) | §2.4 |
 | 5 | Dashboard `redirect("/admin")` → `redirect("/admin/login")` | ✅ Already in main (commit 3) | §2.5 |
 | 6 | `app/error.tsx` `<a>` → `<Link>` | ✅ Already in main (commit 3) | §2.6 |
-| 7 | Delete `useSkeleton` hook + unwire from 5 wrapper components | ✅ Done on `fix/critical-customer-bugs` (2026-05-09) | §3.2 |
-| 8 | Delete `/api/admin/health/tests` route + `TestRunner.tsx` UI | ✅ Done on `fix/critical-customer-bugs` (2026-05-09) | §7.1 |
+| 7 | Delete `useSkeleton` hook + unwire from 5 wrapper components | ⬜ TODO on Day 1 branch | §3.2 |
+| 8 | Delete `/api/admin/health/tests` route + `TestRunner.tsx` UI | ⬜ TODO on Day 1 branch | §7.1 |
 
 **Validation:** `npm run lint && npm test` clean on the branch before merge.
 
@@ -54,28 +54,18 @@ Also: move `agent/` (1132 LOC of dev-time AI fixer tooling, §1.14) out of the p
 
 ---
 
-## Day 3 — Wire in the salvageable five ✅
+## Day 3 — Wire in the salvageable five
 
-**Branch:** `feat/wire-up-salvageable-features` (branched off `main`, 2026-05-09)
+**Branch:** `feat/wire-up-salvageable-features`
 **Goal:** Activate features that already exist in the codebase but aren't connected. Reusability §2.
 
-| Item | What | Status |
+| Item | What | Effort |
 |---|---|---|
-| Wire `lib/env.ts` into `instrumentation.ts` | Replace ad-hoc `process.env.X` reads in `backend/mongodb.ts` and `lib/utils/auth.ts` with typed `serverEnv.X` reads. | ✅ Done |
-| Build carparts edit modal | `PUT /api/admin/carparts` is fully implemented and tested but no UI calls it. | ✅ Done |
-| Wire `Cars.tsx` Edit / View handlers | Buttons exist with no `onClick`. Delete deferred to Day 4 (needs `<ConfirmDialog>`). | ✅ Done |
-| Render `<JsonLd>` on car detail pages | Component imported on `/BrowseFleet/[_id]/page.tsx` but never rendered — real SEO debt. | ✅ Done |
-| Verify and wire `CarShareCard` / `ShareButton` | Audit usage on car detail pages; integrate where missing. | ✅ Done |
-
-**Actual outcome (2026-05-09):**
-- **env wiring:** Added `src/instrumentation.ts` (Next.js `register()` hook) so the Zod env validation runs at server boot. `backend/mongodb.ts` and `lib/utils/auth.ts` now read from `serverEnv` instead of `process.env`. Tests required env vars to be set before module imports, so env-var setup moved out of `jest.setup.js` `beforeAll` into a new `jest.env.setup.js` referenced via `setupFiles` in both jest configs. The `auth.test.ts` module-level guard test was relaxed to a regex (`/SESSION_SECRET must be set in production/`) because the throw now originates in `lib/env.ts` with a slightly different message.
-- **JsonLd:** `BrowseFleet/[_id]/page.tsx` now renders a schema.org `Vehicle` payload (price, mileage, condition, availability, manufacturer) on every car detail page.
-- **Carparts edit:** Reused the existing add-modal form via an `editTarget` state plus a single `handleSubmitPart` that POSTs for new parts and PUTs for edits. Added a `Pencil` button next to the existing `Trash2` in each row.
-- **Cars.tsx:** Edit navigates to a new `/admin/dashboard/cars/edit/[_id]` "quick edit" page (status / price / mileage / featured / description — covers the most-changed fields without rebuilding the multi-step `CarForm`). View opens the public detail page in a new tab. Delete left unwired pending Day 4.
-- **CarShareCard:** ShareButton was already wired in `CarDetailView` and `CarListCard`; nothing missing. `CarShareModal` (which renders `CarShareCard`) replaced the wide bottom-of-detail-page ShareButton near the booking CTA — gives customers a richer "share this listing" preview.
-- **Lint:** No new errors. The 15 remaining are the pre-existing `react/no-unescaped-entities` in email templates and `no-explicit-any` in `TestBookingForm.tsx` (audit §6.3, not Day 3 scope).
-- **TypeScript:** No new errors. Pre-existing tsc errors in `admin/cars/route.ts` and `admin/users/route.ts` unchanged.
-- **Tests:** Could not run jest in the dev sandbox (Linux ARM64 SWC binary missing); user to verify with `npm test` locally before merge.
+| Wire `lib/env.ts` into `instrumentation.ts` | The Zod env validation never runs today. Replace ad-hoc `process.env.X` reads in `backend/mongodb.ts` and `lib/utils/auth.ts` with typed `serverEnv.X` reads. | 30 min |
+| Build carparts edit modal | `PUT /api/admin/carparts` is fully implemented and tested but no UI calls it. The `Pencil` icon is imported but unused. | 60 min |
+| Wire `Cars.tsx` Edit / View / Delete handlers | Buttons exist with no `onClick`. Endpoints exist. Pure UI plumbing. (Delete uses `<ConfirmDialog>` from Day 4.) | 30 min |
+| Render `<JsonLd>` on car detail pages | Component imported on `/BrowseFleet/[_id]/page.tsx` but never rendered — real SEO debt for a sales site. | 15 min |
+| Verify and wire `CarShareCard` / `ShareButton` | Audit usage on car detail pages; integrate where missing. | 15 min each |
 
 ---
 
