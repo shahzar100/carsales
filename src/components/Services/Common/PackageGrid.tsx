@@ -1,5 +1,4 @@
 import React from "react";
-import PackageGridWrapper from "./PackageGridWrapper";
 
 interface PackageGridProps {
   title: string;
@@ -12,8 +11,6 @@ const PackageGrid: React.FC<PackageGridProps> = ({
   children,
   columns = 3,
 }) => {
-  const childCount = React.Children.count(children);
-
   return (
     <div className="relative right-1/2 left-1/2 -mr-[50vw] mb-8 -ml-[50vw] w-screen overflow-hidden bg-black px-4 py-16 md:mb-12 md:px-8 md:py-20">
       {/* Ambient glow */}
@@ -25,21 +22,15 @@ const PackageGrid: React.FC<PackageGridProps> = ({
         <h2 className="mb-10 text-center text-2xl font-bold tracking-tight text-white md:mb-14 md:text-3xl">
           {title}
         </h2>
-        <PackageGridWrapper
-          count={childCount}
-          columns={columns}
-          popularIndex={childCount === 3 ? 1 : -1}
+        <div
+          className={`mx-auto grid max-w-7xl gap-6 lg:gap-8 ${
+            columns === 2
+              ? "md:max-w-5xl md:grid-cols-2"
+              : "md:grid-cols-2 lg:grid-cols-3"
+          }`}
         >
-          <div
-            className={`mx-auto grid max-w-7xl gap-6 lg:gap-8 ${
-              columns === 2
-                ? "md:max-w-5xl md:grid-cols-2"
-                : "md:grid-cols-2 lg:grid-cols-3"
-            }`}
-          >
-            {children}
-          </div>
-        </PackageGridWrapper>
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -7,16 +7,12 @@ import Filters from "@/components/Car/Filters";
 import CarListCard from "@/components/Car/CarListCard";
 import { Car, Search } from "lucide-react";
 import Pagination from "@/components/Helpful/Pagination";
-import { useSkeleton } from "@/hooks/useSkeleton";
-import { CarListCardSkeletonGrid } from "@/components/UI/Skeleton";
-import { SkeletonWrapper } from "@/components/UI/Skeleton";
 
 const ITEMS_PER_PAGE = 9;
 
 const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
   const { state } = useFilters();
   const [currentPage, setCurrentPage] = useState(1);
-  const isLoading = useSkeleton(1000, 3000);
 
   // Apply filters
   const filteredCars = filterCars(cars, state);
@@ -98,20 +94,11 @@ const BrowseFleetInner = ({ cars }: { cars: CarInterface[] }) => {
 
       {/* Car List */}
       {paginatedCars.length > 0 && (
-        <SkeletonWrapper
-          isLoading={isLoading}
-          skeleton={
-            <CarListCardSkeletonGrid
-              count={Math.min(paginatedCars.length, 4)}
-            />
-          }
-        >
-          <div className="flex flex-col gap-4">
-            {paginatedCars.map((car) => (
-              <CarListCard key={car._id} car={car} variant="customer" />
-            ))}
-          </div>
-        </SkeletonWrapper>
+        <div className="flex flex-col gap-4">
+          {paginatedCars.map((car) => (
+            <CarListCard key={car._id} car={car} variant="customer" />
+          ))}
+        </div>
       )}
 
       {/* Pagination */}

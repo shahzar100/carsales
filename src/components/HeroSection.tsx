@@ -12,7 +12,6 @@ import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
-import HeroFeaturedCarWrapper from "./HeroFeaturedCarWrapper";
 
 const HeroSection = async () => {
   const [featuredCar, businessInfo] = await Promise.all([
@@ -71,84 +70,82 @@ const HeroSection = async () => {
 
           {/* Right Column - Featured Car */}
           {featuredCar?.make && (
-            <HeroFeaturedCarWrapper>
-              <div className="relative">
-                <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/2 shadow-2xl ring-1 shadow-black/40 ring-white/5">
-                  {/* Car Image — full-bleed with overlay */}
-                  <div className="group relative">
-                    <div className="relative aspect-16/10 w-full">
-                      <Image
-                        src={featuredCar.image || "/tesla.webp"}
-                        alt={`${featuredCar.make} ${featuredCar.model}`}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        priority
-                      />
-                      {/* Bottom gradient fade into card */}
-                      <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/80 to-transparent" />
-                    </div>
-
-                    {/* Featured Badge — overlaid on image */}
-                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-red-600/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-                      <Star size={12} />
-                      Featured
-                    </div>
+            <div className="relative">
+              <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/2 shadow-2xl ring-1 shadow-black/40 ring-white/5">
+                {/* Car Image — full-bleed with overlay */}
+                <div className="group relative">
+                  <div className="relative aspect-16/10 w-full">
+                    <Image
+                      src={featuredCar.image || "/tesla.webp"}
+                      alt={`${featuredCar.make} ${featuredCar.model}`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      priority
+                    />
+                    {/* Bottom gradient fade into card */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/80 to-transparent" />
                   </div>
 
-                  {/* Car Details */}
-                  <div className="space-y-4 p-5 sm:p-6">
-                    <div>
-                      <h3 className="text-lg font-bold text-white sm:text-xl">
-                        {featuredCar
-                          ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
-                          : "2023 BMW X5"}
-                      </h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {featuredCar &&
-                          `${featuredCar.doors} Door  •  ${featuredCar.fuel}  •  ${featuredCar.colour}`}
-                      </p>
-                    </div>
+                  {/* Featured Badge — overlaid on image */}
+                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-red-600/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                    <Star size={12} />
+                    Featured
+                  </div>
+                </div>
 
-                    <div className="flex items-end justify-between">
-                      <span className="text-2xl font-bold text-white">
-                        £{featuredCar && featuredCar.price.toLocaleString()}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {featuredCar &&
-                          `${featuredCar.mileage.toLocaleString()} miles`}
-                      </span>
-                    </div>
+                {/* Car Details */}
+                <div className="space-y-4 p-5 sm:p-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-white sm:text-xl">
+                      {featuredCar
+                        ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
+                        : "2023 BMW X5"}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {featuredCar &&
+                        `${featuredCar.doors} Door  •  ${featuredCar.fuel}  •  ${featuredCar.colour}`}
+                    </p>
+                  </div>
 
-                    {/* Quick info pills */}
-                    <div className="flex flex-wrap gap-2">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
-                        <Eye size={12} className="text-red-400" />
-                        Available for viewing
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
-                        <Clock size={12} className="text-red-400" />
-                        Book today
-                      </span>
-                    </div>
+                  <div className="flex items-end justify-between">
+                    <span className="text-2xl font-bold text-white">
+                      £{featuredCar && featuredCar.price.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {featuredCar &&
+                        `${featuredCar.mileage.toLocaleString()} miles`}
+                    </span>
+                  </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex w-full gap-3 pt-1">
-                      <Link
-                        href={
-                          featuredCar
-                            ? `/BrowseFleet/${featuredCar._id}`
-                            : "/BrowseFleet"
-                        }
-                        className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:border-white/20 hover:bg-white/10"
-                      >
-                        View Details
-                      </Link>
-                      <FeaturedCarBookingButton car={featuredCar} />
-                    </div>
+                  {/* Quick info pills */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
+                      <Eye size={12} className="text-red-400" />
+                      Available for viewing
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs text-gray-300 ring-1 ring-white/10">
+                      <Clock size={12} className="text-red-400" />
+                      Book today
+                    </span>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex w-full gap-3 pt-1">
+                    <Link
+                      href={
+                        featuredCar
+                          ? `/BrowseFleet/${featuredCar._id}`
+                          : "/BrowseFleet"
+                      }
+                      className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:border-white/20 hover:bg-white/10"
+                    >
+                      View Details
+                    </Link>
+                    <FeaturedCarBookingButton car={featuredCar} />
                   </div>
                 </div>
               </div>
-            </HeroFeaturedCarWrapper>
+            </div>
           )}
         </div>
 

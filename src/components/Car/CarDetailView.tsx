@@ -23,8 +23,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import ShareButton from "@/components/SEO/ShareButton";
-import { useSkeleton } from "@/hooks/useSkeleton";
-import CarDetailSkeleton from "@/components/UI/Skeleton/CarDetailSkeleton";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -36,7 +34,6 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
   const mapsUrl = businessInfo?.googleMapsUrl;
   const { updateViewingBooking } = useViewing();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const isLoading = useSkeleton(1000, 3000);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-GB", {
@@ -153,10 +150,6 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
     typeof window !== "undefined"
       ? window.location.href
       : `/BrowseFleet/${car._id}`;
-
-  if (isLoading) {
-    return <CarDetailSkeleton />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
