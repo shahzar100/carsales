@@ -8,10 +8,56 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 interface PageProps {
   params: Promise<{
     _id: string;
   }>;
+}
+
+/**
+ * Build a schema.org `Vehicle` payload for a single car.
+ *
+ * Search engines surface this for "vehicle listing" rich results — title,
+ * price, mileage, condition, availability — so it's the difference between
+ * a plain blue link and a structured card on the SERP.
+ *
+ * Reference: https://schema.org/Vehicle
+ */
+function buildCarJsonLd(car: CarInterface, id: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Vehicle",
+    name: `${car.year} ${car.make} ${car.model}`,
+    manufacturer: { "@type": "Organization", name: car.make },
+    model: car.model,
+    vehicleModelDate: String(car.year),
+    mileageFromOdometer: {
+      "@type": "QuantitativeValue",
+      value: car.mileage,
+      unitCode: "SMI", // statute miles
+    },
+    vehicleTransmission: car.transmission,
+    fuelType: car.fuel,
+    color: car.colour,
+    numberOfDoors: car.doors,
+    ...(car.image ? { image: car.image } : {}),
+    ...(car.description ? { description: car.description } : {}),
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/BrowseFleet/${id}`,
+      priceCurrency: "GBP",
+      price: car.price,
+      itemCondition: "https://schema.org/UsedCondition",
+      availability:
+        car.status === "available"
+          ? "https://schema.org/InStock"
+          : car.status === "reserved"
+            ? "https://schema.org/PreOrder"
+            : "https://schema.org/OutOfStock",
+    },
+  };
 }
 
 const getCar = async (id: string): Promise<CarInterface | null> => {
@@ -88,7 +134,12 @@ const CarDetailsPage = async ({ params }: PageProps) => {
     );
   }
 
-  return <CarDetailView car={car} />;
+  return (
+    <>
+      <JsonLd data={buildCarJsonLd(car, _id)} />
+      <CarDetailView car={car} />
+    </>
+  );
 };
 
 export default CarDetailsPage;

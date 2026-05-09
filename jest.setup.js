@@ -44,18 +44,11 @@ beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
   mongoUri = mongod.getUri();
 
-  // Set test environment variables
+  // Override the placeholder URI from jest.env.setup.js with the real
+  // MongoMemoryServer URI. The mocked @/backend/mongodb (above) reads
+  // process.env.MONGODB_URI lazily so the override is honoured even
+  // though src/lib/env.ts cached the placeholder at module load.
   process.env.MONGODB_URI = mongoUri;
-  process.env.NODE_ENV = "test";
-  process.env.SESSION_SECRET =
-    "test-session-secret-at-least-32-characters-long";
-  process.env.ADMIN_PASSWORD = "test-admin-password";
-  process.env.RESEND_API_KEY = "test-resend-key";
-  process.env.EMAIL_FROM = "test@example.com";
-  process.env.NEXT_PUBLIC_SITE_URL = "http://localhost:3000";
-  process.env.NEXT_BUSINESS_NAME = "Test Motor Company";
-  process.env.NEXT_BUSINESS_PHONE = "555-123-4567";
-  process.env.NEXT_BUSINESS_EMAIL = "test@testmotor.com";
 });
 
 afterAll(async () => {

@@ -302,6 +302,9 @@ describe("Authentication Utilities", () => {
 
   describe("Module-level production guard", () => {
     it("should throw when SESSION_SECRET is missing in production", () => {
+      // The throw now originates in src/lib/env.ts (validateServerEnv),
+      // which auth.ts imports. Behaviour is preserved: importing auth in
+      // production without SESSION_SECRET aborts module load.
       const originalNodeEnv = process.env.NODE_ENV;
       const originalSessionSecret = process.env.SESSION_SECRET;
 
@@ -316,7 +319,7 @@ describe("Authentication Utilities", () => {
         jest.isolateModules(() => {
           require("@/lib/utils/auth");
         });
-      }).toThrow("SESSION_SECRET environment variable must be set in production");
+      }).toThrow(/SESSION_SECRET must be set in production/);
 
       Object.defineProperty(process.env, "NODE_ENV", {
         value: originalNodeEnv,

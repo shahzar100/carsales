@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import { getIronSession, IronSession, SessionOptions } from "iron-session";
 import { cookies } from "next/headers";
 
+import { serverEnv } from "@/lib/env";
+
 export interface SessionData {
   isLoggedIn: boolean;
   username?: string;
@@ -14,12 +16,10 @@ const ROLE_HIERARCHY: Record<string, number> = {
   admin: 3,
 };
 
-if (!process.env.SESSION_SECRET) {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(
-      "SESSION_SECRET environment variable must be set in production"
-    );
-  }
+// `serverEnv` enforces the production-vs-dev SESSION_SECRET contract
+// (see src/lib/env.ts: throws if SESSION_SECRET is missing in production).
+// In development we still want a friendly warning when running without one.
+if (!serverEnv.SESSION_SECRET) {
   console.warn(
     "⚠️  SESSION_SECRET is not set — using fallback. Set it for all environments!"
   );
@@ -27,10 +27,10 @@ if (!process.env.SESSION_SECRET) {
 
 export const sessionOptions: SessionOptions = {
   password:
-    process.env.SESSION_SECRET || "dev-only-fallback-secret-at-least-32chars!",
+    serverEnv.SESSION_SECRET || "dev-only-fallback-secret-at-least-32chars!",
   cookieName: "carsales_admin_session",
   cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
+    secure: serverEnv.NODE_ENV === "production",
     httpOnly: true,
     maxAge: 60 * 60 * 24, // 24 hours
     sameSite: "lax",
