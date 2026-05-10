@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import CarActions from "@/components/Admin/Navigation/CarActions";
 import ShareButton from "@/components/SEO/ShareButton";
+import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
 
 interface CarListCardProps {
   car: CarInterface;
@@ -26,19 +27,6 @@ const CarListCard: React.FC<CarListCardProps> = ({
   variant = "customer",
 }) => {
   const isAdmin = variant === "admin";
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat("en-GB").format(mileage);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -191,12 +179,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
                     {car.featured ? "⭐" : "☆"}
                   </button>
                   <span className="text-xs text-gray-400">
-                    Added{" "}
-                    {new Date(car.createdAt).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    Added {formatDate(car.createdAt)}
                   </span>
                 </div>
                 <CarActions car={car} />

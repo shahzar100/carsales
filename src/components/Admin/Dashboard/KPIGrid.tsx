@@ -11,6 +11,7 @@ import {
   Clock,
   CheckCircle,
 } from "lucide-react";
+import { formatPrice } from "@/lib/utils/format";
 
 // ═════════════════════════════════════════════════════════════
 // KPIGrid — top-level stat cards row
@@ -19,9 +20,6 @@ import {
 interface KPIGridProps {
   kpis: DashboardKPIs;
 }
-
-const formatCurrency = (v: number) =>
-  `£${v.toLocaleString("en-GB", { maximumFractionDigits: 0 })}`;
 
 const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -34,10 +32,10 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
     />
     <StatCard
       label="Inventory Value"
-      value={formatCurrency(kpis.totalInventoryValue)}
+      value={formatPrice(kpis.totalInventoryValue)}
       icon={PoundSterling}
       colour="bg-emerald-100 text-emerald-600"
-      subtext={`${formatCurrency(kpis.totalSoldValue)} sold value`}
+      subtext={`${formatPrice(kpis.totalSoldValue)} sold value`}
     />
     <StatCard
       label="Service Bookings"

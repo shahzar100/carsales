@@ -12,6 +12,7 @@ import FeaturedCarBookingButton from "./UI/FeaturedCarBookingButton";
 import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 const HeroSection = async () => {
   const [featuredCar, businessInfo] = await Promise.all([
@@ -109,11 +110,11 @@ const HeroSection = async () => {
 
                   <div className="flex items-end justify-between">
                     <span className="text-2xl font-bold text-white">
-                      £{featuredCar && featuredCar.price.toLocaleString()}
+                      {featuredCar && formatPrice(featuredCar.price)}
                     </span>
                     <span className="text-sm text-gray-500">
                       {featuredCar &&
-                        `${featuredCar.mileage.toLocaleString()} miles`}
+                        `${formatMileage(featuredCar.mileage)} miles`}
                     </span>
                   </div>
 

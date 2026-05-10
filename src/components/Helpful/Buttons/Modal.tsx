@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -39,12 +40,14 @@ const Modal = ({
     [onClose]
   );
 
+  // Body scroll lock is owned by useScrollLock so multiple overlays
+  // (Modal + NavMenu + ConfirmDialog) can share the lock without racing.
+  useScrollLock(true);
+
   useEffect(() => {
     setMounted(true);
-    document.body.style.overflowY = "hidden";
     document.addEventListener("keydown", handleEscapeKey);
     return () => {
-      document.body.style.overflowY = "";
       document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [handleEscapeKey]);

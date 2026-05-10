@@ -3,9 +3,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
 import Modal from "@/components/Helpful/Buttons/Modal";
+import ConfirmDialog from "@/components/UI/ConfirmDialog";
+import EmptyState from "@/components/UI/EmptyState";
 import ImageUploader from "@/components/Admin/ImageUploader";
 import { useToast } from "@/contexts/ToastContext";
 import { CarPartInterface } from "@/lib/interfaces";
+import { formatPrice } from "@/lib/utils/format";
 
 const EMPTY_FORM = {
   name: "",
@@ -322,53 +325,39 @@ export default function CarPartsManagement() {
         </Modal>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation — uses the shared ConfirmDialog primitive */}
       {deleteTarget && (
-        <Modal title="Confirm Deletion" onClose={() => setDeleteTarget(null)}>
-          <div className="space-y-4">
-            <p className="text-gray-700">
-              Are you sure you want to delete{" "}
-              <strong>{deleteTarget.name}</strong>?
-            </p>
-            <p className="text-sm text-red-600">
-              This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setDeleteTarget(null)}
-                type="button"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                onClick={handleDeletePart}
-                loading={deleting}
-              >
-                Delete Part
-              </Button>
-            </div>
-          </div>
-        </Modal>
+        <ConfirmDialog
+          title="Delete car part?"
+          description={
+            <>
+              <strong>{deleteTarget.name}</strong> will be permanently removed
+              from inventory. This cannot be undone.
+            </>
+          }
+          confirmLabel="Delete part"
+          variant="danger"
+          loading={deleting}
+          onConfirm={handleDeletePart}
+          onCancel={() => setDeleteTarget(null)}
+        />
       )}
 
-      {/* Content — hidden when delete confirmation is active */}
-      {!deleteTarget && (
-        <>
+      {/* Content (overlay handles its own dimming via backdrop) */}
+      <>
           {parts.length === 0 ? (
-            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12">
-              <p className="mb-4 text-lg font-medium text-gray-500">
-                No Parts Yet
-              </p>
-              <p className="mb-6 text-sm text-gray-400">
-                Add your first car part to get started.
-              </p>
-              <Button onClick={() => setShowAddForm(true)}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add First Part
-              </Button>
-            </div>
+            <EmptyState
+              icon={PlusCircle}
+              title="No parts yet"
+              description="Add your first car part to get started."
+              action={
+                <Button onClick={() => setShowAddForm(true)}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add First Part
+                </Button>
+              }
+              size="lg"
+            />
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="min-w-full divide-y divide-gray-200">
@@ -410,7 +399,7 @@ export default function CarPartsManagement() {
                         {part.category}
                       </td>
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                        £{part.price}
+                        {formatPrice(part.price)}
                       </td>
                       <td className="px-6 py-4 text-sm whitespace-nowrap">
                         <span
@@ -460,7 +449,6 @@ export default function CarPartsManagement() {
             </div>
           )}
         </>
-      )}
     </div>
   );
 }

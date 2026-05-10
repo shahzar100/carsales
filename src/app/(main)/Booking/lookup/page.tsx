@@ -43,6 +43,8 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Button from "@/components/Helpful/Buttons/Button";
+import { formatDate, formatTime } from "@/lib/utils/booking";
+import { formatPrice } from "@/lib/utils/format";
 
 interface Booking {
   bookingReference: string;
@@ -126,31 +128,6 @@ function BookingLookupContent() {
       handleSearch();
     }
   }, [searchParams, handleSearch, email]);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const formatTime = (time: string) => {
-    const timeFormats: { [key: string]: string } = {
-      "09:00": "9:00 AM - 10:00 AM",
-      "10:00": "10:00 AM - 11:00 AM",
-      "11:00": "11:00 AM - 12:00 PM",
-      "12:00": "12:00 PM - 1:00 PM",
-      "14:00": "2:00 PM - 3:00 PM",
-      "15:00": "3:00 PM - 4:00 PM",
-      "16:00": "4:00 PM - 5:00 PM",
-      "17:00": "5:00 PM - 6:00 PM",
-      "18:00": "6:00 PM - 7:00 PM",
-    };
-    return timeFormats[time] || time;
-  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig: {
@@ -304,7 +281,7 @@ function BookingLookupContent() {
                         {booking.carDetails.model}
                       </h4>
                       <p className="mt-1 text-lg font-bold text-red-600">
-                        ${booking.carDetails.price.toLocaleString()}
+                        {formatPrice(booking.carDetails.price)}
                       </p>
                     </div>
                   )}

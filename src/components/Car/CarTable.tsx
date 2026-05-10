@@ -3,6 +3,12 @@ import React, { useState } from "react";
 import Image from "next/image";
 import CarActions from "@/components/Admin/Navigation/CarActions";
 import Pagination from "@/components/Helpful/Pagination";
+import {
+  formatPrice,
+  formatMileage,
+  formatDate,
+} from "@/lib/utils/format";
+import StatusBadge from "@/components/UI/StatusBadge";
 
 interface CarTableProps {
   cars: CarInterface[];
@@ -11,46 +17,6 @@ interface CarTableProps {
 const CarTable: React.FC<CarTableProps> = ({ cars }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  // Format price with currency
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  // Format mileage
-  const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat("en-GB").format(mileage) + " mi";
-  };
-
-  // Format date
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  // Get status badge styles
-  const getStatusBadge = (status: CarInterface["status"]) => {
-    const baseStyles =
-      "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide";
-    switch (status) {
-      case "available":
-        return `${baseStyles} bg-emerald-100 text-emerald-700`;
-      case "sold":
-        return `${baseStyles} bg-red-100 text-red-700`;
-      case "reserved":
-        return `${baseStyles} bg-amber-100 text-amber-700`;
-      default:
-        return `${baseStyles} bg-gray-100 text-gray-700`;
-    }
-  };
 
   // Pagination calculations
   const totalPages = Math.ceil(cars.length / itemsPerPage);
@@ -164,7 +130,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                   {/* Mileage */}
                   <td className="px-4 py-5">
                     <span className="text-gray-600">
-                      {formatMileage(car.mileage)}
+                      {formatMileage(car.mileage)} mi
                     </span>
                   </td>
 
@@ -185,9 +151,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
 
                   {/* Status */}
                   <td className="px-4 py-5">
-                    <span className={getStatusBadge(car.status)}>
-                      {car.status}
-                    </span>
+                    <StatusBadge status={car.status} />
                   </td>
 
                   {/* Created Date */}

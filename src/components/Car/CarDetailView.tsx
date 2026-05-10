@@ -25,6 +25,7 @@ import {
 import ShareButton from "@/components/SEO/ShareButton";
 import { CarShareModal } from "@/components/SEO/CarShareCard";
 import { Share2 } from "lucide-react";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -36,17 +37,6 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
   const mapsUrl = businessInfo?.googleMapsUrl;
   const { updateViewingBooking } = useViewing();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-
-  const formatMileage = (mileage: number) =>
-    new Intl.NumberFormat("en-GB").format(mileage);
 
   // Gather all images — main + extras
   const allImages = [car.image || "/tesla.webp", ...(car.images || [])].filter(

@@ -170,21 +170,21 @@ describe("Booking Utilities", () => {
   describe("📋 Functional Standards - Time Formatting", () => {
     describe("formatTime", () => {
       it("should format morning times correctly", () => {
-        expect(formatTime("09:00")).toBe("9:00 AM - 10:00 AM");
-        expect(formatTime("10:00")).toBe("10:00 AM - 11:00 AM");
-        expect(formatTime("11:00")).toBe("11:00 AM - 12:00 PM");
+        expect(formatTime("09:00")).toBe("09:00–10:00");
+        expect(formatTime("10:00")).toBe("10:00–11:00");
+        expect(formatTime("11:00")).toBe("11:00–12:00");
       });
 
       it("should format noon correctly", () => {
-        expect(formatTime("12:00")).toBe("12:00 PM - 1:00 PM");
+        expect(formatTime("12:00")).toBe("12:00–13:00");
       });
 
       it("should format afternoon/evening times correctly", () => {
-        expect(formatTime("14:00")).toBe("2:00 PM - 3:00 PM");
-        expect(formatTime("15:00")).toBe("3:00 PM - 4:00 PM");
-        expect(formatTime("16:00")).toBe("4:00 PM - 5:00 PM");
-        expect(formatTime("17:00")).toBe("5:00 PM - 6:00 PM");
-        expect(formatTime("18:00")).toBe("6:00 PM - 7:00 PM");
+        expect(formatTime("14:00")).toBe("14:00–15:00");
+        expect(formatTime("15:00")).toBe("15:00–16:00");
+        expect(formatTime("16:00")).toBe("16:00–17:00");
+        expect(formatTime("17:00")).toBe("17:00–18:00");
+        expect(formatTime("18:00")).toBe("18:00–19:00");
       });
 
       it("should return original time for unmapped values", () => {
@@ -200,7 +200,7 @@ describe("Booking Utilities", () => {
       });
 
       it("should be case-sensitive", () => {
-        expect(formatTime("09:00")).toBe("9:00 AM - 10:00 AM");
+        expect(formatTime("09:00")).toBe("09:00–10:00");
         // Keys are exact-match; a non-matching key returns the input
         expect(formatTime("9:00")).toBe("9:00"); // Missing leading zero, not mapped
       });
@@ -221,8 +221,8 @@ describe("Booking Utilities", () => {
         definedTimes.forEach((time) => {
           const formatted = formatTime(time);
           expect(formatted).not.toBe(time); // Should be transformed
-          expect(formatted).toContain("-"); // Should have range
-          expect(formatted).toMatch(/AM|PM/); // Should have meridiem
+          expect(formatted).toContain("–"); // Should have en-dash range
+          expect(formatted).toMatch(/^\d{2}:\d{2}–\d{2}:\d{2}$/);
         });
       });
     });

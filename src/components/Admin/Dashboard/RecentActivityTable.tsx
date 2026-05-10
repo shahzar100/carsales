@@ -1,6 +1,7 @@
 import React from "react";
 import { ActivityItem } from "./types";
 import { Wrench, Eye, Clock } from "lucide-react";
+import { formatDate, formatRelativeTime } from "@/lib/utils/format";
 
 // ═════════════════════════════════════════════════════════════
 // RecentActivityTable — latest bookings across all types
@@ -37,25 +38,6 @@ const typeBadge = (type: "service" | "viewing") =>
     </span>
   );
 
-const formatDate = (d: string) => {
-  if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
-
-const timeAgo = (iso: string) => {
-  if (!iso) return "";
-  const diff = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-};
 
 const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
   <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -110,7 +92,7 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
                   {statusBadge(item.status)}
                 </td>
                 <td className="px-6 py-3 text-right text-xs whitespace-nowrap text-gray-400">
-                  {item.createdAt ? timeAgo(item.createdAt) : "—"}
+                  {item.createdAt ? formatRelativeTime(item.createdAt) : "—"}
                 </td>
               </tr>
             ))}

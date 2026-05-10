@@ -14,6 +14,7 @@ import {
 } from "./template/EmailTemplate";
 import type { CarViewingBooking } from "@/lib/interfaces";
 import { formatDate } from "@/lib/utils/booking";
+import { formatPrice } from "@/lib/utils/format";
 
 interface ShopInfo {
   businessName: string;
@@ -158,7 +159,7 @@ export const ReviewInviteViewing: React.FC<Props> = ({
           color: "#dc2626",
         }}
       >
-        £{booking.carDetails.price.toLocaleString()}
+        {formatPrice(booking.carDetails.price)}
       </Text>
     </Section>
 

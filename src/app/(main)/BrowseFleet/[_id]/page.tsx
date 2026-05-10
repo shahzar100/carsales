@@ -7,6 +7,7 @@ import CarDetailView from "@/components/Car/CarDetailView";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { JsonLd } from "@/components/SEO/JsonLd";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -89,7 +90,7 @@ export async function generateMetadata({
   }
 
   const title = `${car.year} ${car.make} ${car.model}`;
-  const description = `${car.year} ${car.make} ${car.model} — ${car.fuel}, ${car.transmission}, ${car.mileage.toLocaleString()} miles. ${car.colour}. Price: £${car.price.toLocaleString()}. Book a viewing today.`;
+  const description = `${car.year} ${car.make} ${car.model} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles. ${car.colour}. Price: ${formatPrice(car.price)}. Book a viewing today.`;
 
   return {
     title,

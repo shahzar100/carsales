@@ -18,6 +18,7 @@ import {
   ImagePlus,
   ClipboardList,
 } from "lucide-react";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 const currentYear = new Date().getFullYear();
 
@@ -312,17 +313,13 @@ const CarForm = () => {
               <SummaryRow label="Year" value={carData.year} />
               <SummaryRow
                 label="Price"
-                value={
-                  carData.price
-                    ? `£${Number(carData.price).toLocaleString()}`
-                    : "—"
-                }
+                value={carData.price ? formatPrice(Number(carData.price)) : "—"}
               />
               <SummaryRow
                 label="Mileage"
                 value={
                   carData.mileage
-                    ? `${Number(carData.mileage).toLocaleString()} mi`
+                    ? `${formatMileage(Number(carData.mileage))} mi`
                     : "—"
                 }
               />

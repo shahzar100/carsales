@@ -2,6 +2,8 @@ import React from "react";
 import { Search, Eye, Check } from "lucide-react";
 import { Booking, SelectedBooking } from "@/lib/types";
 import Button from "@/components/Helpful/Buttons/Button";
+import { formatDate } from "@/lib/utils/format";
+import { formatTime } from "@/lib/utils/booking";
 
 type BookingType = "viewing" | "service";
 
@@ -109,10 +111,10 @@ export default function BookingsTable({
                 </td>
                 <td className="px-4 py-3 text-sm">{renderDetail(booking)}</td>
                 <td className="px-4 py-3 text-sm">
-                  <p>
-                    {new Date(booking.appointmentDate).toLocaleDateString()}
+                  <p>{formatDate(booking.appointmentDate)}</p>
+                  <p className="text-gray-500">
+                    {formatTime(booking.appointmentTime)}
                   </p>
-                  <p className="text-gray-500">{booking.appointmentTime}</p>
                 </td>
                 <td className="px-4 py-3">{getStatusBadge(booking.status)}</td>
                 <td className="px-4 py-3">

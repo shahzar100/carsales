@@ -1,4 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import {
+  ok,
+  badRequest,
+  tooManyRequests,
+  serverError,
+} from "@/lib/utils/apiResponse";
 import { waitUntil } from "@vercel/functions";
 import { ipAddress } from "@vercel/functions";
 import { getQuotesCollection, Quote } from "@/lib/models";
@@ -22,10 +28,7 @@ export async function POST(request: NextRequest) {
     const rateLimit = checkRateLimit(`quote:${ip}`, 3, 60000);
 
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 }
-      );
+      return tooManyRequests("Too many requests. Please try again later.");
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,10 +36,7 @@ export async function POST(request: NextRequest) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON in request body" },
-        { status: 400 }
-      );
+      return badRequest("Invalid JSON in request body");
     }
 
     // Validate and sanitize customer info
@@ -45,40 +45,25 @@ export async function POST(request: NextRequest) {
       !body.customerInfo?.email ||
       !body.customerInfo?.phone
     ) {
-      return NextResponse.json(
-        { error: "Customer information is required" },
-        { status: 400 }
-      );
+      return badRequest("Customer information is required");
     }
 
     const emailValidation = validateEmail(body.customerInfo.email);
     if (!emailValidation.valid) {
-      return NextResponse.json(
-        { error: "Invalid email address" },
-        { status: 400 }
-      );
+      return badRequest("Invalid email address");
     }
 
     const phoneValidation = validatePhone(body.customerInfo.phone);
     if (!phoneValidation.valid) {
-      return NextResponse.json(
-        { error: "Invalid phone number" },
-        { status: 400 }
-      );
+      return badRequest("Invalid phone number");
     }
 
     if (!body.serviceType) {
-      return NextResponse.json(
-        { error: "Service type is required" },
-        { status: 400 }
-      );
+      return badRequest("Service type is required");
     }
 
     if (!body.vehicle?.make || !body.vehicle?.model || !body.vehicle?.year) {
-      return NextResponse.json(
-        { error: "Vehicle information is required" },
-        { status: 400 }
-      );
+      return badRequest("Vehicle information is required");
     }
 
     const quoteReference = generateQuoteReference();
@@ -141,19 +126,13 @@ export async function POST(request: NextRequest) {
       })()
     );
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        quoteReference,
-        message:
-          "Quote request submitted successfully. We'll get back to you shortly.",
-      },
+    return ok({
+      quoteReference,
+      message:
+        "Quote request submitted successfully. We'll get back to you shortly.",
     });
   } catch (error) {
     console.error("Error creating quote:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

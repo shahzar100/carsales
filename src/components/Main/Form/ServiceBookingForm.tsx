@@ -23,6 +23,7 @@ import {
   MessageSquareQuote,
   CalendarCheck,
 } from "lucide-react";
+import { formatDate } from "@/lib/utils/format";
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,32 +44,22 @@ const sanitizeInput = (input: string): string =>
     .substring(0, 1000);
 
 const timeSlots = [
-  { value: "09:00", label: "9:00 AM" },
-  { value: "09:30", label: "9:30 AM" },
-  { value: "10:00", label: "10:00 AM" },
-  { value: "10:30", label: "10:30 AM" },
-  { value: "11:00", label: "11:00 AM" },
-  { value: "11:30", label: "11:30 AM" },
-  { value: "12:00", label: "12:00 PM" },
-  { value: "12:30", label: "12:30 PM" },
-  { value: "14:00", label: "2:00 PM" },
-  { value: "14:30", label: "2:30 PM" },
-  { value: "15:00", label: "3:00 PM" },
-  { value: "15:30", label: "3:30 PM" },
-  { value: "16:00", label: "4:00 PM" },
-  { value: "16:30", label: "4:30 PM" },
-  { value: "17:00", label: "5:00 PM" },
+  { value: "09:00", label: "09:00" },
+  { value: "09:30", label: "09:30" },
+  { value: "10:00", label: "10:00" },
+  { value: "10:30", label: "10:30" },
+  { value: "11:00", label: "11:00" },
+  { value: "11:30", label: "11:30" },
+  { value: "12:00", label: "12:00" },
+  { value: "12:30", label: "12:30" },
+  { value: "14:00", label: "14:00" },
+  { value: "14:30", label: "14:30" },
+  { value: "15:00", label: "15:00" },
+  { value: "15:30", label: "15:30" },
+  { value: "16:00", label: "16:00" },
+  { value: "16:30", label: "16:30" },
+  { value: "17:00", label: "17:00" },
 ];
-
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-GB", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
 
 const formatTime = (val: string) =>
   timeSlots.find((t) => t.value === val)?.label ?? val;
@@ -407,7 +398,8 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
 
             {data.date && data.time && (
               <InfoBanner variant="info">
-                <strong>Your appointment:</strong> {formatDate(data.date)} at{" "}
+                <strong>Your appointment:</strong>{" "}
+                {formatDate(data.date, "long")} at{" "}
                 {formatTime(data.time)}.
               </InfoBanner>
             )}
@@ -556,7 +548,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
 
             {data.purpose === "book" && (
               <SummaryCard title="Appointment">
-                <SummaryRow label="Date" value={formatDate(data.date)} />
+                <SummaryRow label="Date" value={formatDate(data.date, "long")} />
                 <SummaryRow label="Time" value={formatTime(data.time)} />
               </SummaryCard>
             )}

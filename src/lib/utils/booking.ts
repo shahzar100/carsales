@@ -12,9 +12,16 @@ export function generateQuoteReference(): string {
   return `QT-${uuid}`;
 }
 
+/**
+ * Format a date for booking-related UI (lookup page, confirmation emails).
+ *
+ * Uses UK long form — e.g. `"Saturday, 25 December 2024"`. The non-booking
+ * formatters in `src/lib/utils/format.ts` are also en-GB; this one is kept
+ * separate because the booking flow specifically wants the long form.
+ */
 export function formatDate(date: string): string {
   const d = new Date(date);
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString("en-GB", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -22,17 +29,24 @@ export function formatDate(date: string): string {
   });
 }
 
+/**
+ * Format a 24-hour booking slot key (e.g. `"09:00"`) as a UK 24-hour time
+ * range covering the one-hour appointment window — `"09:00–10:00"`.
+ *
+ * The dash is an en-dash (U+2013), the standard separator for time ranges
+ * in UK style guides. Unmapped values pass through unchanged.
+ */
 export function formatTime(time: string): string {
   const timeFormats: { [key: string]: string } = {
-    "09:00": "9:00 AM - 10:00 AM",
-    "10:00": "10:00 AM - 11:00 AM",
-    "11:00": "11:00 AM - 12:00 PM",
-    "12:00": "12:00 PM - 1:00 PM",
-    "14:00": "2:00 PM - 3:00 PM",
-    "15:00": "3:00 PM - 4:00 PM",
-    "16:00": "4:00 PM - 5:00 PM",
-    "17:00": "5:00 PM - 6:00 PM",
-    "18:00": "6:00 PM - 7:00 PM",
+    "09:00": "09:00–10:00",
+    "10:00": "10:00–11:00",
+    "11:00": "11:00–12:00",
+    "12:00": "12:00–13:00",
+    "14:00": "14:00–15:00",
+    "15:00": "15:00–16:00",
+    "16:00": "16:00–17:00",
+    "17:00": "17:00–18:00",
+    "18:00": "18:00–19:00",
   };
   return timeFormats[time] || time;
 }

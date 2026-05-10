@@ -3,38 +3,32 @@ import { serializeDocument } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { getBusinessInfo, updateBusinessInfo } from "@/lib/utils/businessInfo";
 import type { ShopInfo } from "@/lib/interfaces";
+import {
+  ok,
+  badRequest,
+  unauthorized,
+  notFound,
+  fail,
+} from "@/lib/utils/apiResponse";
 
 export async function GET() {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Authentication required to access business settings" },
-        { status: 401 }
+      return unauthorized(
+        "Authentication required to access business settings"
       );
     }
 
     const businessInfo = await getBusinessInfo();
-
     if (!businessInfo) {
-      return NextResponse.json(
-        { error: "No business information found in the database" },
-        { status: 404 }
-      );
+      return notFound("No business information found in the database");
     }
 
-    return NextResponse.json({
-      success: true,
-      data: businessInfo,
-    });
+    return ok(businessInfo);
   } catch (error) {
     console.error("Error fetching shop info:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to retrieve business information",
-      },
-      { status: 500 }
-    );
+    return fail("Failed to retrieve business information");
   }
 }
 
@@ -42,9 +36,8 @@ export async function PUT(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { error: "Authentication required to update business settings" },
-        { status: 401 }
+      return unauthorized(
+        "Authentication required to update business settings"
       );
     }
 
@@ -52,17 +45,11 @@ export async function PUT(request: NextRequest) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON in request body — could not parse the data" },
-        { status: 400 }
-      );
+      return badRequest("Invalid JSON in request body — could not parse the data");
     }
 
     if (!body || typeof body !== "object") {
-      return NextResponse.json(
-        { error: "Request body must be a valid JSON object" },
-        { status: 400 }
-      );
+      return badRequest("Request body must be a valid JSON object");
     }
 
     // ── Field validation ───────────────────────────────────
@@ -176,25 +163,12 @@ export async function PUT(request: NextRequest) {
       await updateBusinessInfo(shopInfo);
     } catch (dbError) {
       console.error("Database error while updating business info:", dbError);
-      return NextResponse.json(
-        {
-          error: "Database update failed",
-        },
-        { status: 500 }
-      );
+      return fail("Database update failed");
     }
 
-    return NextResponse.json({
-      success: true,
-      data: serializeDocument(shopInfo),
-    });
+    return ok(serializeDocument(shopInfo));
   } catch (error) {
     console.error("Error updating shop info:", error);
-    return NextResponse.json(
-      {
-        error: "Unexpected error while saving business information",
-      },
-      { status: 500 }
-    );
+    return fail("Unexpected error while saving business information");
   }
 }

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
@@ -14,6 +14,10 @@ import {
   Eye,
 } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
+import ConfirmDialog from "@/components/UI/ConfirmDialog";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
+import { useToast } from "@/contexts/ToastContext";
+import { getStatusStyles } from "@/components/UI/StatusBadge";
 
 interface CarsProps {
   car: CarInterface;
@@ -25,6 +29,9 @@ interface CarsProps {
 
 const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
   const router = useRouter();
+  const toast = useToast();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Navigate to the public-facing detail page (in a new tab so the admin
   // doesn't lose their place in the inventory list).
@@ -43,32 +50,41 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
     router.push(`/admin/dashboard/cars/edit/${car._id}`);
   };
 
-  // Delete is intentionally left unwired here — Day 4 builds the shared
-  // <ConfirmDialog> primitive, which the delete flow needs.
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-emerald-100 text-emerald-700";
-      case "sold":
-        return "bg-red-100 text-red-700";
-      case "reserved":
-        return "bg-amber-100 text-amber-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+  // Delete uses the shared <ConfirmDialog> primitive (Day 4) so accidental
+  // clicks can't silently destroy a listing. The parent owns the inventory
+  // list, so we notify it via `onDeleted` rather than re-fetching here.
+  const handleConfirmDelete = async () => {
+    if (!car._id) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(
+        `/api/admin/cars?id=${encodeURIComponent(car._id)}`,
+        { method: "DELETE" }
+      );
+      const body = await res.json();
+      if (!res.ok || body?.success === false) {
+        const message =
+          body?.error || "Could not delete the car. Please try again.";
+        toast.error("Delete failed", message);
+        return;
+      }
+      toast.success("Car deleted", `${car.year} ${car.make} ${car.model}`);
+      setConfirmingDelete(false);
+      // Step the carousel back if we just deleted the last item, then ask
+      // the router to re-fetch the cars list so the deleted entry disappears.
+      if (carId > 0 && carId === length - 1) {
+        setCarId(carId - 1);
+      }
+      router.refresh();
+    } catch (err) {
+      console.error("Error deleting car:", err);
+      toast.error(
+        "Delete failed",
+        "Network error — please check your connection and try again."
+      );
+    } finally {
+      setDeleting(false);
     }
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat("en-GB").format(mileage);
   };
 
   return (
@@ -100,7 +116,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Badges */}
             <div className="absolute top-2 left-2 flex gap-1.5">
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${getStatusColor(car.status)}`}
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${getStatusStyles(car.status)}`}
               >
                 {car.status}
               </span>
@@ -195,13 +211,38 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 <Eye className="h-3.5 w-3.5" />
                 View
               </Button>
-              <Button variant="danger" size="sm">
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => setConfirmingDelete(true)}
+                disabled={!car._id}
+              >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          title="Delete car?"
+          description={
+            <>
+              <strong>
+                {car.year} {car.make} {car.model}
+              </strong>{" "}
+              will be permanently removed from inventory. Bookings already
+              attached to this listing stay in the dashboard.
+            </>
+          }
+          confirmLabel="Delete car"
+          variant="danger"
+          loading={deleting}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmingDelete(false)}
+        />
+      )}
     </>
   );
 };

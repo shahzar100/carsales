@@ -7,6 +7,13 @@ import {
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
+import {
+  ok,
+  badRequest,
+  unauthorized,
+  notFound,
+  serverError,
+} from "@/lib/utils/apiResponse";
 
 // ── Car validation schema ────────────────────────────────────
 const carSchema = z.object({
@@ -38,7 +45,7 @@ export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     // Get pagination parameters
@@ -49,10 +56,7 @@ export async function GET(request: NextRequest) {
 
     const VALID_STATUSES = ["available", "sold", "reserved"] as const;
     if (status !== "all" && !VALID_STATUSES.includes(status as typeof VALID_STATUSES[number])) {
-      return NextResponse.json(
-        { error: "Invalid status value" },
-        { status: 400 }
-      );
+      return badRequest("Invalid status value");
     }
 
     // Validate pagination parameters
@@ -79,6 +83,9 @@ export async function GET(request: NextRequest) {
       .limit(validLimit)
       .toArray();
 
+    // GET admin cars: response shape preserves the legacy `pagination` field
+    // at the top level (alongside `data`) for compatibility with existing
+    // admin dashboard fetchers that read `response.pagination`.
     return NextResponse.json({
       success: true,
       data: cars.map((car) => serializeDocument(car)),
@@ -91,10 +98,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching cars:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -102,7 +106,7 @@ export async function POST(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const body = await request.json();
@@ -128,19 +132,15 @@ export async function POST(request: NextRequest) {
 
     const result = await carsCollection.insertOne(newCar as CarInterface);
 
-    return NextResponse.json({
-      success: true,
-      data: serializeDocument({
+    return ok(
+      serializeDocument({
         _id: result.insertedId.toString(),
         ...newCar,
-      }),
-    });
+      })
+    );
   } catch (error) {
     console.error("Error creating car:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -148,17 +148,14 @@ export async function PUT(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const body = await request.json();
     const { _id, ...updateData } = body;
 
     if (!_id || !ObjectId.isValid(String(_id))) {
-      return NextResponse.json(
-        { error: "Invalid or missing car ID" },
-        { status: 400 }
-      );
+      return badRequest("Invalid or missing car ID");
     }
 
     // Validate update data with partial car schema
@@ -188,19 +185,13 @@ export async function PUT(request: NextRequest) {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "Car not found" }, { status: 404 });
+      return notFound("Car not found");
     }
 
-    return NextResponse.json({
-      success: true,
-      data: serializeDocument({ _id, ...updatedCar }),
-    });
+    return ok(serializeDocument({ _id, ...updatedCar }));
   } catch (error) {
     console.error("Error updating car:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -208,17 +199,14 @@ export async function DELETE(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id || !ObjectId.isValid(String(id))) {
-      return NextResponse.json(
-        { error: "Invalid or missing car ID" },
-        { status: 400 }
-      );
+      return badRequest("Invalid or missing car ID");
     }
 
     const carsCollection = await getCarsCollection();
@@ -227,7 +215,7 @@ export async function DELETE(request: NextRequest) {
     } as unknown as Parameters<typeof carsCollection.deleteOne>[0]);
 
     if (result.deletedCount === 0) {
-      return NextResponse.json({ error: "Car not found" }, { status: 404 });
+      return notFound("Car not found");
     }
 
     return NextResponse.json({
@@ -236,9 +224,6 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error deleting car:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

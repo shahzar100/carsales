@@ -17,6 +17,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useViewing } from "@/backend/ViewingContext";
+import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,26 +38,16 @@ const sanitizeInput = (input: string): string =>
     .substring(0, 500);
 
 const timeSlots = [
-  { value: "09:00", label: "9:00 AM – 10:00 AM" },
-  { value: "10:00", label: "10:00 AM – 11:00 AM" },
-  { value: "11:00", label: "11:00 AM – 12:00 PM" },
-  { value: "12:00", label: "12:00 PM – 1:00 PM" },
-  { value: "14:00", label: "2:00 PM – 3:00 PM" },
-  { value: "15:00", label: "3:00 PM – 4:00 PM" },
-  { value: "16:00", label: "4:00 PM – 5:00 PM" },
-  { value: "17:00", label: "5:00 PM – 6:00 PM" },
-  { value: "18:00", label: "6:00 PM – 7:00 PM" },
+  { value: "09:00", label: "09:00–10:00" },
+  { value: "10:00", label: "10:00–11:00" },
+  { value: "11:00", label: "11:00–12:00" },
+  { value: "12:00", label: "12:00–13:00" },
+  { value: "14:00", label: "14:00–15:00" },
+  { value: "15:00", label: "15:00–16:00" },
+  { value: "16:00", label: "16:00–17:00" },
+  { value: "17:00", label: "17:00–18:00" },
+  { value: "18:00", label: "18:00–19:00" },
 ];
-
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-GB", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
 
 const formatTime = (val: string) =>
   timeSlots.find((t) => t.value === val)?.label ?? val;
@@ -138,7 +129,8 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
 
             {data.date && data.time && (
               <InfoBanner variant="info">
-                <strong>Your appointment:</strong> {formatDate(data.date)} at{" "}
+                <strong>Your appointment:</strong>{" "}
+                {formatDate(data.date, "long")} at{" "}
                 {formatTime(data.time)}. Each viewing session is approximately 1
                 hour.
               </InfoBanner>
@@ -236,14 +228,11 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
                   label="Vehicle"
                   value={`${car.year} ${car.make} ${car.model}`}
                 />
-                <SummaryRow
-                  label="Price"
-                  value={`£${car.price?.toLocaleString()}`}
-                />
+                <SummaryRow label="Price" value={formatPrice(car.price)} />
                 {car.mileage && (
                   <SummaryRow
                     label="Mileage"
-                    value={`${car.mileage.toLocaleString()} miles`}
+                    value={`${formatMileage(car.mileage)} miles`}
                   />
                 )}
                 {car.fuel && <SummaryRow label="Fuel" value={car.fuel} />}
@@ -251,7 +240,7 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
             )}
 
             <SummaryCard title="Appointment">
-              <SummaryRow label="Date" value={formatDate(data.date)} />
+              <SummaryRow label="Date" value={formatDate(data.date, "long")} />
               <SummaryRow label="Time" value={formatTime(data.time)} />
             </SummaryCard>
 

@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import {
   getCarPartsCollection,
   CarPartInterface,
   serializeDocument,
 } from "@/lib/models";
+import { ok, serverError } from "@/lib/utils/apiResponse";
 
 // ── Seed data (from CarParts page mock data) ─────────────────
 const seedCarParts: Omit<CarPartInterface, "_id">[] = [
@@ -137,15 +138,9 @@ export async function GET(request: NextRequest) {
 
     const parts = await carPartsCollection.find(filter).toArray();
 
-    return NextResponse.json({
-      success: true,
-      data: parts.map((part) => serializeDocument(part)),
-    });
+    return ok(parts.map((part) => serializeDocument(part)));
   } catch (error) {
     console.error("Error fetching car parts:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

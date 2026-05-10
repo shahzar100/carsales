@@ -1,6 +1,7 @@
 "use client";
 import { Menu, X } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface NavMenuProps {
   children: React.ReactNode;
@@ -24,24 +25,10 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [menu]);
 
-  // Handle body scroll lock when menu is open
-  useEffect(() => {
-    if (menu) {
-      // Lock body scroll
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "0px"; // Prevent layout shift
-    } else {
-      // Unlock body scroll
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, [menu]);
+  // Body scroll lock is shared via useScrollLock so it cooperates with
+  // Modal/ConfirmDialog overlays — closing one no longer unlocks the body
+  // while another is still open.
+  useScrollLock(menu);
 
   return (
     <>

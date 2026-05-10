@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Car, Fuel, Palette, Hash, Gauge } from "lucide-react";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 interface VehicleDetailsProps {
   vehicle: {
@@ -50,7 +51,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
 
           {vehicle.price && (
             <div className="text-3xl font-bold text-green-600">
-              £{vehicle.price.toLocaleString()}
+              {formatPrice(vehicle.price)}
             </div>
           )}
 
@@ -62,7 +63,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
                 <div>
                   <p className="text-xs text-gray-600">Mileage</p>
                   <p className="text-sm font-medium">
-                    {vehicle.mileage.toLocaleString()} miles
+                    {formatMileage(vehicle.mileage)} miles
                   </p>
                 </div>
               </div>

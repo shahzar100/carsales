@@ -6,12 +6,19 @@ import {
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
+import {
+  ok,
+  badRequest,
+  unauthorized,
+  notFound,
+  serverError,
+} from "@/lib/utils/apiResponse";
 
 export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const carPartsCollection = await getCarPartsCollection();
@@ -20,16 +27,10 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .toArray();
 
-    return NextResponse.json({
-      success: true,
-      data: parts.map((part) => serializeDocument(part)),
-    });
+    return ok(parts.map((part) => serializeDocument(part)));
   } catch (error) {
     console.error("Error fetching car parts:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -37,24 +38,18 @@ export async function POST(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const body = await request.json();
 
     // Validate required fields
     if (!body.name || !body.brand || !body.category || body.price == null) {
-      return NextResponse.json(
-        { error: "Name, brand, category, and price are required" },
-        { status: 400 }
-      );
+      return badRequest("Name, brand, category, and price are required");
     }
 
     if (body.category && /[${}]/.test(String(body.category))) {
-      return NextResponse.json(
-        { error: "Invalid category value" },
-        { status: 400 }
-      );
+      return badRequest("Invalid category value");
     }
 
     const carPartsCollection = await getCarPartsCollection();
@@ -77,19 +72,15 @@ export async function POST(request: NextRequest) {
       newPart as CarPartInterface
     );
 
-    return NextResponse.json({
-      success: true,
-      data: serializeDocument({
+    return ok(
+      serializeDocument({
         _id: result.insertedId.toString(),
         ...newPart,
-      }),
-    });
+      })
+    );
   } catch (error) {
     console.error("Error creating car part:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -97,17 +88,14 @@ export async function PUT(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const body = await request.json();
     const { _id, ...updateData } = body;
 
     if (!_id || !ObjectId.isValid(String(_id))) {
-      return NextResponse.json(
-        { error: "Invalid or missing car part ID" },
-        { status: 400 }
-      );
+      return badRequest("Invalid or missing car part ID");
     }
 
     const carPartsCollection = await getCarPartsCollection();
@@ -125,22 +113,13 @@ export async function PUT(request: NextRequest) {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { error: "Car part not found" },
-        { status: 404 }
-      );
+      return notFound("Car part not found");
     }
 
-    return NextResponse.json({
-      success: true,
-      data: serializeDocument({ _id, ...updatedPart }),
-    });
+    return ok(serializeDocument({ _id, ...updatedPart }));
   } catch (error) {
     console.error("Error updating car part:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -148,17 +127,14 @@ export async function DELETE(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id || !ObjectId.isValid(String(id))) {
-      return NextResponse.json(
-        { error: "Invalid or missing car part ID" },
-        { status: 400 }
-      );
+      return badRequest("Invalid or missing car part ID");
     }
 
     const carPartsCollection = await getCarPartsCollection();
@@ -167,10 +143,7 @@ export async function DELETE(request: NextRequest) {
     } as unknown as Parameters<typeof carPartsCollection.deleteOne>[0]);
 
     if (result.deletedCount === 0) {
-      return NextResponse.json(
-        { error: "Car part not found" },
-        { status: 404 }
-      );
+      return notFound("Car part not found");
     }
 
     return NextResponse.json({
@@ -179,9 +152,6 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error deleting car part:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

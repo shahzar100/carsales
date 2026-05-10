@@ -1,4 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import {
+  ok,
+  badRequest,
+  tooManyRequests,
+  serverError,
+} from "@/lib/utils/apiResponse";
 import { waitUntil } from "@vercel/functions";
 import { ipAddress } from "@vercel/functions";
 import {
@@ -27,10 +33,7 @@ export async function POST(request: NextRequest) {
     const rateLimit = checkRateLimit(`service-booking:${ip}`, 5, 60000);
 
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 }
-      );
+      return tooManyRequests("Too many requests. Please try again later.");
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,10 +41,7 @@ export async function POST(request: NextRequest) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON in request body" },
-        { status: 400 }
-      );
+      return badRequest("Invalid JSON in request body");
     }
 
     // Validate and sanitize customer info
@@ -50,48 +50,32 @@ export async function POST(request: NextRequest) {
       !body.customerInfo?.email ||
       !body.customerInfo?.phone
     ) {
-      return NextResponse.json(
-        { error: "Customer information is required" },
-        { status: 400 }
-      );
+      return badRequest("Customer information is required");
     }
 
     const emailValidation = validateEmail(body.customerInfo.email);
     if (!emailValidation.valid) {
-      return NextResponse.json(
-        { error: "Invalid email address" },
-        { status: 400 }
-      );
+      return badRequest("Invalid email address");
     }
 
     const phoneValidation = validatePhone(body.customerInfo.phone);
     if (!phoneValidation.valid) {
-      return NextResponse.json(
-        { error: "Invalid phone number" },
-        { status: 400 }
-      );
+      return badRequest("Invalid phone number");
     }
 
     // Validate service details
     if (!body.serviceType || !body.appointmentDate || !body.appointmentTime) {
-      return NextResponse.json(
-        { error: "Service details are required" },
-        { status: 400 }
-      );
+      return badRequest("Service details are required");
     }
 
     if (!validateFutureDate(body.appointmentDate)) {
-      return NextResponse.json(
-        { error: "Appointment date must be in the future and within one year" },
-        { status: 400 }
+      return badRequest(
+        "Appointment date must be in the future and within one year"
       );
     }
 
     if (!validateAppointmentTime(body.appointmentTime)) {
-      return NextResponse.json(
-        { error: "Invalid appointment time" },
-        { status: 400 }
-      );
+      return badRequest("Invalid appointment time");
     }
 
     const bookingReference = generateBookingReference();
@@ -148,19 +132,13 @@ export async function POST(request: NextRequest) {
       })()
     );
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        bookingReference,
-        message:
-          "Service booking created successfully. Check your email for confirmation.",
-      },
+    return ok({
+      bookingReference,
+      message:
+        "Service booking created successfully. Check your email for confirmation.",
     });
   } catch (error) {
     console.error("Error creating service booking:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

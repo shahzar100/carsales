@@ -9,6 +9,7 @@ import { FilterProvider, useFilters } from "@/contexts/FilterContext";
 import { filterCars } from "@/lib/utils/filterCars";
 import CarCard from "./CarCard";
 import CarListCard from "./CarListCard";
+import EmptyState from "@/components/UI/EmptyState";
 
 const CarViewContent = ({
   cars,
@@ -51,12 +52,11 @@ const CarViewContent = ({
         cars={cars}
       />
       {filteredCars.length === 0 && (
-        <div className="flex h-40 items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50">
-          <div className="text-center">
-            <Car className="mx-auto h-8 w-8 text-gray-400" />
-            <p>No cars found</p>
-          </div>
-        </div>
+        <EmptyState
+          icon={Car}
+          title="No cars found"
+          description="Try adjusting your filters or clearing the search."
+        />
       )}
       {filteredCars.length > 0 && (
         <>

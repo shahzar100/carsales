@@ -6,12 +6,18 @@ import {
 } from "@/lib/models";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId, Document } from "mongodb";
+import {
+  badRequest,
+  unauthorized,
+  notFound,
+  serverError,
+} from "@/lib/utils/apiResponse";
 
 export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
@@ -58,10 +64,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }
 
@@ -69,7 +72,7 @@ export async function PUT(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized();
     }
 
     const body = await request.json();
@@ -99,10 +102,7 @@ export async function PUT(request: NextRequest) {
     // Validate type
     const validTypes = ["service", "viewing"];
     if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: "Invalid type. Must be 'service' or 'viewing'" },
-        { status: 400 }
-      );
+      return badRequest("Invalid type. Must be 'service' or 'viewing'");
     }
 
     // Get the appropriate collection
@@ -116,10 +116,7 @@ export async function PUT(request: NextRequest) {
     try {
       objectId = ObjectId.createFromHexString(String(_bookingId));
     } catch (err) {
-      return NextResponse.json(
-        { error: "Invalid booking ID format" },
-        { status: 400 }
-      );
+      return badRequest("Invalid booking ID format");
     }
 
     // Update the booking status
@@ -147,14 +144,11 @@ export async function PUT(request: NextRequest) {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return notFound("Booking not found");
     }
 
     if (result.modifiedCount === 0) {
-      return NextResponse.json(
-        { error: "Booking status was not updated" },
-        { status: 400 }
-      );
+      return badRequest("Booking status was not updated");
     }
 
     // Get the updated booking
@@ -169,9 +163,6 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating booking status:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

@@ -5,27 +5,16 @@ import { Calendar, Clock, User, Mail, Phone, Wrench, Car } from "lucide-react";
 import { Booking } from "@/lib/types";
 import Modal from "@/components/Helpful/Buttons/Modal";
 import Button from "@/components/Helpful/Buttons/Button";
+import { formatPrice, formatDate } from "@/lib/utils/format";
+import { formatTime as formatBookingTime } from "@/lib/utils/booking";
+import StatusBadge from "@/components/UI/StatusBadge";
 
 interface BookingDetailsModalProps {
   booking: Booking;
   onClose: () => void;
 }
 
-const statusBadge = (status: string) => {
-  const styles: Record<string, string> = {
-    pending: "bg-amber-100 text-amber-700",
-    confirmed: "bg-emerald-100 text-emerald-700",
-    completed: "bg-gray-100 text-gray-700",
-    cancelled: "bg-red-100 text-red-700",
-  };
-  return (
-    <span
-      className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${styles[status] || "bg-gray-100 text-gray-700"}`}
-    >
-      {status}
-    </span>
-  );
-};
+const statusBadge = (status: string) => <StatusBadge status={status} />;
 
 export default function BookingDetailsModal({
   booking,
@@ -79,17 +68,14 @@ export default function BookingDetailsModal({
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="h-4 w-4 text-gray-400" />
               <span className="text-gray-900">
-                {new Date(booking.appointmentDate).toLocaleDateString("en-GB", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {formatDate(booking.appointmentDate)}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-900">{booking.appointmentTime}</span>
+              <span className="text-gray-900">
+                {formatBookingTime(booking.appointmentTime)}
+              </span>
             </div>
           </div>
         </div>
@@ -120,7 +106,7 @@ export default function BookingDetailsModal({
                 {booking.carDetails.model}
               </span>
               <span className="ml-auto font-semibold text-gray-900">
-                £{booking.carDetails.price?.toLocaleString()}
+                {formatPrice(booking.carDetails.price)}
               </span>
             </div>
           </div>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { CarInterface } from "@/lib/interfaces";
 import ShareButton from "@/components/SEO/ShareButton";
+import { formatPrice, formatMileage } from "@/lib/utils/format";
 import {
   Fuel,
   Gauge,
@@ -40,20 +41,15 @@ const CarShareCard: React.FC<CarShareCardProps> = ({
 
   const carUrl = `${resolvedBase}/BrowseFleet/${car._id}`;
   const carTitle = `${car.year} ${car.make} ${car.model}`;
-  const carPrice = new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(car.price);
+  const carPrice = formatPrice(car.price);
 
-  const shareText = `Check out this ${carTitle} — ${car.fuel}, ${car.transmission}, ${car.mileage.toLocaleString()} miles — ${carPrice}`;
+  const shareText = `Check out this ${carTitle} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles — ${carPrice}`;
 
   const quickSpecs = [
     { icon: Calendar, value: car.year.toString(), label: "Year" },
     {
       icon: Gauge,
-      value: `${car.mileage.toLocaleString()} mi`,
+      value: `${formatMileage(car.mileage)} mi`,
       label: "Mileage",
     },
     { icon: Fuel, value: car.fuel, label: "Fuel" },

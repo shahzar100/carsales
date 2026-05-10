@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { getCarsCollection } from "@/lib/models";
+import { ok, serverError } from "@/lib/utils/apiResponse";
 
 export async function GET() {
   try {
@@ -17,20 +17,18 @@ export async function GET() {
       carsCollection.distinct("make", { status: "available" }),
     ]);
 
-    return NextResponse.json(
+    return ok(
       {
-        success: true,
-        data: {
-          businessInfo,
-          carStats: {
-            total: totalCars,
-            available: availableCars,
-            sold: soldCars,
-            makes: makes.length,
-            makesList: makes.sort(),
-          },
+        businessInfo,
+        carStats: {
+          total: totalCars,
+          available: availableCars,
+          sold: soldCars,
+          makes: makes.length,
+          makesList: makes.sort(),
         },
       },
+      200,
       {
         headers: {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
@@ -39,9 +37,6 @@ export async function GET() {
     );
   } catch (error) {
     console.error("Error fetching about info:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return serverError();
   }
 }

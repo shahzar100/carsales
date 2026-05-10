@@ -112,7 +112,12 @@ export default function StatusDashboard({
         <div className="flex items-center gap-3">
           {health.timestamp && (
             <span className="caption hidden sm:inline">
-              Updated {new Date(health.timestamp).toLocaleTimeString()}
+              Updated{" "}
+              {new Date(health.timestamp).toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
             </span>
           )}
           <Button
