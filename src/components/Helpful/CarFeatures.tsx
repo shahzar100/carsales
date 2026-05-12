@@ -21,7 +21,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
         <label className="label-sm mb-0">
           Features
           {selectedFeatures.length > 0 && (
-            <span className="badge-sm badge-blue ml-1.5">
+            <span className="badge-sm badge-brand ml-1.5">
               {selectedFeatures.length}
             </span>
           )}

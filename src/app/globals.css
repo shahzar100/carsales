@@ -7,15 +7,15 @@
 
 /* ---- Theme colours ---- */
 
-:root {
-  --color-brand: #dc2626; /* red-600 */
-  --color-brand-dark: #b91c1c; /* red-700 */
-  --color-brand-darker: #991b1b; /* red-800 */
-  --color-brand-light: #fef2f2; /* red-50 */
-  --color-brand-muted: #fee2e2; /* red-100 */
-  --color-surface-dark: #0a0a0a; /* gray-950 */
-  --color-surface-darker: #000000;
-}
+/*
+ * Day 9 / Fix 9.5: the `--color-brand*` and `--color-surface-*` CSS
+ * variables that used to live here were never consumed by any JSX
+ * (verified: `rg "var\(--color-" src/` was empty). Components reach
+ * for Tailwind utilities (`bg-red-600`, `text-red-600`, etc.) directly.
+ * Maintaining the variables alongside the utilities gave the worst of
+ * both worlds — re-introduce them when theming becomes a real
+ * requirement. For now Tailwind is the single source of truth.
+ */
 
 /* ---- Typography ---- */
 
@@ -129,7 +129,12 @@
   @apply bg-amber-100 text-amber-700;
 }
 
-.badge-blue {
+/*
+ * Day 9 / Fix 9.4: this utility was named `badge-blue` but actually
+ * rendered in brand red. Renamed to `.badge-brand` so the class name
+ * doesn't mislead readers. Call sites swept in the same commit.
+ */
+.badge-brand {
   @apply bg-red-50 text-red-600;
 }
 
