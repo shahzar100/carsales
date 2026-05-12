@@ -128,7 +128,7 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
               <p className="caption">
                 {totalMatching} of {totalAvailable} vehicles
                 {activeCount > 0 && (
-                  <span className="badge-sm badge-blue ml-1.5">
+                  <span className="badge-sm badge-brand ml-1.5">
                     {activeCount} active
                   </span>
                 )}

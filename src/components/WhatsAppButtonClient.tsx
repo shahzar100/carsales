@@ -37,9 +37,17 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
     ? `44${cleaned.slice(1)}`
     : cleaned;
 
+  // (Day 9 / Fix 9.2) Strip query strings + hash from the URL we paste
+  // into WhatsApp. Customer doesn't need our `?utm_...` / filter state,
+  // and it removes a small PII / search-history leak.
+  const cleanUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${window.location.pathname}`
+      : "";
+
   const message =
     pathname && pathname.startsWith("/BrowseFleet/") && pathname.length > 12
-      ? `Hi ${businessName}, I'm interested in this car: ${typeof window !== "undefined" ? window.location.href : ""}`
+      ? `Hi ${businessName}, I'm interested in this car: ${cleanUrl}`
       : `Hi ${businessName}, I have a question about your services.`;
 
   const href = `https://wa.me/${normalised}?text=${encodeURIComponent(message)}`;
