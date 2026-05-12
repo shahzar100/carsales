@@ -111,7 +111,7 @@ export const ReviewInviteService: React.FC<Props> = ({
       Thank you for choosing {shopInfo.businessName} for your recent{" "}
       <strong>{booking.serviceType}</strong> on{" "}
       <strong>{formatDate(booking.appointmentDate)}</strong>. We hope everything
-      went smoothly! We'd love to hear your thoughts.
+      went smoothly! We&apos;d love to hear your thoughts.
     </Text>
 
     <Section

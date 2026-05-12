@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
+import { logError } from "@/lib/utils/observability";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -111,7 +112,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
   } catch (error) {
-    console.error("Error generating sitemap car pages:", error);
+    logError(error, { context: "sitemap.cars" });
   }
 
   return [...staticPages, ...carPages];

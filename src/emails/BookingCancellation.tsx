@@ -123,7 +123,7 @@ export const BookingCancellation: React.FC<Props> = ({
           lineHeight: "1.6",
         }}
       >
-        If you'd like to rebook, please visit our website or contact us
+        If you&apos;d like to rebook, please visit our website or contact us
         directly.
       </Text>
       <Text style={{ color: "#6b7280", fontSize: "14px", margin: "8px 0 0" }}>

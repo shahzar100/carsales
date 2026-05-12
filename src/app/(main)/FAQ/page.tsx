@@ -12,7 +12,6 @@ import {
   CreditCard,
   Clock,
   Truck,
-  Sparkles,
   MessageSquare,
 } from "lucide-react";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";

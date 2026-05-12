@@ -109,9 +109,9 @@ export const ReviewInviteTinting: React.FC<Props> = ({
     >
       Thank you for choosing {shopInfo.businessName} for your{" "}
       <strong>{booking.serviceType}</strong> on{" "}
-      <strong>{formatDate(booking.appointmentDate)}</strong>. We hope you're
-      enjoying the new look and the added privacy! We'd really appreciate your
-      feedback.
+      <strong>{formatDate(booking.appointmentDate)}</strong>. We hope
+      you&apos;re enjoying the new look and the added privacy! We&apos;d really
+      appreciate your feedback.
     </Text>
 
     {/* Tint summary */}

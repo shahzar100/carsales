@@ -107,10 +107,10 @@ export const ReviewInviteRecovery: React.FC<Props> = ({
         margin: "0 0 20px",
       }}
     >
-      We hope you're back on the road safely! Thank you for calling{" "}
+      We hope you&apos;re back on the road safely! Thank you for calling{" "}
       {shopInfo.businessName} for your <strong>{booking.serviceType}</strong> on{" "}
-      <strong>{formatDate(booking.appointmentDate)}</strong>. We'd appreciate
-      your feedback so we can keep improving our emergency service.
+      <strong>{formatDate(booking.appointmentDate)}</strong>. We&apos;d
+      appreciate your feedback so we can keep improving our emergency service.
     </Text>
 
     {/* Recovery summary */}

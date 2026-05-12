@@ -58,8 +58,8 @@ export const PasswordReset: React.FC<Props> = ({
           margin: "16px 0 0",
         }}
       >
-        If you didn't request this, you can safely ignore this email. Your
-        password will remain unchanged.
+        If you didn&apos;t request this, you can safely ignore this email.
+        Your password will remain unchanged.
       </Text>
 
       <Text

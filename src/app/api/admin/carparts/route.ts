@@ -16,7 +16,7 @@ import {
 import { deleteS3Objects } from "@/lib/utils/s3";
 import { logError } from "@/lib/utils/observability";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     return ok(parts.map((part) => serializeDocument(part)));
   } catch (error) {
-    console.error("Error fetching car parts:", error);
+    logError(error, { route: "GET /api/admin/carparts" });
     return serverError();
   }
 }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       })
     );
   } catch (error) {
-    console.error("Error creating car part:", error);
+    logError(error, { route: "POST /api/admin/carparts" });
     return serverError();
   }
 }
@@ -118,7 +118,7 @@ export async function PUT(request: NextRequest) {
 
     return ok(serializeDocument({ _id, ...updatedPart }));
   } catch (error) {
-    console.error("Error updating car part:", error);
+    logError(error, { route: "PUT /api/admin/carparts" });
     return serverError();
   }
 }

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Form, { FormStep } from "../../Form/Form";
 import {
   FormInput,
@@ -73,7 +73,8 @@ const PasswordForm = () => {
   };
 
   // ── User lookup ────────────────────────────────────────────
-  const lookupUser = async () => {
+  // useCallback so the steps useMemo doesn't re-run on every render.
+  const lookupUser = useCallback(async () => {
     if (!data.identifier.trim()) return;
     setLookingUp(true);
     setLookupError("");
@@ -96,7 +97,7 @@ const PasswordForm = () => {
     } finally {
       setLookingUp(false);
     }
-  };
+  }, [data.identifier]);
 
   // ── Steps ──────────────────────────────────────────────────
   const steps: FormStep[] = useMemo(
@@ -284,7 +285,16 @@ const PasswordForm = () => {
         ),
       },
     ],
-    [data, foundUser, lookingUp, lookupError, done, newPassword, emailSent]
+    [
+      data,
+      foundUser,
+      lookingUp,
+      lookupError,
+      done,
+      newPassword,
+      emailSent,
+      lookupUser,
+    ]
   );
 
   // ── Submit ─────────────────────────────────────────────────

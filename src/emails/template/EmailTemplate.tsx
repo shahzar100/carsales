@@ -18,7 +18,6 @@ import {
   Section,
   Text,
   Hr,
-  Img,
   Font,
   Preview,
   Tailwind,

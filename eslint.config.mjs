@@ -12,6 +12,22 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    // Allow `_`-prefixed identifiers to be unused intentionally. Common
+    // pattern: destructuring to drop a field (`const { _id, ...rest } = obj`),
+    // or catch clauses where the error binding isn't consumed. (Day 4 / Fix 4.3.)
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

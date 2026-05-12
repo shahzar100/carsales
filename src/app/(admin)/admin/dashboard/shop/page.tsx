@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import BusinessInfoForm from "@/components/Admin/Tabs/BusinessInfoForm";
 import type { ShopInfo } from "@/lib/interfaces";
 import { useToast } from "@/hooks/useToast";
@@ -10,11 +10,7 @@ export default function ShopSettingsPage() {
 
   const toast = useToast();
 
-  useEffect(() => {
-    fetchShopInfo();
-  }, []);
-
-  const fetchShopInfo = async () => {
+  const fetchShopInfo = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch("/api/admin/shop");
@@ -35,7 +31,11 @@ export default function ShopSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchShopInfo();
+  }, [fetchShopInfo]);
 
   const handleSaveShopInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

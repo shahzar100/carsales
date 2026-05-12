@@ -18,6 +18,7 @@ import ConfirmDialog from "@/components/UI/ConfirmDialog";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 import { useToast } from "@/contexts/ToastContext";
 import { getStatusStyles } from "@/components/UI/StatusBadge";
+import { logError } from "@/lib/utils/observability";
 
 interface CarsProps {
   car: CarInterface;
@@ -77,7 +78,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
       }
       router.refresh();
     } catch (err) {
-      console.error("Error deleting car:", err);
+      logError(err, { context: "Cars.deleteCar" });
       toast.error(
         "Delete failed",
         "Network error — please check your connection and try again."

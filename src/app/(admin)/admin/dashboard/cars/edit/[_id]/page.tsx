@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 import { CarInterface } from "@/lib/interfaces";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
 import EditCarForm from "@/components/Admin/Form/EditCarForm";
+import { logError } from "@/lib/utils/observability";
 
 interface PageProps {
   params: Promise<{ _id: string }>;
@@ -21,7 +22,7 @@ const getCar = async (id: string): Promise<CarInterface | null> => {
     if (!car) return null;
     return serializeDocument(car) as CarInterface;
   } catch (error) {
-    console.error("Error fetching car for edit:", error);
+    logError(error, { context: "admin/cars/edit.getCar" });
     return null;
   }
 };

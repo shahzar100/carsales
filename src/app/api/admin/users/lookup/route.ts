@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
+import { logError } from "@/lib/utils/observability";
 
 /**
  * GET /api/admin/users/lookup?q=<username_or_email>
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("User lookup error:", error);
+    logError(error, { route: "GET /api/admin/users/lookup" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

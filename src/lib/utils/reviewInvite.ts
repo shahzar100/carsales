@@ -11,6 +11,7 @@ import React from "react";
 import { Document } from "mongodb";
 import { sendEmail } from "@/emails/send";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import { logEvent } from "@/lib/utils/observability";
 import type { ServiceAppointment, CarViewingBooking } from "@/lib/interfaces";
 
 // ── Review email templates ───────────────────────────────────
@@ -100,12 +101,10 @@ export async function sendReviewInviteEmail(
 
   const customerEmail =
     (booking.customerInfo as { email?: string })?.email ?? "";
-  const customerName =
-    (booking.customerInfo as { name?: string })?.name ?? "Customer";
   const bookingRef = (booking.bookingReference as string) ?? "N/A";
 
   if (!customerEmail) {
-    console.warn("⚠️ No customer email — skipping review invite");
+    logEvent("reviewInvite.skipped_no_email", { bookingRef });
     return;
   }
 
@@ -184,9 +183,9 @@ export async function sendReviewInviteEmail(
   });
 
   if (!result.success) {
-    console.warn(
-      `⚠️ Review invite email failed for ${bookingRef}:`,
-      result.error
-    );
+    logEvent("reviewInvite.email_send_failed", {
+      bookingRef,
+      error: String(result.error),
+    });
   }
 }

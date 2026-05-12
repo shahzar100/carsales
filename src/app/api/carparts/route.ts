@@ -5,6 +5,7 @@ import {
   serializeDocument,
 } from "@/lib/models";
 import { ok, serverError } from "@/lib/utils/apiResponse";
+import { logError } from "@/lib/utils/observability";
 
 // ── Seed data (from CarParts page mock data) ─────────────────
 const seedCarParts: Omit<CarPartInterface, "_id">[] = [
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
 
     return ok(parts.map((part) => serializeDocument(part)));
   } catch (error) {
-    console.error("Error fetching car parts:", error);
+    logError(error, { route: "GET /api/carparts" });
     return serverError();
   }
 }

@@ -59,7 +59,6 @@ export function logError(
   const message = error instanceof Error ? error.message : String(error);
   const stack = error instanceof Error ? error.stack : undefined;
 
-  // eslint-disable-next-line no-console
   console.error("[error]", {
     message,
     stack,
@@ -75,6 +74,5 @@ export function logEvent(
   name: string,
   context: LogContext = {}
 ): void {
-  // eslint-disable-next-line no-console
   console.log(`[event] ${name}`, redactObject(context));
 }

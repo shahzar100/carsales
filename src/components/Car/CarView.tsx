@@ -22,17 +22,18 @@ const CarViewContent = ({
   const [carId, setCarId] = useState<number>(0);
   const { state } = useFilters();
 
-  // Switch to card view on smaller screens
+  // Switch to card view on smaller screens. Functional setState lets us
+  // read the current viewType without retaining it as a dep — re-binding
+  // the resize listener on every viewType change is wasteful and was
+  // the source of the stale-closure warning.
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768 && viewType !== "card") {
-        setViewType("card");
+      if (window.innerWidth < 768) {
+        setViewType((prev) => (prev !== "card" ? "card" : prev));
       }
     };
 
-    // Check on mount
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);

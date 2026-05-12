@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
+import { logError } from "@/lib/utils/observability";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -10,8 +11,7 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   useEffect(() => {
-    // Log to your error tracking service (Sentry, etc.)
-    console.error("Unhandled error:", error);
+    logError(error, { context: "app/error.tsx", digest: error.digest });
   }, [error]);
 
   return (

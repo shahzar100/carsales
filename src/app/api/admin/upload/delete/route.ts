@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { deleteS3Object } from "@/lib/utils/s3";
+import { logError } from "@/lib/utils/observability";
 
 const ALLOWED_PREFIXES = ["cars/", "parts/"];
 
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("POST /api/admin/upload/delete error:", error);
+    logError(error, { route: "POST /api/admin/upload/delete" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
