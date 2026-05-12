@@ -48,6 +48,11 @@ const serverSchema = z.object({
   ADMIN_EMAIL: z.string().optional(),
   ADMIN_PASSWORD: z.string().optional(),
 
+  // ── Observability ─────────────────────────────────────────
+  // Sentry DSN. Optional in dev/test (observability.ts no-ops); the
+  // server-side guard below requires it in production.
+  SENTRY_DSN: z.string().optional(),
+
   // ── App ───────────────────────────────────────────────────
   NODE_ENV: z
     .enum(["development", "production", "test"])

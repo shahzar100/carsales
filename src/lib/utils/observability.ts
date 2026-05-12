@@ -5,9 +5,11 @@
  * so that wiring Sentry (or Datadog, or New Relic) is a one-file edit:
  * implement `logError` and `logEvent` here, leave every call site alone.
  *
- * TODO(infra): wire Sentry. The free tier covers this app's traffic;
- * setup is ~30 minutes. Until then, errors land in Vercel function logs
- * with no alerting. See CODEBASE_ISSUES F2.
+ * Sentry wiring is documented in SETUP.md → "Sentry (production error
+ * tracking)". The DSN is read from env (SENTRY_DSN) but the SDK is not
+ * yet installed — installing @sentry/nextjs and uncommenting the
+ * Sentry.captureException / Sentry.addBreadcrumb lines is the only edit
+ * required at every call site. (Day 5 / Fix 5.1.)
  */
 
 type LogContext = Record<string, unknown>;
