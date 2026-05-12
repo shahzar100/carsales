@@ -5,6 +5,7 @@ import {
   serializeDocument,
 } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
+import { verifyTurnstileToken } from "@/lib/utils/turnstile";
 import {
   ok,
   badRequest,
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const ref = searchParams.get("ref");
     const email = searchParams.get("email");
+    const turnstileToken = searchParams.get("turnstileToken");
 
     if (!ref) {
       return badRequest("Booking reference is required");
@@ -53,6 +55,17 @@ export async function GET(request: NextRequest) {
 
     if (!email || typeof email !== "string") {
       return badRequest("Email address is required for verification");
+    }
+
+    // CAPTCHA — no-op when TURNSTILE_SECRET_KEY is unset (dev/test) and
+    // a hard fail in production via verifyTurnstileToken's own guard.
+    // The bookingReference + email pair is already a bearer secret for
+    // emailed lookup links, so verification only meaningfully gates the
+    // manual-form path; URL-driven recipients won't have a token but
+    // will be rate-limited per-IP regardless. (Fix 2.5, finding #16.)
+    const captcha = await verifyTurnstileToken(turnstileToken, ip);
+    if (!captcha.ok) {
+      return badRequest("CAPTCHA verification failed");
     }
 
     const serviceCollection = await getServiceAppointmentsCollection();
