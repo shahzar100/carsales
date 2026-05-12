@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { LucideIcon, Check } from "lucide-react";
 
 interface ShopButtonProps {
