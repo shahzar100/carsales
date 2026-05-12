@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/utils/auth";
-import { generatePresignedUploadUrl, getPublicUrl } from "@/lib/utils/s3";
+import {
+  generatePresignedUploadUrl,
+  getPublicUrl,
+  MAX_UPLOAD_BYTES,
+} from "@/lib/utils/s3";
 import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/lib/utils/observability";
 
 const ALLOWED_CONTENT_TYPES = [
   "image/jpeg",
@@ -35,10 +40,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { contentType, fileName, folder } = body as {
+    const { contentType, fileName, folder, contentLength } = body as {
       contentType?: string;
       fileName?: string;
       folder?: string;
+      contentLength?: number;
     };
 
     if (!contentType || typeof contentType !== "string") {
@@ -71,16 +77,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid folder" }, { status: 400 });
     }
 
+    // (#14) Require declared size; reject anything over the cap before we
+    // even spend the round-trip to S3 to sign.
+    if (
+      typeof contentLength !== "number" ||
+      !Number.isFinite(contentLength) ||
+      contentLength <= 0
+    ) {
+      return NextResponse.json(
+        { error: "contentLength (in bytes) is required" },
+        { status: 400 }
+      );
+    }
+    if (contentLength > MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        {
+          error: `File too large. Max upload size is ${Math.round(
+            MAX_UPLOAD_BYTES / 1024 / 1024
+          )} MB`,
+        },
+        { status: 413 }
+      );
+    }
+
     const sanitized = sanitizeFileName(fileName);
     const uuid = uuidv4();
     const key = `${folder}/${uuid}-${sanitized}`;
 
-    const uploadUrl = await generatePresignedUploadUrl(key, contentType);
+    const uploadUrl = await generatePresignedUploadUrl(
+      key,
+      contentType,
+      contentLength
+    );
     const publicUrl = getPublicUrl(key);
 
-    return NextResponse.json({ uploadUrl, key, publicUrl });
+    return NextResponse.json({
+      uploadUrl,
+      key,
+      publicUrl,
+      maxBytes: MAX_UPLOAD_BYTES,
+    });
   } catch (error) {
-    console.error("POST /api/admin/upload error:", error);
+    logError(error, { route: "POST /api/admin/upload" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

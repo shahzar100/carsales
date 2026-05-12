@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Calendar } from "lucide-react";
-import { useViewing } from "@/backend/ViewingContext";
+import { useViewing } from "@/contexts/ViewingContext";
 import { CarInterface } from "@/lib/interfaces";
 
 const FeaturedCarBookingButton: React.FC<{ car: CarInterface }> = ({ car }) => {
@@ -11,7 +11,7 @@ const FeaturedCarBookingButton: React.FC<{ car: CarInterface }> = ({ car }) => {
 
   const setCarForViewing = () => {
     updateViewingBooking({
-      carId: car._id,
+      carId: car._id ? String(car._id) : undefined,
       carDetails: {
         make: car.make,
         model: car.model,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { CarInterface } from "@/lib/interfaces";
 import ShareButton from "@/components/SEO/ShareButton";
@@ -36,8 +36,14 @@ const CarShareCard: React.FC<CarShareCardProps> = ({
   mode = "inline",
   onClose,
 }) => {
-  const resolvedBase =
-    baseUrl ?? (typeof window !== "undefined" ? window.location.origin : "");
+  // Resolve the absolute URL on the client only to avoid the SSR/CSR
+  // hydration mismatch from reading window.location during render.
+  // (CODEBASE_ISSUES G2.)
+  const [resolvedBase, setResolvedBase] = useState<string>(baseUrl ?? "");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setResolvedBase(baseUrl ?? window.location.origin);
+  }, [baseUrl]);
 
   const carUrl = `${resolvedBase}/BrowseFleet/${car._id}`;
   const carTitle = `${car.year} ${car.make} ${car.model}`;

@@ -7,9 +7,16 @@ import CarDetailView from "@/components/Car/CarDetailView";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { JsonLd } from "@/components/SEO/JsonLd";
+import { Breadcrumb } from "@/components/SEO/Breadcrumb";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const businessName =
+  process.env.NEXT_PUBLIC_BUSINESS_NAME || "Morley Motor Company";
+
+// (#27) Revalidate car detail pages every 5 minutes; admin mutations
+// call revalidatePath for instant invalidation when something changes.
+export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{
@@ -57,6 +64,14 @@ function buildCarJsonLd(car: CarInterface, id: string) {
           : car.status === "reserved"
             ? "https://schema.org/PreOrder"
             : "https://schema.org/OutOfStock",
+      // (#22) Naming the seller as an AutoDealer is what unlocks the
+      // "vehicle listing" rich result. Without it Google falls back to a
+      // plain product card.
+      seller: {
+        "@type": "AutoDealer",
+        name: businessName,
+        url: siteUrl,
+      },
     },
   };
 }
@@ -92,6 +107,13 @@ export async function generateMetadata({
   const title = `${car.year} ${car.make} ${car.model}`;
   const description = `${car.year} ${car.make} ${car.model} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles. ${car.colour}. Price: ${formatPrice(car.price)}. Book a viewing today.`;
 
+  // (#23) Always supply an OG image. If the car has no photo we fall
+  // back to the static brand image so WhatsApp/Facebook never render a
+  // blank preview card.
+  const ogImage = car.image
+    ? { url: car.image, alt: title }
+    : { url: "/car.jpg", alt: businessName };
+
   return {
     title,
     description,
@@ -100,7 +122,7 @@ export async function generateMetadata({
       title,
       description,
       url: `/BrowseFleet/${_id}`,
-      images: car.image ? [{ url: car.image, alt: title }] : undefined,
+      images: [ogImage],
     },
   };
 }
@@ -138,6 +160,17 @@ const CarDetailsPage = async ({ params }: PageProps) => {
   return (
     <>
       <JsonLd data={buildCarJsonLd(car, _id)} />
+      {/* (#22) BreadcrumbList rich result — appears as the SERP slug. */}
+      <Breadcrumb
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Browse Fleet", url: "/BrowseFleet" },
+          {
+            name: `${car.year} ${car.make} ${car.model}`,
+            url: `/BrowseFleet/${_id}`,
+          },
+        ]}
+      />
       <CarDetailView car={car} />
     </>
   );

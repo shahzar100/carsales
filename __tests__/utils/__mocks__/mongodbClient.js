@@ -1,5 +1,5 @@
 /**
- * Mock for @/backend/mongodb
+ * Mock for @/lib/mongodb
  *
  * Provides a lazy "thenable" clientPromise that defers connection
  * until first awaited, ensuring process.env.MONGODB_URI is available

@@ -13,9 +13,9 @@ jest.mock("@vercel/functions", () => ({
   ),
 }));
 
-// Mock @/backend/mongodb to use a lazy connection that defers until
+// Mock @/lib/mongodb to use a lazy connection that defers until
 // MONGODB_URI is available (set in beforeAll after MongoMemoryServer starts)
-jest.mock("@/backend/mongodb", () => {
+jest.mock("@/lib/mongodb", () => {
   const { MongoClient } = require("mongodb");
   let cachedClientPromise = null;
 
@@ -45,7 +45,7 @@ beforeAll(async () => {
   mongoUri = mongod.getUri();
 
   // Override the placeholder URI from jest.env.setup.js with the real
-  // MongoMemoryServer URI. The mocked @/backend/mongodb (above) reads
+  // MongoMemoryServer URI. The mocked @/lib/mongodb (above) reads
   // process.env.MONGODB_URI lazily so the override is honoured even
   // though src/lib/env.ts cached the placeholder at module load.
   process.env.MONGODB_URI = mongoUri;

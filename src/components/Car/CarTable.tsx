@@ -82,7 +82,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
             ) : (
               paginatedCars.map((car, index) => (
                 <tr
-                  key={car._id || index}
+                  key={car._id ? String(car._id) : index}
                   className="group transition-all duration-200 hover:bg-red-50/30"
                 >
                   {/* Vehicle Info with Image */}

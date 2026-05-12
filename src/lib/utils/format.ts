@@ -63,17 +63,43 @@ const DATE_FORMAT_OPTIONS: Record<DateFormatStyle, Intl.DateTimeFormatOptions> =
   };
 
 /**
+ * `YYYY-MM-DD` matcher used to parse calendar-only dates as local dates
+ * rather than UTC midnight. (CODEBASE_ISSUES C11.)
+ *
+ * `new Date("2026-03-25")` parses as UTC midnight; in a UK summer
+ * timezone (BST, UTC+1) `toLocaleDateString` then renders it as
+ * "24 March 2026". Booking dates come from `<input type="date">` which
+ * has no timezone — so we treat them as local-calendar dates here.
+ */
+const YMD = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+function parseToDate(value: string | Date): Date {
+  if (value instanceof Date) return value;
+  const m = YMD.exec(value);
+  if (m) {
+    const [, y, mo, d] = m;
+    // Construct via the local-time constructor; midnight on the *user's*
+    // calendar day, not UTC midnight.
+    return new Date(Number(y), Number(mo) - 1, Number(d));
+  }
+  return new Date(value);
+}
+
+/**
  * Format a date string or Date as a UK-locale date.
  *
  * Returns `"—"` for empty/null/invalid input so it's safe to use directly
  * in tables and cards without conditional rendering.
+ *
+ * Calendar-only `YYYY-MM-DD` strings (the shape booking forms produce) are
+ * parsed in the local timezone — see `parseToDate` above.
  */
 export function formatDate(
   date: string | Date | null | undefined,
   style: DateFormatStyle = "short"
 ): string {
   if (date == null || date === "") return "—";
-  const d = date instanceof Date ? date : new Date(date);
+  const d = parseToDate(date);
   if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleDateString("en-GB", DATE_FORMAT_OPTIONS[style]);
 }

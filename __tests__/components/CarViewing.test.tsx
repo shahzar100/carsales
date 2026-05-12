@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import CarViewing from "@/components/CarViewing";
 
 // Mock ViewingContext
-jest.mock("@/backend/ViewingContext", () => ({
+jest.mock("@/contexts/ViewingContext", () => ({
   useViewing: jest.fn(),
 }));
 
@@ -29,7 +29,7 @@ jest.mock("@/components/Shared/VehicleDetails", () => {
   };
 });
 
-import { useViewing } from "@/backend/ViewingContext";
+import { useViewing } from "@/contexts/ViewingContext";
 
 const mockUseViewing = useViewing as jest.MockedFunction<typeof useViewing>;
 

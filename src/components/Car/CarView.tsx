@@ -94,7 +94,11 @@ const CarViewContent = ({
           {filteredCars.length > 0 && viewType === "list" && (
             <div className="flex flex-col gap-4">
               {filteredCars.map((car) => (
-                <CarListCard key={car._id} car={car} variant="admin" />
+                <CarListCard
+                  key={String(car._id)}
+                  car={car}
+                  variant="admin"
+                />
               ))}
             </div>
           )}

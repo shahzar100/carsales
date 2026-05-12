@@ -91,7 +91,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredParts.map((part) => (
             <div
-              key={part._id}
+              key={String(part._id)}
               className="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
             >
               {/* Part Image */}

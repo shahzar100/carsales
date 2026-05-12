@@ -6,9 +6,23 @@ import React, {
   createContext,
   useContext,
 } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-// Auth Context
+/**
+ * AuthContext — client-side glue for admin auth.
+ *
+ * (#10) This used to gate the entire admin subtree from the client,
+ * which let the JS bundle and dashboard markup hydrate before the
+ * auth check resolved. The server-side guard in
+ * `(admin)/admin/dashboard/layout.tsx` now handles access control.
+ *
+ * What's left here:
+ *   - `isLoggedIn` flag for the nav tabs (Login vs Logout button)
+ *   - `login()` and `logout()` helpers that hit the API and route
+ *
+ * It never renders a blocking spinner or redirects on its own — the
+ * server-side layout already did that work before we got here.
+ */
 interface AuthContextType {
   isLoggedIn: boolean;
   login: () => void;
@@ -31,22 +45,27 @@ interface AuthProviderProps {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Optimistic: if we made it past the server-side guard, the user is
+  // logged in. The login page initialises this to false instead, but
+  // gets corrected when it actually checks the session below.
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const checkAuth = useCallback(async () => {
-    try {
-      const response = await fetch("/api/admin/session");
-      const result = await response.json();
-      setIsLoggedIn(result.isLoggedIn);
-    } catch {
-      setIsLoggedIn(false);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    }
+  // One-shot session check on mount so the navigation knows whether to
+  // show "Logout" or hide. We don't block rendering on it.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch("/api/admin/session");
+        const result = await response.json();
+        if (!cancelled) setIsLoggedIn(Boolean(result.isLoggedIn));
+      } catch {
+        if (!cancelled) setIsLoggedIn(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const logout = useCallback(async () => {
@@ -54,6 +73,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       await fetch("/api/admin/logout", { method: "POST" });
       setIsLoggedIn(false);
       router.push("/admin/login");
+      router.refresh();
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -62,49 +82,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const login = useCallback(() => {
     setIsLoggedIn(true);
     router.push("/admin/dashboard");
+    router.refresh();
   }, [router]);
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  useEffect(() => {
-    if (isLoggedIn === null) return;
-
-    // Skip redirect if already on login page
-    if (pathname === "/admin/login") return;
-
-    if (!isLoggedIn) {
-      router.push("/admin/login");
-    }
-  }, [isLoggedIn, router, pathname]);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn && pathname !== "/admin/login") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
-          <p className="text-gray-600">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn ?? false, login, logout }}
-    >
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

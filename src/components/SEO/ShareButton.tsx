@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Share2, Check, Link2, Mail, ExternalLink } from "lucide-react";
 import Modal from "@/components/Helpful/Buttons/Modal";
 
@@ -138,13 +138,19 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  /* Always produce an absolute URL — external platforms need it */
-  const resolvedUrl = (() => {
-    const raw = url ?? (typeof window !== "undefined" ? window.location.href : "");
-    if (raw.startsWith("http")) return raw;
-    if (typeof window !== "undefined") return `${window.location.origin}${raw}`;
-    return raw;
-  })();
+  // Resolve the absolute URL on the client only. Reading window.location
+  // during render produced different HTML on server vs. client and
+  // triggered hydration warnings on every car detail page.
+  // (CODEBASE_ISSUES G2.)
+  const [resolvedUrl, setResolvedUrl] = useState<string>(
+    typeof url === "string" && url.startsWith("http") ? url : ""
+  );
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = url ?? window.location.href;
+    if (raw.startsWith("http")) setResolvedUrl(raw);
+    else setResolvedUrl(`${window.location.origin}${raw}`);
+  }, [url]);
 
   const handleShare = (platform: SharePlatform) => {
     const shareUrl = platform.buildUrl(resolvedUrl, text, title);

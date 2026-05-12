@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
-import { useViewing } from "@/backend/ViewingContext";
-import { useBusinessInfo } from "@/backend/BusinessInfoContext";
+import { useViewing } from "@/contexts/ViewingContext";
+import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import {
   Fuel,
   Gauge,
@@ -26,6 +26,9 @@ import ShareButton from "@/components/SEO/ShareButton";
 import { CarShareModal } from "@/components/SEO/CarShareCard";
 import { Share2 } from "lucide-react";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
+import FinanceCalculator from "@/components/Car/FinanceCalculator";
+import ReserveCarForm from "@/components/Car/ReserveCarForm";
+import PartExchangeForm from "@/components/Car/PartExchangeForm";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -45,7 +48,9 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
 
   const handleBookingClick = () => {
     updateViewingBooking({
-      carId: car._id,
+      // _id is `string | ObjectId | undefined` per the interface but the
+      // API serialises it before this component renders. (CODEBASE_ISSUES C18.)
+      carId: car._id ? String(car._id) : undefined,
       carDetails: {
         make: car.make,
         model: car.model,
@@ -138,10 +143,12 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
 
   const carTitle = `${car.year} ${car.make} ${car.model}`;
   const shareText = `Check out this ${carTitle} — ${car.fuel}, ${car.transmission}, ${formatMileage(car.mileage)} miles — ${formatPrice(car.price)}`;
-  const carUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `/BrowseFleet/${car._id}`;
+  // Hydration-safe: server-render the relative path, then upgrade to the
+  // absolute URL after mount. (CODEBASE_ISSUES G2.)
+  const [carUrl, setCarUrl] = useState<string>(`/BrowseFleet/${car._id}`);
+  useEffect(() => {
+    if (typeof window !== "undefined") setCarUrl(window.location.href);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -416,6 +423,27 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                     {car.description}
                   </p>
                 </div>
+              )}
+
+              {/* (#29) Finance calculator — only on available cars. */}
+              {car.status === "available" && (
+                <FinanceCalculator price={car.price} />
+              )}
+
+              {/* (#30) Reserve this car — no payment, captures intent. */}
+              {car.status === "available" && car._id && (
+                <ReserveCarForm
+                  carId={String(car._id)}
+                  carLabel={`${car.year} ${car.make} ${car.model}`}
+                />
+              )}
+
+              {/* (#31) Part-exchange / trade-in. */}
+              {car.status === "available" && car._id && (
+                <PartExchangeForm
+                  carId={String(car._id)}
+                  carLabel={`${car.year} ${car.make} ${car.model}`}
+                />
               )}
             </div>
 

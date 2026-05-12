@@ -1,124 +1,149 @@
 /**
- * INPUT VALIDATION & SANITIZATION UTILITIES
- * 
- * Provides validation and sanitization functions for user inputs
- * to prevent XSS, SQL injection, and other security vulnerabilities.
+ * INPUT VALIDATION HELPERS
+ *
+ * Routes do structural validation with Zod (length, type, enum). These
+ * helpers add the domain-specific checks that Zod's primitives can't
+ * express on their own:
+ *
+ *   - `validateEmail`    — RFC-ish email regex + lowercasing + trim
+ *   - `validatePhone`    — strip non-numeric junk + bounded length
+ *   - `sanitizeName`     — character whitelist for human names
+ *   - `validateFutureDate` / `validateAppointmentTime` — booking domain
+ *
+ * Important: these are NOT anti-XSS sanitisers. React escapes output on
+ * render, so we don't denylist `<`, `javascript:`, etc. — that approach
+ * produces false confidence and missed bypasses. The previous
+ * `sanitizeString` helper has been removed; use Zod `.max()` on the
+ * route's schema instead.
  */
 
 /**
- * Sanitize string input by removing potentially dangerous characters
+ * Validate an email and return its normalised (trimmed, lowercased) form.
+ * Doesn't claim to be RFC-5322 perfect — good enough to reject obvious
+ * garbage at the route boundary while keeping legitimate addresses.
  */
-export function sanitizeString(input: string, maxLength: number = 1000): string {
-  if (typeof input !== "string") return "";
-  
-  return input
-    .trim()
-    .slice(0, maxLength)
-    .replace(/[<>]/g, "") // Remove potential HTML tags
-    .replace(/javascript:/gi, "") // Remove javascript: protocol
-    .replace(/on\w+=/gi, ""); // Remove event handlers
-}
-
-/**
- * Validate and sanitize email address
- */
-export function validateEmail(email: string): { valid: boolean; sanitized: string } {
-  const sanitized = sanitizeString(email, 254).toLowerCase();
+export function validateEmail(email: string): {
+  valid: boolean;
+  sanitized: string;
+} {
+  if (typeof email !== "string") return { valid: false, sanitized: "" };
+  const sanitized = email.trim().slice(0, 254).toLowerCase();
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  
-  return {
-    valid: emailRegex.test(sanitized),
-    sanitized,
-  };
+  return { valid: emailRegex.test(sanitized), sanitized };
 }
 
 /**
- * Validate and sanitize phone number
+ * Strip a phone number down to digits, +, spaces, and brackets, then
+ * verify it looks plausible. Stored as-typed so admins can dial it back
+ * without reformatting.
  */
-export function validatePhone(phone: string): { valid: boolean; sanitized: string } {
+export function validatePhone(phone: string): {
+  valid: boolean;
+  sanitized: string;
+} {
+  if (typeof phone !== "string") return { valid: false, sanitized: "" };
   const sanitized = phone.replace(/[^\d+\s()-]/g, "").slice(0, 20);
   const phoneRegex = /^[\d\s+()-]{7,20}$/;
-  
-  return {
-    valid: phoneRegex.test(sanitized),
-    sanitized,
-  };
+  return { valid: phoneRegex.test(sanitized), sanitized };
 }
 
 /**
- * Validate booking reference format (BK-XXXXXX or QT-XXXXXX)
+ * Validate booking reference format (`BK-XXXXXX` or `QT-XXXXXX`).
  */
 export function validateBookingReference(ref: string): boolean {
-  const refRegex = /^(BK|QT)-[A-Z0-9]{6}$/;
-  return refRegex.test(ref);
+  if (typeof ref !== "string") return false;
+  return /^(BK|QT)-[A-Z0-9]{6}$/.test(ref);
 }
 
 /**
- * Sanitize name field
+ * Sanitise a personal name. This is a CHARACTER WHITELIST for what's
+ * allowed in a name field, not an XSS filter. Trims, caps length at
+ * 100, keeps letters / spaces / hyphens / apostrophes.
  */
 export function sanitizeName(name: string): string {
-  return sanitizeString(name, 100).replace(/[^a-zA-Z\s'-]/g, "");
+  if (typeof name !== "string") return "";
+  return name
+    .trim()
+    .slice(0, 100)
+    .replace(/[^a-zA-Z\s'-]/g, "");
 }
 
 /**
- * Validate date is in future and within reasonable range
+ * Validate that a date string is today or later AND within one year.
+ *
+ * Parses `YYYY-MM-DD` as a local calendar date (CODEBASE_ISSUES C11) so
+ * a booking for "today" stays accepted up to local midnight — UTC-based
+ * comparison previously rejected today's date during BST evenings.
  */
 export function validateFutureDate(dateStr: string): boolean {
   try {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(now.getFullYear() + 1);
-    
-    return date > now && date < oneYearFromNow;
+    const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+    const date = ymd
+      ? new Date(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3]))
+      : new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return false;
+
+    const todayLocal = new Date();
+    todayLocal.setHours(0, 0, 0, 0);
+
+    const oneYearFromNow = new Date(todayLocal);
+    oneYearFromNow.setFullYear(todayLocal.getFullYear() + 1);
+
+    return date >= todayLocal && date < oneYearFromNow;
   } catch {
     return false;
   }
 }
 
 /**
- * Validate appointment time format
+ * Validate that an appointment time is one of the known slots.
  */
 export function validateAppointmentTime(time: string): boolean {
-  const validTimes = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+  const validTimes = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+  ];
   return validTimes.includes(time);
 }
 
 /**
- * Rate limiting helper (simple in-memory implementation)
- * For production, use Redis or a dedicated rate limiting service
+ * Legacy rate-limit shim — delegates to `createRateLimiter` so behaviour
+ * stays consistent across the codebase. Prefer importing `createRateLimiter`
+ * from `@/lib/utils/rateLimit` directly in new code.
  */
-const requestCounts = new Map<string, { count: number; resetAt: number }>();
+import { createRateLimiter } from "./rateLimit";
+
+const legacyRateLimitCache = new Map<
+  string,
+  ReturnType<typeof createRateLimiter>
+>();
 
 export function checkRateLimit(
   identifier: string,
   maxRequests: number = 10,
   windowMs: number = 60000
 ): { allowed: boolean; remaining: number } {
-  const now = Date.now();
-  const record = requestCounts.get(identifier);
-  
-  if (!record || now > record.resetAt) {
-    requestCounts.set(identifier, { count: 1, resetAt: now + windowMs });
-    return { allowed: true, remaining: maxRequests - 1 };
+  const bucketKey = `legacy:${maxRequests}:${windowMs}`;
+  let limiter = legacyRateLimitCache.get(bucketKey);
+  if (!limiter) {
+    limiter = createRateLimiter(bucketKey, { maxRequests, windowMs });
+    legacyRateLimitCache.set(bucketKey, limiter);
   }
-  
-  if (record.count >= maxRequests) {
-    return { allowed: false, remaining: 0 };
-  }
-  
-  record.count++;
-  return { allowed: true, remaining: maxRequests - record.count };
+  const { allowed, remaining } = limiter.check(identifier);
+  return { allowed, remaining };
 }
 
 /**
- * Clean up old rate limit records (call periodically)
+ * @deprecated No-op — the underlying limiter purges lazily on every check.
+ * Kept to avoid breaking existing callers.
  */
 export function cleanupRateLimits() {
-  const now = Date.now();
-  for (const [key, record] of requestCounts.entries()) {
-    if (now > record.resetAt) {
-      requestCounts.delete(key);
-    }
-  }
+  // Intentionally empty.
 }

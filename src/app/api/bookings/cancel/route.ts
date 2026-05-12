@@ -64,9 +64,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update booking status
-    await collection.updateOne(
-      { bookingReference },
+    // Compare-and-set so two simultaneous cancels don't both fire the email
+    // and overwrite each other's audit fields. (CODEBASE_ISSUES C6.)
+    // Only the first request whose updateOne actually transitions the row
+    // gets to send the cancellation email.
+    const updateResult = await collection.updateOne(
+      { bookingReference, status: { $ne: "cancelled" } },
       {
         $set: {
           status: "cancelled",
@@ -76,6 +79,15 @@ export async function POST(request: NextRequest) {
         },
       }
     );
+
+    if (updateResult.modifiedCount !== 1) {
+      // Another request just cancelled it. Treat as success-shaped — the
+      // booking is in the desired terminal state — but skip the email.
+      return NextResponse.json({
+        success: true,
+        message: "Booking already cancelled",
+      });
+    }
 
     // Send cancellation email in the background after responding
     const customerEmail = booking.customerInfo.email;

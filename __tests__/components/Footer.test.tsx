@@ -21,7 +21,7 @@ const mockBusinessInfo = {
   },
 };
 
-jest.mock("@/backend/BusinessInfoContext", () => ({
+jest.mock("@/contexts/BusinessInfoContext", () => ({
   useBusinessInfo: () => ({ businessInfo: mockBusinessInfo }),
 }));
 
@@ -79,7 +79,7 @@ describe("Footer", () => {
 
   it("renders null when no business info", () => {
     jest
-      .spyOn(require("@/backend/BusinessInfoContext"), "useBusinessInfo")
+      .spyOn(require("@/contexts/BusinessInfoContext"), "useBusinessInfo")
       .mockReturnValue({ businessInfo: null });
 
     const { container } = render(<Footer />);

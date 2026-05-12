@@ -51,7 +51,7 @@ const CarCard = ({
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
         {filteredCars.map((c, idx) => (
           <button
-            key={c._id || idx}
+            key={c._id ? String(c._id) : idx}
             onClick={() => setCarId(idx)}
             className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg transition-all duration-200 ${
               idx === carId

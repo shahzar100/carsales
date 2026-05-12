@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ViewingProvider } from "@/backend/ViewingContext";
-import { BusinessInfoProvider } from "@/backend/BusinessInfoContext";
-import { NavigationProvider } from "@/backend/NavigationContext";
+import { ViewingProvider } from "@/contexts/ViewingContext";
+import { BusinessInfoProvider } from "@/contexts/BusinessInfoContext";
+import { NavigationProvider } from "@/contexts/NavigationContext";
 import { ToastProvider, ToastContainer } from "@/components/Toast";
 import PageLoader from "@/components/UI/PageLoader";
 
@@ -35,9 +35,20 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GB",
     siteName: businessName,
+    // (#23) Default OG image — every page without an explicit override
+    // gets this. WhatsApp / Facebook / iMessage all use it for previews.
+    images: [
+      {
+        url: "/car.jpg",
+        width: 1200,
+        height: 630,
+        alt: businessName,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/car.jpg"],
   },
   robots: {
     index: true,

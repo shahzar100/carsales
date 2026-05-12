@@ -56,7 +56,9 @@ export default function ImageUploader({
       setError("");
 
       try {
-        // 1. Get presigned URL
+        // 1. Get presigned URL. (#14) We declare contentLength now so the
+        // server can both pre-check and bind it into the signed URL — S3
+        // will reject the PUT if the actual upload doesn't match.
         const presignRes = await fetch("/api/admin/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,6 +66,7 @@ export default function ImageUploader({
             fileName: file.name,
             contentType: file.type,
             folder,
+            contentLength: file.size,
           }),
         });
 

@@ -13,6 +13,8 @@ import {
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { deleteS3Objects } from "@/lib/utils/s3";
+import { logError } from "@/lib/utils/observability";
 
 export async function GET(request: NextRequest) {
   try {
@@ -106,9 +108,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carPartsCollection.updateOne(
-      {
-        _id: ObjectId.createFromHexString(String(_id)),
-      } as unknown as Parameters<typeof carPartsCollection.updateOne>[0],
+      { _id: ObjectId.createFromHexString(String(_id)) },
       { $set: updatedPart }
     );
 
@@ -138,12 +138,32 @@ export async function DELETE(request: NextRequest) {
     }
 
     const carPartsCollection = await getCarPartsCollection();
-    const result = await carPartsCollection.deleteOne({
-      _id: ObjectId.createFromHexString(String(id)),
-    } as unknown as Parameters<typeof carPartsCollection.deleteOne>[0]);
+    const _id = ObjectId.createFromHexString(String(id));
+
+    // Read the document so we can clean up its S3 image after the Mongo
+    // delete succeeds. (CODEBASE_ISSUES C8.)
+    const partDoc = await carPartsCollection.findOne({ _id });
+
+    const result = await carPartsCollection.deleteOne({ _id });
 
     if (result.deletedCount === 0) {
       return notFound("Car part not found");
+    }
+
+    if (partDoc) {
+      const cleanup = await deleteS3Objects([
+        (partDoc as { image?: string }).image,
+      ]);
+      if (cleanup.failed.length > 0) {
+        logError(
+          new Error(`S3 cleanup partial failure on carpart delete (${cleanup.failed.length} keys)`),
+          {
+            route: "DELETE /api/admin/carparts",
+            partId: String(_id),
+            failed: cleanup.failed.map((f) => f.key),
+          }
+        );
+      }
     }
 
     return NextResponse.json({
@@ -151,7 +171,7 @@ export async function DELETE(request: NextRequest) {
       message: "Car part deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting car part:", error);
+    logError(error, { route: "DELETE /api/admin/carparts" });
     return serverError();
   }
 }

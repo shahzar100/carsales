@@ -88,10 +88,14 @@ npm install
 2. Create an admin user:
 
 ```bash
-node scripts/setup-admin.mjs
+# Make sure ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD are set in .env.local,
+# then run:
+npm run setup-admin
 ```
 
-Follow the prompts to create your admin username and password.
+The script reads from `.env.local` and bcrypt-hashes the password into the
+`adminUsers` collection in MongoDB. It's idempotent — re-running on an
+existing user updates the password.
 
 ## Running the Application
 

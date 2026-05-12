@@ -7,12 +7,21 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{tsx,jsx,ts,js}\" --config .prettierrc",
     "format:check": "prettier --check \"src/**/*.{tsx,jsx,ts,js}\" --config .prettierrc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "setup-admin": "node scripts/setup-admin.mjs",
+    "migrate:business-info": "tsx scripts/migrate-business-info.ts",
     "email": "email dev --dir src/emails"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1023.0",
@@ -39,6 +48,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.48.0",
     "@react-email/preview-server": "^5.2.9",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { z } from "zod";
 import {
   ok,
   badRequest,
@@ -17,14 +18,30 @@ import {
   validateEmail,
   validatePhone,
   sanitizeName,
-  sanitizeString,
   validateFutureDate,
   validateAppointmentTime,
   checkRateLimit,
 } from "@/lib/utils/validation";
+import { verifyTurnstileToken } from "@/lib/utils/turnstile";
 import { sendEmail } from "@/emails/send";
 import { ServiceBookingConfirmation } from "@/emails/ServiceBookingConfirmation";
+import { logError } from "@/lib/utils/observability";
 import React from "react";
+
+// CODEBASE_ISSUES C12, D1: structural validation up front.
+const serviceSchema = z.object({
+  customerInfo: z.object({
+    name: z.string().min(1).max(100),
+    email: z.string().min(1).max(254),
+    phone: z.string().min(1).max(20),
+  }),
+  serviceType: z.string().min(1).max(100),
+  serviceDetails: z.string().max(500).optional().default(""),
+  appointmentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  appointmentTime: z.string().min(1).max(10),
+  // (#17) Optional — server-side verifier no-ops without a secret.
+  turnstileToken: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,21 +53,25 @@ export async function POST(request: NextRequest) {
       return tooManyRequests("Too many requests. Please try again later.");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let body: any;
+    let raw: unknown;
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return badRequest("Invalid JSON in request body");
     }
 
-    // Validate and sanitize customer info
-    if (
-      !body.customerInfo?.name ||
-      !body.customerInfo?.email ||
-      !body.customerInfo?.phone
-    ) {
-      return badRequest("Customer information is required");
+    const parsed = serviceSchema.safeParse(raw);
+    if (!parsed.success) {
+      return badRequest(
+        parsed.error.issues[0]?.message ?? "Invalid request body"
+      );
+    }
+    const body = parsed.data;
+
+    // (#17) CAPTCHA check
+    const captcha = await verifyTurnstileToken(body.turnstileToken, ip);
+    if (!captcha.ok) {
+      return badRequest("CAPTCHA verification failed. Please try again.");
     }
 
     const emailValidation = validateEmail(body.customerInfo.email);
@@ -61,11 +82,6 @@ export async function POST(request: NextRequest) {
     const phoneValidation = validatePhone(body.customerInfo.phone);
     if (!phoneValidation.valid) {
       return badRequest("Invalid phone number");
-    }
-
-    // Validate service details
-    if (!body.serviceType || !body.appointmentDate || !body.appointmentTime) {
-      return badRequest("Service details are required");
     }
 
     if (!validateFutureDate(body.appointmentDate)) {
@@ -88,8 +104,10 @@ export async function POST(request: NextRequest) {
         email: emailValidation.sanitized,
         phone: phoneValidation.sanitized,
       },
-      serviceType: sanitizeString(body.serviceType, 100),
-      serviceDetails: sanitizeString(body.serviceDetails || "", 500),
+      // Length is enforced by the Zod schema above; no further sanitisation
+      // needed — React escapes on render. (#4)
+      serviceType: body.serviceType,
+      serviceDetails: body.serviceDetails || "",
       appointmentDate: body.appointmentDate,
       appointmentTime: body.appointmentTime,
       status: "pending",
@@ -97,7 +115,22 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    await serviceCollection.insertOne(newBooking as ServiceAppointment);
+    try {
+      await serviceCollection.insertOne(newBooking as ServiceAppointment);
+    } catch (err: unknown) {
+      // The new partial-unique index `uniq_active_service_slot`
+      // (CODEBASE_ISSUES C3) throws E11000 if the slot was just taken.
+      if (
+        err &&
+        typeof err === "object" &&
+        (err as { code?: number }).code === 11000
+      ) {
+        return tooManyRequests(
+          "That slot was just taken — please pick another time."
+        );
+      }
+      throw err;
+    }
 
     // Send confirmation email in the background after responding
     waitUntil(
@@ -121,13 +154,18 @@ export async function POST(request: NextRequest) {
           });
 
           if (!emailResult.success) {
-            console.warn(
-              "⚠️ Email failed to send but booking was created:",
-              emailResult.error
-            );
+            logError(emailResult.error, {
+              route: "POST /api/bookings/service",
+              action: "email_send_failed",
+              bookingReference,
+            });
           }
         } catch (emailError) {
-          console.error("Error sending service booking email:", emailError);
+          logError(emailError, {
+            route: "POST /api/bookings/service",
+            action: "email_throw",
+            bookingReference,
+          });
         }
       })()
     );
@@ -138,7 +176,7 @@ export async function POST(request: NextRequest) {
         "Service booking created successfully. Check your email for confirmation.",
     });
   } catch (error) {
-    console.error("Error creating service booking:", error);
+    logError(error, { route: "POST /api/bookings/service" });
     return serverError();
   }
 }

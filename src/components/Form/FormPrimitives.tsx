@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -274,6 +274,12 @@ export const CopyableCode: React.FC<{
 
 // ═════════════════════════════════════════════════════════════
 // Styled Input
+//
+// Generates a unique id with `useId()` and wires `htmlFor`/`id` so
+// screen readers correctly associate the visible label with the input.
+// (CODEBASE_ISSUES G4.) Forwards `required` + `aria-required` and
+// supports an `error` prop so the field can describe its own validation
+// failure to assistive tech via `aria-describedby`/`aria-invalid`.
 // ═════════════════════════════════════════════════════════════
 export const FormInput: React.FC<{
   label: string;
@@ -285,6 +291,8 @@ export const FormInput: React.FC<{
   min?: string;
   max?: string;
   disabled?: boolean;
+  /** Optional inline error — also wires `aria-invalid` + `aria-describedby`. */
+  error?: string;
 }> = ({
   label,
   value,
@@ -295,27 +303,47 @@ export const FormInput: React.FC<{
   min,
   max,
   disabled,
-}) => (
-  <div>
-    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-      {label}
-      {required && <span className="ml-1 text-red-500">*</span>}
-    </label>
-    <input
-      type={type}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      min={min}
-      max={max}
-      disabled={disabled}
-      className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
-    />
-  </div>
-);
+  error,
+}) => {
+  const generatedId = useId();
+  const inputId = `form-input-${generatedId}`;
+  const errorId = error ? `form-input-error-${generatedId}` : undefined;
+  return (
+    <div>
+      <label
+        htmlFor={inputId}
+        className="mb-1.5 block text-sm font-medium text-gray-700"
+      >
+        {label}
+        {required && <span className="ml-1 text-red-500">*</span>}
+      </label>
+      <input
+        id={inputId}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        min={min}
+        max={max}
+        disabled={disabled}
+        required={required}
+        aria-required={required || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
+        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+      />
+      {error && (
+        <p id={errorId} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
 
 // ═════════════════════════════════════════════════════════════
 // Styled Textarea
+// (CODEBASE_ISSUES G4 — same label-association fix as FormInput.)
 // ═════════════════════════════════════════════════════════════
 export const FormTextarea: React.FC<{
   label: string;
@@ -324,21 +352,40 @@ export const FormTextarea: React.FC<{
   placeholder?: string;
   rows?: number;
   required?: boolean;
-}> = ({ label, value, onChange, placeholder, rows = 3, required }) => (
-  <div>
-    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-      {label}
-      {required && <span className="ml-1 text-red-500">*</span>}
-    </label>
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      rows={rows}
-      className="w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-    />
-  </div>
-);
+  error?: string;
+}> = ({ label, value, onChange, placeholder, rows = 3, required, error }) => {
+  const generatedId = useId();
+  const inputId = `form-textarea-${generatedId}`;
+  const errorId = error ? `form-textarea-error-${generatedId}` : undefined;
+  return (
+    <div>
+      <label
+        htmlFor={inputId}
+        className="mb-1.5 block text-sm font-medium text-gray-700"
+      >
+        {label}
+        {required && <span className="ml-1 text-red-500">*</span>}
+      </label>
+      <textarea
+        id={inputId}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        required={required}
+        aria-required={required || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
+        className="w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+      />
+      {error && (
+        <p id={errorId} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
 
 // ═════════════════════════════════════════════════════════════
 // Toggle Switch

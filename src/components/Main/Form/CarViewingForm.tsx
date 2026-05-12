@@ -16,8 +16,9 @@ import {
   ClipboardList,
   CheckCircle,
 } from "lucide-react";
-import { useViewing } from "@/backend/ViewingContext";
+import { useViewing } from "@/contexts/ViewingContext";
 import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
+import TurnstileWidget from "@/components/Form/TurnstileWidget";
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,13 +30,10 @@ const maxDate = () => {
   return d.toISOString().split("T")[0];
 };
 
-const sanitizeInput = (input: string): string =>
-  input
-    .replace(/<script[^>]*>.*?<\/script>/gi, "")
-    .replace(/javascript:/gi, "")
-    .replace(/on\w+=/gi, "")
-    .replace(/<.*?>/g, "")
-    .substring(0, 500);
+// (#4) Length cap only — React escapes on render, so removing characters
+// here gave a false sense of safety. Server-side validation is the
+// source of truth; cap at 500 to keep textareas reasonable.
+const capLength = (input: string): string => input.slice(0, 500);
 
 const timeSlots = [
   { value: "09:00", label: "09:00–10:00" },
@@ -85,9 +83,10 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
 
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
 
   const update = (field: keyof ViewingFormData, value: string) =>
-    setData((prev) => ({ ...prev, [field]: sanitizeInput(value) }));
+    setData((prev) => ({ ...prev, [field]: capLength(value) }));
 
   const car = viewingBooking.carDetails;
 
@@ -255,6 +254,10 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
               <strong>Important:</strong> Please arrive 10 minutes early. Bring
               a valid driver&apos;s licence if you&apos;d like a test drive.
             </InfoBanner>
+
+            {/* (#17) Turnstile renders only when the env var is set;
+                invisible in local dev to keep tests + manual testing fast. */}
+            <TurnstileWidget onToken={setTurnstileToken} />
           </div>
         ),
       },
@@ -288,6 +291,7 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
       appointmentDate: data.date,
       appointmentTime: data.time,
       dealership: viewingBooking.dealership,
+      turnstileToken,
     };
 
     const res = await fetch("/api/bookings/viewing", {

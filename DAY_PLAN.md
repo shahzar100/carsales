@@ -139,12 +139,21 @@ Items: merge `src/backend/` into `src/contexts/`; merge `src/lib/interfaces.ts` 
 
 These don't fit the Day numbering because they're not audit findings — they're handover prerequisites. Pick them up between Days as time allows.
 
-| Task | Why | Effort |
-|---|---|---|
-| **System Status widget** | Replaces the deleted TestRunner with the *right* tool: a live operational health panel ("website ✓ online, DB ✓ connected, last booking 4 min ago, email service ✓ sending") that tells the client what they actually need to know. Plain language, no stack traces. | Half a day |
-| **GitHub Actions CI** | Run `npm test` on every push/PR. The green tick on github.com signals "this code is tested" at handover. Optional later: rebuild a TestRunner-style button in the admin panel that triggers the workflow via `workflow_dispatch`. | 30 min for the workflow, +2 hr for the trigger UI |
-| **Client-facing operations README** | Plain-language guide for the non-technical client: "how to add a car," "how to confirm a booking," "what to do when the Status widget shows red." Lives in admin dashboard or as a shared doc, not the repo. | Half a day |
-| **Developer handover docs** | Refresh `README.md` and `SETUP.md`. Add an ops runbook: MongoDB / S3 / email service ownership, domain registrar, env vars, deployment URL, who pays for what. Document the escalation path (you, for paid fixes). | Half a day |
+| Task | Why | Effort | Status |
+|---|---|---|---|
+| **System Status widget** | Replaces the deleted TestRunner with the *right* tool: a live operational health panel ("website ✓ online, DB ✓ connected, last booking 4 min ago, email service ✓ sending") that tells the client what they actually need to know. Plain language, no stack traces. | Half a day | Pending |
+| **GitHub Actions CI** | Run `npm test` on every push/PR. The green tick on github.com signals "this code is tested" at handover. Optional later: rebuild a TestRunner-style button in the admin panel that triggers the workflow via `workflow_dispatch`. | 30 min for the workflow, +2 hr for the trigger UI | ✅ Done on `ci/github-actions` (2026-05-10) |
+| **E2E test suite (Playwright)** | 10 critical-path tests covering home → fleet → detail, car viewing booking, service booking, quote request, booking lookup, admin login (success + failure), cars quick-edit, carparts CRUD, logout redirect. New `e2e` job in CI gates `main` on a real-server smoke. | Half a day | ✅ Done on `ci/github-actions` (2026-05-10) |
+| **Client-facing operations README** | Plain-language guide for the non-technical client: "how to add a car," "how to confirm a booking," "what to do when the Status widget shows red." Lives in admin dashboard or as a shared doc, not the repo. | Half a day | Pending |
+| **Developer handover docs** | Refresh `README.md` and `SETUP.md`. Add an ops runbook: MongoDB / S3 / email service ownership, domain registrar, env vars, deployment URL, who pays for what. Document the escalation path (you, for paid fixes). | Half a day | Pending |
+
+### CI workflow notes (`ci/github-actions`)
+
+Five jobs gating `main`: `lint`, `test-components` (`jest.config.js`), `test-api` (`jest.config.api.js`), `build` (env vars set inline to satisfy Day 3's `instrumentation.ts` Zod validation), `e2e` (Playwright with a real `mongo:7` service container). The lint job needed `eslint.config.mjs` tightening — `__tests__/`, `coverage/`, `jest.*.js`, and `e2e/` are now ignored, and the deferred test-code rules (`no-explicit-any`, `no-require-imports`, `triple-slash-reference`) are off in those globs. `react/no-unescaped-entities` is downgraded to warn in `src/emails/**`. Result: lint went from 140 errors to 0 errors / 56 warnings. The deferred cleanups in audit §6.3 are still listed as warnings so they're visible without blocking CI.
+
+### E2E coverage notes (`e2e/`)
+
+`@playwright/test` added as a devDep; `playwright.config.ts` autostarts `npm run dev` locally and trusts the CI workflow to bring the server up itself. Tests use accessible roles + visible text (no `data-testid` attributes in the codebase yet). Fixtures: `e2e/fixtures/db.ts` seeds cars / carparts / bookings via the same MongoDB driver the app uses; `cleanupE2EData()` only matches rows tagged with `(E2E)` or the `e2e-` email prefix so a misconfigured run can't damage real data. `auth.ts` provides `loginAsAdmin(page)`. The login-failures spec soft-asserts on rate limiting (some deployments don't tune the limiter aggressively) and hard-asserts the form remains usable under burst load.
 
 ---
 

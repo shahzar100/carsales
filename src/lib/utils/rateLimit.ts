@@ -2,9 +2,13 @@
  * Simple in-memory rate limiter for serverless API routes.
  *
  * Uses a Map of IP → { count, resetTime } to track requests.
- * Because Vercel serverless functions share memory across warm
- * starts, this provides reasonable protection within a single
- * instance. For stronger guarantees, use a Redis-backed solution.
+ *
+ * ⚠️ TODO(infra): on Vercel each warm instance has its own Map and cold
+ * starts reset it, so the documented "5 attempts per 15 min" is in
+ * practice "5 per warm instance" — easily ×N-bypassed by spreading
+ * attempts. Back this with Vercel KV / Upstash Redis before going to
+ * scale. The `check()` and `reset()` API stays the same; only the store
+ * implementation changes. Tracked as CODEBASE_ISSUES A12.
  *
  * Stale entries are lazily purged on each check to prevent
  * unbounded memory growth.

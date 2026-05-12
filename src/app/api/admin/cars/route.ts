@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   getCarsCollection,
   CarInterface,
@@ -14,6 +15,19 @@ import {
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { deleteS3Objects } from "@/lib/utils/s3";
+import { logError } from "@/lib/utils/observability";
+
+/**
+ * (#27) Invalidate the customer-facing fleet pages after any car mutation
+ * so admin changes show up without waiting for the 60s revalidate timer.
+ * Called from POST / PUT / DELETE below.
+ */
+function revalidateFleetPaths(carId?: string) {
+  revalidatePath("/BrowseFleet");
+  revalidatePath("/"); // featured car on home
+  if (carId) revalidatePath(`/BrowseFleet/${carId}`);
+}
 
 // ── Car validation schema ────────────────────────────────────
 const carSchema = z.object({
@@ -66,10 +80,13 @@ export async function GET(request: NextRequest) {
 
     const carsCollection = await getCarsCollection();
 
-    // Build query filter
-    const filter: { status?: string } = {};
+    // Build query filter. `status` is narrowed at the route boundary
+    // (one of "available" | "sold" | "reserved" | "all") via the
+    // searchParams.get above; CarInterface.status is the enum, so we
+    // type the local filter as Partial<CarInterface> to keep it aligned.
+    const filter: Partial<Pick<CarInterface, "status">> = {};
     if (status !== "all") {
-      filter.status = status;
+      filter.status = status as CarInterface["status"];
     }
 
     // Get total count for pagination
@@ -132,6 +149,8 @@ export async function POST(request: NextRequest) {
 
     const result = await carsCollection.insertOne(newCar as CarInterface);
 
+    revalidateFleetPaths(result.insertedId.toString());
+
     return ok(
       serializeDocument({
         _id: result.insertedId.toString(),
@@ -178,9 +197,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const result = await carsCollection.updateOne(
-      {
-        _id: ObjectId.createFromHexString(String(_id)),
-      } as unknown as Parameters<typeof carsCollection.updateOne>[0],
+      { _id: ObjectId.createFromHexString(String(_id)) },
       { $set: updatedCar }
     );
 
@@ -188,9 +205,11 @@ export async function PUT(request: NextRequest) {
       return notFound("Car not found");
     }
 
+    revalidateFleetPaths(String(_id));
+
     return ok(serializeDocument({ _id, ...updatedCar }));
   } catch (error) {
-    console.error("Error updating car:", error);
+    logError(error, { route: "PUT /api/admin/cars" });
     return serverError();
   }
 }
@@ -210,20 +229,47 @@ export async function DELETE(request: NextRequest) {
     }
 
     const carsCollection = await getCarsCollection();
-    const result = await carsCollection.deleteOne({
-      _id: ObjectId.createFromHexString(String(id)),
-    } as unknown as Parameters<typeof carsCollection.deleteOne>[0]);
+    const _id = ObjectId.createFromHexString(String(id));
+
+    // Read the document first so we can clean up its S3 images after the
+    // Mongo delete succeeds. (CODEBASE_ISSUES C8.)
+    const carDoc = await carsCollection.findOne({ _id });
+
+    const result = await carsCollection.deleteOne({ _id });
 
     if (result.deletedCount === 0) {
       return notFound("Car not found");
     }
+
+    // Best-effort S3 cleanup. Failures here are logged but don't fail the
+    // request — orphaned S3 objects are recoverable, a user-visible delete
+    // failure isn't.
+    if (carDoc) {
+      const keys: Array<string | undefined> = [
+        carDoc.image,
+        ...((carDoc.images as string[] | undefined) ?? []),
+      ];
+      const cleanup = await deleteS3Objects(keys);
+      if (cleanup.failed.length > 0) {
+        logError(
+          new Error(`S3 cleanup partial failure on car delete (${cleanup.failed.length} keys)`),
+          {
+            route: "DELETE /api/admin/cars",
+            carId: String(_id),
+            failed: cleanup.failed.map((f) => f.key),
+          }
+        );
+      }
+    }
+
+    revalidateFleetPaths(String(_id));
 
     return NextResponse.json({
       success: true,
       message: "Car deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting car:", error);
+    logError(error, { route: "DELETE /api/admin/cars" });
     return serverError();
   }
 }

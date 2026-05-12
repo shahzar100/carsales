@@ -116,7 +116,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!role || !validRoles.includes(role)) {
+    // Cast to widen for `.includes` — `validRoles` is `as const` so its
+    // element type is the union, but `role` is a free string at this point.
+    if (!role || !(validRoles as readonly string[]).includes(role)) {
       return NextResponse.json(
         { error: "Role must be one of: staff, manager, admin" },
         { status: 400 }

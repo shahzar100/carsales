@@ -2,12 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, verifyPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
+import { logError } from "@/lib/utils/observability";
 
-// 5 login attempts per 15-minute window per IP
+// 5 login attempts per 15-minute window per IP.
+// CODEBASE_ISSUES A12: this is in-process and resets on Vercel cold start;
+// move to a KV-backed store before going to scale.
 const loginLimiter = createRateLimiter("login", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
 });
+
+/**
+ * Constant-time guard against username enumeration.
+ *
+ * Pre-computed bcrypt (cost 12) of "this-is-not-a-real-password".
+ * verifyPassword runs against this when the user doesn't exist, so the
+ * response time matches a real failed login. The hash rejects any real
+ * input password by construction. (CODEBASE_ISSUES A8.)
+ */
+const DUMMY_PASSWORD_HASH =
+  "$2b$12$pDBDseLO5CRDEGLX70WZHutBFb6ujNeagUc/ONCxc/fWbmAUG46i6";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +29,7 @@ export async function POST(request: NextRequest) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
-    const { allowed, remaining, resetIn } = loginLimiter.check(ip);
+    const { allowed, resetIn } = loginLimiter.check(ip);
 
     if (!allowed) {
       return NextResponse.json(
@@ -30,9 +44,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { username, password } = await request.json();
+    // ── Parse + type-guard the body ────────────────────────
+    // Without this, a JSON body of {"username": {"$gt": ""}} would forge a
+    // Mongo operator filter and match the first user in the collection.
+    // (CODEBASE_ISSUES A5.)
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
 
-    if (!username || !password) {
+    if (
+      !body ||
+      typeof body !== "object" ||
+      typeof (body as { username?: unknown }).username !== "string" ||
+      typeof (body as { password?: unknown }).password !== "string"
+    ) {
+      return NextResponse.json(
+        { error: "Username and password are required" },
+        { status: 400 }
+      );
+    }
+
+    const username = (body as { username: string }).username.trim();
+    const password = (body as { password: string }).password;
+
+    if (
+      username.length === 0 ||
+      username.length > 64 ||
+      password.length === 0 ||
+      password.length > 200
+    ) {
       return NextResponse.json(
         { error: "Username and password are required" },
         { status: 400 }
@@ -42,23 +88,19 @@ export async function POST(request: NextRequest) {
     const adminCollection = await getAdminUsersCollection();
     const admin = await adminCollection.findOne({ username });
 
-    if (!admin) {
+    // Constant-time path: always run verifyPassword exactly once, regardless of
+    // whether the user exists. (CODEBASE_ISSUES A8.)
+    const passwordHash = admin?.passwordHash ?? DUMMY_PASSWORD_HASH;
+    const isValid = await verifyPassword(password, passwordHash);
+
+    if (!admin || !isValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    const isValid = await verifyPassword(password, admin.passwordHash);
-
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    // Update last login
+    // Update last login (fire-and-forget; not blocking on this is fine).
     await adminCollection.updateOne(
       { _id: admin._id },
       { $set: { lastLogin: new Date() } }
@@ -71,15 +113,16 @@ export async function POST(request: NextRequest) {
     session.role = admin.role as string | undefined;
     await session.save();
 
-    // Reset rate limiter on successful login
-    loginLimiter.reset(ip);
+    // Note: deliberately NOT calling loginLimiter.reset(ip). Resetting on
+    // success lets a successful guess from a credential dump grant unlimited
+    // fresh attempts. (CODEBASE_ISSUES A6.)
 
     return NextResponse.json({
       success: true,
       message: "Login successful",
     });
   } catch (error) {
-    console.error("Login error:", error);
+    logError(error, { route: "POST /api/admin/login" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

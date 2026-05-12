@@ -7,7 +7,6 @@
  */
 
 import {
-  sanitizeString,
   validateEmail,
   validatePhone,
   validateBookingReference,
@@ -23,66 +22,10 @@ describe("validation utilities", () => {
     jest.clearAllMocks();
   });
 
-  // ── sanitizeString ──────────────────────────────────────────
-
-  describe("sanitizeString", () => {
-    it("should return empty string for non-string input", () => {
-      expect(sanitizeString(123 as unknown as string)).toBe("");
-      expect(sanitizeString(null as unknown as string)).toBe("");
-      expect(sanitizeString(undefined as unknown as string)).toBe("");
-    });
-
-    it("should trim whitespace", () => {
-      expect(sanitizeString("  hello  ")).toBe("hello");
-    });
-
-    it("should truncate to maxLength", () => {
-      const long = "a".repeat(2000);
-      expect(sanitizeString(long, 100).length).toBe(100);
-    });
-
-    it("should use default maxLength of 1000", () => {
-      const long = "a".repeat(2000);
-      expect(sanitizeString(long).length).toBe(1000);
-    });
-
-    it("should remove HTML angle brackets", () => {
-      expect(sanitizeString("<script>alert('xss')</script>")).toBe(
-        "scriptalert('xss')/script"
-      );
-    });
-
-    it("should remove javascript: protocol", () => {
-      expect(sanitizeString("javascript:alert(1)")).toBe("alert(1)");
-    });
-
-    it("should remove event handlers", () => {
-      expect(sanitizeString("onerror=alert(1)")).toBe("alert(1)");
-      expect(sanitizeString("onclick=doStuff()")).toBe("doStuff()");
-    });
-
-    it("should handle XSS payloads", () => {
-      const xssPayloads = [
-        '<img onerror="alert(1)" />',
-        "<script>document.cookie</script>",
-        "javascript:void(0)",
-      ];
-      for (const payload of xssPayloads) {
-        const result = sanitizeString(payload);
-        expect(result).not.toContain("<script>");
-        expect(result).not.toContain("javascript:");
-        expect(result).not.toMatch(/on\w+=/i);
-      }
-    });
-
-    it("should handle empty string", () => {
-      expect(sanitizeString("")).toBe("");
-    });
-
-    it("should preserve safe content", () => {
-      expect(sanitizeString("Hello World 123!")).toBe("Hello World 123!");
-    });
-  });
+  // (#4) `sanitizeString` removed — it was a denylist masquerading as XSS
+  // protection. React escapes on render, and the routes apply Zod `.max()`
+  // for length. Anti-XSS character stripping at input time was producing
+  // false confidence rather than safety.
 
   // ── validateEmail ──────────────────────────────────────────
 

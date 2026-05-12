@@ -15,7 +15,8 @@ process.env.SESSION_SECRET =
   process.env.SESSION_SECRET ||
   "test-session-secret-at-least-32-characters-long";
 process.env.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "test-admin-password";
-process.env.RESEND_API_KEY = process.env.RESEND_API_KEY || "test-resend-key";
+// RESEND_API_KEY removed — codebase uses nodemailer, not Resend.
+// (CODEBASE_ISSUES H4.)
 process.env.EMAIL_FROM = process.env.EMAIL_FROM || "test@example.com";
 process.env.NEXT_PUBLIC_SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";

@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Allow the example env through so new developers have something to copy
+# from. Real values still live in `.env.local` which stays ignored below.
+!.env.example
 
 # vercel
 .vercel

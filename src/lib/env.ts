@@ -3,9 +3,10 @@ import { z } from "zod";
 /**
  * Server-side environment variable validation.
  *
- * Validates all required env vars at boot time so the app
- * fails fast with clear error messages rather than crashing
- * at runtime with cryptic undefined errors.
+ * Validates all required env vars at boot time so the app fails fast with
+ * clear error messages rather than crashing at runtime with cryptic
+ * undefined errors. The matching `.env.example` at the repo root
+ * documents every variable for new developers. (CODEBASE_ISSUES H3.)
  */
 
 const serverSchema = z.object({
@@ -32,6 +33,21 @@ const serverSchema = z.object({
   EMAIL_FROM: z.string().optional().default("noreply@yourdomain.com"),
   EMAIL_FROM_NAME: z.string().optional().default("MMC Leeds"),
 
+  // ── AWS / S3 — used by src/lib/utils/s3.ts ────────────────
+  AWS_REGION: z.string().optional(),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_BUCKET_NAME: z.string().optional(),
+  CLOUDFRONT_DOMAIN: z.string().optional(),
+
+  // ── Cron — Vercel sets this to authenticate cron invocations ─
+  CRON_SECRET: z.string().optional(),
+
+  // ── Admin bootstrap (consumed by scripts/setup-admin.mjs) ──
+  ADMIN_USERNAME: z.string().optional(),
+  ADMIN_EMAIL: z.string().optional(),
+  ADMIN_PASSWORD: z.string().optional(),
+
   // ── App ───────────────────────────────────────────────────
   NODE_ENV: z
     .enum(["development", "production", "test"])
@@ -42,6 +58,7 @@ const clientSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().optional().default("http://localhost:3000"),
   NEXT_PUBLIC_BUSINESS_NAME: z.string().optional().default("MMC Leeds"),
   NEXT_PUBLIC_APP_URL: z.string().optional().default("http://localhost:3000"),
+  NEXT_PUBLIC_BASE_URL: z.string().optional(), // used by reviewInvite
 });
 
 function validateServerEnv() {
@@ -56,11 +73,20 @@ function validateServerEnv() {
     throw new Error("Invalid server environment variables");
   }
 
-  // Fail in production if SESSION_SECRET is missing
-  if (!parsed.data.SESSION_SECRET && parsed.data.NODE_ENV === "production") {
-    throw new Error(
-      "SESSION_SECRET must be set in production (min 32 characters)"
-    );
+  // Production hard-requires SESSION_SECRET. Ditto for the EMAIL_FROM
+  // default — `noreply@yourdomain.com` would send real emails from a
+  // nonsense address. (CODEBASE_ISSUES H3.)
+  if (parsed.data.NODE_ENV === "production") {
+    if (!parsed.data.SESSION_SECRET) {
+      throw new Error(
+        "SESSION_SECRET must be set in production (min 32 characters)"
+      );
+    }
+    if (parsed.data.EMAIL_FROM === "noreply@yourdomain.com") {
+      throw new Error(
+        "EMAIL_FROM must be set to a real address in production"
+      );
+    }
   }
 
   return parsed.data;
@@ -71,6 +97,7 @@ function validateClientEnv() {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_BUSINESS_NAME: process.env.NEXT_PUBLIC_BUSINESS_NAME,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   });
 
   if (!parsed.success) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useBusinessInfo } from "@/backend/BusinessInfoContext";
+import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import {
   MapPin,
   Phone,

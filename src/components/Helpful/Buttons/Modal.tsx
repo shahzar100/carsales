@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -22,6 +22,11 @@ const sizeClasses = {
   full: "w-full h-full m-4",
 };
 
+// CSS selector for elements that can receive Tab focus. Used by the focus
+// trap below to find the dialog's first/last focusable child.
+const FOCUSABLE_SELECTOR =
+  'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
 const Modal = ({
   title,
   children,
@@ -30,6 +35,9 @@ const Modal = ({
   variant = "default",
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // Element that had focus before the modal opened — restored on close.
+  const previousActiveElement = useRef<HTMLElement | null>(null);
 
   const handleEscapeKey = useCallback(
     (event: KeyboardEvent) => {
@@ -40,17 +48,66 @@ const Modal = ({
     [onClose]
   );
 
+  // Focus trap (CODEBASE_ISSUES G3): cycle Tab/Shift-Tab inside the dialog.
+  // Without this, Tab walks back into the page underneath, which violates
+  // the WAI-ARIA dialog pattern and confuses keyboard / SR users.
+  const handleFocusTrap = useCallback((event: KeyboardEvent) => {
+    if (event.key !== "Tab") return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusable = dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    if (focusable.length === 0) {
+      event.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (event.shiftKey && (active === first || active === dialog)) {
+      last.focus();
+      event.preventDefault();
+    } else if (!event.shiftKey && active === last) {
+      first.focus();
+      event.preventDefault();
+    }
+  }, []);
+
   // Body scroll lock is owned by useScrollLock so multiple overlays
   // (Modal + NavMenu + ConfirmDialog) can share the lock without racing.
   useScrollLock(true);
 
   useEffect(() => {
     setMounted(true);
+    // Remember who had focus, then move focus into the dialog so the trap
+    // has somewhere to start. (CODEBASE_ISSUES G3.)
+    previousActiveElement.current =
+      typeof document !== "undefined"
+        ? (document.activeElement as HTMLElement | null)
+        : null;
+
     document.addEventListener("keydown", handleEscapeKey);
+    document.addEventListener("keydown", handleFocusTrap);
+
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
+      document.removeEventListener("keydown", handleFocusTrap);
+      // Restore focus on close. Guard with optional chaining: the previous
+      // element may have been removed from the DOM by the time we close.
+      previousActiveElement.current?.focus?.();
     };
-  }, [handleEscapeKey]);
+  }, [handleEscapeKey, handleFocusTrap]);
+
+  // After the dialog mounts, move focus to the first focusable element
+  // inside it — usually the close button. Run after the portal renders.
+  useEffect(() => {
+    if (!mounted) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const first = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+    first?.focus();
+  }, [mounted]);
 
   if (!mounted) return null;
 
@@ -62,9 +119,15 @@ const Modal = ({
       }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
+        // tabIndex=-1 so the dialog is a focus target programmatically
+        // even when no children are focusable (e.g. content-only "clean"
+        // variant). The focus trap relies on `document.activeElement`
+        // being inside the dialog.
+        tabIndex={-1}
         className={`relative max-h-[90vh] overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-2xl ${sizeClasses[size]} ${
           variant === "default" ? "flex flex-col gap-4 p-8" : ""
         }`}

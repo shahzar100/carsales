@@ -13,14 +13,40 @@ export function generateQuoteReference(): string {
 }
 
 /**
+ * (#30) Reservation reference — `RS-XXXXXX`. Same shape as bookings so
+ * the lookup UI can validate against a regex family without per-type
+ * branching.
+ */
+export function generateReservationReference(): string {
+  const uuid = uuidv4().replace(/-/g, "").substring(0, 6).toUpperCase();
+  return `RS-${uuid}`;
+}
+
+/**
+ * (#31) Part-exchange enquiry reference — `PX-XXXXXX`.
+ */
+export function generatePartExchangeReference(): string {
+  const uuid = uuidv4().replace(/-/g, "").substring(0, 6).toUpperCase();
+  return `PX-${uuid}`;
+}
+
+/**
  * Format a date for booking-related UI (lookup page, confirmation emails).
  *
  * Uses UK long form — e.g. `"Saturday, 25 December 2024"`. The non-booking
  * formatters in `src/lib/utils/format.ts` are also en-GB; this one is kept
  * separate because the booking flow specifically wants the long form.
+ *
+ * `YYYY-MM-DD` inputs (the shape `<input type="date">` produces) are parsed
+ * as a *local* calendar day. `new Date("2026-03-25")` parses as UTC
+ * midnight, which in BST renders as 24 March — wrong day on every
+ * confirmation email through the summer. (CODEBASE_ISSUES C11.)
  */
 export function formatDate(date: string): string {
-  const d = new Date(date);
+  const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  const d = ymd
+    ? new Date(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3]))
+    : new Date(date);
   return d.toLocaleDateString("en-GB", {
     weekday: "long",
     year: "numeric",

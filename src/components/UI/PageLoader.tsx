@@ -1,10 +1,10 @@
 "use client";
 
-import { useNavigation } from "@/backend/NavigationContext";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Car } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 const PageLoader = () => {
   const { isNavigating, setIsNavigating, navigationTarget } = useNavigation();

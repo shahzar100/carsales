@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { useNavigation } from "@/backend/NavigationContext";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { usePathname } from "next/navigation";
 import { ChevronDown, LucideIcon } from "lucide-react";
 

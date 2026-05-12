@@ -1,4 +1,4 @@
-import clientPromise from "@/backend/mongodb";
+import clientPromise from "@/lib/mongodb";
 
 // ── Types ────────────────────────────────────────────────────
 

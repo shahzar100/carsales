@@ -1,5 +1,13 @@
+// CODEBASE_ISSUES C18: `_id` was previously declared as `string` even though
+// MongoDB stores it as `ObjectId`. The widened type below removes the need
+// for `as unknown as Parameters<...>` casts at every read/update site.
+// `serializeDocument` (src/lib/models/index.ts) converts ObjectId → string
+// before responses leave the API boundary, so client consumers still see
+// a string at runtime.
+import type { ObjectId } from "mongodb";
+
 export interface CarInterface {
-  _id?: string;
+  _id?: string | ObjectId;
   make: string;
   model: string;
   year: number;
@@ -20,7 +28,7 @@ export interface CarInterface {
 }
 
 export interface ServiceAppointment {
-  _id?: string;
+  _id?: string | ObjectId;
   bookingReference: string;
   customerInfo: {
     name: string;
@@ -41,7 +49,7 @@ export interface ServiceAppointment {
 }
 
 export interface CarViewingBooking {
-  _id?: string;
+  _id?: string | ObjectId;
   bookingReference: string;
   carId: string;
   carDetails: {
@@ -135,7 +143,7 @@ export interface ServiceOverview {
 }
 
 export interface ShopInfo {
-  _id?: string;
+  _id?: string | ObjectId;
   // Core business info
   businessName: string;
   address: string;
@@ -173,7 +181,7 @@ export interface ShopInfo {
 }
 
 export interface AdminUser {
-  _id?: string;
+  _id?: string | ObjectId;
   username: string;
   email: string;
   passwordHash: string;
@@ -186,7 +194,7 @@ export interface AdminUser {
 }
 
 export interface Quote {
-  _id?: string;
+  _id?: string | ObjectId;
   quoteReference: string;
   customerInfo: {
     name: string;
@@ -207,7 +215,7 @@ export interface Quote {
 }
 
 export interface CarPartInterface {
-  _id?: string;
+  _id?: string | ObjectId;
   name: string;
   brand: string;
   category: string;
@@ -217,6 +225,70 @@ export interface CarPartInterface {
   compatibility: string;
   description: string;
   inStock: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * (#30) Reservation — customer reserves a car online and brings cash
+ * to the showroom to confirm. Captures high-intent leads without
+ * payment infrastructure.
+ */
+export interface Reservation {
+  _id?: string | ObjectId;
+  reservationReference: string;
+  carId: string;
+  carDetails: {
+    make: string;
+    model: string;
+    year: number;
+    price: number;
+    image?: string;
+  };
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  /** Status moves: pending → confirmed (deposit paid) → cancelled/expired. */
+  status: "pending" | "confirmed" | "cancelled" | "expired";
+  /** Notes from the customer ("I'll be in tomorrow afternoon", etc.). */
+  notes?: string;
+  /** When the reservation auto-expires if no deposit is taken. */
+  expiresAt: Date;
+  cancellationReason?: string;
+  cancelledAt?: Date;
+  confirmedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * (#31) Part-exchange enquiry — customer's current car details, used
+ * by the sales team to come back with a valuation.
+ */
+export interface PartExchange {
+  _id?: string | ObjectId;
+  enquiryReference: string;
+  /** Which listing they were viewing when they enquired (optional). */
+  interestedInCarId?: string;
+  interestedInCarLabel?: string;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  vehicle: {
+    registration?: string;
+    make: string;
+    model: string;
+    year: number;
+    mileage: number;
+    condition: "Excellent" | "Good" | "Fair" | "Poor";
+    serviceHistory?: "Full" | "Partial" | "None";
+    notes?: string;
+  };
+  status: "pending" | "valued" | "accepted" | "declined";
   createdAt: Date;
   updatedAt: Date;
 }

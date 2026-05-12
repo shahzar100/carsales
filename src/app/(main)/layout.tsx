@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function MainLayout({
   children,
@@ -19,6 +21,12 @@ export default function MainLayout({
         {children}
       </main>
       <Footer />
+      {/* (#36) Floating WhatsApp button — async server component that
+          fetches the business phone, wrapped in Suspense so it never
+          blocks the page render if Mongo is slow. */}
+      <Suspense fallback={null}>
+        <WhatsAppButton />
+      </Suspense>
     </>
   );
 }

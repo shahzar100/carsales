@@ -58,7 +58,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
     setDeleting(true);
     try {
       const res = await fetch(
-        `/api/admin/cars?id=${encodeURIComponent(car._id)}`,
+        `/api/admin/cars?id=${encodeURIComponent(String(car._id))}`,
         { method: "DELETE" }
       );
       const body = await res.json();

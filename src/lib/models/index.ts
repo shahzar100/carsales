@@ -1,5 +1,5 @@
 import { Db, Collection } from "mongodb";
-import clientPromise from "@/backend/mongodb";
+import clientPromise from "@/lib/mongodb";
 import {
   CarInterface,
   ServiceAppointment,
@@ -12,6 +12,8 @@ import {
   ServiceOverview,
   RecoveryInfo,
   CarPartInterface,
+  Reservation,
+  PartExchange,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -23,6 +25,8 @@ export type {
   AdminUser,
   Quote,
   CarPartInterface,
+  Reservation,
+  PartExchange,
 };
 
 // ── Cached collection handles ────────────────────────────────
@@ -39,6 +43,8 @@ let tintOptionsCollection: Collection<TintOption>;
 let serviceOverviewsCollection: Collection<ServiceOverview>;
 let recoveryInfoCollection: Collection<RecoveryInfo>;
 let carPartsCollection: Collection<CarPartInterface>;
+let reservationsCollection: Collection<Reservation>;
+let partExchangesCollection: Collection<PartExchange>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -128,6 +134,18 @@ export async function getServiceAppointmentsCollection(): Promise<
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
       },
+      // Slot uniqueness for active service bookings.
+      // (CODEBASE_ISSUES C3.) The partial filter scopes the constraint to
+      // bookings still on the calendar — cancelled and completed bookings
+      // don't block the slot from being rebooked.
+      {
+        key: { appointmentDate: 1, appointmentTime: 1 },
+        unique: true,
+        partialFilterExpression: {
+          status: { $in: ["pending", "confirmed"] },
+        },
+        name: "uniq_active_service_slot",
+      },
     ]);
   }
   return serviceAppointmentsCollection;
@@ -152,6 +170,17 @@ export async function getCarViewingBookingsCollection(): Promise<
       // Compound index for cron review-invite query
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
+      },
+      // Slot uniqueness for active viewing bookings on a specific car.
+      // (CODEBASE_ISSUES C3.) Scoped by status so cancelled/completed
+      // bookings don't permanently lock a slot.
+      {
+        key: { carId: 1, appointmentDate: 1, appointmentTime: 1 },
+        unique: true,
+        partialFilterExpression: {
+          status: { $in: ["pending", "confirmed"] },
+        },
+        name: "uniq_active_viewing_slot",
       },
     ]);
   }
@@ -222,7 +251,10 @@ export async function getAdminUsersCollection(): Promise<
 
     await adminUsersCollection.createIndexes([
       { key: { username: 1 }, unique: true },
-      { key: { email: 1 } },
+      // Sparse so existing rows without an email don't block creation.
+      // Unique so concurrent POSTs can't create two admins with the same
+      // email. (CODEBASE_ISSUES C7.)
+      { key: { email: 1 }, unique: true, sparse: true },
     ]);
   }
   return adminUsersCollection;
@@ -259,4 +291,53 @@ export async function getCarPartsCollection(): Promise<
     ]);
   }
   return carPartsCollection;
+}
+
+// ── Reservations (#30) ───────────────────────────────────────
+export async function getReservationsCollection(): Promise<
+  Collection<Reservation>
+> {
+  if (!reservationsCollection) {
+    const db = await getDb();
+    reservationsCollection = db.collection<Reservation>("reservations");
+
+    await reservationsCollection.createIndexes([
+      { key: { reservationReference: 1 }, unique: true },
+      { key: { carId: 1 } },
+      { key: { status: 1 } },
+      { key: { "customerInfo.email": 1 } },
+      { key: { status: 1, createdAt: -1 } },
+      // Auto-expire pending reservations via TTL on expiresAt.
+      { key: { expiresAt: 1 }, expireAfterSeconds: 0 },
+      // Only one active (pending/confirmed) reservation per car at a time.
+      {
+        key: { carId: 1 },
+        unique: true,
+        partialFilterExpression: {
+          status: { $in: ["pending", "confirmed"] },
+        },
+        name: "uniq_active_reservation_per_car",
+      },
+    ]);
+  }
+  return reservationsCollection;
+}
+
+// ── Part Exchange enquiries (#31) ────────────────────────────
+export async function getPartExchangesCollection(): Promise<
+  Collection<PartExchange>
+> {
+  if (!partExchangesCollection) {
+    const db = await getDb();
+    partExchangesCollection =
+      db.collection<PartExchange>("partExchanges");
+
+    await partExchangesCollection.createIndexes([
+      { key: { enquiryReference: 1 }, unique: true },
+      { key: { status: 1 } },
+      { key: { "customerInfo.email": 1 } },
+      { key: { status: 1, createdAt: -1 } },
+    ]);
+  }
+  return partExchangesCollection;
 }

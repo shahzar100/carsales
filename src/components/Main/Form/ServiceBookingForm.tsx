@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { useBusinessInfo } from "@/backend/BusinessInfoContext";
+import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import Form, { FormStep } from "../../Form/Form";
 import Dropdown from "../../Form/Dropdown";
 import {
@@ -24,6 +24,7 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
+import TurnstileWidget from "@/components/Form/TurnstileWidget";
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,13 +36,9 @@ const maxDate = () => {
   return d.toISOString().split("T")[0];
 };
 
-const sanitizeInput = (input: string): string =>
-  input
-    .replace(/<script[^>]*>.*?<\/script>/gi, "")
-    .replace(/javascript:/gi, "")
-    .replace(/on\w+=/gi, "")
-    .replace(/<.*?>/g, "")
-    .substring(0, 1000);
+// (#4) Length cap only — React escapes on render; the prior denylist
+// was security theatre. Structural validation is enforced server-side.
+const capLength = (input: string): string => input.slice(0, 1000);
 
 const timeSlots = [
   { value: "09:00", label: "09:00" },
@@ -180,10 +177,12 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
   });
 
   const [submitted, setSubmitted] = useState(false);
+  // (#17) Turnstile token — sent server-side for spam protection.
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
   const [bookingRef, setBookingRef] = useState("");
 
   const update = (field: keyof ServiceFormData, value: string) =>
-    setData((prev) => ({ ...prev, [field]: sanitizeInput(value) }));
+    setData((prev) => ({ ...prev, [field]: capLength(value) }));
 
   const currentYear = new Date().getFullYear();
 
@@ -572,6 +571,9 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
                 </>
               )}
             </InfoBanner>
+
+            {/* (#17) Turnstile renders only when the env var is set. */}
+            <TurnstileWidget onToken={setTurnstileToken} />
           </div>
         ),
       },
@@ -618,6 +620,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
           year: data.vehicleYear,
           registration: data.vehicleReg || undefined,
         },
+        turnstileToken,
       };
 
       const res = await fetch("/api/bookings/quote", {
@@ -654,6 +657,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
           .join("\n"),
         appointmentDate: data.date,
         appointmentTime: data.time,
+        turnstileToken,
       };
 
       const res = await fetch("/api/bookings/service", {
