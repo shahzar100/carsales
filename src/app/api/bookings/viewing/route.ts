@@ -117,6 +117,26 @@ export async function POST(request: NextRequest) {
     const bookingReference = generateBookingReference();
     const viewingCollection = await getCarViewingBookingsCollection();
 
+    // (Day 12 / Fix 12.7) If the client didn't send a dealership, fall
+    // back to the shop's single showroom. The plan's preferred long-term
+    // path is to drop the field after a deprecation window; until then,
+    // this keeps every viewing row populated without making the form
+    // think about it.
+    let dealership = body.dealership;
+    if (!dealership) {
+      try {
+        const shop = await getBusinessInfo();
+        dealership = {
+          location: shop?.businessName ?? "Showroom",
+          address: shop
+            ? [shop.address, shop.city, shop.zipCode].filter(Boolean).join(", ")
+            : "",
+        };
+      } catch {
+        dealership = { location: "Showroom", address: "" };
+      }
+    }
+
     const newBooking: Omit<CarViewingBooking, "_id"> = {
       bookingReference,
       carId: body.carId,
@@ -134,7 +154,7 @@ export async function POST(request: NextRequest) {
       },
       appointmentDate: body.appointmentDate,
       appointmentTime: body.appointmentTime,
-      dealership: body.dealership,
+      dealership,
       status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
