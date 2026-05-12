@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting - max 5 requests per minute per IP
     const ip = ipAddress(request) || "unknown";
-    const rateLimit = checkRateLimit(`service-booking:${ip}`, 5, 60000);
+    const rateLimit = await checkRateLimit(`service-booking:${ip}`, 5, 60000);
 
     if (!rateLimit.allowed) {
       return tooManyRequests("Too many requests. Please try again later.");

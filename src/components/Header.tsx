@@ -26,10 +26,10 @@ const Header = () => {
               Brands
             </p>
             <div className="grid grid-cols-2 gap-1 text-sm">
-              <NavLink href="/BrowseFleet/Toyota" text="Toyota" />
-              <NavLink href="/BrowseFleet/Honda" text="Honda" />
-              <NavLink href="/BrowseFleet/BMW" text="BMW" />
-              <NavLink href="/BrowseFleet/Audi" text="Audi" />
+              <NavLink href="/BrowseFleet?make=Toyota" text="Toyota" />
+              <NavLink href="/BrowseFleet?make=Honda" text="Honda" />
+              <NavLink href="/BrowseFleet?make=BMW" text="BMW" />
+              <NavLink href="/BrowseFleet?make=Audi" text="Audi" />
             </div>
           </div>
         </NavLink>

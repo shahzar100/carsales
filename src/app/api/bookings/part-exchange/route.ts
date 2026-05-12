@@ -58,7 +58,7 @@ const partExchangeSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const ip = ipAddress(request) || "unknown";
-    const rateLimit = checkRateLimit(`part-exchange:${ip}`, 3, 5 * 60 * 1000);
+    const rateLimit = await checkRateLimit(`part-exchange:${ip}`, 3, 5 * 60 * 1000);
     if (!rateLimit.allowed) {
       return tooManyRequests("Too many requests. Please try again later.");
     }

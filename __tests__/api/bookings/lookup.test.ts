@@ -166,7 +166,9 @@ describe("/api/bookings/lookup", () => {
       });
       jest.doMock("@/lib/utils/rateLimit", () => ({
         createRateLimiter: () => ({
-          check: () => ({ allowed: true, remaining: 10, resetIn: 0 }),
+          // check() is async on the real implementation.
+          check: async () => ({ allowed: true, remaining: 10, resetIn: 0 }),
+          reset: async () => {},
         }),
       }));
       const { GET: mockedGET } = require("@/app/api/bookings/lookup/route");

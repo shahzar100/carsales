@@ -125,18 +125,18 @@ const legacyRateLimitCache = new Map<
   ReturnType<typeof createRateLimiter>
 >();
 
-export function checkRateLimit(
+export async function checkRateLimit(
   identifier: string,
   maxRequests: number = 10,
   windowMs: number = 60000
-): { allowed: boolean; remaining: number } {
+): Promise<{ allowed: boolean; remaining: number }> {
   const bucketKey = `legacy:${maxRequests}:${windowMs}`;
   let limiter = legacyRateLimitCache.get(bucketKey);
   if (!limiter) {
     limiter = createRateLimiter(bucketKey, { maxRequests, windowMs });
     legacyRateLimitCache.set(bucketKey, limiter);
   }
-  const { allowed, remaining } = limiter.check(identifier);
+  const { allowed, remaining } = await limiter.check(identifier);
   return { allowed, remaining };
 }
 

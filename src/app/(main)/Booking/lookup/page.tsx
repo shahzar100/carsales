@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Button from "@/components/Helpful/Buttons/Button";
+import TurnstileWidget from "@/components/Form/TurnstileWidget";
 import { formatDate, formatTime } from "@/lib/utils/booking";
 import { formatPrice } from "@/lib/utils/format";
 
@@ -84,10 +85,21 @@ function BookingLookupContent() {
   const searchParams = useSearchParams();
   const [reference, setReference] = useState(searchParams.get("ref") || "");
   const [email, setEmail] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [booking, setBooking] = useState<Booking | null>(null);
   const [bookingType, setBookingType] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Stable callback for TurnstileWidget so we don't re-mount the widget
+  // on every render (the widget's useEffect depends on onToken identity).
+  const handleTurnstileToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const captchaConfigured = Boolean(
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  );
 
   const handleSearch = useCallback(async () => {
     if (!reference.trim()) {
@@ -100,14 +112,19 @@ function BookingLookupContent() {
       return;
     }
 
+    if (captchaConfigured && !turnstileToken) {
+      setError("Please complete the CAPTCHA challenge before searching");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setBooking(null);
 
     try {
-      const response = await fetch(
-        `/api/bookings/lookup?ref=${encodeURIComponent(reference)}&email=${encodeURIComponent(email)}`
-      );
+      const params = new URLSearchParams({ ref: reference, email });
+      if (turnstileToken) params.set("turnstileToken", turnstileToken);
+      const response = await fetch(`/api/bookings/lookup?${params}`);
       const result = await response.json();
 
       if (response.ok && result.success) {
@@ -121,13 +138,15 @@ function BookingLookupContent() {
     } finally {
       setLoading(false);
     }
-  }, [reference, email]);
+  }, [reference, email, turnstileToken, captchaConfigured]);
 
   useEffect(() => {
-    if (searchParams.get("ref") && email) {
-      handleSearch();
-    }
-  }, [searchParams, handleSearch, email]);
+    // URL-driven path: only auto-fire when the user has supplied their
+    // email AND (if CAPTCHA is configured) the widget has issued a token.
+    if (!searchParams.get("ref") || !email) return;
+    if (captchaConfigured && !turnstileToken) return;
+    handleSearch();
+  }, [searchParams, handleSearch, email, turnstileToken, captchaConfigured]);
 
   const getStatusBadge = (status: string) => {
     const statusConfig: {
@@ -201,6 +220,7 @@ function BookingLookupContent() {
                 className="w-full rounded-lg border border-gray-200 px-4 py-3 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               />
             </div>
+            <TurnstileWidget onToken={handleTurnstileToken} />
             <Button onClick={handleSearch} loading={loading} size="lg">
               {loading ? "Searching..." : "Search"}
             </Button>

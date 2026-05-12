@@ -32,7 +32,9 @@ jest.mock("@/lib/utils/validation", () => {
   const actual = jest.requireActual("@/lib/utils/validation");
   return {
     ...actual,
-    checkRateLimit: jest.fn().mockReturnValue({ allowed: true, remaining: 2 }),
+    checkRateLimit: jest
+      .fn()
+      .mockResolvedValue({ allowed: true, remaining: 2 }),
   };
 });
 const {
@@ -58,7 +60,7 @@ const validQuoteBody = {
 describe("/api/bookings/quote", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCheckRateLimit.mockReturnValue({ allowed: true, remaining: 2 });
+    mockCheckRateLimit.mockResolvedValue({ allowed: true, remaining: 2 });
   });
 
   afterEach(async () => {
@@ -185,7 +187,7 @@ describe("/api/bookings/quote", () => {
 
   describe("Rate Limiting", () => {
     it("should return 429 when rate limit is exceeded", async () => {
-      mockCheckRateLimit.mockReturnValue({ allowed: false, remaining: 0 });
+      mockCheckRateLimit.mockResolvedValue({ allowed: false, remaining: 0 });
 
       const request = new NextRequest(
         "http://localhost:3000/api/bookings/quote",
