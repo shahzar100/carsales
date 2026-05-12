@@ -12,6 +12,7 @@ import React from "react";
 import { PasswordReset } from "@/emails/PasswordReset";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError, logEvent } from "@/lib/utils/observability";
+import { recordAudit } from "@/lib/utils/audit";
 
 // Defensive ceiling against an authenticated-but-malicious account.
 // 10 actions per IP per hour is plenty for legitimate admin use.
@@ -181,6 +182,15 @@ export async function POST(request: NextRequest) {
         : "admin.password.reminder_sent",
       { actor: session.username, target: username }
     );
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action:
+        action === "reset"
+          ? "user.password_reset_sent"
+          : "user.password_reminder_sent",
+      targetType: "user",
+      metadata: { target: username },
+    });
 
     return NextResponse.json({
       success: true,

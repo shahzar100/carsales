@@ -73,6 +73,20 @@ interface DateFilter {
 export async function getDashboardData(
   dateFilter?: DateFilter
 ): Promise<DashboardData> {
+  // Resolve the range first so we can push the filter down to MongoDB
+  // instead of loading every booking ever and filtering in JS.
+  // (Day 11 / Fix 11.1. The grouping math below still runs in JS so the
+  // output shape is unchanged — but the bookings load is now bounded by
+  // the date range, which is the real cost at scale.)
+  const { from: rangeFrom, to: rangeTo } = parseDateRange(
+    dateFilter?.range,
+    dateFilter?.from,
+    dateFilter?.to
+  );
+
+  const bookingDateFilter: Record<string, unknown> =
+    rangeFrom && rangeTo ? { createdAt: { $gte: rangeFrom, $lte: rangeTo } } : {};
+
   // Fetch all collections in parallel
   const [carsCol, serviceCol, viewingCol, usersCol] = await Promise.all([
     getCarsCollection(),
@@ -84,33 +98,17 @@ export async function getDashboardData(
   const [allCars, allServiceBookings, allViewingBookings, users] =
     await Promise.all([
       carsCol.find({}).toArray(),
-      serviceCol.find({}).sort({ createdAt: -1 }).toArray(),
-      viewingCol.find({}).sort({ createdAt: -1 }).toArray(),
+      serviceCol.find(bookingDateFilter).sort({ createdAt: -1 }).toArray(),
+      viewingCol.find(bookingDateFilter).sort({ createdAt: -1 }).toArray(),
       usersCol.find({}).toArray(),
     ]);
 
-  // ── Date-range filtering ─────────────────────────────
-  const { from: rangeFrom, to: rangeTo } = parseDateRange(
-    dateFilter?.range,
-    dateFilter?.from,
-    dateFilter?.to
-  );
-
-  const inRange = (dateVal: unknown): boolean => {
-    if (!rangeFrom || !rangeTo) return true;
-    const d = dateVal instanceof Date ? dateVal : new Date(String(dateVal));
-    return d >= rangeFrom && d <= rangeTo;
-  };
-
-  // Cars are never filtered by date (inventory is point-in-time)
+  // Cars are never filtered by date (inventory is point-in-time). Bookings
+  // were already filtered server-side by `bookingDateFilter`, so the
+  // arrays we have now are the in-range slice ready to group.
   const cars = allCars;
-  // Bookings are filtered by createdAt
-  const serviceBookings = allServiceBookings.filter((b) =>
-    inRange(b.createdAt)
-  );
-  const viewingBookings = allViewingBookings.filter((b) =>
-    inRange(b.createdAt)
-  );
+  const serviceBookings = allServiceBookings;
+  const viewingBookings = allViewingBookings;
 
   // ── KPI Stats ──────────────────────────────────────────
   const totalCars = cars.length;

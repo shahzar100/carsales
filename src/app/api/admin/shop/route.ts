@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { serializeDocument } from "@/lib/models";
-import { isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { recordAudit } from "@/lib/utils/audit";
 import { getBusinessInfo, updateBusinessInfo } from "@/lib/utils/businessInfo";
 import type { ShopInfo } from "@/lib/interfaces";
 import {
@@ -169,6 +170,14 @@ export async function PUT(request: NextRequest) {
       });
       return fail("Database update failed");
     }
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "shop.update",
+      targetType: "shop",
+      metadata: { fields: Object.keys(body as Record<string, unknown>) },
+    });
 
     return ok(serializeDocument(shopInfo));
   } catch (error) {

@@ -23,6 +23,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import ShareButton from "@/components/SEO/ShareButton";
+import SaveCarButton from "@/components/Car/SaveCarButton";
 import { CarShareModal } from "@/components/SEO/CarShareCard";
 import { Share2 } from "lucide-react";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
@@ -163,6 +164,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
             Back to Fleet
           </Link>
           <div className="flex items-center gap-3">
+            {car._id && <SaveCarButton carId={String(car._id)} />}
             <ShareButton
               url={carUrl}
               title={carTitle}

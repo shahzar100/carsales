@@ -4,8 +4,9 @@ import {
   getCarViewingBookingsCollection,
   serializeDocument,
 } from "@/lib/models";
-import { isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId, Document } from "mongodb";
+import { recordAudit } from "@/lib/utils/audit";
 import {
   badRequest,
   unauthorized,
@@ -155,6 +156,15 @@ export async function PUT(request: NextRequest) {
     // Get the updated booking
     const updatedBooking = await genericCollection.findOne({
       _id: objectId,
+    });
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: `booking.${status}`,
+      targetType: type === "service" ? "booking" : "viewing",
+      targetId: String(_bookingId),
+      metadata: { type, newStatus: status },
     });
 
     return NextResponse.json({

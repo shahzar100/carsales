@@ -8,6 +8,7 @@ import {
   PlusCircle,
   Activity,
   Cog,
+  ShieldCheck,
 } from "lucide-react";
 import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
@@ -29,6 +30,7 @@ export default function AdminNavigationTabs() {
     { href: "/admin/dashboard/shop", text: "Business Info", icon: Settings },
     { href: "/admin/dashboard/add", text: "Create New", icon: PlusCircle },
     { href: "/admin/dashboard/status", text: "System Status", icon: Activity },
+    { href: "/admin/dashboard/audit", text: "Audit Log", icon: ShieldCheck },
   ];
 
   return (

@@ -4,7 +4,7 @@ import {
   CarPartInterface,
   serializeDocument,
 } from "@/lib/models";
-import { isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 import {
   ok,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/utils/apiResponse";
 import { deleteS3Objects } from "@/lib/utils/s3";
 import { logError } from "@/lib/utils/observability";
+import { recordAudit } from "@/lib/utils/audit";
 
 export async function GET(_request: NextRequest) {
   try {
@@ -74,6 +75,15 @@ export async function POST(request: NextRequest) {
       newPart as CarPartInterface
     );
 
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "carPart.create",
+      targetType: "carPart",
+      targetId: result.insertedId.toString(),
+      metadata: { name: newPart.name, brand: newPart.brand },
+    });
+
     return ok(
       serializeDocument({
         _id: result.insertedId.toString(),
@@ -115,6 +125,15 @@ export async function PUT(request: NextRequest) {
     if (result.matchedCount === 0) {
       return notFound("Car part not found");
     }
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "carPart.update",
+      targetType: "carPart",
+      targetId: String(_id),
+      metadata: { fields: Object.keys(updateData) },
+    });
 
     return ok(serializeDocument({ _id, ...updatedPart }));
   } catch (error) {
@@ -165,6 +184,17 @@ export async function DELETE(request: NextRequest) {
         );
       }
     }
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "carPart.delete",
+      targetType: "carPart",
+      targetId: String(_id),
+      metadata: partDoc
+        ? { name: (partDoc as { name?: string }).name }
+        : undefined,
+    });
 
     return NextResponse.json({
       success: true,

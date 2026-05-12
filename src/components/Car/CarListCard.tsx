@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import CarActions from "@/components/Admin/Navigation/CarActions";
 import ShareButton from "@/components/SEO/ShareButton";
+import SaveCarButton from "@/components/Car/SaveCarButton";
 import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
 
 interface CarListCardProps {
@@ -86,6 +87,13 @@ const CarListCard: React.FC<CarListCardProps> = ({
               </span>
             )}
           </div>
+
+          {/* Save (heart) toggle — customer-only, top right corner. */}
+          {!isAdmin && car._id && (
+            <div className="absolute top-3 right-3">
+              <SaveCarButton carId={String(car._id)} />
+            </div>
+          )}
 
           {/* Price badge on mobile */}
           <div className="absolute right-3 bottom-3 sm:hidden">
