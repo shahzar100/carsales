@@ -93,8 +93,16 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   // Focus the safe option (Cancel) on open so a stray Enter key dismisses
   // the dialog instead of firing the destructive action.
+  //
+  // Modal (our parent) runs its own auto-focus on the first focusable
+  // child (the Close × button) inside its own useEffect — parent effects
+  // fire *after* child effects, so a synchronous focus call here gets
+  // overridden. Defer to the next microtask so Modal's focus runs first
+  // and we land on Cancel deterministically. (Test: __tests__/components/
+  // UI/ConfirmDialog.test.tsx → "auto-focuses Cancel".)
   useEffect(() => {
-    cancelRef.current?.focus();
+    const id = requestAnimationFrame(() => cancelRef.current?.focus());
+    return () => cancelAnimationFrame(id);
   }, []);
 
   const { icon, bg } = ICON_BY_VARIANT[variant];
