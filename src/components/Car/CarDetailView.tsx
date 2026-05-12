@@ -194,8 +194,29 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
           <div className="flex flex-col gap-8 lg:flex-row">
             {/* Image Gallery */}
             <div className="w-full lg:w-3/5">
-              {/* Main Image */}
-              <div className="relative aspect-16/10 overflow-hidden rounded-2xl bg-gray-100 shadow-lg">
+              {/* Main Image. role=region + tabIndex makes the gallery a
+                  focusable landmark so keyboard users get ArrowLeft /
+                  ArrowRight navigation. (Day 6 / Fix 6.4.) */}
+              <div
+                role="region"
+                aria-label={`${car.year} ${car.make} ${car.model} image gallery`}
+                tabIndex={allImages.length > 1 ? 0 : -1}
+                onKeyDown={(e) => {
+                  if (allImages.length <= 1) return;
+                  if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    setActiveImageIndex((prev) =>
+                      prev === 0 ? allImages.length - 1 : prev - 1
+                    );
+                  } else if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    setActiveImageIndex((prev) =>
+                      prev === allImages.length - 1 ? 0 : prev + 1
+                    );
+                  }
+                }}
+                className="relative aspect-16/10 overflow-hidden rounded-2xl bg-gray-100 shadow-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+              >
                 <Image
                   src={allImages[activeImageIndex] || "/tesla.webp"}
                   alt={`${car.make} ${car.model}`}
@@ -205,28 +226,40 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                   sizes="(max-width: 1024px) 100vw, 60vw"
                 />
 
+                {/* Screen-reader live region — announces the current image
+                    as the user navigates. */}
+                {allImages.length > 1 && (
+                  <span className="sr-only" aria-live="polite">
+                    Image {activeImageIndex + 1} of {allImages.length}
+                  </span>
+                )}
+
                 {/* Image navigation arrows */}
                 {allImages.length > 1 && (
                   <>
                     <button
+                      type="button"
+                      aria-label="Previous image"
                       onClick={() =>
                         setActiveImageIndex((prev) =>
                           prev === 0 ? allImages.length - 1 : prev - 1
                         )
                       }
-                      className="absolute top-1/2 left-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
+                      className="absolute top-1/2 left-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60 focus:ring-2 focus:ring-white focus:outline-none"
                     >
-                      <ChevronLeft className="h-5 w-5" />
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </button>
                     <button
+                      type="button"
+                      aria-label="Next image"
                       onClick={() =>
                         setActiveImageIndex((prev) =>
                           prev === allImages.length - 1 ? 0 : prev + 1
                         )
                       }
-                      className="absolute top-1/2 right-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
+                      className="absolute top-1/2 right-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60 focus:ring-2 focus:ring-white focus:outline-none"
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
                     </button>
 
                     {/* Dots */}
@@ -234,8 +267,13 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car }) => {
                       {allImages.map((_, idx) => (
                         <button
                           key={idx}
+                          type="button"
+                          aria-label={`Go to image ${idx + 1}`}
+                          aria-current={
+                            idx === activeImageIndex ? "true" : undefined
+                          }
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`h-2 rounded-full transition-all ${
+                          className={`h-2 rounded-full transition-all focus:ring-2 focus:ring-white focus:outline-none ${
                             idx === activeImageIndex
                               ? "w-6 bg-white"
                               : "w-2 bg-white/50 hover:bg-white/80"
