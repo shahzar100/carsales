@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
-    const { allowed, resetIn } = passwordActionLimiter.check(ip);
+    const { allowed, resetIn } = await passwordActionLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(
         { error: "Too many password actions. Please try again later." },

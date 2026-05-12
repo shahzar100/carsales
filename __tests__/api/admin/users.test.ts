@@ -23,13 +23,14 @@ const {
   hasMinimumRole: mockHasMinimumRole,
 } = require("@/lib/utils/auth");
 
-// Mock rate limiter to prevent test interference from in-memory state
+// Mock rate limiter to prevent test interference from in-memory state.
+// `check` and `reset` are now async on the real implementation.
 jest.mock("@/lib/utils/rateLimit", () => ({
   createRateLimiter: () => ({
     check: jest
       .fn()
-      .mockReturnValue({ allowed: true, remaining: 9, resetIn: 0 }),
-    reset: jest.fn(),
+      .mockResolvedValue({ allowed: true, remaining: 9, resetIn: 0 }),
+    reset: jest.fn().mockResolvedValue(undefined),
   }),
 }));
 

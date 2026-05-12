@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
-    const { allowed, resetIn } = loginLimiter.check(ip);
+    const { allowed, resetIn } = await loginLimiter.check(ip);
 
     if (!allowed) {
       return NextResponse.json(

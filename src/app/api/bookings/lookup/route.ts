@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
-    const { allowed, resetIn } = lookupLimiter.check(ip);
+    const { allowed, resetIn } = await lookupLimiter.check(ip);
 
     if (!allowed) {
       return tooManyRequests(

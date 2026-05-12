@@ -227,32 +227,32 @@ describe("validation utilities", () => {
   // ── checkRateLimit ─────────────────────────────────────────
 
   describe("checkRateLimit", () => {
-    it("should allow first request", () => {
-      const result = checkRateLimit("test-unique-1", 5, 60000);
+    it("should allow first request", async () => {
+      const result = await checkRateLimit("test-unique-1", 5, 60000);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(4);
     });
 
-    it("should track request count and decrement remaining", () => {
+    it("should track request count and decrement remaining", async () => {
       const id = "test-unique-2";
-      checkRateLimit(id, 5, 60000);
-      const result = checkRateLimit(id, 5, 60000);
+      await checkRateLimit(id, 5, 60000);
+      const result = await checkRateLimit(id, 5, 60000);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(3);
     });
 
-    it("should deny when rate limit exceeded", () => {
+    it("should deny when rate limit exceeded", async () => {
       const id = "test-unique-3";
       for (let i = 0; i < 3; i++) {
-        checkRateLimit(id, 3, 60000);
+        await checkRateLimit(id, 3, 60000);
       }
-      const result = checkRateLimit(id, 3, 60000);
+      const result = await checkRateLimit(id, 3, 60000);
       expect(result.allowed).toBe(false);
       expect(result.remaining).toBe(0);
     });
 
-    it("should use default values", () => {
-      const result = checkRateLimit("test-unique-4");
+    it("should use default values", async () => {
+      const result = await checkRateLimit("test-unique-4");
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(9); // default max is 10
     });
@@ -265,10 +265,10 @@ describe("validation utilities", () => {
       expect(() => cleanupRateLimits()).not.toThrow();
     });
 
-    it("should clean up expired rate limit entries", () => {
+    it("should clean up expired rate limit entries", async () => {
       // Create a rate limit entry with a very short window (1ms)
       const id = "test-cleanup-expired";
-      checkRateLimit(id, 10, 1);
+      await checkRateLimit(id, 10, 1);
 
       // Wait for it to expire
       const start = Date.now();
@@ -280,20 +280,20 @@ describe("validation utilities", () => {
       cleanupRateLimits();
 
       // After cleanup, the entry should be gone - new request gets fresh limits
-      const result = checkRateLimit(id, 10, 60000);
+      const result = await checkRateLimit(id, 10, 60000);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(9); // Fresh start, 10-1 = 9
     });
 
-    it("should not clean up non-expired entries", () => {
+    it("should not clean up non-expired entries", async () => {
       const id = "test-cleanup-active";
-      checkRateLimit(id, 5, 60000); // 60s window
-      checkRateLimit(id, 5, 60000);
+      await checkRateLimit(id, 5, 60000); // 60s window
+      await checkRateLimit(id, 5, 60000);
 
       cleanupRateLimits();
 
       // Entry should still exist - next request continues from count 2
-      const result = checkRateLimit(id, 5, 60000);
+      const result = await checkRateLimit(id, 5, 60000);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(2); // 5-3 = 2
     });
