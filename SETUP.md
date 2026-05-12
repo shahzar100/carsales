@@ -303,6 +303,112 @@ The application uses Tailwind CSS. Customize colors in `tailwind.config.js`.
 5. **HTTPS**: Always use HTTPS in production
 6. **Input Validation**: All user inputs are validated on the server side
 
+## Sentry (production error tracking)
+
+The app routes all `console.error` / `console.warn` calls through
+`src/lib/utils/observability.ts` (`logError`, `logEvent`). When `SENTRY_DSN`
+is unset, the shim falls through to `console.*` so dev and tests behave
+exactly as before. To wire Sentry for production:
+
+1. **Install the SDK** (one-time):
+
+   ```bash
+   npm i @sentry/nextjs
+   npx @sentry/wizard@latest -i nextjs
+   ```
+
+   The wizard creates `sentry.client.config.ts`, `sentry.server.config.ts`,
+   and `sentry.edge.config.ts`. Accept the defaults; the wizard reads
+   `SENTRY_DSN` from `.env.local`.
+
+2. **Update `observability.ts`** to forward to Sentry:
+
+   ```ts
+   import * as Sentry from "@sentry/nextjs";
+
+   export function logError(error: unknown, context: LogContext = {}): void {
+     Sentry.captureException(error, { extra: redactObject(context) });
+     // keep console.error for local visibility
+     console.error("[error]", { ...redactObject(context) });
+   }
+
+   export function logEvent(name: string, context: LogContext = {}): void {
+     Sentry.addBreadcrumb({ category: "app", message: name, data: redactObject(context) });
+     console.log(`[event] ${name}`, redactObject(context));
+   }
+   ```
+
+3. **Set `SENTRY_DSN` in Vercel** for production and preview, and (optionally)
+   in `.env.local` for dev testing.
+
+4. **Verify**: trigger a known error (e.g. `/api/admin/cars` with a bad payload)
+   and confirm the event lands in your Sentry project within ~30 seconds.
+
+Start at `tracesSampleRate: 0.1`. The PII redactor in `observability.ts`
+already strips emails, phones, passwords, and tokens before send.
+
+## Staging environment
+
+Run staging as a **separate Vercel project + separate MongoDB cluster** —
+never point staging at the production database. Concretely:
+
+| Resource | Production | Staging |
+|---|---|---|
+| Vercel project | `carsales` | `carsales-staging` |
+| MongoDB Atlas cluster | `MMC-prod` | `MMC-staging` |
+| S3 bucket | `mmc-images-prod` | `mmc-images-staging` |
+| Sentry env | `production` | `staging` |
+| Turnstile site key | prod sitekey | staging sitekey (Cloudflare dashboard) |
+
+Staging should mirror production env vars 1:1 except for the credentials
+above. Use the staging Vercel project's "Production" environment for the
+`day-N-*` branch deploys; use its "Preview" for PR previews.
+
+## MongoDB backup & restore
+
+**Atlas (recommended).** Both the production and staging clusters should
+have **Continuous Cloud Backup** enabled with point-in-time recovery
+(PIT). Atlas retains:
+
+- 24h of oplog continuously
+- Daily snapshots for 7 days
+- Weekly snapshots for 4 weeks
+- Monthly snapshots for 12 months
+
+To restore: Atlas UI → Backup → Restore → choose timestamp →
+"Restore into a new cluster" (never overwrite live). After verification,
+update `MONGODB_URI` in Vercel to point at the new cluster.
+
+**Local / self-hosted.** Use `mongodump` nightly via cron:
+
+```bash
+mongodump --uri="$MONGODB_URI" --out=/backups/$(date +%F)
+```
+
+…and copy the result to S3 (or wherever) with a 30-day retention policy.
+Test restores quarterly: `mongorestore --uri="$STAGING_URI" /backups/2026-05-01`.
+
+## Secret rotation
+
+Rotate the secrets below on a schedule. The `Owner` column should match
+your handover spreadsheet.
+
+| Secret | Owner | Cadence | Last rotated |
+|---|---|---|---|
+| `SESSION_SECRET` | Engineering | Quarterly | _(fill in)_ |
+| `ADMIN_PASSWORD` (seed) | Engineering | Once + on offboarding | _(fill in)_ |
+| `SMTP_PASS` | Operations | Per provider policy (Resend: yearly) | _(fill in)_ |
+| `AWS_SECRET_ACCESS_KEY` | Engineering | Quarterly | _(fill in)_ |
+| `CRON_SECRET` | Engineering | Quarterly | _(fill in)_ |
+| `TURNSTILE_SECRET_KEY` | Engineering | On compromise only | _(fill in)_ |
+| `SENTRY_DSN` | Engineering | On compromise only (auth tokens only, not DSN) | _(fill in)_ |
+| MongoDB Atlas DB user | DBA / Engineering | Quarterly | _(fill in)_ |
+
+To rotate: generate the new value, deploy to Vercel as a new env var,
+verify a preview deploy, then promote and remove the old value. For
+`SESSION_SECRET` rotation, expect every admin user to be logged out — do
+it during a quiet window.
+
 ## Support
 
 For issues or questions:
