@@ -163,7 +163,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/Enquiry"
+                  href="/contact"
                   className="text-gray-700 transition-colors hover:text-red-600"
                 >
                   Contact Us

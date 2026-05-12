@@ -379,21 +379,22 @@ describe("CarPartsGrid Component", () => {
       expect(reserveButtons.length).toBe(mockParts.length);
     });
 
-    it("navigates to /Enquiry with query params when Reserve Part is clicked", async () => {
+    it("navigates to /contact with query params when Reserve Part is clicked", async () => {
       const user = userEvent.setup();
       render(<CarPartsGrid parts={mockParts} />);
 
       const reserveButtons = screen.getAllByText("Reserve Part");
       await user.click(reserveButtons[0]);
 
-      // Should navigate to /Enquiry with part info as query params
+      // /Enquiry was consolidated into /contact in Day 3; the URL contract
+      // (subject + part identification via query params) is unchanged.
       expect(mockPush).toHaveBeenCalledTimes(1);
       const calledUrl = mockPush.mock.calls[0][0] as string;
-      expect(calledUrl).toContain("/Enquiry");
+      expect(calledUrl).toContain("/contact");
       expect(calledUrl).toContain("BMW+M3+Brake+Pads");
     });
 
-    it("includes part name and brand in Enquiry URL query params", async () => {
+    it("includes part name and brand in contact URL query params", async () => {
       const user = userEvent.setup();
       render(<CarPartsGrid parts={mockParts} />);
 
@@ -401,7 +402,7 @@ describe("CarPartsGrid Component", () => {
       await user.click(reserveButtons[1]); // Click Honda part's reserve button
 
       const calledUrl = mockPush.mock.calls[0][0] as string;
-      expect(calledUrl).toContain("/Enquiry");
+      expect(calledUrl).toContain("/contact");
       // Should contain subject or part/brand params
       expect(calledUrl).toMatch(/part=|subject=/i);
       expect(calledUrl).toContain("Honda");

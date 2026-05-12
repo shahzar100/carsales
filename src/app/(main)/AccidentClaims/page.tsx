@@ -185,7 +185,7 @@ export default async function AccidentClaims() {
                 Call Now: {phone}
               </a>
               <Link
-                href="/Enquiry"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-8 py-3.5 font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
               >
                 Make an Enquiry
