@@ -76,6 +76,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // Day 3 / WEBSITE_REVIEW #10, #46. /Enquiry duplicated /contact and
+      // competed with it on search. 308 preserves any external SEO authority.
+      { source: "/Enquiry", destination: "/contact", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

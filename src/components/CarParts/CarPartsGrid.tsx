@@ -60,7 +60,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
       part: part.name,
       brand: part.brand,
     });
-    router.push(`/Enquiry?${params.toString()}`);
+    router.push(`/contact?${params.toString()}`);
   };
 
   /** Check if the part name already contains both brand and category text */
