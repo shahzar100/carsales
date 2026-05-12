@@ -52,6 +52,20 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.cloudfront.net",
       },
+      // Explicit S3 fallback for environments without CloudFront.
+      // The CSP `connect-src` already permits these hosts; this
+      // aligns the two policies.
+      {
+        protocol: "https",
+        hostname: "*.s3.*.amazonaws.com",
+        pathname: "/**",
+      },
+      // Path-style S3 URLs (eu-west-2, etc.).
+      {
+        protocol: "https",
+        hostname: "s3.*.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   async headers() {
