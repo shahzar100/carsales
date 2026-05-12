@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { getIronSession, IronSession, SessionOptions } from "iron-session";
 import { cookies } from "next/headers";
@@ -21,13 +22,22 @@ const ROLE_HIERARCHY: Record<string, number> = {
 // In development we still want a friendly warning when running without one.
 if (!serverEnv.SESSION_SECRET) {
   console.warn(
-    "⚠️  SESSION_SECRET is not set — using fallback. Set it for all environments!"
+    "⚠️  SESSION_SECRET is not set — using a random per-process fallback. " +
+      "Sessions won't survive server restarts. Set SESSION_SECRET in .env.local " +
+      "for a stable dev session."
   );
 }
 
+// (Day 12 / Fix 12.3) The literal `"dev-only-fallback-secret-at-least-32chars!"`
+// was a hardcoded plaintext string in source. Anyone who could read the
+// repo could mint a valid dev session cookie. Generate a fresh secret
+// at module load instead — opaque to source readers, regenerated every
+// `next dev` restart (dev sessions become un-resumable across restarts,
+// which is fine: you log in once a session).
+const FALLBACK_SECRET = crypto.randomBytes(32).toString("hex");
+
 export const sessionOptions: SessionOptions = {
-  password:
-    serverEnv.SESSION_SECRET || "dev-only-fallback-secret-at-least-32chars!",
+  password: serverEnv.SESSION_SECRET || FALLBACK_SECRET,
   cookieName: "carsales_admin_session",
   cookieOptions: {
     secure: serverEnv.NODE_ENV === "production",
