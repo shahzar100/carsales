@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import crypto from "crypto";
 import React from "react";
-import { hashPassword, hasMinimumRole } from "@/lib/utils/auth";
+import { getSession, hashPassword, hasMinimumRole } from "@/lib/utils/auth";
+import { recordAudit } from "@/lib/utils/audit";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { sendEmail } from "@/emails/send";
@@ -166,6 +167,13 @@ export async function POST(request: NextRequest) {
     );
 
     logEvent("admin.user.created", { target: username });
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "user.create",
+      targetType: "user",
+      metadata: { target: username, role },
+    });
 
     return NextResponse.json({
       success: true,

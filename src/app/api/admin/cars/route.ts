@@ -5,7 +5,8 @@ import {
   CarInterface,
   serializeDocument,
 } from "@/lib/models";
-import { isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { recordAudit } from "@/lib/utils/audit";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { logError } from "@/lib/utils/observability";
@@ -150,6 +151,19 @@ export async function POST(request: NextRequest) {
     const result = await carsCollection.insertOne(newCar as CarInterface);
 
     revalidateFleetPaths(result.insertedId.toString());
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "car.create",
+      targetType: "car",
+      targetId: result.insertedId.toString(),
+      metadata: {
+        make: newCar.make,
+        model: newCar.model,
+        year: newCar.year,
+      },
+    });
 
     return ok(
       serializeDocument({
