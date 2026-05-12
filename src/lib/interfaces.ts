@@ -292,3 +292,42 @@ export interface PartExchange {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+// ───────────────────────────────────────────────────────────────
+// UI / admin-dashboard types (moved from src/lib/types.ts in Day 7).
+// `types.ts` is now a thin re-export shim that also keeps the
+// `Car` alias for older import sites.
+// ───────────────────────────────────────────────────────────────
+
+export interface Booking {
+  _id: string;
+  bookingReference: string;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  appointmentDate: string;
+  appointmentTime: string;
+  status: string;
+  serviceType?: string;
+  carDetails?: {
+    make: string;
+    model: string;
+    year: number;
+    price: number;
+  };
+}
+
+export interface Notification {
+  type: "success" | "error";
+  message: string;
+}
+
+export type ActiveTab = "cars" | "service" | "viewing" | "shop";
+
+export interface SelectedBooking {
+  booking: Booking;
+  type: string;
+}
