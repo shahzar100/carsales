@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import { JsonLd } from "@/components/SEO/JsonLd";
 import { Breadcrumb } from "@/components/SEO/Breadcrumb";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
+import { logError } from "@/lib/utils/observability";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const businessName =
@@ -85,7 +86,7 @@ const getCar = async (id: string): Promise<CarInterface | null> => {
     if (!car) return null;
     return serializeDocument(car) as CarInterface;
   } catch (error) {
-    console.error("Error fetching car:", error);
+    logError(error, { context: "BrowseFleet/[_id].getCar" });
     return null;
   }
 };

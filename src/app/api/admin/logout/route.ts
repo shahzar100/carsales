@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/utils/auth";
+import { logError } from "@/lib/utils/observability";
 
 export async function POST() {
   try {
@@ -14,7 +15,7 @@ export async function POST() {
       message: "Logged out successfully",
     });
   } catch (error) {
-    console.error("Logout error:", error);
+    logError(error, { route: "POST /api/admin/logout" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

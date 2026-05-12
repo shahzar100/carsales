@@ -42,8 +42,8 @@ export const QuoteConfirmation = ({
           </Text>
           
           <Text style={text}>
-            Thank you for requesting a quote from {shopInfo.businessName}. 
-            We've received your request and our team will review it shortly.
+            Thank you for requesting a quote from {shopInfo.businessName}.
+            We&apos;ve received your request and our team will review it shortly.
           </Text>
 
           <Section style={informationTable}>

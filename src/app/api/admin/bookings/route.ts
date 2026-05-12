@@ -12,6 +12,7 @@ import {
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { logError } from "@/lib/utils/observability";
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching bookings:", error);
+    logError(error, { route: "GET /api/admin/bookings" });
     return serverError();
   }
 }
@@ -115,7 +116,7 @@ export async function PUT(request: NextRequest) {
     let objectId;
     try {
       objectId = ObjectId.createFromHexString(String(_bookingId));
-    } catch (err) {
+    } catch (_err) {
       return badRequest("Invalid booking ID format");
     }
 
@@ -162,7 +163,7 @@ export async function PUT(request: NextRequest) {
       data: updatedBooking ? serializeDocument(updatedBooking) : null,
     });
   } catch (error) {
-    console.error("Error updating booking status:", error);
+    logError(error, { route: "PUT /api/admin/bookings" });
     return serverError();
   }
 }

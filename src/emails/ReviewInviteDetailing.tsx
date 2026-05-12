@@ -110,8 +110,8 @@ export const ReviewInviteDetailing: React.FC<Props> = ({
       Thank you for choosing {shopInfo.businessName} for your{" "}
       <strong>{booking.serviceType}</strong> detail on{" "}
       <strong>{formatDate(booking.appointmentDate)}</strong>. We put a lot of
-      care into every vehicle — we'd love to know if the results matched your
-      expectations!
+      care into every vehicle — we&apos;d love to know if the results matched
+      your expectations!
     </Text>
 
     {/* Detail summary */}

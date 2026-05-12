@@ -10,6 +10,7 @@ import {
   notFound,
   fail,
 } from "@/lib/utils/apiResponse";
+import { logError } from "@/lib/utils/observability";
 
 export async function GET() {
   try {
@@ -27,7 +28,7 @@ export async function GET() {
 
     return ok(businessInfo);
   } catch (error) {
-    console.error("Error fetching shop info:", error);
+    logError(error, { route: "GET /api/admin/shop" });
     return fail("Failed to retrieve business information");
   }
 }
@@ -162,13 +163,16 @@ export async function PUT(request: NextRequest) {
     try {
       await updateBusinessInfo(shopInfo);
     } catch (dbError) {
-      console.error("Database error while updating business info:", dbError);
+      logError(dbError, {
+        route: "PUT /api/admin/shop",
+        op: "updateBusinessInfo",
+      });
       return fail("Database update failed");
     }
 
     return ok(serializeDocument(shopInfo));
   } catch (error) {
-    console.error("Error updating shop info:", error);
+    logError(error, { route: "PUT /api/admin/shop" });
     return fail("Unexpected error while saving business information");
   }
 }

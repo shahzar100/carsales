@@ -578,7 +578,7 @@ const ServiceBookingForm: React.FC<ServiceBookingFormProps> = ({
         ),
       },
     ],
-    [data, currentYear, submitted, bookingRef]
+    [data, currentYear, submitted, bookingRef, defaultService, subServiceOptions]
   );
 
   // ── Submit ───────────────────────────────────────────────

@@ -124,8 +124,8 @@ export const CarViewingConfirmation: React.FC<Props> = ({
         lineHeight: "1.6",
       }}
     >
-      Please arrive 5 minutes early. Bring a valid driving licence if you'd like
-      a test drive.
+      Please arrive 5 minutes early. Bring a valid driving licence if
+      you&apos;d like a test drive.
     </Text>
   </EmailTemplate>
 );

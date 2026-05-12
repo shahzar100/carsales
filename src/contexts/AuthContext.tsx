@@ -7,6 +7,7 @@ import React, {
   useContext,
 } from "react";
 import { useRouter } from "next/navigation";
+import { logError } from "@/lib/utils/observability";
 
 /**
  * AuthContext — client-side glue for admin auth.
@@ -75,7 +76,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       router.push("/admin/login");
       router.refresh();
     } catch (error) {
-      console.error("Logout error:", error);
+      logError(error, { context: "AuthProvider.logout" });
     }
   }, [router]);
 

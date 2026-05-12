@@ -109,8 +109,8 @@ export const ReviewInviteRepair: React.FC<Props> = ({
     >
       Thank you for trusting {shopInfo.businessName} with your recent{" "}
       <strong>{booking.serviceType}</strong> on{" "}
-      <strong>{formatDate(booking.appointmentDate)}</strong>. Now that you've
-      had your vehicle back, we'd love to know how we did.
+      <strong>{formatDate(booking.appointmentDate)}</strong>. Now that
+      you&apos;ve had your vehicle back, we&apos;d love to know how we did.
     </Text>
 
     {/* Repair summary */}

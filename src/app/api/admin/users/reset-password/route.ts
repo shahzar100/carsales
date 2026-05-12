@@ -10,7 +10,6 @@ const consumeLimiter = createRateLimiter("password-reset-consume", {
   windowMs: 15 * 60 * 1000,
 });
 
-const TOKEN_HEX_LENGTH = 64;
 const PASSWORD_MIN = 12;
 const PASSWORD_MAX = 200;
 

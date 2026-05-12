@@ -7,6 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import type { ShopInfo } from "@/lib/interfaces";
+import { logError } from "@/lib/utils/observability";
 
 // Re-export the ShopInfo type as BusinessInfo for backward compatibility
 export type BusinessInfo = ShopInfo;
@@ -37,7 +38,7 @@ export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
         setBusinessInfo(result.data);
       }
     } catch (error) {
-      console.error("Error fetching business info:", error);
+      logError(error, { context: "BusinessInfoProvider.fetchBusinessInfo" });
     } finally {
       setLoading(false);
     }

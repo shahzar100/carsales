@@ -8,6 +8,7 @@ import {
   SelectedBooking,
 } from "@/components/Admin";
 import { useToast } from "@/hooks/useToast";
+import { logError } from "@/lib/utils/observability";
 
 export default function ServiceBookingsPage() {
   const [serviceBookings, setServiceBookings] = useState<Booking[]>([]);
@@ -34,8 +35,8 @@ export default function ServiceBookingsPage() {
       if (data.success) {
         setServiceBookings(data.data.serviceBookings);
       }
-    } catch {
-      console.error("Error fetching bookings:");
+    } catch (error) {
+      logError(error, { context: "service-dashboard.fetchBookings" });
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,7 @@ import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { sendEmail } from "@/emails/send";
 import { BookingCancellation } from "@/emails/BookingCancellation";
+import { logError, logEvent } from "@/lib/utils/observability";
 import React from "react";
 
 export async function POST(request: NextRequest) {
@@ -114,13 +115,15 @@ export async function POST(request: NextRequest) {
           });
 
           if (!emailResult.success) {
-            console.warn(
-              "⚠️ Cancellation email failed to send:",
-              emailResult.error
-            );
+            logEvent("booking.cancel.email_send_failed", {
+              error: String(emailResult.error),
+            });
           }
         } catch (emailError) {
-          console.error("Error sending cancellation email:", emailError);
+          logError(emailError, {
+            route: "POST /api/bookings/cancel",
+            op: "send_cancellation_email",
+          });
         }
       })()
     );
@@ -130,7 +133,7 @@ export async function POST(request: NextRequest) {
       message: "Booking cancelled successfully and customer notified",
     });
   } catch (error) {
-    console.error("Error cancelling booking:", error);
+    logError(error, { route: "POST /api/bookings/cancel" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

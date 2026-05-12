@@ -76,7 +76,11 @@ const Dropdown: React.FC<DropdownProps> = ({
         case "Enter":
           event.preventDefault();
           if (highlightedIndex >= 0 && !options[highlightedIndex].disabled) {
-            handleSelect(options[highlightedIndex].value);
+            // Inline handleSelect body so the effect doesn't depend on
+            // a non-memoized function declared further down. (Day 4 / 4.1.)
+            onChange?.(options[highlightedIndex].value);
+            setIsOpen(false);
+            setHighlightedIndex(-1);
           }
           break;
         case "Escape":
@@ -87,7 +91,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, highlightedIndex, options]);
+  }, [isOpen, highlightedIndex, options, onChange]);
 
   // Scroll highlighted option into view
   useEffect(() => {

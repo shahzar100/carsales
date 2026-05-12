@@ -6,6 +6,7 @@ import {
 } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { verifyTurnstileToken } from "@/lib/utils/turnstile";
+import { logError } from "@/lib/utils/observability";
 import {
   ok,
   badRequest,
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
       booking: serializeDocument(booking),
     });
   } catch (error) {
-    console.error("Error looking up booking:", error);
+    logError(error, { route: "GET /api/bookings/lookup" });
     return serverError();
   }
 }

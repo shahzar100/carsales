@@ -1,6 +1,7 @@
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { getCarsCollection } from "@/lib/models";
 import { ok, serverError } from "@/lib/utils/apiResponse";
+import { logError } from "@/lib/utils/observability";
 
 export async function GET() {
   try {
@@ -36,7 +37,7 @@ export async function GET() {
       }
     );
   } catch (error) {
-    console.error("Error fetching about info:", error);
+    logError(error, { route: "GET /api/about" });
     return serverError();
   }
 }

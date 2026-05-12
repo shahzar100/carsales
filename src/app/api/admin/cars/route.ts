@@ -8,6 +8,7 @@ import {
 import { isAuthenticated } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
+import { logError } from "@/lib/utils/observability";
 import {
   ok,
   badRequest,
@@ -16,7 +17,6 @@ import {
   serverError,
 } from "@/lib/utils/apiResponse";
 import { deleteS3Objects } from "@/lib/utils/s3";
-import { logError } from "@/lib/utils/observability";
 
 /**
  * (#27) Invalidate the customer-facing fleet pages after any car mutation
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching cars:", error);
+    logError(error, { route: "GET /api/admin/cars" });
     return serverError();
   }
 }
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
       })
     );
   } catch (error) {
-    console.error("Error creating car:", error);
+    logError(error, { route: "POST /api/admin/cars" });
     return serverError();
   }
 }

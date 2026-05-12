@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/utils/auth";
+import { logError } from "@/lib/utils/observability";
 
 export async function GET() {
   try {
@@ -10,7 +11,7 @@ export async function GET() {
       ...(session.isLoggedIn && { username: session.username }),
     });
   } catch (error) {
-    console.error("Session check error:", error);
+    logError(error, { route: "GET /api/admin/session" });
     return NextResponse.json({ isLoggedIn: false }, { status: 500 });
   }
 }

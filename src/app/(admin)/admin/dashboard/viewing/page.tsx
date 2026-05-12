@@ -8,6 +8,7 @@ import {
   SelectedBooking,
 } from "@/components/Admin";
 import { useToast } from "@/hooks/useToast";
+import { logError } from "@/lib/utils/observability";
 
 export default function ViewingBookingsPage() {
   const [viewingBookings, setViewingBookings] = useState<Booking[]>([]);
@@ -34,8 +35,8 @@ export default function ViewingBookingsPage() {
       if (data.success) {
         setViewingBookings(data.data.viewingBookings);
       }
-    } catch {
-      console.error("Error fetching bookings");
+    } catch (error) {
+      logError(error, { context: "viewing-dashboard.fetchBookings" });
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export default function ViewingBookingsPage() {
       } else {
         toast.error("Cancellation Failed", "Failed to cancel booking");
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error", "An error occurred while cancelling the booking");
     }
   };
