@@ -4,6 +4,7 @@ import { hashPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError, logEvent } from "@/lib/utils/observability";
+import { recordAudit } from "@/lib/utils/audit";
 
 const consumeLimiter = createRateLimiter("password-reset-consume", {
   maxRequests: 3,
@@ -104,6 +105,12 @@ export async function POST(request: NextRequest) {
     );
 
     logEvent("admin.password.reset_consumed", { target: user.username });
+    await recordAudit({
+      actor: user.username,
+      action: "user.password_reset_consumed",
+      targetType: "user",
+      metadata: { target: user.username },
+    });
 
     return NextResponse.json({
       success: true,

@@ -58,6 +58,7 @@ const Header = () => {
         <NavLink href="/Recoveries" text={"Breakdown Recovery"} />
         <NavLink href="/AccidentClaims" text={"Accident Claims"} />
         <NavLink href="/Booking/lookup" text={"Track Booking"} />
+        <NavLink href="/saved" text={"Saved"} />
         <NavLink href="/AboutUs" text={"About Us"} />
       </NavMenu>
     </nav>

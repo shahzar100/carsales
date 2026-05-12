@@ -221,6 +221,15 @@ export async function PUT(request: NextRequest) {
 
     revalidateFleetPaths(String(_id));
 
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "car.update",
+      targetType: "car",
+      targetId: String(_id),
+      metadata: { fields: Object.keys(parsed.data) },
+    });
+
     return ok(serializeDocument({ _id, ...updatedCar }));
   } catch (error) {
     logError(error, { route: "PUT /api/admin/cars" });
@@ -277,6 +286,17 @@ export async function DELETE(request: NextRequest) {
     }
 
     revalidateFleetPaths(String(_id));
+
+    const session = await getSession();
+    await recordAudit({
+      actor: session.username ?? "unknown",
+      action: "car.delete",
+      targetType: "car",
+      targetId: String(_id),
+      metadata: carDoc
+        ? { make: carDoc.make, model: carDoc.model, year: carDoc.year }
+        : undefined,
+    });
 
     return NextResponse.json({
       success: true,

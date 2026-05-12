@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CookieBanner from "@/components/Shared/CookieBanner";
+import { SavedCarsProvider } from "@/contexts/SavedCarsContext";
 
 export default function MainLayout({
   children,
@@ -10,7 +11,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <SavedCarsProvider>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-200 focus:rounded-lg focus:bg-red-600 focus:px-4 focus:py-2 focus:text-white"
@@ -29,6 +30,6 @@ export default function MainLayout({
         <WhatsAppButton />
       </Suspense>
       <CookieBanner />
-    </>
+    </SavedCarsProvider>
   );
 }
