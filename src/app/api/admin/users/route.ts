@@ -1,46 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import crypto from "crypto";
+import React from "react";
 import { hashPassword, hasMinimumRole } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
+import { sendEmail } from "@/emails/send";
+import { PasswordReset } from "@/emails/PasswordReset";
+import { logError, logEvent } from "@/lib/utils/observability";
 
 // 10 user-creation attempts per hour per IP
 const userCreateLimiter = createRateLimiter("admin-user-create", {
   maxRequests: 10,
   windowMs: 60 * 60 * 1000,
 });
-
-/**
- * Generate a cryptographically strong random password.
- * Format: 4 mixed chars + dash + 4 mixed chars + dash + 4 mixed chars (16 chars total)
- * Guarantees at least 1 uppercase, 1 lowercase, 1 digit, and 1 special character.
- */
-function generateStrongPassword(): string {
-  const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-  const lower = "abcdefghjkmnpqrstuvwxyz";
-  const digits = "23456789";
-  const special = "!@#$%&*";
-
-  const pick = (chars: string) => chars[crypto.randomInt(chars.length)];
-
-  // Guarantee at least one of each category
-  const guaranteed = [pick(upper), pick(lower), pick(digits), pick(special)];
-
-  // Fill the rest from the full pool
-  const pool = upper + lower + digits + special;
-  const remaining = Array.from({ length: 12 }, () => pick(pool));
-
-  // Shuffle all characters together
-  const all = [...guaranteed, ...remaining];
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = crypto.randomInt(i + 1);
-    [all[i], all[j]] = [all[j], all[i]];
-  }
-
-  // Format as xxxx-xxxx-xxxx-xxxx for readability
-  const raw = all.join("");
-  return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}`;
-}
 
 const validRoles = ["staff", "manager", "admin"] as const;
 
@@ -127,7 +100,6 @@ export async function POST(request: NextRequest) {
 
     const adminCollection = await getAdminUsersCollection();
 
-    // Check for duplicate username or email
     const existing = await adminCollection.findOne({
       $or: [{ username }, { email }],
     });
@@ -143,27 +115,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Generate password & hash with bcrypt ────────────────
-    const plainPassword = generateStrongPassword();
-    const passwordHash = await hashPassword(plainPassword);
+    // The new user receives a setup link, not a plaintext password. We seed
+    // the row with an unguessable hash that will never match a real
+    // bcrypt.compare, so the account is unlogin-able until the reset link
+    // is consumed. (WEBSITE_REVIEW #11 / DAY_PLAN Fix 2.3.)
+    const placeholderHash = await hashPassword(
+      crypto.randomBytes(32).toString("hex")
+    );
 
-    // ── Insert into MongoDB ─────────────────────────────────
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
     await adminCollection.insertOne({
       username,
       email,
-      passwordHash,
+      passwordHash: placeholderHash,
       role: role as (typeof validRoles)[number],
+      resetToken: resetTokenHash,
+      resetTokenExpiry,
       createdAt: new Date(),
     });
 
-    // Return the plain-text password ONCE so the admin can hand it off
+    waitUntil(
+      (async () => {
+        try {
+          const emailResult = await sendEmail({
+            to: email,
+            subject: "Set up your admin account",
+            react: React.createElement(PasswordReset, { username, resetToken }),
+          });
+          if (!emailResult.success) {
+            logError(emailResult.error, {
+              route: "POST /api/admin/users",
+              action: "setup.email_send_failed",
+              username,
+            });
+          }
+        } catch (emailError) {
+          logError(emailError, {
+            route: "POST /api/admin/users",
+            action: "setup.email_throw",
+            username,
+          });
+        }
+      })()
+    );
+
+    logEvent("admin.user.created", { target: username });
+
     return NextResponse.json({
       success: true,
-      message: "User created successfully",
-      password: plainPassword,
+      message: "User created. Setup email sent.",
+      emailSent: true,
     });
   } catch (error) {
-    console.error("Create user error:", error);
+    logError(error, { route: "POST /api/admin/users" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
