@@ -3,6 +3,7 @@ import NavMenu from "./Dropdown/NavMenu";
 import NavLink from "./Dropdown/NavLink";
 import Link from "next/link";
 import Image from "next/image";
+import SearchBar from "./Shared/SearchBar";
 const Header = () => {
   return (
     <nav aria-label="Main navigation" className="sticky top-0 z-60 row-span-1 flex w-full items-center justify-between gap-2 bg-black p-4 shadow-md lg:px-6 lg:py-2">
@@ -18,6 +19,11 @@ const Header = () => {
           className="aspect-square h-16 w-16 sm:h-20 sm:w-20 lg:h-25 lg:w-25"
         />
       </Link>
+
+      {/* Site-wide search — hidden on small screens to avoid crowding;
+          customers on mobile use the BrowseFleet filter UI instead. */}
+      <SearchBar className="hidden max-w-md flex-1 md:flex" />
+
 
       <NavMenu title="Menu">
         <NavLink dropdown={true} href="/BrowseFleet" text={"Browse Fleet"}>

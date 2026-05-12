@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import CookieBanner from "@/components/Shared/CookieBanner";
 
 export default function MainLayout({
   children,
@@ -27,6 +28,7 @@ export default function MainLayout({
       <Suspense fallback={null}>
         <WhatsAppButton />
       </Suspense>
+      <CookieBanner />
     </>
   );
 }
