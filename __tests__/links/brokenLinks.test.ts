@@ -116,17 +116,39 @@ function extractInternalHrefs(
   const results: { href: string; line: number }[] = [];
   const lines = content.split("\n");
 
+  // For URL-builder utilities (review-invite generators, sitemap, email
+  // templates) the route doesn't appear as `href=...`. Day 8 / Fix 8.2:
+  // also scan these specific files for string literals that look like an
+  // internal route — this is what would have caught the /review email
+  // 404 (Finding #2) before customers did.
+  const rel = path.relative(SRC_DIR, filePath);
+  const scanAsUtility =
+    rel.startsWith("lib/") || rel.startsWith("emails/") || rel === "app/sitemap.ts";
+
   for (let i = 0; i < lines.length; i++) {
-    // Match href="/...", href={"/..."}, href={`/...`}
-    const patterns = [
+    const line = lines[i];
+    const patterns: RegExp[] = [
       /href="(\/[^"]*?)"/g,
       /href=\{"(\/[^"]*?)"\}/g,
       /href=\{`(\/[^`]*?)`\}/g,
     ];
 
+    // Utility files: match internal-route string literals — bare strings
+    // ("/contact") and template literals (`${baseUrl}/review?ref=...`).
+    // This is what would have caught the /review email 404 (Finding #2)
+    // before customers did. Skips comments.
+    if (scanAsUtility && !/^\s*\/\//.test(line)) {
+      patterns.push(
+        // Bare quoted: "/contact" or '/contact'
+        /["'](\/[A-Za-z][a-zA-Z0-9_-]+(?:\/[A-Za-z0-9_-]+)*)["']/g,
+        // Template literal with ${...} prefix: `${baseUrl}/review?...`
+        /\$\{[^}]*\}(\/[A-Za-z][a-zA-Z0-9_-]+(?:\/[A-Za-z0-9_-]+)*)/g
+      );
+    }
+
     for (const pattern of patterns) {
       let match: RegExpExecArray | null;
-      while ((match = pattern.exec(lines[i])) !== null) {
+      while ((match = pattern.exec(line)) !== null) {
         let href = match[1];
 
         // Skip dynamic template expressions — we can't statically resolve them
