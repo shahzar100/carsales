@@ -14,6 +14,7 @@ import {
   CarPartInterface,
   Reservation,
   PartExchange,
+  AuditLog,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -27,6 +28,7 @@ export type {
   CarPartInterface,
   Reservation,
   PartExchange,
+  AuditLog,
 };
 
 // ── Cached collection handles ────────────────────────────────
@@ -45,6 +47,7 @@ let recoveryInfoCollection: Collection<RecoveryInfo>;
 let carPartsCollection: Collection<CarPartInterface>;
 let reservationsCollection: Collection<Reservation>;
 let partExchangesCollection: Collection<PartExchange>;
+let auditLogsCollection: Collection<AuditLog>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -340,4 +343,26 @@ export async function getPartExchangesCollection(): Promise<
     ]);
   }
   return partExchangesCollection;
+}
+
+// ── Audit log (Day 10 / Fix 10.1 groundwork) ─────────────────
+//
+// recordAudit() writes here. Reads are admin-only and tail-ordered.
+// `createdAt` index is descending because the admin UI almost always
+// wants "most recent first". A compound (actor, createdAt) index lets
+// the filter-by-actor view stay fast even with millions of rows.
+export async function getAuditLogsCollection(): Promise<
+  Collection<AuditLog>
+> {
+  if (!auditLogsCollection) {
+    const db = await getDb();
+    auditLogsCollection = db.collection<AuditLog>("auditLogs");
+
+    await auditLogsCollection.createIndexes([
+      { key: { createdAt: -1 } },
+      { key: { actor: 1, createdAt: -1 } },
+      { key: { targetType: 1, targetId: 1 } },
+    ]);
+  }
+  return auditLogsCollection;
 }

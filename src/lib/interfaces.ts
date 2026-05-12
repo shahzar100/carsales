@@ -331,3 +331,32 @@ export interface SelectedBooking {
   booking: Booking;
   type: string;
 }
+
+// ───────────────────────────────────────────────────────────────
+// Audit log (Day 10 / Fix 10.1 groundwork)
+//
+// Every state-changing admin action should call recordAudit() with the
+// actor (session.username), an action verb (`car.create`, `car.update`,
+// `booking.cancel`, `user.create`, etc.), the targetType + targetId, and
+// any extra metadata the operator might want to grep for during forensics.
+// ───────────────────────────────────────────────────────────────
+
+export interface AuditLog {
+  _id?: string | ObjectId;
+  actor: string;
+  action: string;
+  targetType:
+    | "car"
+    | "carPart"
+    | "user"
+    | "booking"
+    | "viewing"
+    | "reservation"
+    | "partExchange"
+    | "quote"
+    | "shop"
+    | "other";
+  targetId?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+}
