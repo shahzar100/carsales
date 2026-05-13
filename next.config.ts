@@ -25,20 +25,9 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' https://res.cloudinary.com https://*.cloudfront.net data: blob:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://*.s3.*.amazonaws.com",
-      "frame-ancestors 'self'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join("; "),
-  },
+  // Content-Security-Policy is set per-request in src/middleware.ts so it
+  // can include a fresh `'nonce-...'` for script-src on every page render.
+  // See Day 12.1.
 ];
 
 const nextConfig: NextConfig = {
