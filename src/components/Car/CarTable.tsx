@@ -9,6 +9,7 @@ import {
   formatDate,
 } from "@/lib/utils/format";
 import StatusBadge from "@/components/UI/StatusBadge";
+import { Star } from "lucide-react";
 
 interface CarTableProps {
   cars: CarInterface[];
@@ -167,10 +168,10 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                       {/* Featured Toggle */}
                       <button
                         aria-label={car.featured ? "Remove from featured" : "Add to featured"}
-                        className={`flex h-10 w-10 items-center justify-center rounded-xl text-xl shadow-sm transition-all duration-200 ${
+                        className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-sm transition-all duration-200 ${
                           car.featured
-                            ? "bg-linear-to-br from-yellow-100 to-amber-100 ring-2 ring-yellow-300 hover:scale-110 hover:shadow-md"
-                            : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-yellow-50 hover:text-yellow-500 hover:ring-yellow-200"
+                            ? "bg-red-50 text-red-600 ring-2 ring-red-200 hover:scale-110 hover:shadow-md"
+                            : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-red-50 hover:text-red-500 hover:ring-red-200"
                         }`}
                         title={
                           car.featured
@@ -178,7 +179,10 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                             : "Not featured - Click to feature"
                         }
                       >
-                        {car.featured ? "⭐" : "☆"}
+                        <Star
+                          className="h-4 w-4"
+                          fill={car.featured ? "currentColor" : "none"}
+                        />
                       </button>
 
                       {/* Divider */}

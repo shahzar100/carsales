@@ -81,7 +81,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
               </span>
             )}
             {car.featured && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-yellow-400 px-2.5 py-1 text-[11px] font-bold text-yellow-900 shadow-sm">
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-600/90 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm backdrop-blur-sm">
                 <Star className="h-3 w-3 fill-current" />
                 Featured
               </span>
@@ -177,14 +177,18 @@ const CarListCard: React.FC<CarListCardProps> = ({
                 {/* Admin: Featured toggle + Actions */}
                 <div className="flex items-center gap-3">
                   <button
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-all ${
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition-all ${
                       car.featured
-                        ? "bg-yellow-100 ring-2 ring-yellow-300 hover:scale-110"
-                        : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-yellow-50 hover:text-yellow-500"
+                        ? "bg-red-50 text-red-600 ring-2 ring-red-200 hover:scale-110"
+                        : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-red-50 hover:text-red-500"
                     }`}
                     title={car.featured ? "Unfeature" : "Feature"}
+                    aria-label={car.featured ? "Unfeature car" : "Feature car"}
                   >
-                    {car.featured ? "⭐" : "☆"}
+                    <Star
+                      className="h-4 w-4"
+                      fill={car.featured ? "currentColor" : "none"}
+                    />
                   </button>
                   <span className="text-xs text-gray-400">
                     Added {formatDate(car.createdAt)}
@@ -217,7 +221,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
                   />
                   <Link
                     href={`/BrowseFleet/${car._id}`}
-                    className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-[0.98]"
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-[0.98]"
                   >
                     <Eye className="h-4 w-4" />
                     View Details
