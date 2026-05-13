@@ -30,15 +30,11 @@ npm run test:e2e
 
 The local config autostarts `npm run dev` on port 3000. The first run is slower because Next compiles on demand.
 
-## CI
-
-The `e2e` job in `.github/workflows/ci.yml` runs after `build`. It boots a real `mongo:7` service container on 27017, builds the app (`npm run build`), starts it (`npm start`), waits for the port, then runs Playwright. Reports + traces upload as artifacts.
-
 ## Test data
 
 Tests seed and tear down their own data via the API where possible. Where seeding through the API is awkward (e.g., creating a car without going through the multi-step CarForm UI), the fixtures hit MongoDB directly via the same driver the app uses.
 
-The admin password used by the tests is whatever `ADMIN_PASSWORD` is set to in the environment. The CI workflow sets a deterministic value; locally, `.env.local` controls it.
+The admin password used by the tests is whatever `ADMIN_PASSWORD` is set to in the environment; locally, `.env.local` controls it.
 
 ## Selectors
 

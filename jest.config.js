@@ -27,13 +27,10 @@ const customJestConfig = {
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov", "clover"],
-  // Day 8 / Fix 8.3 — coverage ratchet. The plan's target progression is
-  // 25% → 35% → 50% → 80% over time. Start conservatively above today's
-  // baseline (~23%) so CI gates a real regression without blocking
-  // unrelated work. Raise these floors as coverage climbs.
-  //
-  // The thresholds only apply when `npx jest --coverage` is run; bare
-  // `npx jest` is unaffected so dev iteration speed is preserved.
+  // Local coverage floor. Applies only when `npx jest --coverage` is
+  // run; bare `npx jest` is unaffected so dev iteration speed is
+  // preserved. The plan's target progression is 25% → 35% → 50% → 80%
+  // over time — raise these as coverage climbs.
   coverageThreshold: {
     global: {
       statements: 25,
