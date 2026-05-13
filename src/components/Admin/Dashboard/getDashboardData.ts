@@ -6,15 +6,32 @@ import {
   getAdminUsersCollection,
   serializeDocument,
 } from "@/lib/models";
-import type { DashboardData } from "./types";
+import type {
+  DashboardData,
+  DayBookingData,
+  MonthlyBookingData,
+  PieSlice,
+  PopularCarData,
+  PriceRangeData,
+} from "./types";
 
 // ── Helpers ──────────────────────────────────────────────────
+const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+// Map MongoDB's $dayOfWeek (1 = Sunday … 7 = Saturday) to the
+// Mon-first labels the chart expects.
+const MONGO_DAY_TO_LABEL: Record<number, string> = {
+  1: "Sun",
+  2: "Mon",
+  3: "Tue",
+  4: "Wed",
+  5: "Thu",
+  6: "Fri",
+  7: "Sat",
+};
+
 function getMonthLabel(date: Date): string {
   return date.toLocaleDateString("en-GB", { month: "short", year: "2-digit" });
-}
-
-function getDayLabel(date: Date): string {
-  return date.toLocaleDateString("en-GB", { weekday: "short" });
 }
 
 /** Parse the search-param based range into a { from, to } Date pair */
@@ -27,7 +44,6 @@ export function parseDateRange(
 
   if (!range || range === "all") return { from: null, to: null };
 
-  // Preset days  (7d / 14d / 21d / 30d)
   const dayMatch = range.match(/^(\d+)d$/);
   if (dayMatch) {
     const days = parseInt(dayMatch[1]);
@@ -37,7 +53,6 @@ export function parseDateRange(
     return { from: start, to: now };
   }
 
-  // Specific month  (month-0 … month-11)
   if (range.startsWith("month-")) {
     const idx = parseInt(range.split("-")[1]);
     if (!isNaN(idx) && idx >= 0 && idx < 12) {
@@ -48,7 +63,6 @@ export function parseDateRange(
     }
   }
 
-  // Custom range
   if (range === "custom" && from && to) {
     return {
       from: new Date(`${from}T00:00:00`),
@@ -60,8 +74,11 @@ export function parseDateRange(
 }
 
 // ═════════════════════════════════════════════════════════════
-// getDashboardData — fetches all analytics directly from MongoDB
-// Called server-side only from the dashboard page component
+// getDashboardData — Mongo-side aggregation for the admin dashboard.
+//
+// Everything that used to be `find({}).toArray()` followed by JS counting
+// now runs as `$facet` pipelines server-side. The output shape is unchanged;
+// only the data path is. See Day 11.1 / Finding #47.
 // ═════════════════════════════════════════════════════════════
 
 interface DateFilter {
@@ -70,24 +87,145 @@ interface DateFilter {
   to?: string | null;
 }
 
+const PRICE_BUCKET_RANGES: PriceRangeData[] = [
+  { range: "< £5k", count: 0 },
+  { range: "£5k–£10k", count: 0 },
+  { range: "£10k–£20k", count: 0 },
+  { range: "£20k–£30k", count: 0 },
+  { range: "£30k–£50k", count: 0 },
+  { range: "£50k+", count: 0 },
+];
+
+const PRICE_BUCKET_BOUNDARIES = [0, 5000, 10000, 20000, 30000, 50000, 1e12];
+
+type CountRow<K = string> = { _id: K; count: number };
+type TotalRow = { _id: null; total: number };
+
+interface CarsFacet {
+  statusCounts: CountRow<string>[];
+  inventoryValue: TotalRow[];
+  soldValue: TotalRow[];
+  fuelCounts: CountRow<string>[];
+  priceBuckets: CountRow<number>[]; // _id is the lower bound of the bucket
+  total: { value: number }[];
+}
+
+interface BookingsFacet {
+  statusCounts: CountRow<string>[];
+  monthly: CountRow<string>[]; // _id = "%b %y"
+  dayOfWeek: CountRow<number>[]; // _id = $dayOfWeek result (1–7)
+  total: { value: number }[];
+}
+
+interface ServiceFacet extends BookingsFacet {
+  serviceTypeCounts: CountRow<string>[];
+}
+
+interface ViewingFacet extends BookingsFacet {
+  popularCars: CountRow<string>[];
+}
+
+function statusCount(rows: CountRow<string>[], status: string): number {
+  return rows.find((r) => r._id === status)?.count ?? 0;
+}
+
+function totalFromRow(rows: TotalRow[]): number {
+  return rows[0]?.total ?? 0;
+}
+
+function totalFromCountStage(rows: { value: number }[]): number {
+  return rows[0]?.value ?? 0;
+}
+
+// Fill in zero-counts for every month between chartStart and chartEnd so the
+// chart x-axis is dense even if Mongo only returned non-empty months.
+function ymKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function buildMonthlySeries(
+  service: CountRow<string>[],
+  viewing: CountRow<string>[],
+  chartStart: Date,
+  chartEnd: Date
+): MonthlyBookingData[] {
+  // The Mongo facet emits rows keyed by "YYYY-MM"; we walk the chart range and
+  // convert each month to its display label so the x-axis stays dense even
+  // when a month has zero bookings.
+  const serviceByKey = new Map(service.map((r) => [r._id, r.count]));
+  const viewingByKey = new Map(viewing.map((r) => [r._id, r.count]));
+
+  const series: MonthlyBookingData[] = [];
+  const seen = new Set<string>();
+  const cursor = new Date(chartStart.getFullYear(), chartStart.getMonth(), 1);
+  while (cursor <= chartEnd) {
+    const key = ymKey(cursor);
+    if (!seen.has(key)) {
+      seen.add(key);
+      series.push({
+        month: getMonthLabel(cursor),
+        services: serviceByKey.get(key) ?? 0,
+        viewings: viewingByKey.get(key) ?? 0,
+      });
+    }
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+  return series;
+}
+
+function buildDayOfWeekSeries(
+  service: CountRow<number>[],
+  viewing: CountRow<number>[]
+): DayBookingData[] {
+  const tally: Record<string, number> = Object.fromEntries(
+    DAY_LABELS.map((d) => [d, 0])
+  );
+  for (const row of [...service, ...viewing]) {
+    const label = MONGO_DAY_TO_LABEL[row._id];
+    if (label && label in tally) tally[label] += row.count;
+  }
+  return DAY_LABELS.map((day) => ({ day, count: tally[day] }));
+}
+
+function buildPriceDistribution(buckets: CountRow<number>[]): PriceRangeData[] {
+  return PRICE_BUCKET_RANGES.map((row, i) => {
+    const lo = PRICE_BUCKET_BOUNDARIES[i];
+    const match = buckets.find((b) => b._id === lo);
+    return { range: row.range, count: match?.count ?? 0 };
+  });
+}
+
+function buildFuelSlices(rows: CountRow<string>[]): PieSlice[] {
+  return rows.map((r) => ({ name: r._id, value: r.count }));
+}
+
+function buildServiceTypeSlices(rows: CountRow<string>[]): PieSlice[] {
+  return rows
+    .map((r) => ({ name: r._id, value: r.count }))
+    .sort((a, b) => b.value - a.value);
+}
+
+function buildPopularCars(rows: CountRow<string>[]): PopularCarData[] {
+  return rows
+    .map((r) => ({ label: r._id, count: r.count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+}
+
 export async function getDashboardData(
   dateFilter?: DateFilter
 ): Promise<DashboardData> {
-  // Resolve the range first so we can push the filter down to MongoDB
-  // instead of loading every booking ever and filtering in JS.
-  // (Day 11 / Fix 11.1. The grouping math below still runs in JS so the
-  // output shape is unchanged — but the bookings load is now bounded by
-  // the date range, which is the real cost at scale.)
   const { from: rangeFrom, to: rangeTo } = parseDateRange(
     dateFilter?.range,
     dateFilter?.from,
     dateFilter?.to
   );
 
-  const bookingDateFilter: Record<string, unknown> =
-    rangeFrom && rangeTo ? { createdAt: { $gte: rangeFrom, $lte: rangeTo } } : {};
+  const bookingDateMatch =
+    rangeFrom && rangeTo
+      ? { $match: { createdAt: { $gte: rangeFrom, $lte: rangeTo } } }
+      : null;
 
-  // Fetch all collections in parallel
   const [carsCol, serviceCol, viewingCol, usersCol] = await Promise.all([
     getCarsCollection(),
     getServiceAppointmentsCollection(),
@@ -95,68 +233,259 @@ export async function getDashboardData(
     getAdminUsersCollection(),
   ]);
 
-  const [allCars, allServiceBookings, allViewingBookings, users] =
-    await Promise.all([
-      carsCol.find({}).toArray(),
-      serviceCol.find(bookingDateFilter).sort({ createdAt: -1 }).toArray(),
-      viewingCol.find(bookingDateFilter).sort({ createdAt: -1 }).toArray(),
-      usersCol.find({}).toArray(),
-    ]);
+  // ── Cars aggregate (inventory is point-in-time, never date-filtered) ──
+  const carsPipeline = [
+    {
+      $facet: {
+        statusCounts: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
+        inventoryValue: [
+          { $match: { status: { $in: ["available", "reserved"] } } },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: { $ifNull: ["$price", 0] } },
+            },
+          },
+        ],
+        soldValue: [
+          { $match: { status: "sold" } },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: { $ifNull: ["$price", 0] } },
+            },
+          },
+        ],
+        fuelCounts: [
+          {
+            $group: {
+              _id: { $ifNull: ["$fuel", "Unknown"] },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+        priceBuckets: [
+          {
+            $bucket: {
+              groupBy: { $ifNull: ["$price", 0] },
+              boundaries: PRICE_BUCKET_BOUNDARIES,
+              default: "missing",
+              output: { count: { $sum: 1 } },
+            },
+          },
+        ],
+        total: [{ $count: "value" }],
+      },
+    },
+  ];
 
-  // Cars are never filtered by date (inventory is point-in-time). Bookings
-  // were already filtered server-side by `bookingDateFilter`, so the
-  // arrays we have now are the in-range slice ready to group.
-  const cars = allCars;
-  const serviceBookings = allServiceBookings;
-  const viewingBookings = allViewingBookings;
+  // ── Service bookings facet ──
+  const servicePipeline = [
+    ...(bookingDateMatch ? [bookingDateMatch] : []),
+    {
+      $facet: {
+        statusCounts: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
+        monthly: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: "%Y-%m", date: "$createdAt" },
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+        dayOfWeek: [
+          {
+            $match: {
+              appointmentDate: { $exists: true, $ne: null, $type: "string" },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dayOfWeek: {
+                  $dateFromString: { dateString: "$appointmentDate" },
+                },
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+        serviceTypeCounts: [
+          {
+            $project: {
+              key: {
+                $let: {
+                  vars: { type: { $ifNull: ["$serviceType", "Other"] } },
+                  in: {
+                    $cond: [
+                      { $gt: [{ $indexOfBytes: ["$$type", "—"] }, -1] },
+                      {
+                        $trim: {
+                          input: {
+                            $arrayElemAt: [{ $split: ["$$type", "—"] }, 0],
+                          },
+                        },
+                      },
+                      "$$type",
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          { $group: { _id: "$key", count: { $sum: 1 } } },
+        ],
+        total: [{ $count: "value" }],
+      },
+    },
+  ];
 
-  // ── KPI Stats ──────────────────────────────────────────
-  const totalCars = cars.length;
-  const availableCars = cars.filter((c) => c.status === "available").length;
-  const soldCars = cars.filter((c) => c.status === "sold").length;
-  const reservedCars = cars.filter((c) => c.status === "reserved").length;
+  // ── Viewing bookings facet ──
+  const viewingPipeline = [
+    ...(bookingDateMatch ? [bookingDateMatch] : []),
+    {
+      $facet: {
+        statusCounts: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
+        monthly: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: "%Y-%m", date: "$createdAt" },
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+        dayOfWeek: [
+          {
+            $match: {
+              appointmentDate: { $exists: true, $ne: null, $type: "string" },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dayOfWeek: {
+                  $dateFromString: { dateString: "$appointmentDate" },
+                },
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+        popularCars: [
+          { $match: { carDetails: { $type: "object" } } },
+          {
+            $group: {
+              _id: {
+                $concat: [
+                  { $toString: { $ifNull: ["$carDetails.year", ""] } },
+                  " ",
+                  { $ifNull: ["$carDetails.make", ""] },
+                  " ",
+                  { $ifNull: ["$carDetails.model", ""] },
+                ],
+              },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+          { $limit: 5 },
+        ],
+        total: [{ $count: "value" }],
+      },
+    },
+  ];
 
-  const totalServiceBookings = serviceBookings.length;
-  const pendingServiceBookings = serviceBookings.filter(
-    (b) => b.status === "pending"
-  ).length;
-  const confirmedServiceBookings = serviceBookings.filter(
-    (b) => b.status === "confirmed"
-  ).length;
-  const completedServiceBookings = serviceBookings.filter(
-    (b) => b.status === "completed"
-  ).length;
-  const cancelledServiceBookings = serviceBookings.filter(
-    (b) => b.status === "cancelled"
-  ).length;
+  // ── Recent activity: top-10 newest from each collection (in range) ──
+  const recentService = serviceCol
+    .find(bookingDateMatch ? { createdAt: { $gte: rangeFrom!, $lte: rangeTo! } } : {})
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .toArray();
+  const recentViewing = viewingCol
+    .find(bookingDateMatch ? { createdAt: { $gte: rangeFrom!, $lte: rangeTo! } } : {})
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .toArray();
 
-  const totalViewingBookings = viewingBookings.length;
-  const pendingViewingBookings = viewingBookings.filter(
-    (b) => b.status === "pending"
-  ).length;
-  const confirmedViewingBookings = viewingBookings.filter(
-    (b) => b.status === "confirmed"
-  ).length;
-  const completedViewingBookings = viewingBookings.filter(
-    (b) => b.status === "completed"
-  ).length;
-  const cancelledViewingBookings = viewingBookings.filter(
-    (b) => b.status === "cancelled"
-  ).length;
-
-  // ── Revenue / Inventory Value ──────────────────────────
-  const totalInventoryValue = cars
-    .filter((c) => c.status === "available" || c.status === "reserved")
-    .reduce((sum, c) => sum + (c.price || 0), 0);
-
-  const totalSoldValue = cars
-    .filter((c) => c.status === "sold")
-    .reduce((sum, c) => sum + (c.price || 0), 0);
-
-  // ── Bookings by Month ─────────────────────────────────
+  // ── Upcoming appointments: ALWAYS unfiltered by createdAt; next 7 days ──
   const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+  const nextWeek = new Date(now);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const nextWeekStr = nextWeek.toISOString().split("T")[0];
+  const upcomingMongoFilter = {
+    appointmentDate: { $gte: todayStr, $lte: nextWeekStr },
+    status: { $ne: "cancelled" as const },
+  };
+  const upcomingService = serviceCol
+    .find(upcomingMongoFilter)
+    .sort({ appointmentDate: 1, appointmentTime: 1 })
+    .limit(8)
+    .toArray();
+  const upcomingViewing = viewingCol
+    .find(upcomingMongoFilter)
+    .sort({ appointmentDate: 1, appointmentTime: 1 })
+    .limit(8)
+    .toArray();
 
-  // Determine the month span from the date filter, default to last 6 months
+  const [
+    carsAgg,
+    serviceAgg,
+    viewingAgg,
+    recentServiceDocs,
+    recentViewingDocs,
+    upcomingServiceDocs,
+    upcomingViewingDocs,
+    totalUsers,
+  ] = await Promise.all([
+    carsCol.aggregate<CarsFacet>(carsPipeline).next(),
+    serviceCol.aggregate<ServiceFacet>(servicePipeline).next(),
+    viewingCol.aggregate<ViewingFacet>(viewingPipeline).next(),
+    recentService,
+    recentViewing,
+    upcomingService,
+    upcomingViewing,
+    usersCol.estimatedDocumentCount(),
+  ]);
+
+  // $facet always returns one row; coerce to typed defaults for empty collections.
+  const carsResult: CarsFacet = carsAgg ?? {
+    statusCounts: [],
+    inventoryValue: [],
+    soldValue: [],
+    fuelCounts: [],
+    priceBuckets: [],
+    total: [],
+  };
+  const serviceResult: ServiceFacet = serviceAgg ?? {
+    statusCounts: [],
+    monthly: [],
+    dayOfWeek: [],
+    serviceTypeCounts: [],
+    total: [],
+  };
+  const viewingResult: ViewingFacet = viewingAgg ?? {
+    statusCounts: [],
+    monthly: [],
+    dayOfWeek: [],
+    popularCars: [],
+    total: [],
+  };
+
+  // ── KPI rollups ──
+  const totalCars = totalFromCountStage(carsResult.total);
+  const availableCars = statusCount(carsResult.statusCounts, "available");
+  const soldCars = statusCount(carsResult.statusCounts, "sold");
+  const reservedCars = statusCount(carsResult.statusCounts, "reserved");
+
+  const totalServiceBookings = totalFromCountStage(serviceResult.total);
+  const totalViewingBookings = totalFromCountStage(viewingResult.total);
+
+  // ── Month-span (defaults to last 6 months when no filter) ──
   const chartStart =
     rangeFrom ??
     (() => {
@@ -168,119 +497,21 @@ export async function getDashboardData(
     })();
   const chartEnd = rangeTo ?? now;
 
-  const monthlyData: Record<
-    string,
-    { month: string; services: number; viewings: number }
-  > = {};
-
-  // Initialize months spanning the range
-  const cursor = new Date(chartStart.getFullYear(), chartStart.getMonth(), 1);
-  while (cursor <= chartEnd) {
-    const label = getMonthLabel(cursor);
-    if (!monthlyData[label]) {
-      monthlyData[label] = { month: label, services: 0, viewings: 0 };
-    }
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
-
-  serviceBookings.forEach((b) => {
-    const created = new Date(b.createdAt);
-    const label = getMonthLabel(created);
-    if (monthlyData[label]) monthlyData[label].services++;
-  });
-
-  viewingBookings.forEach((b) => {
-    const created = new Date(b.createdAt);
-    const label = getMonthLabel(created);
-    if (monthlyData[label]) monthlyData[label].viewings++;
-  });
-
-  const bookingsByMonth = Object.values(monthlyData);
-
-  // ── Bookings by Day of Week ────────────────────────────
-  const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const bookingsByDay = dayOrder.map((day) => ({ day, count: 0 }));
-
-  [...serviceBookings, ...viewingBookings].forEach((b) => {
-    if (b.appointmentDate) {
-      const d = new Date(b.appointmentDate);
-      const label = getDayLabel(d);
-      const entry = bookingsByDay.find((e) => e.day === label);
-      if (entry) entry.count++;
-    }
-  });
-
-  // ── Car Inventory by Fuel Type ─────────────────────────
-  const fuelCounts: Record<string, number> = {};
-  cars.forEach((c) => {
-    const fuel = c.fuel || "Unknown";
-    fuelCounts[fuel] = (fuelCounts[fuel] || 0) + 1;
-  });
-  const inventoryByFuel = Object.entries(fuelCounts).map(([name, value]) => ({
-    name,
-    value,
-  }));
-
-  // ── Car Inventory by Status ────────────────────────────
-  const inventoryByStatus = [
-    { name: "Available", value: availableCars, colour: "#22c55e" },
-    { name: "Sold", value: soldCars, colour: "#dc2626" },
-    { name: "Reserved", value: reservedCars, colour: "#f59e0b" },
-  ];
-
-  // ── Service Type Breakdown ─────────────────────────────
-  const serviceTypeCounts: Record<string, number> = {};
-  serviceBookings.forEach((b) => {
-    const type = b.serviceType || "Other";
-    const key = type.includes("—") ? type.split("—")[0].trim() : type;
-    serviceTypeCounts[key] = (serviceTypeCounts[key] || 0) + 1;
-  });
-  const serviceTypeBreakdown = Object.entries(serviceTypeCounts)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value);
-
-  // ── Price Distribution ─────────────────────────────────
-  const priceRanges = [
-    { range: "< £5k", min: 0, max: 5000 },
-    { range: "£5k–£10k", min: 5000, max: 10000 },
-    { range: "£10k–£20k", min: 10000, max: 20000 },
-    { range: "£20k–£30k", min: 20000, max: 30000 },
-    { range: "£30k–£50k", min: 30000, max: 50000 },
-    { range: "£50k+", min: 50000, max: Infinity },
-  ];
-  const priceDistribution = priceRanges.map((r) => ({
-    range: r.range,
-    count: cars.filter((c) => c.price >= r.min && c.price < r.max).length,
-  }));
-
-  // ── Most Viewed Cars (top 5 by viewing bookings) ───────
-  const carViewCounts: Record<string, { label: string; count: number }> = {};
-  viewingBookings.forEach((b) => {
-    if (b.carDetails) {
-      const key = `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`;
-      if (!carViewCounts[key]) carViewCounts[key] = { label: key, count: 0 };
-      carViewCounts[key].count++;
-    }
-  });
-  const popularCars = Object.values(carViewCounts)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
-  // ── Recent Activity (last 10 events) ───────────────────
-  const allBookings = [
-    ...serviceBookings.map((b) => ({
+  // ── Recent activity merge ──
+  const allRecent = [
+    ...recentServiceDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "service" as const,
     })),
-    ...viewingBookings.map((b) => ({
+    ...recentViewingDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "viewing" as const,
     })),
   ];
-  allBookings.sort(
+  allRecent.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-  const recentActivity = allBookings.slice(0, 10).map((b) => ({
+  const recentActivity = allRecent.slice(0, 10).map((b) => ({
     type: b._type,
     reference: b.bookingReference,
     customer: b.customerInfo?.name || "Unknown",
@@ -288,9 +519,9 @@ export async function getDashboardData(
     time: b.appointmentTime,
     status: b.status,
     detail:
-      b._type === "viewing" && b.carDetails
+      b._type === "viewing" && "carDetails" in b && b.carDetails
         ? `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`
-        : b._type === "service"
+        : b._type === "service" && "serviceType" in b
           ? b.serviceType || ""
           : "",
     createdAt:
@@ -299,47 +530,32 @@ export async function getDashboardData(
         : String(b.createdAt),
   }));
 
-  // ── Upcoming Appointments (next 7 days — always unfiltered) ──
-  // Use all bookings regardless of date filter since upcoming is forward-looking
-  const allBookingsUnfiltered = [
-    ...allServiceBookings.map((b) => ({
+  // ── Upcoming merge (Mongo already filtered + sorted, just slice 8) ──
+  const allUpcoming = [
+    ...upcomingServiceDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "service" as const,
     })),
-    ...allViewingBookings.map((b) => ({
+    ...upcomingViewingDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "viewing" as const,
     })),
   ];
-
-  const todayStr = now.toISOString().split("T")[0];
-  const nextWeek = new Date(now);
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  const nextWeekStr = nextWeek.toISOString().split("T")[0];
-
-  const upcomingAppointments = allBookingsUnfiltered
-    .filter(
-      (b) =>
-        b.appointmentDate >= todayStr &&
-        b.appointmentDate <= nextWeekStr &&
-        b.status !== "cancelled"
-    )
-    .sort((a, b) => a.appointmentDate.localeCompare(b.appointmentDate))
-    .slice(0, 8)
-    .map((b) => ({
-      type: b._type,
-      reference: b.bookingReference,
-      customer: b.customerInfo?.name || "Unknown",
-      date: b.appointmentDate,
-      time: b.appointmentTime,
-      status: b.status,
-      detail:
-        b._type === "viewing" && b.carDetails
-          ? `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`
-          : b._type === "service"
-            ? b.serviceType || ""
-            : "",
-    }));
+  allUpcoming.sort((a, b) => a.appointmentDate.localeCompare(b.appointmentDate));
+  const upcomingAppointments = allUpcoming.slice(0, 8).map((b) => ({
+    type: b._type,
+    reference: b.bookingReference,
+    customer: b.customerInfo?.name || "Unknown",
+    date: b.appointmentDate,
+    time: b.appointmentTime,
+    status: b.status,
+    detail:
+      b._type === "viewing" && "carDetails" in b && b.carDetails
+        ? `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`
+        : b._type === "service" && "serviceType" in b
+          ? b.serviceType || ""
+          : "",
+  }));
 
   return {
     kpis: {
@@ -348,27 +564,39 @@ export async function getDashboardData(
       soldCars,
       reservedCars,
       totalServiceBookings,
-      pendingServiceBookings,
-      confirmedServiceBookings,
-      completedServiceBookings,
-      cancelledServiceBookings,
+      pendingServiceBookings: statusCount(serviceResult.statusCounts, "pending"),
+      confirmedServiceBookings: statusCount(serviceResult.statusCounts, "confirmed"),
+      completedServiceBookings: statusCount(serviceResult.statusCounts, "completed"),
+      cancelledServiceBookings: statusCount(serviceResult.statusCounts, "cancelled"),
       totalViewingBookings,
-      pendingViewingBookings,
-      confirmedViewingBookings,
-      completedViewingBookings,
-      cancelledViewingBookings,
-      totalInventoryValue,
-      totalSoldValue,
-      totalUsers: users.length,
+      pendingViewingBookings: statusCount(viewingResult.statusCounts, "pending"),
+      confirmedViewingBookings: statusCount(viewingResult.statusCounts, "confirmed"),
+      completedViewingBookings: statusCount(viewingResult.statusCounts, "completed"),
+      cancelledViewingBookings: statusCount(viewingResult.statusCounts, "cancelled"),
+      totalInventoryValue: totalFromRow(carsResult.inventoryValue),
+      totalSoldValue: totalFromRow(carsResult.soldValue),
+      totalUsers,
     },
     charts: {
-      bookingsByMonth,
-      bookingsByDay,
-      inventoryByFuel,
-      inventoryByStatus,
-      serviceTypeBreakdown,
-      priceDistribution,
-      popularCars,
+      bookingsByMonth: buildMonthlySeries(
+        serviceResult.monthly,
+        viewingResult.monthly,
+        chartStart,
+        chartEnd
+      ),
+      bookingsByDay: buildDayOfWeekSeries(
+        serviceResult.dayOfWeek,
+        viewingResult.dayOfWeek
+      ),
+      inventoryByFuel: buildFuelSlices(carsResult.fuelCounts),
+      inventoryByStatus: [
+        { name: "Available", value: availableCars, colour: "#22c55e" },
+        { name: "Sold", value: soldCars, colour: "#dc2626" },
+        { name: "Reserved", value: reservedCars, colour: "#f59e0b" },
+      ],
+      serviceTypeBreakdown: buildServiceTypeSlices(serviceResult.serviceTypeCounts),
+      priceDistribution: buildPriceDistribution(carsResult.priceBuckets),
+      popularCars: buildPopularCars(viewingResult.popularCars),
     },
     recentActivity,
     upcomingAppointments,
