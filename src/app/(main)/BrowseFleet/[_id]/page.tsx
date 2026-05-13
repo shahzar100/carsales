@@ -91,6 +91,39 @@ const getCar = async (id: string): Promise<CarInterface | null> => {
   }
 };
 
+// Similar cars: same fuel type, available, excluding the current car.
+// Falls back to "any available car" if there aren't enough matches.
+const getSimilarCars = async (
+  car: CarInterface,
+  id: string
+): Promise<CarInterface[]> => {
+  try {
+    const carsCollection = await getCarsCollection();
+    const matchByFuel = await carsCollection
+      .find({
+        _id: { $ne: new ObjectId(id) as never },
+        status: "available",
+        fuel: car.fuel,
+      })
+      .limit(4)
+      .toArray();
+    if (matchByFuel.length >= 4) {
+      return matchByFuel.map((c) => serializeDocument(c) as CarInterface);
+    }
+    const fallback = await carsCollection
+      .find({
+        _id: { $ne: new ObjectId(id) as never },
+        status: "available",
+      })
+      .limit(4)
+      .toArray();
+    return fallback.map((c) => serializeDocument(c) as CarInterface);
+  } catch (error) {
+    logError(error, { context: "BrowseFleet/[_id].getSimilarCars" });
+    return [];
+  }
+};
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -131,6 +164,7 @@ export async function generateMetadata({
 const CarDetailsPage = async ({ params }: PageProps) => {
   const { _id } = await params;
   const car = await getCar(_id);
+  const similar = car ? await getSimilarCars(car, _id) : [];
 
   if (!car) {
     return (
@@ -172,7 +206,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
           },
         ]}
       />
-      <CarDetailView car={car} />
+      <CarDetailView car={car} similar={similar} />
     </>
   );
 };
