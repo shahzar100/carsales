@@ -1,5 +1,5 @@
 import { middleware } from "@/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 describe("middleware", () => {
   const createRequest = (
@@ -88,5 +88,46 @@ describe("middleware", () => {
     });
     const res = middleware(req);
     expect(res.status).toBe(403);
+  });
+
+  describe("CSP nonce (page routes)", () => {
+    it("sets a Content-Security-Policy header with a nonce on page requests", () => {
+      const req = createRequest("GET", "/");
+      const res = middleware(req);
+      const csp = res.headers.get("Content-Security-Policy");
+      expect(csp).toBeTruthy();
+      expect(csp).toMatch(/script-src [^;]*'nonce-[A-Za-z0-9+/=]+'/);
+      expect(csp).toContain("'strict-dynamic'");
+      // We dropped 'unsafe-inline' from script-src
+      const scriptDirective = csp!
+        .split(";")
+        .find((d) => d.trim().startsWith("script-src"));
+      expect(scriptDirective).not.toContain("'unsafe-inline'");
+    });
+
+    it("does not set CSP on /api routes (they don't render HTML)", () => {
+      const req = createRequest("GET", "/api/cars");
+      const res = middleware(req);
+      expect(res.headers.get("Content-Security-Policy")).toBeNull();
+    });
+
+    it("generates a fresh nonce per request", () => {
+      const a = middleware(createRequest("GET", "/"));
+      const b = middleware(createRequest("GET", "/"));
+      const noncePattern = /'nonce-([A-Za-z0-9+/=]+)'/;
+      const nonceA = a.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
+      const nonceB = b.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
+      expect(nonceA).toBeTruthy();
+      expect(nonceB).toBeTruthy();
+      expect(nonceA).not.toBe(nonceB);
+    });
+
+    it("permits Cloudflare Turnstile in script-src and frame-src", () => {
+      const req = createRequest("GET", "/contact");
+      const res = middleware(req);
+      const csp = res.headers.get("Content-Security-Policy")!;
+      expect(csp).toContain("https://challenges.cloudflare.com");
+      expect(csp).toMatch(/frame-src[^;]*challenges\.cloudflare\.com/);
+    });
   });
 });
