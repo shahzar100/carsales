@@ -5,9 +5,9 @@ import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import { verifyTotpCode } from "@/lib/utils/twoFactor";
 
-// 5 login attempts per 15-minute window per IP.
-// CODEBASE_ISSUES A12: this is in-process and resets on Vercel cold start;
-// move to a KV-backed store before going to scale.
+// 5 login attempts per 15-minute window per IP. Backed by Vercel KV in
+// production (see rateLimit.ts) so the counter is shared across all warm
+// Lambdas; falls back to per-instance memory when KV_REST_API_URL is unset.
 const loginLimiter = createRateLimiter("login", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,

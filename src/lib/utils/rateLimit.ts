@@ -1,20 +1,16 @@
 /**
  * Rate limiter for serverless API routes.
  *
- * The exposed `check()` / `reset()` API is **async** so the in-memory
- * store can later be swapped for a distributed one (Vercel KV / Upstash
- * Redis) without touching call sites. The plan calls this out as
- * WEBSITE_REVIEW Finding #13 / CODEBASE_ISSUES A12.
+ * In-memory by default; KV-backed (Upstash REST) when KV_REST_API_URL is
+ * configured. The KV path is the one we want in production — every warm
+ * Vercel instance hits the same counter, so "5 attempts per 15 minutes"
+ * actually means that globally instead of per-Lambda.
  *
- * Implementation today: in-memory per-instance Map. On Vercel each warm
- * instance has its own Map, so the documented "N attempts per window"
- * is in practice "N per warm instance". This is acceptable for dev and
- * low-traffic prod; for real abuse resistance, wire a KV backend (the
- * `KV_REST_API_URL` env probe at the bottom is where the swap happens).
- *
- * Stale entries are lazily purged on each check to prevent unbounded
- * memory growth.
+ * Stale entries in the in-memory store are lazily purged on each check
+ * to prevent unbounded memory growth.
  */
+
+import { logError } from "@/lib/utils/observability";
 
 interface RateLimitEntry {
   count: number;
@@ -40,6 +36,7 @@ export interface RateLimiter {
   reset(identifier: string): Promise<void>;
 }
 
+// ── In-memory backend (dev / test / no-KV fallback) ──────────
 const limiters = new Map<string, Map<string, RateLimitEntry>>();
 
 function inMemoryLimiter(
@@ -62,7 +59,6 @@ function inMemoryLimiter(
 
   return {
     async check(identifier: string): Promise<RateLimitResult> {
-      // Lazily purge old entries every 100 checks
       if (store.size > 100) purgeStale();
 
       const now = Date.now();
@@ -97,6 +93,88 @@ function inMemoryLimiter(
   };
 }
 
+// ── KV backend (Upstash REST) ────────────────────────────────
+function kvConfigured(): { url: string; token: string } | null {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return { url, token };
+}
+
+async function kvRequest(
+  config: { url: string; token: string },
+  path: string
+): Promise<unknown> {
+  // Upstash REST: every command is a GET against `/<cmd>/<arg>/...`. We POST
+  // would also work; GET keeps the call shape consistent with the existing
+  // featuredCarCache module.
+  const res = await fetch(`${config.url}${path}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${config.token}` },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`KV ${res.status} on ${path}`);
+  }
+  return res.json();
+}
+
+function kvLimiter(name: string, opts: RateLimiterOptions): RateLimiter {
+  const config = kvConfigured()!;
+  const keyFor = (id: string) => `rl:${name}:${id}`;
+
+  return {
+    async check(identifier: string): Promise<RateLimitResult> {
+      const key = keyFor(identifier);
+      try {
+        // INCR returns the new value; if it was 1 we just created the entry
+        // and need to set the TTL. (TTL on each INCR would reset the window
+        // every request, which is wrong.)
+        const incrRes = (await kvRequest(config, `/incr/${key}`)) as {
+          result: number;
+        };
+        const count = incrRes.result;
+
+        if (count === 1) {
+          await kvRequest(
+            config,
+            `/pexpire/${key}/${opts.windowMs}`
+          );
+        }
+
+        const ttlRes = (await kvRequest(config, `/pttl/${key}`)) as {
+          result: number;
+        };
+        const resetIn = ttlRes.result > 0 ? ttlRes.result : opts.windowMs;
+
+        return {
+          allowed: count <= opts.maxRequests,
+          remaining: Math.max(0, opts.maxRequests - count),
+          resetIn,
+        };
+      } catch (error) {
+        // Network blip or KV outage shouldn't lock everyone out — fall open
+        // and log. We keep the in-memory limiter as a soft safety net for
+        // the duration of this warm instance only.
+        logError(error, { context: "rateLimit.kvCheck", limiter: name });
+        return {
+          allowed: true,
+          remaining: opts.maxRequests,
+          resetIn: opts.windowMs,
+        };
+      }
+    },
+
+    async reset(identifier: string): Promise<void> {
+      try {
+        await kvRequest(config, `/del/${keyFor(identifier)}`);
+      } catch (error) {
+        logError(error, { context: "rateLimit.kvReset", limiter: name });
+      }
+    },
+  };
+}
+
 /**
  * Create a named rate limiter with the given options.
  *
@@ -114,10 +192,6 @@ export function createRateLimiter(
   name: string,
   opts: RateLimiterOptions
 ): RateLimiter {
-  // Future: when KV_REST_API_URL is set, return a KV-backed limiter here.
-  // The in-memory limiter stays as the dev/test fallback.
-  //
-  //   if (process.env.KV_REST_API_URL) return kvLimiter(name, opts);
-  //
+  if (kvConfigured()) return kvLimiter(name, opts);
   return inMemoryLimiter(name, opts);
 }
