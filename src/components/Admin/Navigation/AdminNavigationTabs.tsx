@@ -9,6 +9,9 @@ import {
   Activity,
   Cog,
   ShieldCheck,
+  Bookmark,
+  ArrowLeftRight,
+  MessageSquareQuote,
 } from "lucide-react";
 import NavMenu from "@/components/Dropdown/NavMenu";
 import NavLink from "@/components/Dropdown/NavLink";
@@ -27,6 +30,21 @@ export default function AdminNavigationTabs() {
       icon: Calendar,
     },
     { href: "/admin/dashboard/viewing", text: "Car Viewings", icon: Eye },
+    {
+      href: "/admin/dashboard/reservations",
+      text: "Reservations",
+      icon: Bookmark,
+    },
+    {
+      href: "/admin/dashboard/part-exchange",
+      text: "Part-Exchange",
+      icon: ArrowLeftRight,
+    },
+    {
+      href: "/admin/dashboard/quotes",
+      text: "Quotes",
+      icon: MessageSquareQuote,
+    },
     { href: "/admin/dashboard/shop", text: "Business Info", icon: Settings },
     { href: "/admin/dashboard/add", text: "Create New", icon: PlusCircle },
     { href: "/admin/dashboard/status", text: "System Status", icon: Activity },
