@@ -122,7 +122,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
                 {car.status}
               </span>
               {car.featured && (
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-semibold text-yellow-900">
+                <span className="inline-flex items-center gap-0.5 rounded-full bg-red-600/90 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
                   <Star className="h-2.5 w-2.5 fill-current" />
                   Featured
                 </span>

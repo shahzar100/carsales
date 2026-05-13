@@ -95,8 +95,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                <Shield className="text-red-400" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+                <Shield className="text-red-500" size={32} />
               </div>
               <h3 className="heading-4 mb-2">No Pressure</h3>
               <p className="text-gray-600">
@@ -105,8 +105,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                <Award className="text-red-400" size={32} />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <Award className="text-red-600" size={32} />
               </div>
               <h3 className="heading-4 mb-2">Expert Advice</h3>
               <p className="text-gray-600">
@@ -132,7 +132,7 @@ export default function Home() {
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/BrowseFleet"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-8 py-4 font-semibold text-white transition-all hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-8 py-4 font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:-translate-y-1 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
               >
                 <Car size={24} />
                 View All Cars
