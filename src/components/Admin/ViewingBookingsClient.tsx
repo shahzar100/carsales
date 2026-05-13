@@ -1,12 +1,7 @@
-// TODO (Day 12.6): convert to the server-component + client-island pattern.
-// See viewing/page.tsx + components/Admin/ViewingBookingsClient.tsx for the
-// canonical example. Same shape applies here: fetch service bookings in this
-// file, hand them to a new ServiceBookingsClient as `initialBookings`, leave
-// all the modals / mutation handlers in the client component.
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  ServiceBookingsTab,
+  ViewingBookingsTab,
   CancelBookingModal,
   BookingDetailsModal,
   Booking,
@@ -15,9 +10,24 @@ import {
 import { useToast } from "@/hooks/useToast";
 import { logError } from "@/lib/utils/observability";
 
-export default function ServiceBookingsPage() {
-  const [serviceBookings, setServiceBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  initialBookings: Booking[];
+}
+
+/**
+ * Client island for the viewings admin page.
+ *
+ * Initial data is provided by the parent server component so the first
+ * paint already shows the bookings — no spinner, no extra network round-trip.
+ * Mutations (cancel, confirm) trigger a client-side refetch to keep the list
+ * in sync without a full page reload.
+ *
+ * Day 12.6 / Finding #29. This is the canonical pattern for migrating the
+ * remaining read-mostly admin pages (service, carparts, shop).
+ */
+export default function ViewingBookingsClient({ initialBookings }: Props) {
+  const [viewingBookings, setViewingBookings] =
+    useState<Booking[]>(initialBookings);
   const [searchTerm, setSearchTerm] = useState("");
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -28,22 +38,15 @@ export default function ServiceBookingsPage() {
 
   const toast = useToast();
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    setLoading(true);
+  const refetchBookings = async () => {
     try {
       const response = await fetch("/api/admin/bookings");
       const data = await response.json();
       if (data.success) {
-        setServiceBookings(data.data.serviceBookings);
+        setViewingBookings(data.data.viewingBookings);
       }
     } catch (error) {
-      logError(error, { context: "service-dashboard.fetchBookings" });
-    } finally {
-      setLoading(false);
+      logError(error, { context: "viewing-dashboard.refetchBookings" });
     }
   };
 
@@ -74,7 +77,7 @@ export default function ServiceBookingsPage() {
         );
         setShowCancelModal(false);
         setSelectedBooking(null);
-        fetchBookings();
+        refetchBookings();
       } else {
         toast.error("Cancellation Failed", "Failed to cancel booking");
       }
@@ -104,8 +107,8 @@ export default function ServiceBookingsPage() {
     );
   };
 
-  const handleShowCancelModal = (selectedBooking: SelectedBooking) => {
-    setSelectedBooking(selectedBooking);
+  const handleShowCancelModal = (booking: SelectedBooking) => {
+    setSelectedBooking(booking);
     setShowCancelModal(true);
   };
 
@@ -132,16 +135,16 @@ export default function ServiceBookingsPage() {
         body: JSON.stringify({
           bookingId: booking._id,
           status: "confirmed",
-          type: "service",
+          type: "viewing",
         }),
       });
 
       if (response.ok) {
         toast.success(
           "Booking Confirmed",
-          "Booking has been confirmed successfully"
+          "Viewing appointment has been confirmed successfully"
         );
-        fetchBookings();
+        refetchBookings();
       } else {
         toast.error("Confirmation Failed", "Failed to confirm booking");
       }
@@ -150,22 +153,11 @@ export default function ServiceBookingsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
-          <p className="text-gray-600">Loading service bookings...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
-      {serviceBookings.length > 0 ? (
-        <ServiceBookingsTab
-          bookings={serviceBookings}
+      {viewingBookings.length > 0 ? (
+        <ViewingBookingsTab
+          bookings={viewingBookings}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onCancelBooking={handleShowCancelModal}
@@ -174,10 +166,9 @@ export default function ServiceBookingsPage() {
           getStatusBadge={getStatusBadge}
         />
       ) : (
-        <p>No service bookings available.</p>
+        <p>No viewing bookings available.</p>
       )}
 
-      {/* Modals */}
       {showCancelModal && selectedBooking && (
         <CancelBookingModal
           selectedBooking={selectedBooking}

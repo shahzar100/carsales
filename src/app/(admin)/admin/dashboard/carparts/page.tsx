@@ -1,3 +1,8 @@
+// TODO (Day 12.6): convert to the server-component + client-island pattern.
+// See viewing/page.tsx + components/Admin/ViewingBookingsClient.tsx for the
+// canonical example. This page is larger (CRUD on car parts inventory) so
+// the conversion is bigger — fetch the parts list server-side, hand to a
+// CarPartsClient that owns the create/edit/delete modals.
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";

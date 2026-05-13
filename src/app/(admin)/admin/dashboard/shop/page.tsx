@@ -1,3 +1,8 @@
+// TODO (Day 12.6): convert to the server-component + client-island pattern.
+// See viewing/page.tsx + components/Admin/ViewingBookingsClient.tsx for the
+// canonical example. For the shop page: fetch businessInfo server-side
+// and hand it to a ShopInfoClient as `initialShopInfo`. BusinessInfoForm
+// already accepts an initial value prop.
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import BusinessInfoForm from "@/components/Admin/Tabs/BusinessInfoForm";
