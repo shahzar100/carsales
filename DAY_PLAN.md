@@ -451,7 +451,7 @@ The `useMemo` over `subServiceOptions` is missing `defaultService` and `subServi
 
 **Change:** replace `'` with `&apos;` inside JSX text where the linter flags it.
 
-**Why safe:** `&apos;` renders identically to `'` in every email client; `react-email`'s render pipeline passes entities through. The lint downgrade in `.github/workflows/ci.yml` (`react/no-unescaped-entities` → warn for `src/emails/**`) can then be reverted to default-error.
+**Why safe:** `&apos;` renders identically to `'` in every email client; `react-email`'s render pipeline passes entities through. Any `react/no-unescaped-entities` downgrade for `src/emails/**` (if one exists) can then be reverted to default-error.
 
 **Test:** open `npm run email` preview and verify the apostrophes still appear in the rendered HTML.
 
@@ -699,10 +699,10 @@ export * from "./interfaces";
 
 ---
 
-## Day 8 — Testing coverage and CI hardening (P2)
+## Day 8 — Testing coverage (P2)
 
 **Branch:** `day-8-testing`
-**Goal:** lift coverage from 23% toward 50% as a stepping stone to 80%. Focus on the high-value files.
+**Goal:** lift coverage from 23% toward 50% as a stepping stone to 80%. Focus on the high-value files. No CI in this repo today — coverage gates run locally via `npm run test:coverage`.
 **Findings addressed:** #50 (coverage), #51 (form coverage), #52 (BusinessInfoForm tests), #53 (link test gaps).
 
 ### Fix 8.1 — Test the four highest-value untested files
@@ -726,18 +726,18 @@ This would have caught Finding #2 (the `/review?ref=…` builder) automatically.
 
 **Why safe:** broader detection only adds failures, never silently passes.
 
-### Fix 8.3 — Add coverage gate to CI
+### Fix 8.3 — Local coverage floor
 
-**Files:** `.github/workflows/ci.yml`.
+**Files:** `jest.config.js`.
 
-**Change:** make the test job fail when coverage drops below 35% (today's baseline + a buffer). Raise the floor by 5% every quarter until 80%.
+**Change:** keep a `coverageThreshold.global` floor so anyone running `npm run test:coverage` locally gets a failure when coverage regresses. Raise the floor by 5% every quarter until 80%. No CI integration today — this is a developer-discipline gate, not an automated one.
 
-**Why safe:** ratchet only goes up.
+**Why safe:** ratchet only goes up. Threshold only fires when `--coverage` is passed; bare `jest` runs are unaffected.
 
 ### Day 8 validation
 
 * [ ] Coverage ≥ 50%.
-* [ ] CI fails if anyone drops it below 35%.
+* [ ] `npm run test:coverage` fails if anyone drops it below the configured floor.
 * [ ] `brokenLinks.test.ts` would have caught the `/review` bug if it had been run before Day 1.
 
 ---
@@ -1063,7 +1063,7 @@ Re-run all seven on each Day's branch before opening the PR.
 When Days 1–12 are merged to `main`:
 * `npm run build` is green.
 * No customer-visible 404s from internal links or emails.
-* Test coverage ≥ 50% with a CI ratchet to 35%.
+* Test coverage ≥ 50% with `npm run test:coverage` failing below the configured local floor.
 * Lint is at 0 errors and ≤ a handful of warnings.
 * CSP no longer contains `'unsafe-inline'` (or deferral is documented).
 * Sentry receives errors from production.
