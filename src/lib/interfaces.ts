@@ -66,6 +66,9 @@ export interface CarViewingBooking {
   };
   appointmentDate: string;
   appointmentTime: string;
+  // Dealership is single-location for now and populated server-side from
+  // businessInfo (Day 12.7). Stays optional on the read type to tolerate
+  // legacy documents written before the auto-default landed.
   dealership?: {
     location: string;
     address: string;

@@ -290,7 +290,6 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
       },
       appointmentDate: data.date,
       appointmentTime: data.time,
-      dealership: viewingBooking.dealership,
       turnstileToken,
     };
 
