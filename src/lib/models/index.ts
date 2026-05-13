@@ -31,10 +31,13 @@ export type {
   AuditLog,
 };
 
+import {
+  readFeaturedCarCache,
+  writeFeaturedCarCache,
+} from "@/lib/utils/featuredCarCache";
+
 // ── Cached collection handles ────────────────────────────────
 let carsCollection: Collection<CarInterface>;
-let featuredCar: CarInterface | null;
-let featuredCarExpiry: number = 0;
 let serviceAppointmentsCollection: Collection<ServiceAppointment>;
 let carViewingBookingsCollection: Collection<CarViewingBooking>;
 let businessInfoCollection: Collection<ShopInfo>;
@@ -87,16 +90,19 @@ async function getDb(): Promise<Db> {
   return client.db("MMC");
 }
 
-const FEATURED_CAR_TTL = 5 * 60 * 1000; // 5 minutes
-
 export async function getFeaturedCar(): Promise<CarInterface | null> {
-  if (featuredCar && Date.now() < featuredCarExpiry) return featuredCar;
+  // Cache layer (KV when configured, in-memory otherwise — see
+  // featuredCarCache.ts). `undefined` means "no cache entry"; `null` means
+  // "cached the absence of a featured car," which is still useful so we
+  // don't keep re-querying Mongo just to confirm there's no winner.
+  const cached = await readFeaturedCarCache<CarInterface>();
+  if (cached !== undefined) return cached;
 
   const cars = await getCarsCollection();
   const car = await cars.findOne({ featured: true });
-  featuredCar = car ? (serializeDocument(car) as CarInterface) : null;
-  featuredCarExpiry = Date.now() + FEATURED_CAR_TTL;
-  return featuredCar;
+  const value = car ? (serializeDocument(car) as CarInterface) : null;
+  await writeFeaturedCarCache(value);
+  return value;
 }
 
 export async function getCarsCollection(): Promise<Collection<CarInterface>> {

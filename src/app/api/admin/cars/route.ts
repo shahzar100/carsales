@@ -18,16 +18,19 @@ import {
   serverError,
 } from "@/lib/utils/apiResponse";
 import { deleteS3Objects } from "@/lib/utils/s3";
+import { invalidateFeaturedCarCache } from "@/lib/utils/featuredCarCache";
 
 /**
  * (#27) Invalidate the customer-facing fleet pages after any car mutation
  * so admin changes show up without waiting for the 60s revalidate timer.
- * Called from POST / PUT / DELETE below.
+ * Also drops the distributed featured-car cache (Day 11.2). Called from
+ * POST / PUT / DELETE below.
  */
-function revalidateFleetPaths(carId?: string) {
+async function revalidateFleetPaths(carId?: string) {
   revalidatePath("/BrowseFleet");
   revalidatePath("/"); // featured car on home
   if (carId) revalidatePath(`/BrowseFleet/${carId}`);
+  await invalidateFeaturedCarCache();
 }
 
 // ── Car validation schema ────────────────────────────────────
@@ -150,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     const result = await carsCollection.insertOne(newCar as CarInterface);
 
-    revalidateFleetPaths(result.insertedId.toString());
+    await revalidateFleetPaths(result.insertedId.toString());
 
     const session = await getSession();
     await recordAudit({
@@ -219,7 +222,7 @@ export async function PUT(request: NextRequest) {
       return notFound("Car not found");
     }
 
-    revalidateFleetPaths(String(_id));
+    await revalidateFleetPaths(String(_id));
 
     const session = await getSession();
     await recordAudit({
@@ -285,7 +288,7 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
-    revalidateFleetPaths(String(_id));
+    await revalidateFleetPaths(String(_id));
 
     const session = await getSession();
     await recordAudit({
