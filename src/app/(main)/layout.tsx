@@ -5,6 +5,17 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import CookieBanner from "@/components/Shared/CookieBanner";
 import { SavedCarsProvider } from "@/contexts/SavedCarsContext";
 
+/**
+ * Force every marketing page to render at request time. Most pages here
+ * call await getBusinessInfo() (which hits MongoDB), and the Header reads
+ * cookies via useSearchParams in SearchBar — so static prerender requires
+ * a live DB connection from the build runner. Vercel's build IPs aren't
+ * on Atlas's allowlist, which surfaces as a TLS internal-error alert
+ * during prerender. Declaring dynamic here makes the build skip DB
+ * entirely; pages still SSR with full HTML for SEO at request time.
+ */
+export const dynamic = "force-dynamic";
+
 export default function MainLayout({
   children,
 }: {
