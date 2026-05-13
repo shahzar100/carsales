@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import NavMenu from "./Dropdown/NavMenu";
 import NavLink from "./Dropdown/NavLink";
 import Link from "next/link";
@@ -21,8 +21,13 @@ const Header = () => {
       </Link>
 
       {/* Site-wide search — hidden on small screens to avoid crowding;
-          customers on mobile use the BrowseFleet filter UI instead. */}
-      <SearchBar className="hidden max-w-md flex-1 md:flex" />
+          customers on mobile use the BrowseFleet filter UI instead.
+          Wrapped in Suspense because SearchBar reads useSearchParams,
+          which de-opts every (main) page from static prerendering
+          otherwise (Next.js 15 missing-suspense-with-csr-bailout). */}
+      <Suspense fallback={null}>
+        <SearchBar className="hidden max-w-md flex-1 md:flex" />
+      </Suspense>
 
 
       <NavMenu title="Menu">
