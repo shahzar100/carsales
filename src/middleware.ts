@@ -23,10 +23,15 @@ function buildCsp(nonce: string): string {
   // further script tags during hydration. The Cloudflare host is needed for
   // the Turnstile widget; frame-src is needed for the challenge iframe.
   //
-  // style-src keeps `'unsafe-inline'` for now because React injects inline
-  // style attributes via `style={{...}}` and Tailwind's `<style>` tag is
-  // built but still loaded as inline in dev. Tightening that is a separate
-  // step once we audit every inline style.
+  // style-src keeps `'unsafe-inline'`. Audited 2026-05-13: 12 non-email
+  // `style={{...}}` attributes, all with runtime-dynamic values
+  // (skeleton widths, toast progress %, image-upload %, dynamic z-index)
+  // that can't move to Tailwind classes. `next/font` also injects inline
+  // `<style>` blocks with @font-face declarations to avoid CLS. Dropping
+  // `'unsafe-inline'` would need a per-build hash allow-list and a
+  // refactor of every dynamic inline style — the cost/benefit doesn't
+  // justify it given style-src XSS is a much weaker class of attack than
+  // the script-src XSS that the nonce above already closes.
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${isProduction ? "" : " 'unsafe-eval'"}`,
