@@ -2,6 +2,17 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/utils/auth";
 
 /**
+ * Force every admin dashboard page to render at request time. The
+ * `await cookies()` inside `isAuthenticated` should opt this subtree
+ * out of static prerender, but Next.js 16's detection through layouts
+ * is unreliable and tries to prerender pages like /admin/dashboard/cars
+ * — which then crashes because the build can't reach MongoDB. Declaring
+ * dynamic here is the durable fix and also matches reality: admin
+ * pages depend on session state and should never be prerendered.
+ */
+export const dynamic = "force-dynamic";
+
+/**
  * (#10) Server-side auth guard for the entire admin dashboard subtree.
  *
  * Runs BEFORE any dashboard page renders, so unauthenticated requests
