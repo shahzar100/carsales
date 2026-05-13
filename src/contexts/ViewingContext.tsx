@@ -21,10 +21,6 @@ interface ViewingBooking {
     email: string;
     phone: string;
   };
-  dealership?: {
-    location: string;
-    address: string;
-  };
 }
 
 interface ViewingContextType {

@@ -49,14 +49,11 @@ const viewingSchema = z.object({
   }),
   appointmentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   appointmentTime: z.string().min(1).max(10),
-  // CarViewingBooking.dealership is `{ location, address }` per the
-  // interface. Accept either the structured shape or omit entirely.
-  dealership: z
-    .object({
-      location: z.string().max(100),
-      address: z.string().max(200),
-    })
-    .optional(),
+  // (Day 12.7) `dealership` is no longer accepted from the client — we're a
+  // single-location dealer and the field is populated server-side from
+  // businessInfo. The field is preserved on the booking document so a
+  // future multi-location rollout can switch this back on without a
+  // schema change.
   // (#17) Optional so the route still works when Turnstile isn't
   // configured locally; the server-side verifier handles the prod
   // contract (verifyTurnstileToken returns ok:true if no secret set).
@@ -117,24 +114,20 @@ export async function POST(request: NextRequest) {
     const bookingReference = generateBookingReference();
     const viewingCollection = await getCarViewingBookingsCollection();
 
-    // (Day 12 / Fix 12.7) If the client didn't send a dealership, fall
-    // back to the shop's single showroom. The plan's preferred long-term
-    // path is to drop the field after a deprecation window; until then,
-    // this keeps every viewing row populated without making the form
-    // think about it.
-    let dealership = body.dealership;
-    if (!dealership) {
-      try {
-        const shop = await getBusinessInfo();
-        dealership = {
-          location: shop?.businessName ?? "Showroom",
-          address: shop
-            ? [shop.address, shop.city, shop.zipCode].filter(Boolean).join(", ")
-            : "",
-        };
-      } catch {
-        dealership = { location: "Showroom", address: "" };
-      }
+    // (Day 12.7) Single-location: always derive dealership from businessInfo.
+    // When the dealer adds a second showroom, swap this for a lookup keyed on
+    // the car's location (or pass the location id through the form).
+    let dealership: { location: string; address: string };
+    try {
+      const shop = await getBusinessInfo();
+      dealership = {
+        location: shop?.businessName ?? "Showroom",
+        address: shop
+          ? [shop.address, shop.city, shop.zipCode].filter(Boolean).join(", ")
+          : "",
+      };
+    } catch {
+      dealership = { location: "Showroom", address: "" };
     }
 
     const newBooking: Omit<CarViewingBooking, "_id"> = {

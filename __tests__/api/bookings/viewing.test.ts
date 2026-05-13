@@ -138,7 +138,9 @@ describe("/api/bookings/viewing", () => {
       expect(data.error).toBe("Booking details are required");
     });
 
-    it("should handle booking without dealership info", async () => {
+    it("auto-populates dealership from businessInfo even when the client omits it", async () => {
+      // (Day 12.7) The route is single-location: dealership is no longer
+      // accepted from the client and is always derived from businessInfo.
       const dataWithoutDealership = {
         ...validBookingData,
         dealership: undefined,
@@ -162,12 +164,12 @@ describe("/api/bookings/viewing", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
 
-      // Verify booking was saved without dealership info
       const { carViewingBookings, client } = await getTestCollections();
       const savedBooking = await carViewingBookings.findOne({
         bookingReference: "BK-VIEW123",
       });
-      expect(savedBooking?.dealership).toBeNull();
+      expect(savedBooking?.dealership).toBeDefined();
+      expect(typeof savedBooking?.dealership?.location).toBe("string");
       await client.close();
     });
 
