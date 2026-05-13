@@ -3,6 +3,7 @@ import { getSession, verifyPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
+import { verifyTotpCode } from "@/lib/utils/twoFactor";
 
 // 5 login attempts per 15-minute window per IP.
 // CODEBASE_ISSUES A12: this is in-process and resets on Vercel cold start;
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
 
     const username = (body as { username: string }).username.trim();
     const password = (body as { password: string }).password;
+    const totpCode = (body as { totpCode?: unknown }).totpCode;
 
     if (
       username.length === 0 ||
@@ -98,6 +100,24 @@ export async function POST(request: NextRequest) {
         { error: "Invalid credentials" },
         { status: 401 }
       );
+    }
+
+    // ── 2FA challenge (Day 12.2) ────────────────────────────
+    // If the user has opted into 2FA, the first POST returns a 200 with
+    // `requires2fa: true` and no session is set. The client re-POSTs with
+    // `username`, `password`, and the 6-digit `totpCode`. We re-verify
+    // the password on the second request rather than holding partial-auth
+    // state server-side.
+    if (admin.totpEnabled && admin.totpSecret) {
+      if (typeof totpCode !== "string") {
+        return NextResponse.json({ success: false, requires2fa: true });
+      }
+      if (!verifyTotpCode(admin.totpSecret, totpCode)) {
+        return NextResponse.json(
+          { error: "Invalid 2FA code", requires2fa: true },
+          { status: 401 }
+        );
+      }
     }
 
     // Update last login (fire-and-forget; not blocking on this is fine).

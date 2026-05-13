@@ -194,6 +194,9 @@ export interface AdminUser {
   resetToken?: string;
   resetTokenExpiry?: Date;
   updatedAt?: Date;
+  // 2FA (Day 12.2). Opt-in per user; absent means 2FA is off.
+  totpSecret?: string;
+  totpEnabled?: boolean;
 }
 
 export interface Quote {
