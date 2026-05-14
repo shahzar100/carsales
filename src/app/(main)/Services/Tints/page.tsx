@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
-import { Shield, CheckCircle, Clock, Sun, Eye } from "lucide-react";
+import Link from "next/link";
+import { Shield, CheckCircle, Clock, Sun, Eye, ArrowRight } from "lucide-react";
 import {
   ServiceHero,
   BackNavigation,
@@ -9,7 +10,6 @@ import {
   BlackRedSection,
 } from "@/components/Services/Common";
 import { TintOptionsGrid, VLTGuide } from "@/components/Services/Tints";
-import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
@@ -145,11 +145,34 @@ const Tints = async () => {
         <div className="mb-6 text-center">
           <h2 className="section-title mb-2">Book Your Window Tinting</h2>
           <p className="mx-auto max-w-2xl text-gray-600">
-            Fill in the form below and we&apos;ll confirm your appointment.
+            Pick a film grade and slot in our climate-controlled bay — most
+            appointments confirmed within the hour.
           </p>
         </div>
-        <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-          <ServiceBookingForm defaultService="Window Tint" />
+        <div className="mx-auto flex max-w-4xl flex-col items-stretch gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 text-white">
+              <Shield className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold tracking-[0.08em] text-red-600 uppercase">
+                Step 1 of 5
+              </p>
+              <p className="text-base font-bold text-gray-900">
+                Start your tinting booking
+              </p>
+              <p className="text-sm text-gray-600">
+                5-year warranty · No deposit required
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/Book?service=tints"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg"
+          >
+            Book window tinting
+            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+          </Link>
         </div>
       </div>
     </div>

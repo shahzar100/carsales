@@ -1,7 +1,14 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, CheckCircle, Star, Shield, Wrench } from "lucide-react";
+import {
+  Clock,
+  CheckCircle,
+  Star,
+  Shield,
+  Wrench,
+  ArrowRight,
+} from "lucide-react";
 import {
   PackageGrid,
   PackageCard,
@@ -11,7 +18,6 @@ import {
   ServiceHero,
 } from "@/components/Services/Common";
 import type { AccentColor } from "@/components/Services/Common/PackageCard";
-import ServiceBookingForm from "@/components/Main/Form/ServiceBookingForm";
 import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
@@ -185,12 +191,36 @@ const Services = async () => {
               Book a Service
             </h2>
             <p className="mx-auto max-w-2xl text-gray-400">
-              Ready to get started? Fill in the form below to schedule your
-              appointment.
+              Five quick steps. Pick your service, package, vehicle, slot, and
+              we&apos;ll confirm by email.
             </p>
           </div>
-          <div className="mx-auto max-w-4xl rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <ServiceBookingForm />
+          <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+            <div className="flex flex-col items-stretch gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-600/20 text-red-300 ring-1 ring-red-500/30">
+                  <Wrench className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold tracking-widest text-red-400 uppercase">
+                    Step 1 of 5
+                  </p>
+                  <p className="text-base font-bold text-white">
+                    Pick a service to begin
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Detailing, tints, or repairs · No deposit required
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/Book"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-red-700 hover:shadow-red-600/50"
+              >
+                Start booking
+                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+              </Link>
+            </div>
           </div>
         </div>
       </BlackRedSection>
