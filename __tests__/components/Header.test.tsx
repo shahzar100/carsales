@@ -2,77 +2,74 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import Header from "@/components/Header";
 
-// Mock child components
-jest.mock("@/components/Dropdown/NavMenu", () => {
-  return function MockNavMenu({
-    children,
-    title,
-  }: {
-    children: React.ReactNode;
-    title: string;
-  }) {
-    return (
-      <div data-testid="nav-menu" aria-label={title}>
-        {children}
-      </div>
-    );
-  };
-});
+// next/navigation — Header reads the router + pathname.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  usePathname: () => "/",
+}));
 
-jest.mock("@/components/Dropdown/NavLink", () => {
-  return function MockNavLink({
-    href,
-    text,
-    children,
-  }: {
-    href: string;
-    text: string;
-    children?: React.ReactNode;
-  }) {
-    return (
-      <a href={href} data-testid="nav-link">
-        {text}
-        {children}
-      </a>
-    );
-  };
-});
+// next-auth — drives the Account panel's logged-in/out states.
+const mockUseSession = jest.fn();
+jest.mock("next-auth/react", () => ({
+  useSession: () => mockUseSession(),
+  signOut: jest.fn(),
+}));
+
+// NavigationContext — Header feeds it on link clicks for PageLoader.
+jest.mock("@/contexts/NavigationContext", () => ({
+  useNavigation: () => ({
+    setIsNavigating: jest.fn(),
+    setNavigationTarget: jest.fn(),
+  }),
+}));
 
 describe("Header", () => {
-  it("renders the navigation element", () => {
-    render(<Header />);
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
+  beforeEach(() => {
+    mockUseSession.mockReturnValue({ data: null, status: "unauthenticated" });
   });
 
-  it("has correct aria-label for main navigation", () => {
+  it("renders the header banner", () => {
     render(<Header />);
-    expect(
-      screen.getByRole("navigation", { name: "Main navigation" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 
   it("renders the logo link pointing to home", () => {
     render(<Header />);
-    const logoLink = screen.getByRole("link", { name: /business logo/i });
+    const logoLink = screen.getByRole("link", { name: /home/i });
     expect(logoLink).toHaveAttribute("href", "/");
   });
 
-  it("renders nav menu", () => {
+  it("renders the site search input", () => {
     render(<Header />);
-    expect(screen.getByTestId("nav-menu")).toBeInTheDocument();
+    expect(
+      screen.getByRole("searchbox", { name: /search make or model/i })
+    ).toBeInTheDocument();
   });
 
-  it("renders all main navigation links", () => {
+  it("renders the Book a Viewing call to action", () => {
     render(<Header />);
-    const links = screen.getAllByTestId("nav-link");
-    const linkTexts = links.map((l) => l.textContent);
+    const cta = screen.getAllByRole("link", { name: /book a viewing/i })[0];
+    expect(cta).toHaveAttribute("href", "/Book");
+  });
 
-    expect(linkTexts.some((t) => t?.startsWith("Browse Fleet"))).toBe(true);
-    expect(linkTexts.some((t) => t?.startsWith("Services"))).toBe(true);
-    expect(linkTexts).toContain("Car Parts");
-    expect(linkTexts).toContain("Breakdown Recovery");
-    expect(linkTexts).toContain("Accident Claims");
-    expect(linkTexts).toContain("Track Booking");
-    expect(linkTexts).toContain("About Us");
+  it("exposes Account and Menu dropdown triggers", () => {
+    render(<Header />);
+    expect(
+      screen.getByRole("button", { name: /account menu/i })
+    ).toHaveAttribute("aria-expanded", "false");
+    expect(
+      screen.getByRole("button", { name: /main menu/i })
+    ).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shows the signed-in name when a session is present", () => {
+    mockUseSession.mockReturnValue({
+      data: { user: { name: "James Whitfield", email: "j@morley.co.uk" } },
+      status: "authenticated",
+    });
+    render(<Header />);
+    expect(
+      screen.getByRole("button", { name: /account menu for james whitfield/i })
+    ).toBeInTheDocument();
   });
 });
