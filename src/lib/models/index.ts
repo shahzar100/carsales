@@ -105,6 +105,22 @@ export async function getFeaturedCar(): Promise<CarInterface | null> {
   return value;
 }
 
+/**
+ * Latest available cars for the homepage "Latest Arrivals" grid. Newest
+ * first by `createdAt`, and restricted to `status: "available"` so sold or
+ * reserved stock never surfaces on the marketing front door. Backed by the
+ * `status, createdAt` compound index created in getCarsCollection().
+ */
+export async function getLatestCars(limit = 6): Promise<CarInterface[]> {
+  const cars = await getCarsCollection();
+  const docs = await cars
+    .find({ status: "available" })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .toArray();
+  return docs.map((doc) => serializeDocument(doc) as CarInterface);
+}
+
 export async function getCarsCollection(): Promise<Collection<CarInterface>> {
   if (!carsCollection) {
     const db = await getDb();
