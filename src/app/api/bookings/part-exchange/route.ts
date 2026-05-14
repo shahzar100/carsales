@@ -3,9 +3,11 @@ import { z } from "zod";
 import {
   ok,
   badRequest,
+  unauthorized,
   tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { getCustomerIdentity } from "@/lib/utils/customerAuth";
 import { waitUntil, ipAddress } from "@vercel/functions";
 import { getPartExchangesCollection, PartExchange } from "@/lib/models";
 import { generatePartExchangeReference } from "@/lib/utils/booking";
@@ -63,6 +65,14 @@ export async function POST(request: NextRequest) {
       return tooManyRequests("Too many requests. Please try again later.");
     }
 
+    // Part-exchange enquiries require a signed-in customer account.
+    const customer = await getCustomerIdentity();
+    if (!customer) {
+      return unauthorized(
+        "Please sign in to your account to submit a part-exchange enquiry."
+      );
+    }
+
     let raw: unknown;
     try {
       raw = await request.json();
@@ -76,6 +86,11 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = parsed.data;
+
+    // Tie the enquiry to the signed-in account — the email on record is
+    // always the account email, so it shows in the customer's dashboard
+    // (matched by account email).
+    body.customerInfo.email = customer.email;
 
     const captcha = await verifyTurnstileToken(body.turnstileToken, ip);
     if (!captcha.ok) {

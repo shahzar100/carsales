@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useSavedCars } from "@/contexts/SavedCarsContext";
 import type { CarInterface } from "@/lib/interfaces";
 import CarListCard from "./CarListCard";
@@ -10,15 +11,20 @@ import CarListCard from "./CarListCard";
 /**
  * Day 10 / Fix 10.4 — the customer-facing "Saved cars" page.
  *
- * Reads the saved-ids from localStorage via SavedCarsContext, then
- * fetches the full car records from the existing /api/admin/cars endpoint
- * (filtered by status:available in buildCarMongoFilter — sold cars
- * naturally drop off when re-fetched). If a saved id no longer maps to
- * an available car, it's filtered out of the displayed list but kept in
- * storage in case the seller marks it available again.
+ * Reads the saved-ids from SavedCarsContext, then fetches the full car
+ * records from the existing /api/admin/cars endpoint (filtered by
+ * status:available in buildCarMongoFilter — sold cars naturally drop off
+ * when re-fetched). If a saved id no longer maps to an available car,
+ * it's filtered out of the displayed list but kept in storage in case
+ * the seller marks it available again.
+ *
+ * The list is localStorage-backed for signed-out visitors and synced to
+ * the customer's account once signed in (see SavedCarsContext) — the
+ * sub-heading reflects which of those applies.
  */
 export default function SavedCarsPage() {
   const { savedIds, clear } = useSavedCars();
+  const { status } = useSession();
   const [cars, setCars] = useState<CarInterface[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +77,20 @@ export default function SavedCarsPage() {
             Saved cars
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            Saved on this device only — no account required.
+            {status === "authenticated" ? (
+              "Synced to your account — your saved cars follow you across devices."
+            ) : (
+              <>
+                Saved on this device.{" "}
+                <Link
+                  href="/login?callbackUrl=/saved"
+                  className="font-semibold text-red-600 hover:underline"
+                >
+                  Sign in
+                </Link>{" "}
+                to sync them across devices.
+              </>
+            )}
           </p>
         </div>
         {savedIds.length > 0 && (

@@ -199,6 +199,39 @@ export interface AdminUser {
   totpEnabled?: boolean;
 }
 
+/**
+ * Customer account — distinct from `AdminUser`. Stored in the `users`
+ * collection, which is also managed by the Auth.js MongoDB adapter
+ * (the adapter owns `name`, `email`, `emailVerified`, `image` and the
+ * sibling `accounts` / `sessions` / `verification_tokens` collections).
+ *
+ * Fields we own on top of the adapter schema:
+ *   - `password`           bcrypt hash, present only for credentials
+ *                          sign-ups. OAuth / magic-link users never
+ *                          have one.
+ *   - `savedCarIds`        server-persisted wishlist, synced from the
+ *                          localStorage-backed SavedCarsContext.
+ *   - `resetToken` /       SHA-256 hash of the password-reset token and
+ *     `resetTokenExpiry`   its expiry. Set by /api/auth/forgot-password,
+ *                          cleared on use. Mirrors the AdminUser flow.
+ *
+ * Customer auth never touches `AdminUser` / `adminUsers`, so a customer
+ * account can never escalate into the admin dashboard.
+ */
+export interface CustomerUser {
+  _id?: string | ObjectId;
+  name?: string;
+  email: string;
+  emailVerified?: Date | null;
+  image?: string;
+  password?: string;
+  savedCarIds?: string[];
+  resetToken?: string;
+  resetTokenExpiry?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface Quote {
   _id?: string | ObjectId;
   quoteReference: string;

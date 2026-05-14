@@ -214,3 +214,28 @@
     background-position: -200% 0;
   }
 }
+
+/* ---- Header dropdown / overlay motion ---- */
+
+/* Used by Header.tsx via `animate-[mm-pop_...]` for the desktop account
+   and menu dropdown panels, and `animate-[mm-fade_...]` for the mobile
+   search sheet + full-screen menu overlay. */
+@keyframes mm-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mm-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -33,6 +33,11 @@ const HeroSection = async () => {
           <div
             className={`${featuredCar?.make ? "text-center lg:text-left" : "text-center"}`}
           >
+            {/* New-arrivals eyebrow pill */}
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-gray-300 uppercase">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+              New arrivals every week
+            </div>
             {/* Main Heading */}
             <h1
               className={`${featuredCar?.make ? "mb-6 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" : "mb-10 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}

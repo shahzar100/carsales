@@ -4,7 +4,7 @@ import SavedCarsPage from "@/components/Car/SavedCarsPage";
 export const metadata: Metadata = {
   title: "Saved cars",
   description:
-    "Cars you've saved while browsing. Stored on this device only — no account required.",
+    "Cars you've saved while browsing. Sign in to keep them synced across all your devices.",
   robots: { index: false, follow: true },
 };
 

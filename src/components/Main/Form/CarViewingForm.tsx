@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAccountContact } from "@/hooks/useAccountContact";
 import Form, { FormStep } from "../../Form/Form";
 import Dropdown from "../../Form/Dropdown";
 import {
@@ -88,6 +89,18 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
   const update = (field: keyof ViewingFormData, value: string) =>
     setData((prev) => ({ ...prev, [field]: capLength(value) }));
 
+  // Prefill name + email from the signed-in account. The email field is
+  // locked below — the API forces it to the account email regardless
+  // (see /api/bookings/viewing).
+  const account = useAccountContact();
+  useEffect(() => {
+    setData((prev) => ({
+      ...prev,
+      ...(account.name ? { name: account.name } : {}),
+      ...(account.email ? { email: account.email } : {}),
+    }));
+  }, [account.name, account.email]);
+
   const car = viewingBooking.carDetails;
 
   // ── Steps ────────────────────────────────────────────────
@@ -163,14 +176,20 @@ const CarViewingForm: React.FC<CarViewingFormProps> = ({ onSubmit }) => {
                 placeholder="e.g. John Smith"
                 required
               />
-              <FormInput
-                label="Email Address"
-                type="email"
-                value={data.email}
-                onChange={(v) => update("email", v)}
-                placeholder="e.g. john@example.com"
-                required
-              />
+              <div>
+                <FormInput
+                  label="Email Address"
+                  type="email"
+                  value={data.email}
+                  onChange={(v) => update("email", v)}
+                  placeholder="e.g. john@example.com"
+                  required
+                  disabled
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Your viewing is linked to your account email.
+                </p>
+              </div>
               <FormInput
                 label="Phone Number"
                 type="tel"

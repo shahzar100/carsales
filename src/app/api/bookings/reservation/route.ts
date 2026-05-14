@@ -4,9 +4,11 @@ import {
   ok,
   badRequest,
   notFound,
+  unauthorized,
   tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { getCustomerIdentity } from "@/lib/utils/customerAuth";
 import { waitUntil, ipAddress } from "@vercel/functions";
 import { ObjectId } from "mongodb";
 import {
@@ -64,6 +66,15 @@ export async function POST(request: NextRequest) {
       return tooManyRequests("Too many requests. Please try again later.");
     }
 
+    // ── Auth ───────────────────────────────────────────────
+    // Reservations require a signed-in customer account.
+    const customer = await getCustomerIdentity();
+    if (!customer) {
+      return unauthorized(
+        "Please sign in to your account to reserve a car."
+      );
+    }
+
     // ── Parse body ─────────────────────────────────────────
     let raw: unknown;
     try {
@@ -78,6 +89,11 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = parsed.data;
+
+    // Tie the reservation to the signed-in account — the email on record
+    // is always the account email, so it shows in the customer's
+    // dashboard (matched by account email).
+    body.customerInfo.email = customer.email;
 
     // ── CAPTCHA ────────────────────────────────────────────
     const captcha = await verifyTurnstileToken(body.turnstileToken, ip);

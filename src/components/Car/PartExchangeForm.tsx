@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
   CheckCircle,
@@ -8,6 +8,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import TurnstileWidget from "@/components/Form/TurnstileWidget";
+import { useAccountContact } from "@/hooks/useAccountContact";
 
 interface Props {
   carId: string;
@@ -49,6 +50,18 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
+
+  // Prefill name + email from the signed-in account. The email field is
+  // then locked — the API forces it to the account email regardless
+  // (see /api/bookings/part-exchange).
+  const account = useAccountContact();
+  useEffect(() => {
+    setForm((f) => ({
+      ...f,
+      ...(account.name ? { name: account.name } : {}),
+      ...(account.email ? { email: account.email } : {}),
+    }));
+  }, [account.name, account.email]);
 
   if (success) {
     return (
@@ -176,11 +189,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             <input
               type="email"
               required
+              readOnly
               maxLength={254}
               value={form.email}
-              onChange={(e) => update("email", e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 shadow-sm"
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Your enquiry is linked to your account email.
+            </p>
           </div>
 
           <div className="sm:col-span-2">

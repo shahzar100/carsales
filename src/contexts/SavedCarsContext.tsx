@@ -6,20 +6,30 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   ReactNode,
 } from "react";
+import { useSession } from "next-auth/react";
 
 /**
- * Day 10 / Fix 10.4 — saved cars (customer wishlist).
+ * Saved cars (customer wishlist).
  *
- * LocalStorage-only by design — no auth, no DB row, no PII. Keeps the
- * surface area of the customer auth story zero ("create an account to
- * save cars" is a friction-creating funnel step we don't need here).
+ * Two-tier storage:
+ *   - Signed out → localStorage only, exactly as before. No auth, no DB
+ *     row, no PII. A visitor can still build a wishlist with zero friction.
+ *   - Signed in  → localStorage stays as a fast local cache, but every
+ *     change is also mirrored to the customer's `users` document via
+ *     `/api/account/saved`, so the wishlist follows them across devices.
  *
- * Storage shape: a JSON array of car _id strings under
- * `saved-cars` in localStorage. Capped at SAVED_CARS_MAX entries —
- * if a customer wants more than this they should pick up the phone.
+ * On sign-in we do a one-time three-way reconcile: take the union of the
+ * server list and whatever was in localStorage, adopt that, and push it
+ * back up. That way cars saved while logged out aren't lost when an
+ * account is created, and cars saved on another device show up here.
+ *
+ * Storage shape (localStorage): a JSON array of car `_id` strings under
+ * `saved-cars`, capped at SAVED_CARS_MAX entries. The server enforces the
+ * same cap (see /api/account/saved).
  */
 
 const STORAGE_KEY = "saved-cars";
@@ -60,16 +70,88 @@ function writeStorage(ids: string[]): void {
   }
 }
 
+/** Fire-and-forget push of the full list to the server. */
+function pushToServer(ids: string[]): void {
+  fetch("/api/account/saved", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids }),
+  }).catch(() => {
+    // Offline / transient failure — localStorage still holds the change,
+    // and the next sign-in reconcile will pick it back up.
+  });
+}
+
 export function SavedCarsProvider({ children }: { children: ReactNode }) {
+  const { status } = useSession();
+  const isAuthed = status === "authenticated";
+
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
-  // Hydrate on mount; first SSR render returns `[]` so server and client
-  // markup match.
+  // `persist` is stable (deps: []), so it reads auth state through a ref
+  // rather than closing over `isAuthed`.
+  const isAuthedRef = useRef(isAuthed);
+  useEffect(() => {
+    isAuthedRef.current = isAuthed;
+  }, [isAuthed]);
+
+  // Hydrate from localStorage on mount; first SSR render returns `[]` so
+  // server and client markup match.
   useEffect(() => {
     setSavedIds(readStorage());
   }, []);
 
-  // Sync changes across browser tabs.
+  // One-time reconcile with the server when the customer signs in.
+  // `reconciledRef` resets on sign-out so a later sign-in re-runs it.
+  const reconciledRef = useRef(false);
+  useEffect(() => {
+    if (!isAuthed) {
+      reconciledRef.current = false;
+      return;
+    }
+    if (reconciledRef.current) return;
+    reconciledRef.current = true;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/account/saved");
+        if (!res.ok) return;
+        const json = await res.json();
+        const serverIds: string[] = Array.isArray(json?.data?.savedCarIds)
+          ? json.data.savedCarIds
+          : [];
+        const local = readStorage();
+        const merged = [...new Set([...serverIds, ...local])].slice(
+          0,
+          SAVED_CARS_MAX
+        );
+        if (cancelled) return;
+        setSavedIds(merged);
+        writeStorage(merged);
+
+        // Only write back if the union actually added something the
+        // server didn't already have.
+        const serverSet = new Set(serverIds);
+        if (
+          merged.length !== serverIds.length ||
+          merged.some((id) => !serverSet.has(id))
+        ) {
+          pushToServer(merged);
+        }
+      } catch {
+        // Network failure — fall back to the localStorage list already
+        // loaded. reconciledRef stays true so we don't hammer the API;
+        // a page reload will retry.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthed]);
+
+  // Sync changes across browser tabs (signed in or out).
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY) return;
@@ -82,6 +164,7 @@ export function SavedCarsProvider({ children }: { children: ReactNode }) {
   const persist = useCallback((ids: string[]) => {
     setSavedIds(ids);
     writeStorage(ids);
+    if (isAuthedRef.current) pushToServer(ids);
   }, []);
 
   const isSaved = useCallback(

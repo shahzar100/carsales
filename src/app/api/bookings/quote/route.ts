@@ -3,9 +3,11 @@ import { z } from "zod";
 import {
   ok,
   badRequest,
+  unauthorized,
   tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { getCustomerIdentity } from "@/lib/utils/customerAuth";
 import { waitUntil } from "@vercel/functions";
 import { ipAddress } from "@vercel/functions";
 import { getQuotesCollection, Quote } from "@/lib/models";
@@ -57,6 +59,14 @@ export async function POST(request: NextRequest) {
       return tooManyRequests("Too many requests. Please try again later.");
     }
 
+    // Quote requests require a signed-in customer account.
+    const customer = await getCustomerIdentity();
+    if (!customer) {
+      return unauthorized(
+        "Please sign in to your account to request a quote."
+      );
+    }
+
     let raw: unknown;
     try {
       raw = await request.json();
@@ -71,6 +81,11 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = parsed.data;
+
+    // Tie the quote request to the signed-in account — the email on
+    // record is always the account email, so it shows in the customer's
+    // dashboard (matched by account email).
+    body.customerInfo.email = customer.email;
 
     // (#17) CAPTCHA check
     const captcha = await verifyTurnstileToken(body.turnstileToken, ip);

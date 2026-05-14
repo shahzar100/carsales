@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import BookingFlow from "@/components/Booking/Flow/BookingFlow";
+import BookingAuthGate from "@/components/Account/BookingAuthGate";
 import "./booking-flow.css";
 
 export const metadata: Metadata = {
@@ -24,10 +25,17 @@ export default async function BookPage() {
 
   return (
     <Suspense fallback={null}>
-      <BookingFlow
-        detailingPackages={detailingPackages}
-        tintOptions={tintOptions}
-      />
+      {/* Service bookings are account-only — see BookingAuthGate and the
+          guard in /api/bookings/service. */}
+      <BookingAuthGate
+        heading="Sign in to book a service"
+        message="You need an account to book a service — it's quick, and your booking then shows up in your dashboard."
+      >
+        <BookingFlow
+          detailingPackages={detailingPackages}
+          tintOptions={tintOptions}
+        />
+      </BookingAuthGate>
     </Suspense>
   );
 }
