@@ -25,6 +25,16 @@ const serverSchema = z.object({
     .min(32, "SESSION_SECRET must be at least 32 characters")
     .optional(),
 
+  // ── Customer auth (Auth.js / NextAuth v5) ─────────────────
+  // Auth.js reads these directly from process.env; they're declared
+  // here so a missing AUTH_SECRET in production fails at boot rather
+  // than on the first sign-in attempt. AUTH_GOOGLE_* are optional —
+  // without them the Google button just won't work; email/password
+  // and magic-link sign-in still do.
+  AUTH_SECRET: z.string().optional(),
+  AUTH_GOOGLE_ID: z.string().optional(),
+  AUTH_GOOGLE_SECRET: z.string().optional(),
+
   // ── Email / SMTP ──────────────────────────────────────────
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().default(587),
@@ -85,6 +95,12 @@ function validateServerEnv() {
     if (!parsed.data.SESSION_SECRET) {
       throw new Error(
         "SESSION_SECRET must be set in production (min 32 characters)"
+      );
+    }
+    if (!parsed.data.AUTH_SECRET) {
+      throw new Error(
+        "AUTH_SECRET must be set in production — Auth.js uses it to " +
+          "sign customer session JWTs (generate with `npx auth secret`)"
       );
     }
     if (parsed.data.EMAIL_FROM === "noreply@yourdomain.com") {

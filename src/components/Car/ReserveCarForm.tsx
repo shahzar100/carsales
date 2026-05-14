@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lock, CheckCircle, Loader2 } from "lucide-react";
 import TurnstileWidget from "@/components/Form/TurnstileWidget";
+import { useAccountContact } from "@/hooks/useAccountContact";
 
 interface Props {
   carId: string;
@@ -30,6 +31,15 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
     null
   );
   const [error, setError] = useState<string | null>(null);
+
+  // Prefill from the signed-in account. The email is then locked — the
+  // API forces it to the account email anyway (see /api/bookings/
+  // reservation), so an editable field would just be misleading.
+  const account = useAccountContact();
+  useEffect(() => {
+    if (account.name) setName(account.name);
+    if (account.email) setEmail(account.email);
+  }, [account.name, account.email]);
 
   if (success) {
     return (
@@ -151,11 +161,14 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
             id="reserve-email"
             type="email"
             required
+            readOnly
             maxLength={254}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 shadow-sm"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Your reservation is linked to your account email.
+          </p>
         </div>
         <div className="sm:col-span-2">
           <label

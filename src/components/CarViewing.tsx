@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useViewing } from "@/contexts/ViewingContext";
 import CarViewingForm from "./Main/Form/CarViewingForm";
 import VehicleDetails from "./Shared/VehicleDetails";
+import BookingAuthGate from "./Account/BookingAuthGate";
 
 const CarViewing = () => {
   const { viewingBooking } = useViewing();
@@ -42,9 +43,14 @@ const CarViewing = () => {
       {/* Car Details Section */}
       <VehicleDetails vehicle={viewingBooking.carDetails} />
 
-      {/* Multi-stage Booking Form */}
+      {/* Multi-stage Booking Form — account required (BookingAuthGate). */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-        <CarViewingForm />
+        <BookingAuthGate
+          heading="Sign in to book a viewing"
+          message="You need an account to book a car viewing — it's quick, and your viewing then shows up in your dashboard."
+        >
+          <CarViewingForm />
+        </BookingAuthGate>
       </div>
     </div>
   );

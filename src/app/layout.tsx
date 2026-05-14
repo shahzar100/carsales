@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AuthSessionProvider from "@/components/Providers/AuthSessionProvider";
 import { ViewingProvider } from "@/contexts/ViewingContext";
 import { BusinessInfoProvider } from "@/contexts/BusinessInfoContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
@@ -71,17 +72,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen overflow-x-hidden antialiased">
-        <ToastProvider>
-          <NavigationProvider>
-            <ViewingProvider>
-              <BusinessInfoProvider>
-                <PageLoader />
-                {children}
-              </BusinessInfoProvider>
-            </ViewingProvider>
-          </NavigationProvider>
-          <ToastContainer />
-        </ToastProvider>
+        {/* SessionProvider wraps everything so any client component can
+            call useSession() — the nav account link and the saved-cars
+            sync both rely on it. */}
+        <AuthSessionProvider>
+          <ToastProvider>
+            <NavigationProvider>
+              <ViewingProvider>
+                <BusinessInfoProvider>
+                  <PageLoader />
+                  {children}
+                </BusinessInfoProvider>
+              </ViewingProvider>
+            </NavigationProvider>
+            <ToastContainer />
+          </ToastProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

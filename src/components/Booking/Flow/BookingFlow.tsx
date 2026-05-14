@@ -1,6 +1,7 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAccountContact } from "@/hooks/useAccountContact";
 import {
   ArrowRight,
   Award,
@@ -215,6 +216,19 @@ export default function BookingFlow({
       [field]: typeof value === "string" ? (capLength(value as string) as BookingState[K]) : value,
     }));
   }, []);
+
+  // Prefill name + email from the signed-in account (this flow sits
+  // behind BookingAuthGate, so the session is authenticated by the time
+  // it renders). The email field in Step 5 is locked to match — the API
+  // forces customerInfo.email to the account email regardless.
+  const account = useAccountContact();
+  useEffect(() => {
+    setData((prev) => ({
+      ...prev,
+      ...(account.name ? { name: account.name } : {}),
+      ...(account.email ? { email: account.email } : {}),
+    }));
+  }, [account.name, account.email]);
 
   // ── Per-service package data ───────────────────────────────
   const packages = useMemo<PackageCardData[]>(() => {
@@ -1033,14 +1047,20 @@ function Step5({
               placeholder="e.g. John Smith"
               required
             />
-            <FormInput
-              label="Email Address"
-              type="email"
-              value={data.email}
-              onChange={(v) => update("email", v)}
-              placeholder="e.g. john@example.com"
-              required
-            />
+            <div>
+              <FormInput
+                label="Email Address"
+                type="email"
+                value={data.email}
+                onChange={(v) => update("email", v)}
+                placeholder="e.g. john@example.com"
+                required
+                disabled
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Your booking is linked to your account email.
+              </p>
+            </div>
             <FormInput
               label="Phone Number"
               type="tel"

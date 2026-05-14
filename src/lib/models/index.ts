@@ -15,6 +15,7 @@ import {
   Reservation,
   PartExchange,
   AuditLog,
+  CustomerUser,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -29,6 +30,7 @@ export type {
   Reservation,
   PartExchange,
   AuditLog,
+  CustomerUser,
 };
 
 import {
@@ -51,6 +53,7 @@ let carPartsCollection: Collection<CarPartInterface>;
 let reservationsCollection: Collection<Reservation>;
 let partExchangesCollection: Collection<PartExchange>;
 let auditLogsCollection: Collection<AuditLog>;
+let usersCollection: Collection<CustomerUser>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -387,4 +390,25 @@ export async function getAuditLogsCollection(): Promise<
     ]);
   }
   return auditLogsCollection;
+}
+
+// ── Customer users (customer-facing Auth.js auth) ────────────
+//
+// Shared with the Auth.js MongoDB adapter, which manages the
+// `accounts`, `sessions` and `verification_tokens` collections itself.
+// We only declare the `users` indexes here. The unique email index is
+// what makes "this email is already registered" a hard DB constraint
+// rather than a check-then-write race in the register route.
+export async function getUsersCollection(): Promise<
+  Collection<CustomerUser>
+> {
+  if (!usersCollection) {
+    const db = await getDb();
+    usersCollection = db.collection<CustomerUser>("users");
+
+    await usersCollection.createIndexes([
+      { key: { email: 1 }, unique: true },
+    ]);
+  }
+  return usersCollection;
 }

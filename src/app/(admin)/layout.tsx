@@ -12,6 +12,16 @@ export const metadata: Metadata = {
 };
 
 /**
+ * Render the admin shell at request time. `/admin/login` would otherwise
+ * be statically prerendered, and prerendering the client-component shell
+ * (AuthProvider + AdminNavigationTabs) trips Next 16's
+ * "Cannot read properties of null (reading 'useState')" export error.
+ * Mirrors the same `force-dynamic` fix already applied to the marketing
+ * layout and the admin dashboard layout.
+ */
+export const dynamic = "force-dynamic";
+
+/**
  * (#10) Admin shell.
  *
  * The auth guard now lives in `admin/dashboard/layout.tsx` — that's the

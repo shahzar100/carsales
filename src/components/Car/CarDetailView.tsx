@@ -39,6 +39,7 @@ import { formatPrice, formatMileage } from "@/lib/utils/format";
 import FinanceCalculator from "@/components/Car/FinanceCalculator";
 import ReserveCarForm from "@/components/Car/ReserveCarForm";
 import PartExchangeForm from "@/components/Car/PartExchangeForm";
+import BookingAuthGate from "@/components/Account/BookingAuthGate";
 
 interface CarDetailViewProps {
   car: CarInterface;
@@ -748,17 +749,22 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
         <section className="border-t border-gray-100 bg-gray-50">
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
             <FinanceCalculator price={car.price} />
+            {/* Reserve + part-exchange are account-only — one gate covers
+                both forms so a signed-out visitor sees a single prompt. */}
             {car._id && (
-              <ReserveCarForm
-                carId={String(car._id)}
-                carLabel={carTitle}
-              />
-            )}
-            {car._id && (
-              <PartExchangeForm
-                carId={String(car._id)}
-                carLabel={carTitle}
-              />
+              <BookingAuthGate
+                heading="Sign in to reserve or part-exchange"
+                message="You need an account to reserve this car or send a part-exchange enquiry — it keeps everything tracked in your dashboard."
+              >
+                <ReserveCarForm
+                  carId={String(car._id)}
+                  carLabel={carTitle}
+                />
+                <PartExchangeForm
+                  carId={String(car._id)}
+                  carLabel={carTitle}
+                />
+              </BookingAuthGate>
             )}
           </div>
         </section>

@@ -3,9 +3,11 @@ import { z } from "zod";
 import {
   ok,
   badRequest,
+  unauthorized,
   tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { getCustomerIdentity } from "@/lib/utils/customerAuth";
 import { waitUntil } from "@vercel/functions";
 import { ipAddress } from "@vercel/functions";
 import {
@@ -53,6 +55,14 @@ export async function POST(request: NextRequest) {
       return tooManyRequests("Too many requests. Please try again later.");
     }
 
+    // Bookings require a signed-in customer account.
+    const customer = await getCustomerIdentity();
+    if (!customer) {
+      return unauthorized(
+        "Please sign in to your account to make a booking."
+      );
+    }
+
     let raw: unknown;
     try {
       raw = await request.json();
@@ -67,6 +77,12 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = parsed.data;
+
+    // The booking is tied to the signed-in account: the email on record
+    // is always the account email, never whatever was typed into the
+    // form. This is what makes the booking show in the customer's
+    // dashboard (which matches bookings by account email).
+    body.customerInfo.email = customer.email;
 
     // (#17) CAPTCHA check
     const captcha = await verifyTurnstileToken(body.turnstileToken, ip);
