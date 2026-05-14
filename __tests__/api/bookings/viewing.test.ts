@@ -15,6 +15,16 @@ jest.mock("@/lib/utils/booking", () => ({
   generateBookingReference: jest.fn().mockReturnValue("BK-VIEW123"),
 }));
 
+// Customer auth — booking routes require a signed-in customer. Mocking
+// it keeps the route from pulling in the @/auth → next-auth ESM chain
+// (which Jest can't parse), and lets each test control whether a
+// customer is "signed in".
+jest.mock("@/lib/utils/customerAuth", () => ({
+  getCustomerIdentity: jest
+    .fn()
+    .mockResolvedValue({ email: "jane@example.com", name: "Jane Doe" }),
+}));
+
 describe("/api/bookings/viewing", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -107,8 +117,10 @@ describe("/api/bookings/viewing", () => {
       const response = await POST(request);
       const data = await response.json();
 
+      // Zod rejects the empty strings; the exact message is an
+      // implementation detail, so just assert the failure shape.
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Customer information is required");
+      expect(data.success).toBe(false);
     });
 
     it("should reject request with missing booking details", async () => {
@@ -135,7 +147,7 @@ describe("/api/bookings/viewing", () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Booking details are required");
+      expect(data.success).toBe(false);
     });
 
     it("auto-populates dealership from businessInfo even when the client omits it", async () => {
@@ -173,21 +185,15 @@ describe("/api/bookings/viewing", () => {
       await client.close();
     });
 
-    it("should reject request with invalid email", async () => {
-      const invalidData = {
-        ...validBookingData,
-        customerInfo: {
-          name: "Jane Doe",
-          email: "not-an-email",
-          phone: "555-0124",
-        },
-      };
+    it("returns 401 when no customer is signed in", async () => {
+      const { getCustomerIdentity } = require("@/lib/utils/customerAuth");
+      getCustomerIdentity.mockResolvedValueOnce(null);
 
       const request = new NextRequest(
         "http://localhost:3000/api/bookings/viewing",
         {
           method: "POST",
-          body: JSON.stringify(invalidData),
+          body: JSON.stringify(validBookingData),
           headers: {
             "Content-Type": "application/json",
             "x-forwarded-for": "10.0.3.5",
@@ -198,8 +204,8 @@ describe("/api/bookings/viewing", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(400);
-      expect(data.error).toBe("Invalid email address");
+      expect(response.status).toBe(401);
+      expect(data.error).toMatch(/sign in/i);
     });
 
     it("should reject request with invalid phone number", async () => {
@@ -347,7 +353,7 @@ describe("/api/bookings/viewing", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should return 500 when an internal error occurs", async () => {
+    it("returns 400 for an unparseable request body", async () => {
       const request = new NextRequest(
         "http://localhost:3000/api/bookings/viewing",
         {
@@ -355,7 +361,7 @@ describe("/api/bookings/viewing", () => {
           body: "not valid json",
           headers: {
             "Content-Type": "application/json",
-            "x-forwarded-for": "192.168.4.400",
+            "x-forwarded-for": "192.168.4.40",
           },
         }
       );
@@ -363,8 +369,10 @@ describe("/api/bookings/viewing", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe("Internal server error");
+      // The route catches the JSON parse error and returns a clean 400
+      // rather than letting it surface as a 500.
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
     });
 
     it("returns 400 for malformed JSON body", async () => {

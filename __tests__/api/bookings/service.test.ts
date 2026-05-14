@@ -15,6 +15,16 @@ jest.mock("@/lib/utils/booking", () => ({
   generateBookingReference: jest.fn().mockReturnValue("BK-TEST123"),
 }));
 
+// Customer auth — booking routes require a signed-in customer. Mocking
+// it keeps the route from pulling in the @/auth → next-auth ESM chain
+// (which Jest can't parse), and lets each test control whether a
+// customer is "signed in".
+jest.mock("@/lib/utils/customerAuth", () => ({
+  getCustomerIdentity: jest
+    .fn()
+    .mockResolvedValue({ email: "john@example.com", name: "John Doe" }),
+}));
+
 describe("/api/bookings/service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -109,8 +119,10 @@ describe("/api/bookings/service", () => {
       const response = await POST(request);
       const data = await response.json();
 
+      // Zod rejects the empty strings; the exact message is an
+      // implementation detail, so just assert the failure shape.
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Customer information is required");
+      expect(data.success).toBe(false);
     });
 
     it("should reject request with missing service details", async () => {
@@ -137,7 +149,7 @@ describe("/api/bookings/service", () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("Service details are required");
+      expect(data.success).toBe(false);
     });
 
     it("should use default shop info when no shop info in database", async () => {
@@ -188,25 +200,21 @@ describe("/api/bookings/service", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe("Internal server error");
+      // The route catches the JSON parse error and returns a clean 400
+      // rather than letting it surface as a 500.
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
     });
 
-    it("should reject request with invalid email", async () => {
-      const invalidData = {
-        ...validBookingData,
-        customerInfo: {
-          name: "John Doe",
-          email: "not-an-email",
-          phone: "555-0123",
-        },
-      };
+    it("returns 401 when no customer is signed in", async () => {
+      const { getCustomerIdentity } = require("@/lib/utils/customerAuth");
+      getCustomerIdentity.mockResolvedValueOnce(null);
 
       const request = new NextRequest(
         "http://localhost:3000/api/bookings/service",
         {
           method: "POST",
-          body: JSON.stringify(invalidData),
+          body: JSON.stringify(validBookingData),
           headers: {
             "Content-Type": "application/json",
             "x-forwarded-for": "10.0.1.1",
@@ -217,8 +225,39 @@ describe("/api/bookings/service", () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(400);
-      expect(data.error).toBe("Invalid email address");
+      expect(response.status).toBe(401);
+      expect(data.error).toMatch(/sign in/i);
+    });
+
+    it("forces the booking onto the account email, ignoring the form value", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/service",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ...validBookingData,
+            customerInfo: {
+              ...validBookingData.customerInfo,
+              email: "someone-else@evil.com",
+            },
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "10.0.1.9",
+          },
+        }
+      );
+
+      const response = await POST(request);
+      expect(response.status).toBe(200);
+
+      const { serviceAppointments, client } = await getTestCollections();
+      const saved = await serviceAppointments.findOne({
+        bookingReference: "BK-TEST123",
+      });
+      // The route ignores the submitted email and uses the account email.
+      expect(saved?.customerInfo.email).toBe("john@example.com");
+      await client.close();
     });
 
     it("should reject request with invalid phone number", async () => {

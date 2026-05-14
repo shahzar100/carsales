@@ -214,6 +214,12 @@ export interface AdminUser {
  *   - `resetToken` /       SHA-256 hash of the password-reset token and
  *     `resetTokenExpiry`   its expiry. Set by /api/auth/forgot-password,
  *                          cleared on use. Mirrors the AdminUser flow.
+ *   - `verifyToken` /      SHA-256 hash of the email-verification token
+ *     `verifyTokenExpiry`  and its expiry. Set on credentials sign-up
+ *                          and on resend; cleared once `emailVerified`
+ *                          is stamped. OAuth / magic-link users skip
+ *                          this entirely — the provider proves the
+ *                          email, so the adapter sets `emailVerified`.
  *
  * Customer auth never touches `AdminUser` / `adminUsers`, so a customer
  * account can never escalate into the admin dashboard.
@@ -228,6 +234,8 @@ export interface CustomerUser {
   savedCarIds?: string[];
   resetToken?: string;
   resetTokenExpiry?: Date;
+  verifyToken?: string;
+  verifyTokenExpiry?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }

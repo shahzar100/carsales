@@ -1,19 +1,26 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { logError } from "@/lib/utils/observability";
 
 /**
  * Global error boundary — catches errors thrown in the root layout
  * itself, which the route-level `error.tsx` can't reach because it
- * renders *inside* that layout.
+ * renders *inside* that layout. It replaces the entire document, so it
+ * renders its own `<html>` / `<body>`.
  *
- * It replaces the entire document, so it must render its own `<html>`
- * and `<body>`. Kept deliberately context-free: providing this file
- * means Next.js uses it instead of synthesising its own default global
- * error page, whose prerender trips a "Cannot read properties of null"
- * export error under Next 16 + Turbopack.
+ * KNOWN ISSUE — `next build` currently fails while prerendering the
+ * synthetic `/_global-error` route with
+ * "TypeError: Cannot read properties of null (reading 'useContext')".
+ * This was investigated extensively (Auth-hardening branch):
+ *   - reproduces with a zero-import, zero-hook version of this file,
+ *   - reproduces under both Turbopack and webpack,
+ *   - reproduces on Next 16.1.6 and 16.2.6, React 19.1.0 and 19.2.0,
+ *   - the failing frame is pure framework code — the built
+ *     `_global-error/page.js` references none of our source files.
+ * So it's a Next.js framework bug, not app code. The file is kept
+ * because it's still the correct runtime error boundary (and good
+ * practice); the build failure needs a Next-side fix or upstream issue.
  */
 export default function GlobalError({
   error,
@@ -51,12 +58,16 @@ export default function GlobalError({
             >
               Try again
             </button>
-            <Link
+            {/* Plain anchor, not next/link: global-error renders outside
+                the app-router tree, so the Link router context isn't
+                available here. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a
               href="/"
               className="rounded-lg border border-gray-300 px-6 py-2.5 text-gray-700 transition-colors hover:bg-gray-50"
             >
               Back to home
-            </Link>
+            </a>
           </div>
         </div>
       </body>
