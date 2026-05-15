@@ -8,19 +8,6 @@ import { logError } from "@/lib/utils/observability";
  * itself, which the route-level `error.tsx` can't reach because it
  * renders *inside* that layout. It replaces the entire document, so it
  * renders its own `<html>` / `<body>`.
- *
- * KNOWN ISSUE — `next build` currently fails while prerendering the
- * synthetic `/_global-error` route with
- * "TypeError: Cannot read properties of null (reading 'useContext')".
- * This was investigated extensively (Auth-hardening branch):
- *   - reproduces with a zero-import, zero-hook version of this file,
- *   - reproduces under both Turbopack and webpack,
- *   - reproduces on Next 16.1.6 and 16.2.6, React 19.1.0 and 19.2.0,
- *   - the failing frame is pure framework code — the built
- *     `_global-error/page.js` references none of our source files.
- * So it's a Next.js framework bug, not app code. The file is kept
- * because it's still the correct runtime error boundary (and good
- * practice); the build failure needs a Next-side fix or upstream issue.
  */
 export default function GlobalError({
   error,
