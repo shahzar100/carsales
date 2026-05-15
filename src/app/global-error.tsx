@@ -1,19 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { logError } from "@/lib/utils/observability";
 
 /**
  * Global error boundary — catches errors thrown in the root layout
  * itself, which the route-level `error.tsx` can't reach because it
- * renders *inside* that layout.
- *
- * It replaces the entire document, so it must render its own `<html>`
- * and `<body>`. Kept deliberately context-free: providing this file
- * means Next.js uses it instead of synthesising its own default global
- * error page, whose prerender trips a "Cannot read properties of null"
- * export error under Next 16 + Turbopack.
+ * renders *inside* that layout. It replaces the entire document, so it
+ * renders its own `<html>` / `<body>`.
  */
 export default function GlobalError({
   error,
@@ -51,12 +45,16 @@ export default function GlobalError({
             >
               Try again
             </button>
-            <Link
+            {/* Plain anchor, not next/link: global-error renders outside
+                the app-router tree, so the Link router context isn't
+                available here. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a
               href="/"
               className="rounded-lg border border-gray-300 px-6 py-2.5 text-gray-700 transition-colors hover:bg-gray-50"
             >
               Back to home
-            </Link>
+            </a>
           </div>
         </div>
       </body>

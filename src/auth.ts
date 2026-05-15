@@ -4,11 +4,14 @@ import Google from "next-auth/providers/google";
 import Nodemailer from "next-auth/providers/nodemailer";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
+import React from "react";
 
 import clientPromise from "@/lib/mongodb";
 import { getUsersCollection } from "@/lib/models";
 import { verifyPassword } from "@/lib/utils/auth";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
+import { sendEmail } from "@/emails/send";
+import { MagicLinkSignIn } from "@/emails/MagicLinkSignIn";
 
 /**
  * Customer-facing authentication (Auth.js / NextAuth v5).
@@ -45,6 +48,14 @@ const customerLoginLimiter = createRateLimiter("customerLogin", {
   windowMs: 15 * 60 * 1000,
 });
 
+// Magic-link guard, keyed by the *recipient email* — without it, the
+// sign-in form could be used to flood someone's inbox with sign-in
+// links. 3 links per 15 min per address is plenty for a real retry.
+const magicLinkLimiter = createRateLimiter("customerMagicLink", {
+  maxRequests: 3,
+  windowMs: 15 * 60 * 1000,
+});
+
 /**
  * Thrown from `authorize()` when the per-IP rate limit is hit. Auth.js
  * masks every other authorize failure as the generic `CredentialsSignin`
@@ -67,7 +78,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   providers: [
-    Google,
+    Google({
+      // Google verifies email ownership, so it's safe to link a Google
+      // sign-in to an existing account with the same address. Without
+      // this, a customer who registered with email/password and later
+      // clicks "Continue with Google" hits an OAuthAccountNotLinked
+      // dead-end instead of just signing in.
+      allowDangerousEmailAccountLinking: true,
+    }),
     Nodemailer({
       // Reuse the app's existing SMTP configuration (see src/emails/send.ts).
       server: {
@@ -81,6 +99,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: `${process.env.EMAIL_FROM_NAME || "MMC Leeds"} <${
         process.env.EMAIL_FROM || "noreply@yourdomain.com"
       }>`,
+      // Override the provider's plain-HTML default: rate-limit per
+      // recipient, then send the branded React Email template.
+      async sendVerificationRequest({ identifier, url }) {
+        const { allowed } = await magicLinkLimiter.check(
+          identifier.toLowerCase()
+        );
+        if (!allowed) {
+          throw new Error(
+            "Too many sign-in links requested for this email. Please wait a few minutes."
+          );
+        }
+        const result = await sendEmail({
+          to: identifier,
+          subject: "Your sign-in link",
+          react: React.createElement(MagicLinkSignIn, { url }),
+        });
+        if (!result.success) {
+          throw new Error("Failed to send the sign-in link.");
+        }
+      },
     }),
     Credentials({
       credentials: {
@@ -119,6 +157,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    // Handle `useSession().update({ name })` from the account Settings
+    // tab — refresh the name on the JWT so a profile edit shows up
+    // immediately instead of only after the next sign-in.
+    jwt({ token, trigger, session }) {
+      if (
+        trigger === "update" &&
+        session &&
+        typeof (session as { name?: unknown }).name === "string"
+      ) {
+        token.name = (session as { name: string }).name;
+      }
+      return token;
+    },
     // JWT strategy: `token.sub` already carries the user id for every
     // provider. Mirror it onto the session so client components and
     // API routes can read `session.user.id` directly.

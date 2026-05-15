@@ -227,6 +227,8 @@ export const getTestCollections = async () => {
     carViewingBookings: db.collection("carViewingBookings"),
     adminUsers: db.collection("adminUsers"),
     quotes: db.collection("quotes"),
+    // Customer accounts (Auth.js `users` collection).
+    users: db.collection("users"),
     client, // Return client so tests can close it
   };
 };

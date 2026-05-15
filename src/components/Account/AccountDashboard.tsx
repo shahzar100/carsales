@@ -2,11 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signOut } from "next-auth/react";
-import { Heart, CalendarClock, History, LogOut } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+import {
+  Heart,
+  CalendarClock,
+  History,
+  Settings as SettingsIcon,
+  LogOut,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import SavedCarsList from "./SavedCarsList";
 import BookingsList, { type ActivityItem } from "./BookingsList";
+import AccountSettings from "./AccountSettings";
+import EmailVerificationBanner from "./EmailVerificationBanner";
 
 /**
  * The single customer dashboard. Saved cars, upcoming bookings and
@@ -22,16 +30,22 @@ import BookingsList, { type ActivityItem } from "./BookingsList";
  * SavedCarsContext instead, so switching tabs never refetches.
  */
 
-type TabId = "saved" | "upcoming" | "history";
+type TabId = "saved" | "upcoming" | "history" | "settings";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "saved", label: "Saved cars", icon: Heart },
   { id: "upcoming", label: "Upcoming", icon: CalendarClock },
   { id: "history", label: "History", icon: History },
+  { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
 function isTabId(value: string | null): value is TabId {
-  return value === "saved" || value === "upcoming" || value === "history";
+  return (
+    value === "saved" ||
+    value === "upcoming" ||
+    value === "history" ||
+    value === "settings"
+  );
 }
 
 export default function AccountDashboard({
@@ -91,7 +105,13 @@ export default function AccountDashboard({
     [router]
   );
 
-  const greetingName = user.name?.split(" ")[0] || "there";
+  // Prefer the live session (so a name change in Settings shows
+  // immediately via useSession().update()), falling back to the
+  // server-passed prop for the first paint.
+  const { data: session } = useSession();
+  const displayName = session?.user?.name ?? user.name;
+  const displayEmail = session?.user?.email ?? user.email;
+  const greetingName = displayName?.split(" ")[0] || "there";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -100,7 +120,7 @@ export default function AccountDashboard({
         <div>
           <h1 className="page-title">Hi, {greetingName}</h1>
           <p className="mt-1 text-sm text-gray-600">
-            {user.email} — your saved cars and bookings, all in one place.
+            {displayEmail} — your saved cars and bookings, all in one place.
           </p>
         </div>
         <button
@@ -112,6 +132,9 @@ export default function AccountDashboard({
           Sign out
         </button>
       </div>
+
+      {/* ── Email verification nudge (renders nothing once verified) ── */}
+      <EmailVerificationBanner />
 
       {/* ── Tabs ───────────────────────────────────────────── */}
       <div
@@ -154,7 +177,7 @@ export default function AccountDashboard({
 
       {/* ── Panels ─────────────────────────────────────────── */}
       <div className="mt-8">
-        {bookingsError && tab !== "saved" && (
+        {bookingsError && (tab === "upcoming" || tab === "history") && (
           <p className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
             We couldn&apos;t load your bookings just now. Please refresh the
             page.
@@ -180,6 +203,8 @@ export default function AccountDashboard({
             emptyDescription="Completed and cancelled bookings made with your email address will appear here."
           />
         )}
+
+        {tab === "settings" && <AccountSettings />}
       </div>
     </div>
   );

@@ -32,6 +32,7 @@ import {
   Heart,
   Calendar,
   Clock,
+  Settings as SettingsIcon,
   LogOut,
   ArrowRight,
   Shield,
@@ -101,6 +102,7 @@ const ACCOUNT_LINKS: LinkItem[] = [
   { label: "Saved cars", href: "/account?tab=saved", icon: Heart },
   { label: "My bookings", href: "/account?tab=upcoming", icon: Calendar },
   { label: "Booking history", href: "/account?tab=history", icon: Clock },
+  { label: "Account settings", href: "/account?tab=settings", icon: SettingsIcon },
 ];
 
 // ── Small primitives ───────────────────────────────────────────────────

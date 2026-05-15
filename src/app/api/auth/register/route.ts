@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { waitUntil } from "@vercel/functions";
 
 import { getUsersCollection } from "@/lib/models";
 import { hashPassword } from "@/lib/utils/auth";
+import { sendVerificationEmail } from "@/lib/utils/emailVerification";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import {
@@ -101,6 +103,11 @@ export async function POST(request: NextRequest) {
       }
       throw err;
     }
+
+    // Fire the verification email in the background — the client signs
+    // the user in immediately either way (verification is soft), so
+    // there's no reason to block the response on SMTP.
+    waitUntil(sendVerificationEmail(email));
 
     return ok({ email }, 201);
   } catch (error) {
