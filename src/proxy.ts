@@ -54,7 +54,7 @@ function generateNonce(): string {
   return btoa(String.fromCharCode(...bytes));
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // ── CSRF protection (state-changing API calls only) ──
   if (
     ["POST", "PUT", "DELETE", "PATCH"].includes(request.method) &&

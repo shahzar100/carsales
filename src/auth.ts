@@ -32,7 +32,7 @@ import { MagicLinkSignIn } from "@/emails/MagicLinkSignIn";
  *     `users` collection that `getUsersCollection()` indexes.
  *   - Route protection is done with server-side `auth()` guards in the
  *     `/account` page, mirroring how the admin dashboard guards itself
- *     in its layout — we deliberately don't put this in middleware.
+ *     in its layout — we deliberately don't put this in proxy.ts.
  */
 
 const credentialsSchema = z.object({

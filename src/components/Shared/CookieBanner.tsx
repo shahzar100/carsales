@@ -1,34 +1,82 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 /**
- * Day 9 / Fix 9.1 — cookie consent banner.
+ * Cookie consent banner with granular GDPR controls.
  *
- * Future-proofs analytics: when Google Analytics / Plausible / etc. is
- * wired, gate the loader on `localStorage.cookie-consent === "accepted"`.
- * Nothing is gated today; this is the consent signal sitting in place.
+ * Storage:
+ *   - "cookie-consent" → "accepted" | "rejected" | "customized" (coarse signal
+ *     used to decide whether to show the banner; preserves the existing key
+ *     so analytics gating like `localStorage["cookie-consent"] === "accepted"`
+ *     continues to work).
+ *   - "cookie-preferences" → JSON { necessary, functional, analytics, marketing,
+ *     timestamp, version } — the granular per-category record. Read this when
+ *     gating individual scripts/loaders.
  *
  * UX:
- *   - Pinned to the bottom of the viewport, above WhatsAppButton z-index.
- *   - Two actions: Accept, Reject. Either choice persists and the banner
- *     hides for that browser.
- *   - aria-live="polite" so screen readers announce it when it appears.
- *   - Focus moves to the dialog on mount + traps inside it; Escape rejects.
- *   - Returns focus to whatever was active when the banner appeared.
+ *   - Pinned to the bottom of the viewport.
+ *   - Initial actions: Reject all, Customize, Accept all (+ privacy link).
+ *   - Customize expands an inline panel with one toggle per category.
+ *   - Necessary cookies are always on and locked.
+ *   - Focus moves to the dialog on mount, traps inside it, returns to the
+ *     originally-focused element on dismiss. Escape rejects all.
  */
 
-const STORAGE_KEY = "cookie-consent";
+const CONSENT_KEY = "cookie-consent";
+const PREFS_KEY = "cookie-preferences";
+const PREFS_VERSION = 1;
+
+type Category = "necessary" | "functional" | "analytics" | "marketing";
+
+type Preferences = Record<Category, boolean>;
+
+const DEFAULT_PREFS: Preferences = {
+  necessary: true,
+  functional: false,
+  analytics: false,
+  marketing: false,
+};
+
+const CATEGORY_COPY: Record<
+  Category,
+  { label: string; description: string; locked?: boolean }
+> = {
+  necessary: {
+    label: "Strictly necessary",
+    description:
+      "Required for the site to work — sign-in, security, and saving your choices on this banner. These can't be turned off.",
+    locked: true,
+  },
+  functional: {
+    label: "Functional",
+    description:
+      "Remember preferences like saved cars and recent searches to improve your experience.",
+  },
+  analytics: {
+    label: "Analytics",
+    description:
+      "Help us understand how visitors use the site so we can improve it. Aggregated and anonymous.",
+  },
+  marketing: {
+    label: "Marketing",
+    description:
+      "Used to measure ad performance and show you relevant offers. Off by default.",
+  },
+};
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const [showCustomize, setShowCustomize] = useState(false);
+  const [prefs, setPrefs] = useState<Preferences>(DEFAULT_PREFS);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored !== "accepted" && stored !== "rejected") {
+    const stored = window.localStorage.getItem(CONSENT_KEY);
+    if (stored !== "accepted" && stored !== "rejected" && stored !== "customized") {
       previousFocusRef.current = document.activeElement as HTMLElement | null;
       setVisible(true);
     }
@@ -37,20 +85,22 @@ export default function CookieBanner() {
   useEffect(() => {
     if (!visible || !dialogRef.current) return;
 
-    // Focus the first interactive element when the banner appears.
-    const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, [tabindex]:not([tabindex="-1"])'
-    );
-    focusables[0]?.focus();
+    const focusables = () =>
+      Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
+
+    focusables()[0]?.focus();
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        dismiss("rejected");
+        persist("rejected", { ...DEFAULT_PREFS });
         return;
       }
       if (e.key !== "Tab") return;
-      // Trap focus inside the dialog.
-      const list = Array.from(focusables);
+      const list = focusables();
       if (list.length === 0) return;
       const first = list[0];
       const last = list[list.length - 1];
@@ -65,16 +115,42 @@ export default function CookieBanner() {
 
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-    // dismiss is stable (defined below).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  }, [visible, showCustomize]);
 
-  const dismiss = (choice: "accepted" | "rejected") => {
+  const persist = (
+    choice: "accepted" | "rejected" | "customized",
+    next: Preferences
+  ) => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_KEY, choice);
+      window.localStorage.setItem(CONSENT_KEY, choice);
+      window.localStorage.setItem(
+        PREFS_KEY,
+        JSON.stringify({
+          ...next,
+          version: PREFS_VERSION,
+          timestamp: new Date().toISOString(),
+        })
+      );
     }
     setVisible(false);
     previousFocusRef.current?.focus();
+  };
+
+  const acceptAll = () =>
+    persist("accepted", {
+      necessary: true,
+      functional: true,
+      analytics: true,
+      marketing: true,
+    });
+
+  const rejectAll = () => persist("rejected", { ...DEFAULT_PREFS });
+
+  const saveCustom = () => persist("customized", prefs);
+
+  const toggle = (key: Category) => {
+    if (CATEGORY_COPY[key].locked) return;
+    setPrefs((p) => ({ ...p, [key]: !p[key] }));
   };
 
   if (!visible) return null;
@@ -88,34 +164,123 @@ export default function CookieBanner() {
       aria-live="polite"
       className="fixed inset-x-3 bottom-3 z-100 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl sm:bottom-6 sm:p-5"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <p id="cookie-banner-title" className="text-sm font-semibold text-gray-900">
             We use cookies
           </p>
           <p className="mt-1 text-sm text-gray-600">
-            We use a small set of essential cookies to keep the site working.
-            With your permission we&apos;ll add analytics later — accept now
-            and you won&apos;t see this again.
+            We use essential cookies to keep the site working, and — with your
+            permission — functional, analytics, and marketing cookies to
+            improve your experience. You can choose which to allow.{" "}
+            <Link
+              href="/privacy"
+              className="font-medium text-red-600 underline-offset-2 hover:underline"
+            >
+              Read our Privacy Policy
+            </Link>
+            .
           </p>
         </div>
-        <div className="flex shrink-0 gap-2 sm:flex-row">
-          <button
-            type="button"
-            onClick={() => dismiss("rejected")}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
-          >
-            Reject
-          </button>
-          <button
-            type="button"
-            onClick={() => dismiss("accepted")}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none"
-          >
-            Accept
-          </button>
-        </div>
+        {!showCustomize && (
+          <div className="flex shrink-0 flex-wrap gap-2 sm:flex-nowrap">
+            <button
+              type="button"
+              onClick={rejectAll}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            >
+              Reject all
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowCustomize(true)}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            >
+              Customize
+            </button>
+            <button
+              type="button"
+              onClick={acceptAll}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none"
+            >
+              Accept all
+            </button>
+          </div>
+        )}
       </div>
+
+      {showCustomize && (
+        <div className="mt-4 border-t border-gray-200 pt-4">
+          <p className="text-sm font-semibold text-gray-900">
+            Cookie preferences
+          </p>
+          <ul className="mt-3 space-y-3">
+            {(Object.keys(CATEGORY_COPY) as Category[]).map((key) => {
+              const { label, description, locked } = CATEGORY_COPY[key];
+              const checked = locked ? true : prefs[key];
+              return (
+                <li
+                  key={key}
+                  className="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900">
+                      {label}
+                      {locked && (
+                        <span className="ml-2 inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-gray-700 uppercase">
+                          Always on
+                        </span>
+                      )}
+                    </p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-gray-600">
+                      {description}
+                    </p>
+                  </div>
+                  <label
+                    className={`relative inline-flex shrink-0 cursor-pointer items-center ${
+                      locked ? "cursor-not-allowed opacity-60" : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={checked}
+                      disabled={locked}
+                      onChange={() => toggle(key)}
+                      aria-label={`${label} cookies`}
+                    />
+                    <span className="h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-red-600 peer-focus-visible:ring-2 peer-focus-visible:ring-red-200" />
+                    <span className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="mt-4 flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              onClick={rejectAll}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            >
+              Reject all
+            </button>
+            <button
+              type="button"
+              onClick={acceptAll}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            >
+              Accept all
+            </button>
+            <button
+              type="button"
+              onClick={saveCustom}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none"
+            >
+              Save preferences
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
