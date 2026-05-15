@@ -65,8 +65,6 @@ export default function CookieBanner() {
 
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-    // dismiss is stable (defined below).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const dismiss = (choice: "accepted" | "rejected") => {
