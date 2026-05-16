@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { User, Mail, Lock, AlertCircle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import Button from "@/components/UI/Button";
+import { InfoBanner } from "@/components/Form/FormPrimitives";
 
 /**
  * Customer sign-up form for the email + password method.
@@ -73,29 +74,14 @@ export default function RegisterForm() {
     <div className="space-y-5">
       <AnimatePresence>
         {error && (
-          <motion.div
+          <InfoBanner
             key={error}
-            initial={{ opacity: 0, y: -4, height: 0 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              height: "auto",
-              x: [0, -6, 6, -4, 4, -2, 0],
-              transition: {
-                opacity: { duration: 0.18 },
-                y: { duration: 0.18 },
-                height: { duration: 0.18 },
-                x: { duration: 0.36, ease: "easeOut" },
-              },
-            }}
-            exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
-            style={{ overflow: "hidden" }}
+            variant="error"
+            animated
+            icon={<AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
           >
-            <div className="flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          </motion.div>
+            {error}
+          </InfoBanner>
         )}
       </AnimatePresence>
 

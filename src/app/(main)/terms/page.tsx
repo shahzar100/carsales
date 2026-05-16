@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Scale, Mail } from "lucide-react";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import LegalPageShell, {
+  type LegalSection,
+} from "@/components/Legal/LegalPageShell";
+import { LEGAL_LAST_UPDATED } from "@/lib/constants";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -20,6 +24,34 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Render one body item from a section's `content` array — preserves the
+ * subtitle / paragraph layout the page used pre-extraction so the
+ * visual output is byte-identical.
+ */
+function SectionBody({
+  items,
+}: {
+  items: { subtitle?: string; text: string }[];
+}) {
+  return (
+    <>
+      {items.map((item, idx) => (
+        <div key={idx}>
+          {item.subtitle && (
+            <h3 className="mb-2 text-base font-semibold text-gray-800">
+              {item.subtitle}
+            </h3>
+          )}
+          <p className="text-sm leading-relaxed whitespace-pre-line text-gray-600">
+            {item.text}
+          </p>
+        </div>
+      ))}
+    </>
+  );
+}
+
 export default async function TermsOfService() {
   const businessInfo = await getBusinessInfo();
 
@@ -33,7 +65,7 @@ export default async function TermsOfService() {
 
   const fullAddress = `${address}, ${city}, ${state} ${zip}`.trim();
 
-  const sections = [
+  const rawSections: { title: string; content: { subtitle?: string; text: string }[] }[] = [
     {
       title: "1. Introduction",
       content: [
@@ -208,99 +240,40 @@ export default async function TermsOfService() {
     },
   ];
 
+  const sections: LegalSection[] = rawSections.map(({ title, content }) => ({
+    title,
+    body: <SectionBody items={content} />,
+  }));
+
   return (
-    <div className="min-h-screen">
-      {/* ─── Hero Section ─── */}
-      <section className="relative overflow-hidden bg-black text-white">
-        <div className="pointer-events-none absolute -top-32 right-0 h-125 w-125 rounded-full bg-red-600/5 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 left-0 h-80 w-80 rounded-full bg-red-600/3 blur-3xl" />
-
-        <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-4 py-1.5 text-sm text-red-400">
-              <Scale size={14} />
-              Legal
-            </div>
-
-            <h1 className="mb-6 text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
-              Terms of{" "}
-              <span className="bg-linear-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-                Service
-              </span>
-            </h1>
-
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-400">
-              Please read these terms carefully before using our website or
-              services. They outline your rights and responsibilities.
-            </p>
-
-            <p className="mt-6 text-sm text-gray-500">
-              Last updated: March 2026
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Terms Content ─── */}
-      <section className="bg-white py-16 sm:py-24">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="mx-auto max-w-4xl">
-            <div className="space-y-10">
-              {sections.map((section) => (
-                <div key={section.title}>
-                  <h2 className="mb-5 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
-                    {section.title}
-                  </h2>
-                  <div className="space-y-4">
-                    {section.content.map((item, idx) => (
-                      <div key={idx}>
-                        {"subtitle" in item && item.subtitle && (
-                          <h3 className="mb-2 text-base font-semibold text-gray-800">
-                            {item.subtitle}
-                          </h3>
-                        )}
-                        <p className="text-sm leading-relaxed whitespace-pre-line text-gray-600">
-                          {item.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Contact CTA ─── */}
-      <section className="bg-black py-16 sm:py-20">
-        <div className="container mx-auto px-4 text-center sm:px-6">
-          <div className="mx-auto max-w-2xl">
-            <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl">
-              Questions About Our Terms?
-            </h2>
-            <p className="mb-8 text-gray-400">
-              If you need clarification on any of our terms or policies,
-              don&apos;t hesitate to reach out.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <a
-                href={`mailto:${email}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-8 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
-              >
-                <Mail size={18} />
-                {email}
-              </a>
-              <Link
-                href="/privacy"
-                className="inline-flex items-center rounded-xl border border-white/20 bg-white/5 px-8 py-3.5 font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-              >
-                View Privacy Policy
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+    <LegalPageShell
+      titleLead="Terms of"
+      titleAccent="Service"
+      eyebrow={{ icon: Scale, label: "Legal" }}
+      intro="Please read these terms carefully before using our website or services. They outline your rights and responsibilities."
+      lastUpdated={LEGAL_LAST_UPDATED}
+      sections={sections}
+      footerCta={{
+        title: "Questions About Our Terms?",
+        body: "If you need clarification on any of our terms or policies, don't hesitate to reach out.",
+        actions: (
+          <>
+            <a
+              href={`mailto:${email}`}
+              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-8 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/25"
+            >
+              <Mail size={18} />
+              {email}
+            </a>
+            <Link
+              href="/privacy"
+              className="inline-flex items-center rounded-xl border border-white/20 bg-white/5 px-8 py-3.5 font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+            >
+              View Privacy Policy
+            </Link>
+          </>
+        ),
+      }}
+    />
   );
 }
