@@ -59,77 +59,73 @@ export default function ResetPasswordForm({ token }: Props) {
 
   if (success) {
     return (
-      <div className="rounded-xl bg-white p-8 shadow-2xl">
-        <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-          <CheckCircle className="h-4 w-4 shrink-0" />
-          <span>Password updated. Redirecting to sign-in…</span>
-        </div>
+      <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+        <CheckCircle className="h-4 w-4 shrink-0" />
+        <span>Password updated. Redirecting to sign-in…</span>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl bg-white p-8 shadow-2xl">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="new-password"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            New password
-          </label>
-          <div className="relative">
-            <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
-            <input
-              id="new-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={PASSWORD_MIN}
-              autoComplete="new-password"
-              className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-              placeholder="At least 12 characters"
-            />
-          </div>
-          <p className="mt-1.5 text-xs text-gray-500">
-            Must include uppercase, lowercase, and a digit.
-          </p>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label
+          htmlFor="new-password"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
+          New password
+        </label>
+        <div className="relative">
+          <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+          <input
+            id="new-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={PASSWORD_MIN}
+            autoComplete="new-password"
+            className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            placeholder="At least 12 characters"
+          />
         </div>
+        <p className="mt-1.5 text-xs text-gray-500">
+          Must include uppercase, lowercase, and a digit.
+        </p>
+      </div>
 
-        <div>
-          <label
-            htmlFor="confirm-password"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Confirm password
-          </label>
-          <div className="relative">
-            <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
-            <input
-              id="confirm-password"
-              type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              required
-              autoComplete="new-password"
-              className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-              placeholder="Re-enter the password"
-            />
-          </div>
+      <div>
+        <label
+          htmlFor="confirm-password"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
+          Confirm password
+        </label>
+        <div className="relative">
+          <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+          <input
+            id="confirm-password"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+            autoComplete="new-password"
+            className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+            placeholder="Re-enter the password"
+          />
         </div>
+      </div>
 
-        {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
 
-        <Button type="submit" loading={loading} size="lg" customWidth="w-full">
-          {loading ? "Updating…" : "Set new password"}
-        </Button>
-      </form>
-    </div>
+      <Button type="submit" loading={loading} size="lg" customWidth="w-full">
+        {loading ? "Updating…" : "Set new password"}
+      </Button>
+    </form>
   );
 }
