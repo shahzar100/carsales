@@ -131,7 +131,6 @@ describe("Toast", () => {
       render(<Toast toast={createToast()} onRemove={onRemove} />);
 
       fireEvent.click(screen.getByLabelText("Close notification"));
-
       // Should not be called immediately (300ms exit animation)
       expect(onRemove).not.toHaveBeenCalled();
 
@@ -144,10 +143,9 @@ describe("Toast", () => {
 
     it("should not call onRemove twice on multiple clicks", () => {
       render(<Toast toast={createToast()} onRemove={onRemove} />);
-
       const closeButton = screen.getByLabelText("Close notification");
       fireEvent.click(closeButton);
-      fireEvent.click(closeButton); // second click should be ignored
+      fireEvent.click(closeButton); // guarded by isRemoving
 
       act(() => {
         jest.advanceTimersByTime(300);
@@ -226,16 +224,15 @@ describe("Toast", () => {
   describe("Visibility animation", () => {
     it("should animate in after 50ms delay", () => {
       render(<Toast toast={createToast()} onRemove={onRemove} />);
-
       const alertEl = screen.getByRole("alert");
-      // Initially should have translate-x-full (not visible)
+      // Initially has translate-x-full (not visible)
       expect(alertEl.className).toContain("translate-x-full");
 
       act(() => {
         jest.advanceTimersByTime(50);
       });
 
-      // After 50ms, should have translate-x-0 (visible)
+      // After 50ms, has translate-x-0 (visible)
       expect(alertEl.className).toContain("translate-x-0");
     });
   });

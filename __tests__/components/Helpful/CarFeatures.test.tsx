@@ -123,7 +123,10 @@ describe("CarFeatures", () => {
         onClearAll={jest.fn()}
       />
     );
-    // Selected feature has "✓ " prefix
-    expect(screen.getByText(/✓.*Bluetooth/)).toBeInTheDocument();
+    // The "✓" lives in its own inline span (separately animated) next to
+    // the feature label, so flatten-and-match rather than expecting a
+    // single text node containing both.
+    const bluetoothBtn = screen.getByRole("button", { name: /bluetooth/i });
+    expect(bluetoothBtn.textContent ?? "").toMatch(/✓\s*Bluetooth/);
   });
 });

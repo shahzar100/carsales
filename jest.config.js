@@ -18,14 +18,30 @@ const customJestConfig = {
     // node-only tests with a MongoMemoryServer dependency — they live in
     // __tests__/utils/ but only the api config has the mongo setup hook.
     "<rootDir>/__tests__/utils/getDashboardData",
+    // Server-only test: pokes `process.env.NODE_ENV` + re-requires
+    // iron-session / `src/lib/env.ts` to assert production cookie flags.
+    // Belongs only in the api (node) config — running it under jsdom
+    // duplicates the result in the test explorer.
+    "<rootDir>/__tests__/utils/auth",
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^uuid$": "<rootDir>/__tests__/utils/__mocks__/uuid.ts",
   },
+  // jsdom config runs UI / app shells / contexts / hooks. API route
+  // handlers + server-only lib code are covered by jest.config.api.js
+  // — listing them here would inflate the 0% rows in the Test Explorer
+  // coverage panel since they never execute under jsdom.
   collectCoverageFrom: [
     "src/**/*.{js,ts,jsx,tsx}",
     "!src/**/*.d.ts",
+    "!src/app/api/**",
+    "!src/lib/mongodb.ts",
+    "!src/lib/models/**",
+    "!src/lib/env.ts",
+    "!src/lib/utils/auth.ts",
+    "!src/lib/utils/businessInfo.ts",
+    "!src/emails/**",
     "!**/node_modules/**",
   ],
   coverageDirectory: "coverage",

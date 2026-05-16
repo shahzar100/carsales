@@ -10,16 +10,20 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import StepStrip, { STEP_LABELS } from "@/components/Booking/Flow/StepStrip";
 
+// `Step 2 of 5` and `2/5` are split across `<motion.span>` and plain text
+// nodes (the count is animated). Match against flattened textContent so
+// the assertion doesn't care about the DOM split.
+const flatText = (el: HTMLElement | Document = document.body) =>
+  (el.textContent ?? "").replace(/\s+/g, " ");
+
 describe("StepStrip", () => {
   it("renders the step counter and title", () => {
     render(<StepStrip step={2} title="Pick a package" />);
-    expect(
-      screen.getByText(`Step 2 of ${STEP_LABELS.length}`)
-    ).toBeInTheDocument();
+    expect(flatText()).toMatch(
+      new RegExp(`Step\\s+2\\s+of\\s+${STEP_LABELS.length}`)
+    );
     expect(screen.getByText("Pick a package")).toBeInTheDocument();
-    expect(
-      screen.getByText(`2/${STEP_LABELS.length}`)
-    ).toBeInTheDocument();
+    expect(flatText()).toMatch(new RegExp(`2\\s*/\\s*${STEP_LABELS.length}`));
   });
 
   it("classifies each step dot as done / now / upcoming", () => {
@@ -48,7 +52,7 @@ describe("StepStrip", () => {
 
   it("honours a custom total", () => {
     render(<StepStrip step={1} title="x" total={3} />);
-    expect(screen.getByText("Step 1 of 3")).toBeInTheDocument();
-    expect(screen.getByText("1/3")).toBeInTheDocument();
+    expect(flatText()).toMatch(/Step\s+1\s+of\s+3/);
+    expect(flatText()).toMatch(/1\s*\/\s*3/);
   });
 });
