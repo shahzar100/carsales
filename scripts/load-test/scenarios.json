@@ -1,0 +1,14 @@
+{
+  "scenarios": [
+    { "name": "home",            "method": "GET", "path": "/" },
+    { "name": "browseFleet",     "method": "GET", "path": "/BrowseFleet" },
+    { "name": "carParts",        "method": "GET", "path": "/CarParts" },
+    { "name": "services",        "method": "GET", "path": "/Services" },
+    { "name": "apiAbout",        "method": "GET", "path": "/api/about" },
+    { "name": "apiBusinessInfo", "method": "GET", "path": "/api/businessinfo" },
+    { "name": "apiCarParts",     "method": "GET", "path": "/api/carparts" },
+    { "name": "apiCarPartsBrand","method": "GET", "path": "/api/carparts?brand=Ford" },
+    { "name": "sitemap",         "method": "GET", "path": "/sitemap.xml" },
+    { "name": "robots",          "method": "GET", "path": "/robots.txt" }
+  ]
+}
