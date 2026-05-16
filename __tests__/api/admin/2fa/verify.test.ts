@@ -104,6 +104,36 @@ describe("POST /api/admin/2fa/verify", () => {
     expect(res.status).toBe(404);
   });
 
+  it("🔒 returns 409 when the user is already 2FA-enrolled (re-enrol hijack guard)", async () => {
+    mockSession.isLoggedIn = true;
+    mockSession.username = "already-enrolled";
+    mockSession.pendingTotpSecret = "ATTACKER-CONTROLLED-SECRET";
+    mockVerifyTotpCode.mockReturnValue(true);
+
+    const { adminUsers, client } = await getTestCollections();
+    await adminUsers.insertOne({
+      username: "already-enrolled",
+      passwordHash: "x",
+      totpEnabled: true,
+      totpSecret: "ORIGINAL-USER-SECRET",
+    } as never);
+    await client.close();
+
+    const res = await POST(makeRequest({ code: "123456" }));
+    expect(res.status).toBe(409);
+    const data = await res.json();
+    expect(data.error).toContain("already enabled");
+
+    // The legitimate secret must be untouched — no DB write happened.
+    const { adminUsers: u2, client: c2 } = await getTestCollections();
+    const saved = await u2.findOne({ username: "already-enrolled" });
+    expect(saved?.totpSecret).toBe("ORIGINAL-USER-SECRET");
+    expect(saved?.totpEnabled).toBe(true);
+    await c2.close();
+
+    expect(mockRecordAudit).not.toHaveBeenCalled();
+  });
+
   it("persists totpEnabled + secret, clears pending, and audit-logs on success", async () => {
     mockSession.isLoggedIn = true;
     mockSession.username = "promotable";

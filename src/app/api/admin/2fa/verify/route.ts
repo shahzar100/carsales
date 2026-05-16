@@ -47,6 +47,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const users = await getAdminUsersCollection();
+
+    // Refuse to overwrite a secret that's already in place. Without this
+    // guard a stolen session cookie could call /enroll → /verify and
+    // silently rotate the legitimate user's TOTP seed to one the attacker
+    // controls, locking the real user out without ever touching the
+    // password. The disable flow (which re-prompts for the password) is
+    // the only path that should clear the existing secret.
+    const existing = await users.findOne({ username: session.username });
+    if (!existing) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    if (existing.totpEnabled === true) {
+      return NextResponse.json(
+        { error: "2FA already enabled — disable first to re-enrol" },
+        { status: 409 }
+      );
+    }
+
     const result = await users.updateOne(
       { username: session.username },
       { $set: { totpSecret: pending, totpEnabled: true, updatedAt: new Date() } }
