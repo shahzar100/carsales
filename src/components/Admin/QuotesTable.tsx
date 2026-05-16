@@ -3,8 +3,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import type { Quote } from "@/lib/interfaces";
 import { logError } from "@/lib/utils/observability";
+
+const rowVariants = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0 },
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04 } },
+};
 
 interface Props {
   rows: Quote[];
@@ -131,11 +142,31 @@ export default function QuotesTable({ rows, filter, pagination }: Props) {
         </span>
       </div>
 
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            key={error}
+            initial={{ opacity: 0, y: -4, height: 0 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              x: [0, -6, 6, -4, 4, -2, 0],
+              transition: {
+                opacity: { duration: 0.18 },
+                y: { duration: 0.18 },
+                height: { duration: 0.18 },
+                x: { duration: 0.36, ease: "easeOut" },
+              },
+            }}
+            exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
+            style={{ overflow: "hidden" }}
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            {error}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
         <table className="min-w-full divide-y divide-gray-200">
@@ -150,7 +181,12 @@ export default function QuotesTable({ rows, filter, pagination }: Props) {
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 text-sm">
+          <motion.tbody
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="divide-y divide-gray-100 text-sm"
+          >
             {rows.length === 0 ? (
               <tr>
                 <td
@@ -165,7 +201,12 @@ export default function QuotesTable({ rows, filter, pagination }: Props) {
                 const id = String(r._id);
                 const busy = busyId === id;
                 return (
-                  <tr key={id} className="hover:bg-gray-50">
+                  <motion.tr
+                    key={id}
+                    variants={rowVariants}
+                    transition={{ type: "spring", stiffness: 360, damping: 28 }}
+                    className="hover:bg-gray-50"
+                  >
                     <td className="px-4 py-2 font-mono text-xs text-gray-700">
                       {r.quoteReference}
                     </td>
@@ -199,53 +240,69 @@ export default function QuotesTable({ rows, filter, pagination }: Props) {
                       )}
                     </td>
                     <td className="px-4 py-2">
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs font-medium ${
-                          STATUS_STYLES[r.status] ?? STATUS_STYLES.pending
-                        }`}
-                      >
-                        {r.status}
-                      </span>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                          key={r.status}
+                          initial={{ opacity: 0, scale: 0.7 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.7 }}
+                          transition={{ type: "spring", stiffness: 460, damping: 24 }}
+                          className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
+                            STATUS_STYLES[r.status] ?? STATUS_STYLES.pending
+                          }`}
+                        >
+                          {r.status}
+                        </motion.span>
+                      </AnimatePresence>
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex flex-wrap gap-2">
                         {r.status === "pending" && (
-                          <button
+                          <motion.button
                             type="button"
                             disabled={busy}
                             onClick={() => markResponded(id)}
+                            whileHover={busy ? undefined : { scale: 1.05 }}
+                            whileTap={busy ? undefined : { scale: 0.94 }}
+                            transition={{ type: "spring", stiffness: 460, damping: 22 }}
                             className="rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
                           >
                             Mark responded
-                          </button>
+                          </motion.button>
                         )}
                         {r.status === "responded" && (
-                          <button
+                          <motion.button
                             type="button"
                             disabled={busy}
                             onClick={() => transition(id, "accepted")}
+                            whileHover={busy ? undefined : { scale: 1.05 }}
+                            whileTap={busy ? undefined : { scale: 0.94 }}
+                            transition={{ type: "spring", stiffness: 460, damping: 22 }}
                             className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
                           >
                             Mark accepted
-                          </button>
+                          </motion.button>
                         )}
                         {r.status !== "expired" && r.status !== "accepted" && (
-                          <button
+                          <motion.button
                             type="button"
                             disabled={busy}
                             onClick={() => transition(id, "expired")}
+                            whileHover={busy ? undefined : { scale: 1.05 }}
+                            whileTap={busy ? undefined : { scale: 0.94 }}
+                            transition={{ type: "spring", stiffness: 460, damping: 22 }}
                             className="rounded-lg border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                           >
                             Expire
-                          </button>
+                          </motion.button>
                         )}
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })
             )}
-          </tbody>
+          </motion.tbody>
         </table>
       </div>
     </div>

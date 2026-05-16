@@ -13,6 +13,7 @@ import Image from "next/image";
 import { getFeaturedCar } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
+import { HeroFadeIn, HeroStatCard } from "./HeroMotion";
 
 const HeroSection = async () => {
   const [featuredCar, businessInfo] = await Promise.all([
@@ -34,27 +35,33 @@ const HeroSection = async () => {
             className={`${featuredCar?.make ? "text-center lg:text-left" : "text-center"}`}
           >
             {/* New-arrivals eyebrow pill */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-gray-300 uppercase">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
-              New arrivals every week
-            </div>
+            <HeroFadeIn delay={0} y={8}>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-gray-300 uppercase">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+                New arrivals every week
+              </div>
+            </HeroFadeIn>
             {/* Main Heading */}
-            <h1
-              className={`${featuredCar?.make ? "mb-6 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" : "mb-10 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
-            >
-              Find Your Perfect Car
-              <span className="mt-2 block bg-linear-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-                Book a Viewing Today
-              </span>
-            </h1>
+            <HeroFadeIn delay={0.1}>
+              <h1
+                className={`${featuredCar?.make ? "mb-6 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" : "mb-10 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl"}`}
+              >
+                Find Your Perfect Car
+                <span className="mt-2 block bg-linear-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+                  Book a Viewing Today
+                </span>
+              </h1>
+            </HeroFadeIn>
             {/* Subtitle */}
-            <p
-              className={`${featuredCar?.make ? "max-w-xl" : "mx-auto max-w-2xl"} text-base leading-relaxed text-gray-400 sm:text-lg`}
-            >
-              Browse our premium collection of vehicles and schedule convenient
-              viewing appointments. Experience quality cars with expert
-              guidance.
-            </p>
+            <HeroFadeIn delay={0.2}>
+              <p
+                className={`${featuredCar?.make ? "max-w-xl" : "mx-auto max-w-2xl"} text-base leading-relaxed text-gray-400 sm:text-lg`}
+              >
+                Browse our premium collection of vehicles and schedule convenient
+                viewing appointments. Experience quality cars with expert
+                guidance.
+              </p>
+            </HeroFadeIn>
 
             {/* CTA Button — below subtitle on desktop when featured car exists */}
             {featuredCar?.make && (
@@ -175,7 +182,7 @@ const HeroSection = async () => {
         {/* Stats Section */}
         <div className="mt-20">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/3 px-6 py-5">
+            <HeroStatCard delay={0}>
               <Car className="text-red-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">
@@ -185,9 +192,9 @@ const HeroSection = async () => {
                   {stats?.vehicles?.label}
                 </p>
               </div>
-            </div>
+            </HeroStatCard>
 
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/3 px-6 py-5">
+            <HeroStatCard delay={0.08}>
               <Calendar className="text-red-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">
@@ -195,9 +202,9 @@ const HeroSection = async () => {
                 </span>
                 <p className="text-sm text-gray-500">{stats?.booking?.label}</p>
               </div>
-            </div>
+            </HeroStatCard>
 
-            <div className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/3 px-6 py-5">
+            <HeroStatCard delay={0.16}>
               <Star className="text-yellow-500" size={24} />
               <div>
                 <span className="text-2xl font-bold">
@@ -205,7 +212,7 @@ const HeroSection = async () => {
                 </span>
                 <p className="text-sm text-gray-500">{stats?.rating?.label}</p>
               </div>
-            </div>
+            </HeroStatCard>
           </div>
         </div>
       </div>

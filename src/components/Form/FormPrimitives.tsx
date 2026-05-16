@@ -1,3 +1,4 @@
+"use client";
 import React, { useId, useState } from "react";
 import {
   ChevronLeft,
@@ -7,6 +8,41 @@ import {
   Copy,
   CheckCheck,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+
+/**
+ * Inline validation message with a subtle fade + shake on first appearance.
+ * Used by FormInput and FormTextarea — keep them visually consistent so
+ * "an error appeared" reads the same anywhere on the page.
+ */
+const FieldError: React.FC<{ id?: string; children: React.ReactNode }> = ({
+  id,
+  children,
+}) => (
+  <AnimatePresence>
+    {children && (
+      <motion.p
+        id={id}
+        role="alert"
+        initial={{ opacity: 0, y: -4, x: 0 }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          x: [0, -6, 6, -4, 4, -2, 0],
+          transition: {
+            opacity: { duration: 0.15 },
+            y: { duration: 0.15 },
+            x: { duration: 0.32, ease: "easeOut" },
+          },
+        }}
+        exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }}
+        className="mt-1 text-xs text-red-600"
+      >
+        {children}
+      </motion.p>
+    )}
+  </AnimatePresence>
+);
 
 // ═════════════════════════════════════════════════════════════
 // Button
@@ -332,11 +368,7 @@ export const FormInput: React.FC<{
         aria-describedby={errorId}
         className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
       />
-      {error && (
-        <p id={errorId} className="mt-1 text-xs text-red-600">
-          {error}
-        </p>
-      )}
+      <FieldError id={errorId}>{error}</FieldError>
     </div>
   );
 };
@@ -378,11 +410,7 @@ export const FormTextarea: React.FC<{
         aria-describedby={errorId}
         className="w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
       />
-      {error && (
-        <p id={errorId} className="mt-1 text-xs text-red-600">
-          {error}
-        </p>
-      )}
+      <FieldError id={errorId}>{error}</FieldError>
     </div>
   );
 };

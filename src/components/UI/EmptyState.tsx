@@ -17,8 +17,10 @@
  * ```
  */
 
+"use client";
 import React from "react";
 import type { LucideIcon } from "lucide-react";
+import { motion } from "motion/react";
 
 interface EmptyStateProps {
   /** Lucide icon component (not an instance — pass `Car`, not `<Car />`). */
@@ -62,9 +64,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const useDashed = dashed ?? true;
   return (
-    <div
+    <motion.div
       role="status"
       aria-live="polite"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className={[
         "flex flex-col items-center justify-center text-center",
         useDashed
@@ -75,17 +80,46 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       ].join(" ")}
     >
       {Icon && (
-        <Icon
-          className={`text-gray-400 ${ICON_SIZE_CLASSES[size]}`}
-          aria-hidden="true"
-        />
+        <motion.span
+          initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 18, delay: 0.05 }}
+        >
+          <Icon
+            className={`text-gray-400 ${ICON_SIZE_CLASSES[size]}`}
+            aria-hidden="true"
+          />
+        </motion.span>
       )}
-      <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+      <motion.h3
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, delay: 0.12 }}
+        className="text-base font-semibold text-gray-900"
+      >
+        {title}
+      </motion.h3>
       {description && (
-        <p className="max-w-md text-sm text-gray-500">{description}</p>
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: 0.18 }}
+          className="max-w-md text-sm text-gray-500"
+        >
+          {description}
+        </motion.p>
       )}
-      {action && <div className="mt-2">{action}</div>}
-    </div>
+      {action && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: 0.24 }}
+          className="mt-2"
+        >
+          {action}
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 

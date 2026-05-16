@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { SelectedBooking } from "@/lib/types";
 import Modal from "@/components/Helpful/Buttons/Modal";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -23,7 +24,14 @@ export default function CancelBookingModal({
     <Modal title="Cancel Booking" onClose={onClose} size="sm">
       {/* Warning icon */}
       <div className="flex items-center gap-2 text-red-600">
-        <AlertTriangle className="h-5 w-5" />
+        <motion.span
+          initial={{ scale: 0.6, rotate: -12 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
+          className="inline-flex"
+        >
+          <AlertTriangle className="h-5 w-5" />
+        </motion.span>
         <span className="text-sm font-semibold">
           This action cannot be undone
         </span>
@@ -54,11 +62,20 @@ export default function CancelBookingModal({
             rows={3}
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm shadow-sm transition-all hover:border-gray-300 placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
           />
-          {reason.length > 0 && reason.length < 10 && (
-            <p className="mt-1 text-xs text-red-500">
-              Reason must be at least 10 characters ({reason.length}/10)
-            </p>
-          )}
+          <AnimatePresence>
+            {reason.length > 0 && reason.length < 10 && (
+              <motion.p
+                initial={{ opacity: 0, y: -4, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -4, height: 0 }}
+                transition={{ duration: 0.18 }}
+                style={{ overflow: "hidden" }}
+                className="mt-1 text-xs text-red-500"
+              >
+                Reason must be at least 10 characters ({reason.length}/10)
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import SavedCarsList from "./SavedCarsList";
 import BookingsList, { type ActivityItem } from "./BookingsList";
 import AccountSettings from "./AccountSettings";
@@ -151,26 +152,37 @@ export default function AccountDashboard({
                 ? bookings.history.length
                 : null;
           return (
-            <button
+            <motion.button
               key={id}
               role="tab"
               aria-selected={active}
               type="button"
               onClick={() => selectTab(id)}
-              className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+              whileTap={{ scale: 0.96 }}
+              className={`relative -mb-px flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
                 active
-                  ? "border-red-600 text-red-600"
-                  : "border-transparent text-gray-500 hover:text-gray-800"
+                  ? "text-red-600"
+                  : "text-gray-500 hover:text-gray-800"
               }`}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
               {label}
               {count !== null && count > 0 && (
-                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                <motion.span
+                  layout
+                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
+                >
                   {count}
-                </span>
+                </motion.span>
               )}
-            </button>
+              {active && (
+                <motion.span
+                  layoutId="account-tab-underline"
+                  className="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"
+                  transition={{ type: "spring", stiffness: 480, damping: 32 }}
+                />
+              )}
+            </motion.button>
           );
         })}
       </div>
@@ -184,27 +196,37 @@ export default function AccountDashboard({
           </p>
         )}
 
-        {tab === "saved" && <SavedCarsList />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {tab === "saved" && <SavedCarsList />}
 
-        {tab === "upcoming" && (
-          <BookingsList
-            items={bookings.upcoming}
-            loading={bookingsLoading}
-            emptyTitle="No upcoming bookings"
-            emptyDescription="When you book a service, car viewing or reservation, it'll show up here."
-          />
-        )}
+            {tab === "upcoming" && (
+              <BookingsList
+                items={bookings.upcoming}
+                loading={bookingsLoading}
+                emptyTitle="No upcoming bookings"
+                emptyDescription="When you book a service, car viewing or reservation, it'll show up here."
+              />
+            )}
 
-        {tab === "history" && (
-          <BookingsList
-            items={bookings.history}
-            loading={bookingsLoading}
-            emptyTitle="No past bookings yet"
-            emptyDescription="Completed and cancelled bookings made with your email address will appear here."
-          />
-        )}
+            {tab === "history" && (
+              <BookingsList
+                items={bookings.history}
+                loading={bookingsLoading}
+                emptyTitle="No past bookings yet"
+                emptyDescription="Completed and cancelled bookings made with your email address will appear here."
+              />
+            )}
 
-        {tab === "settings" && <AccountSettings />}
+            {tab === "settings" && <AccountSettings />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -1,8 +1,26 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Calculator, Info, MessageCircle } from "lucide-react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 import { formatPrice } from "@/lib/utils/format";
+
+/** Renders a £-prefixed integer that tweens smoothly toward `value` via a spring. */
+function AnimatedPrice({ value, className }: { value: number; className?: string }) {
+  const mv = useMotionValue(value);
+  const spring = useSpring(mv, { stiffness: 220, damping: 28, mass: 0.5 });
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    mv.set(value);
+  }, [mv, value]);
+
+  useEffect(() => {
+    return spring.on("change", (v) => setDisplay(Math.round(v)));
+  }, [spring]);
+
+  return <span className={className}>{formatPrice(display)}</span>;
+}
 
 interface Props {
   price: number;
@@ -136,28 +154,35 @@ export default function FinanceCalculator({ price }: Props) {
       </div>
 
       {/* Result */}
-      <div className="mt-6 rounded-xl bg-linear-to-br from-red-50 to-rose-50 p-5 ring-1 ring-red-100">
+      <motion.div
+        layout
+        className="mt-6 rounded-xl bg-linear-to-br from-red-50 to-rose-50 p-5 ring-1 ring-red-100"
+      >
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-red-700/80">
               Estimated monthly payment
             </p>
-            <p className="text-3xl font-extrabold text-red-700">
-              {formatPrice(Math.round(result.monthly))}
+            <p className="text-3xl font-extrabold text-red-700 tabular-nums">
+              <AnimatedPrice value={Math.round(result.monthly)} />
               <span className="ml-1 text-sm font-normal text-red-700/70">
                 /mo
               </span>
             </p>
           </div>
-          <div className="text-right text-xs text-gray-600">
-            <p>Total payable: {formatPrice(Math.round(result.total))}</p>
+          <div className="text-right text-xs text-gray-600 tabular-nums">
+            <p>
+              Total payable: <AnimatedPrice value={Math.round(result.total)} />
+            </p>
             <p>
               Interest:{" "}
-              {formatPrice(Math.max(0, Math.round(result.totalInterest)))}
+              <AnimatedPrice
+                value={Math.max(0, Math.round(result.totalInterest))}
+              />
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Disclaimer */}
       <div className="mt-4 flex items-start gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-600">

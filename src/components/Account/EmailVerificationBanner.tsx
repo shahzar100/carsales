@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MailCheck, MailWarning, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 /**
  * Dashboard banner that nudges email/password customers to verify their
@@ -64,10 +65,24 @@ export default function EmailVerificationBanner() {
   // Just-verified confirmation takes priority over everything else.
   if (verifiedParam === "1" && verified !== false) {
     return (
-      <div className="mt-6 flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
-        <MailCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
-        Your email address has been verified — thank you.
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: -8, height: 0 }}
+        animate={{ opacity: 1, y: 0, height: "auto" }}
+        transition={{ type: "spring", stiffness: 360, damping: 28 }}
+        style={{ overflow: "hidden" }}
+      >
+        <div className="mt-6 flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
+          <motion.span
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 460, damping: 18, delay: 0.1 }}
+            className="inline-flex shrink-0"
+          >
+            <MailCheck className="h-4 w-4" aria-hidden="true" />
+          </motion.span>
+          Your email address has been verified — thank you.
+        </div>
+      </motion.div>
     );
   }
 
@@ -75,32 +90,58 @@ export default function EmailVerificationBanner() {
   if (verified !== false) return null;
 
   return (
-    <div className="mt-6 flex flex-col gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
-      <span className="flex items-start gap-2">
-        <MailWarning className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-        {verifiedParam === "expired"
-          ? "That verification link has expired. Send yourself a fresh one:"
-          : "Please verify your email address to secure your account."}
-      </span>
-      <span className="shrink-0">
-        {resendState === "sent" ? (
-          <span className="font-medium">Sent — check your inbox.</span>
-        ) : (
-          <button
-            type="button"
-            onClick={resend}
-            disabled={resendState === "sending"}
-            className="inline-flex items-center gap-1.5 font-semibold text-amber-900 underline underline-offset-2 hover:no-underline disabled:opacity-60"
-          >
-            {resendState === "sending" && (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+    <motion.div
+      initial={{ opacity: 0, y: -8, height: 0 }}
+      animate={{ opacity: 1, y: 0, height: "auto" }}
+      transition={{ type: "spring", stiffness: 360, damping: 28 }}
+      style={{ overflow: "hidden" }}
+    >
+      <div className="mt-6 flex flex-col gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
+        <span className="flex items-start gap-2">
+          <MailWarning className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          {verifiedParam === "expired"
+            ? "That verification link has expired. Send yourself a fresh one:"
+            : "Please verify your email address to secure your account."}
+        </span>
+        <span className="shrink-0">
+          <AnimatePresence mode="wait" initial={false}>
+            {resendState === "sent" ? (
+              <motion.span
+                key="sent"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 420, damping: 22 }}
+                className="font-medium"
+              >
+                Sent — check your inbox.
+              </motion.span>
+            ) : (
+              <motion.button
+                key="resend"
+                type="button"
+                onClick={resend}
+                disabled={resendState === "sending"}
+                whileTap={{ scale: 0.96 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="inline-flex items-center gap-1.5 font-semibold text-amber-900 underline underline-offset-2 hover:no-underline disabled:opacity-60"
+              >
+                {resendState === "sending" && (
+                  <Loader2
+                    className="h-3.5 w-3.5 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
+                {resendState === "error"
+                  ? "Couldn't send — try again"
+                  : "Resend verification email"}
+              </motion.button>
             )}
-            {resendState === "error"
-              ? "Couldn't send — try again"
-              : "Resend verification email"}
-          </button>
-        )}
-      </span>
-    </div>
+          </AnimatePresence>
+        </span>
+      </div>
+    </motion.div>
   );
 }

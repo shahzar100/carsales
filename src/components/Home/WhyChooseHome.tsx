@@ -7,6 +7,7 @@ import {
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
+import CountUp from "./CountUp";
 
 /**
  * Homepage "Why choose our car viewing service?" section — the dark,
@@ -93,8 +94,8 @@ export default function WhyChooseHome() {
                     <Icon size={22} />
                   </span>
                   <div className="text-right">
-                    <div className="text-[20px] leading-none font-extrabold tracking-tight text-white">
-                      {f.stat}
+                    <div className="text-[20px] leading-none font-extrabold tracking-tight text-white tabular-nums">
+                      <CountUp value={f.stat} />
                     </div>
                     <div className="mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase">
                       {f.statLabel}

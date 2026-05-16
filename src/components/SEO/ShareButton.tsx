@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { Share2, Check, Link2, Mail, ExternalLink } from "lucide-react";
+import { motion } from "motion/react";
 import Modal from "@/components/Helpful/Buttons/Modal";
+
+const tileContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
+};
+const tileItem = {
+  hidden: { opacity: 0, scale: 0.85, y: 8 },
+  show: { opacity: 1, scale: 1, y: 0 },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Platform definitions                                              */
@@ -208,8 +218,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
 
   /* ---- Variant classes ---- */
   const variantClasses = {
-    button:
-      "bg-gray-900 text-white hover:bg-gray-800 shadow-sm active:scale-[0.97]",
+    button: "bg-gray-900 text-white hover:bg-gray-800 shadow-sm",
     outline:
       "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm",
     icon: "bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-100",
@@ -220,11 +229,14 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   return (
     <div className={`relative inline-flex ${className}`}>
       {/* Trigger */}
-      <button
+      <motion.button
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Share this page"
-        className={`inline-flex cursor-pointer items-center justify-center rounded-xl font-medium transition-all duration-200 ${
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.94 }}
+        transition={{ type: "spring", stiffness: 460, damping: 22 }}
+        className={`inline-flex cursor-pointer items-center justify-center rounded-xl font-medium ${
           isIconOnly
             ? `${iconOnlySizes[size]} ${variantClasses.icon}`
             : `${sizeClasses[size]} ${variantClasses[variant]}`
@@ -232,7 +244,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
       >
         <Share2 className={size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"} />
         {!isIconOnly && <span>Share</span>}
-      </button>
+      </motion.button>
 
       {/* ============================================================ */}
       {/*  Modal — centred on screen via the reusable Modal component  */}
@@ -255,17 +267,26 @@ const ShareButton: React.FC<ShareButtonProps> = ({
             <p className="mb-3 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">
               Share on Social
             </p>
-            <div className="grid grid-cols-4 gap-2">
+            <motion.div
+              variants={tileContainer}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-4 gap-2"
+            >
               {PRIMARY_PLATFORMS.map((platform) => (
-                <button
+                <motion.button
                   key={platform.name}
                   type="button"
                   onClick={() => handleShare(platform)}
-                  className="group/item flex flex-col items-center gap-2 rounded-2xl py-3 transition-all duration-200 hover:bg-gray-50 active:scale-95"
+                  variants={tileItem}
+                  whileHover={{ y: -3, scale: 1.04 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: "spring", stiffness: 480, damping: 22 }}
+                  className="flex flex-col items-center gap-2 rounded-2xl py-3 hover:bg-gray-50"
                   aria-label={`Share on ${platform.name}`}
                 >
                   <span
-                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-md transition-all duration-200 group-hover/item:-translate-y-0.5 group-hover/item:shadow-lg"
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-md"
                     style={{
                       backgroundColor:
                         platform.name === "Snapchat"
@@ -286,9 +307,9 @@ const ShareButton: React.FC<ShareButtonProps> = ({
                   <span className="text-[11px] font-medium text-gray-600">
                     {platform.name}
                   </span>
-                </button>
+                </motion.button>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Divider */}

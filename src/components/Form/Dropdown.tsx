@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 export interface DropdownOption {
   value: string;
@@ -157,58 +158,78 @@ const Dropdown: React.FC<DropdownProps> = ({
       </button>
 
       {/* Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute z-9999 mt-2 w-full">
-          <ul
-            ref={listRef}
-            role="listbox"
-            aria-activedescendant={
-              highlightedIndex >= 0 ? `option-${highlightedIndex}` : undefined
-            }
-            className="max-h-60 overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg ring-1 ring-black/5"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="absolute z-9999 mt-2 w-full origin-top"
+            initial={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            transition={{ type: "spring", stiffness: 480, damping: 32 }}
           >
-            {options.length === 0 ? (
-              <li className="px-4 py-3 text-center text-sm text-gray-500">
-                No options available
-              </li>
-            ) : (
-              options.map((option, index) => {
-                const isSelected = option.value === value;
-                const isHighlighted = index === highlightedIndex;
+            <ul
+              ref={listRef}
+              role="listbox"
+              aria-activedescendant={
+                highlightedIndex >= 0 ? `option-${highlightedIndex}` : undefined
+              }
+              className="max-h-60 overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg ring-1 ring-black/5"
+            >
+              {options.length === 0 ? (
+                <li className="px-4 py-3 text-center text-sm text-gray-500">
+                  No options available
+                </li>
+              ) : (
+                options.map((option, index) => {
+                  const isSelected = option.value === value;
+                  const isHighlighted = index === highlightedIndex;
 
-                return (
-                  <li
-                    key={option.value}
-                    id={`option-${index}`}
-                    role="option"
-                    aria-selected={isSelected}
-                    onClick={() =>
-                      !option.disabled && handleSelect(option.value)
-                    }
-                    onMouseEnter={() =>
-                      !option.disabled && setHighlightedIndex(index)
-                    }
-                    className={`flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors duration-100 ${
-                      option.disabled
-                        ? "cursor-not-allowed text-gray-400"
-                        : isHighlighted
-                          ? "bg-red-50 text-red-700"
-                          : isSelected
-                            ? "bg-gray-50 text-gray-900"
-                            : "text-gray-700 hover:bg-gray-50"
-                    } `}
-                  >
-                    <span className={isSelected ? "font-medium" : ""}>
-                      {option.label}
-                    </span>
-                    {isSelected && <Check className="h-4 w-4 text-red-600" />}
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </div>
-      )}
+                  return (
+                    <motion.li
+                      key={option.value}
+                      id={`option-${index}`}
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() =>
+                        !option.disabled && handleSelect(option.value)
+                      }
+                      onMouseEnter={() =>
+                        !option.disabled && setHighlightedIndex(index)
+                      }
+                      initial={{ opacity: 0, x: -4 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.018, duration: 0.15 }}
+                      whileTap={!option.disabled ? { scale: 0.98 } : undefined}
+                      className={`flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors duration-100 ${
+                        option.disabled
+                          ? "cursor-not-allowed text-gray-400"
+                          : isHighlighted
+                            ? "bg-red-50 text-red-700"
+                            : isSelected
+                              ? "bg-gray-50 text-gray-900"
+                              : "text-gray-700 hover:bg-gray-50"
+                      } `}
+                    >
+                      <span className={isSelected ? "font-medium" : ""}>
+                        {option.label}
+                      </span>
+                      {isSelected && (
+                        <motion.span
+                          initial={{ scale: 0, rotate: -90 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", stiffness: 480, damping: 18 }}
+                        >
+                          <Check className="h-4 w-4 text-red-600" />
+                        </motion.span>
+                      )}
+                    </motion.li>
+                  );
+                })
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Error Message */}
       {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}

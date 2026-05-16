@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import TurnstileWidget from "@/components/Form/TurnstileWidget";
 import { useAccountContact } from "@/hooks/useAccountContact";
 
@@ -43,9 +44,21 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
 
   if (success) {
     return (
-      <div className="rounded-2xl bg-emerald-50 p-6 ring-1 ring-emerald-200 sm:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 12, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 360, damping: 26 }}
+        className="rounded-2xl bg-emerald-50 p-6 ring-1 ring-emerald-200 sm:p-8"
+      >
         <div className="flex items-start gap-3">
-          <CheckCircle className="mt-0.5 h-6 w-6 shrink-0 text-emerald-600" />
+          <motion.span
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
+            className="mt-0.5 inline-flex shrink-0"
+          >
+            <CheckCircle className="h-6 w-6 text-emerald-600" />
+          </motion.span>
           <div>
             <h2 className="text-lg font-bold text-emerald-900">
               Reservation confirmed
@@ -68,7 +81,7 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -192,16 +205,39 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
           <TurnstileWidget onToken={setTurnstileToken} />
         </div>
 
-        {error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 sm:col-span-2">
-            {error}
-          </p>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              key={error}
+              initial={{ opacity: 0, y: -4, height: 0 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                height: "auto",
+                x: [0, -6, 6, -4, 4, -2, 0],
+                transition: {
+                  opacity: { duration: 0.18 },
+                  y: { duration: 0.18 },
+                  height: { duration: 0.18 },
+                  x: { duration: 0.36, ease: "easeOut" },
+                },
+              }}
+              exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
+              style={{ overflow: "hidden" }}
+              className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 sm:col-span-2"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
 
-        <button
+        <motion.button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 disabled:opacity-60 sm:col-span-2"
+          whileHover={submitting ? undefined : { scale: 1.02 }}
+          whileTap={submitting ? undefined : { scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 420, damping: 22 }}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-700 disabled:opacity-60 sm:col-span-2"
         >
           {submitting ? (
             <>
@@ -214,7 +250,7 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
               Reserve this car
             </>
           )}
-        </button>
+        </motion.button>
       </form>
 
       <p className="mt-3 text-center text-xs text-gray-500">

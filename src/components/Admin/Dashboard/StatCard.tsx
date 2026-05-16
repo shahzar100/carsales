@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
 import { LucideIcon } from "lucide-react";
+import { motion } from "motion/react";
 
 // ═════════════════════════════════════════════════════════════
 // StatCard — single KPI tile with icon, value, label & trend
@@ -25,23 +27,40 @@ const StatCard: React.FC<StatCardProps> = ({
   subtext,
   badge,
 }) => (
-  <div className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-    <div
+  <motion.div
+    initial={{ opacity: 0, y: 16 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-40px" }}
+    transition={{ type: "spring", stiffness: 360, damping: 28 }}
+    whileHover={{ y: -3 }}
+    className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md"
+  >
+    <motion.div
+      whileHover={{ rotate: -6, scale: 1.06 }}
+      transition={{ type: "spring", stiffness: 420, damping: 18 }}
       className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${colour}`}
     >
       <Icon className="h-6 w-6" />
-    </div>
+    </motion.div>
     <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2">
         <p className="text-sm font-medium text-gray-500">{label}</p>
         {badge}
       </div>
-      <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
+      <motion.p
+        key={String(value)}
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="mt-1 text-2xl font-bold text-gray-900 tabular-nums"
+      >
+        {value}
+      </motion.p>
       {subtext && (
         <p className="mt-0.5 truncate text-xs text-gray-400">{subtext}</p>
       )}
     </div>
-  </div>
+  </motion.div>
 );
 
 export default StatCard;

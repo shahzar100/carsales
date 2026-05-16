@@ -41,6 +41,7 @@ import {
   Info,
   type LucideIcon,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useNavigation } from "@/contexts/NavigationContext";
 
@@ -379,6 +380,7 @@ export default function Header() {
                 />
               </button>
 
+              <AnimatePresence>
               {open === "account" && (
                 <DropdownPanel
                   id={accountPanelId}
@@ -475,6 +477,7 @@ export default function Header() {
                   )}
                 </DropdownPanel>
               )}
+              </AnimatePresence>
             </div>
 
             {/* Menu */}
@@ -516,6 +519,7 @@ export default function Header() {
                 />
               </button>
 
+              <AnimatePresence>
               {open === "menu" && (
                 <DropdownPanel
                   id={menuPanelId}
@@ -619,14 +623,22 @@ export default function Header() {
                   </div>
                 </DropdownPanel>
               )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Mobile search sheet ── */}
+      <AnimatePresence>
       {mobileSearch && (
-        <div className="absolute inset-x-0 top-0 z-[70] animate-[mm-fade_140ms_ease-out] border-b border-white/[0.06] bg-[#0a0a0a] md:hidden">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ type: "spring", stiffness: 460, damping: 32 }}
+          className="absolute inset-x-0 top-0 z-[70] border-b border-white/[0.06] bg-[#0a0a0a] md:hidden"
+        >
           <form
             role="search"
             onSubmit={submitSearch}
@@ -657,13 +669,19 @@ export default function Header() {
               <X size={20} />
             </button>
           </form>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* ── Mobile menu overlay ── */}
+      <AnimatePresence>
       {mobileOpen && (
-        <div
-          className="fixed inset-0 z-[80] flex animate-[mm-fade_180ms_ease-out] flex-col bg-[#0a0a0a] text-white md:hidden"
+        <motion.div
+          initial={{ opacity: 0, x: "100%" }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: "100%" }}
+          transition={{ type: "spring", stiffness: 360, damping: 36 }}
+          className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0a] text-white md:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
@@ -869,8 +887,9 @@ export default function Header() {
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 }
@@ -888,17 +907,21 @@ function DropdownPanel({
   children: React.ReactNode;
 }) {
   return (
-    <div
+    <motion.div
       ref={panelRef}
       id={id}
       role="menu"
+      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 480, damping: 30, mass: 0.6 }}
       className={
-        "absolute top-full right-0 z-50 mt-2 origin-top animate-[mm-pop_160ms_cubic-bezier(.2,.8,.2,1)] rounded-xl border border-white/[0.08] bg-[#171717] p-1 shadow-2xl shadow-black/60 ring-1 ring-black/20 " +
+        "absolute top-full right-0 z-50 mt-2 origin-top-right rounded-xl border border-white/[0.08] bg-[#171717] p-1 shadow-2xl shadow-black/60 ring-1 ring-black/20 " +
         className
       }
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
 

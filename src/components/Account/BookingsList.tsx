@@ -2,6 +2,7 @@
 
 import { Calendar, Car, Wrench, ClipboardList } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { motion } from "motion/react";
 import StatusBadge from "@/components/UI/StatusBadge";
 import EmptyState from "@/components/UI/EmptyState";
 
@@ -26,6 +27,16 @@ const KIND_LABEL: Record<ActivityItem["kind"], string> = {
   service: "Service",
   viewing: "Car viewing",
   reservation: "Reservation",
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0 },
 };
 
 /**
@@ -59,13 +70,21 @@ export default function BookingsList({
   }
 
   return (
-    <ul className="space-y-3">
+    <motion.ul
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-3"
+    >
       {items.map((item) => {
         const Icon = KIND_ICON[item.kind];
         return (
-          <li
+          <motion.li
             key={`${item.kind}-${item.reference}`}
-            className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4"
+            variants={itemVariants}
+            transition={{ type: "spring", stiffness: 360, damping: 28 }}
+            whileHover={{ x: 3 }}
+            className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
           >
             <div className="mt-0.5 rounded-lg bg-gray-100 p-2">
               <Icon className="h-5 w-5 text-gray-600" aria-hidden="true" />
@@ -87,9 +106,9 @@ export default function BookingsList({
                 Ref: {item.reference}
               </p>
             </div>
-          </li>
+          </motion.li>
         );
       })}
-    </ul>
+    </motion.ul>
   );
 }

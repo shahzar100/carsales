@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { motion } from "motion/react";
 import { Check, Clock, type LucideIcon } from "lucide-react";
 
 export interface PackageCardData {
@@ -28,26 +29,46 @@ export default function PackageCard({
   const includes = pkg.includes ?? [];
 
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ type: "spring", stiffness: 360, damping: 28 }}
+      whileHover={{ x: 2 }}
+      whileTap={{ scale: 0.985 }}
       className={`pkg-card${selected ? " is-selected" : ""}${
         pkg.recommended ? " is-recommended" : ""
       }`}
     >
-      <span className="pkg-icon">
+      <motion.span
+        className="pkg-icon"
+        animate={{ scale: selected ? 1.06 : 1 }}
+        transition={{ type: "spring", stiffness: 460, damping: 22 }}
+      >
         <Icon className="h-6 w-6 sm:h-[26px] sm:w-[26px]" />
         <span className="pkg-icon-radio">
-          <span className="dot" />
+          <motion.span
+            className="dot"
+            animate={{ scale: selected ? 1 : 0 }}
+            transition={{ type: "spring", stiffness: 540, damping: 22 }}
+          />
         </span>
-      </span>
+      </motion.span>
 
       <span className="pkg-info">
         <h4>
           <span>{pkg.name}</span>
           {pkg.recommended && (
-            <span className="pkg-rec-badge">Most popular</span>
+            <motion.span
+              className="pkg-rec-badge"
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              Most popular
+            </motion.span>
           )}
         </h4>
         <p>{pkg.description}</p>
@@ -69,7 +90,6 @@ export default function PackageCard({
           <Clock className="h-2.5 w-2.5" /> {pkg.duration}
         </span>
       </span>
-    </button>
+    </motion.button>
   );
 }
-

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 interface DropdownOption {
   value: string;
@@ -48,9 +49,11 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <button
+      <motion.button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        whileTap={{ scale: 0.985 }}
+        transition={{ type: "spring", stiffness: 460, damping: 22 }}
         className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-left shadow-sm transition-colors duration-200 hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none"
       >
         <div className="flex items-center justify-between">
@@ -61,32 +64,47 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           >
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <ChevronDown
-            className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
-              isOpen ? "rotate-180 transform" : ""
-            }`}
-          />
+          <motion.span
+            animate={{ rotate: isOpen ? 180 : 0, color: isOpen ? "#ef4444" : "#9ca3af" }}
+            transition={{ type: "spring", stiffness: 360, damping: 22 }}
+            className="inline-flex"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </motion.span>
         </div>
-      </button>
+      </motion.button>
 
-      {isOpen && (
-        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => handleSelect(option.value)}
-              className={`w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-red-50 hover:text-red-700 ${
-                value === option.value
-                  ? "bg-red-100 font-medium text-red-800"
-                  : "text-gray-900"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -6, scaleY: 0.95 }}
+            transition={{ type: "spring", stiffness: 480, damping: 32 }}
+            style={{ originY: 0 }}
+            className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg"
+          >
+            {options.map((option, idx) => (
+              <motion.button
+                key={option.value}
+                type="button"
+                onClick={() => handleSelect(option.value)}
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.018, duration: 0.15 }}
+                whileTap={{ scale: 0.98 }}
+                className={`w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-red-50 hover:text-red-700 ${
+                  value === option.value
+                    ? "bg-red-100 font-medium text-red-800"
+                    : "text-gray-900"
+                }`}
+              >
+                {option.label}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

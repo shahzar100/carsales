@@ -2,7 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 import type { AuditLog } from "@/lib/interfaces";
+
+const rowVariants = {
+  hidden: { opacity: 0, y: 6 },
+  show: { opacity: 1, y: 0 },
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.03 } },
+};
 
 interface Props {
   rows: AuditLog[];
@@ -147,7 +158,12 @@ export default function AuditLogTable({
               <th className="px-4 py-3">Metadata</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 text-sm">
+          <motion.tbody
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="divide-y divide-gray-100 text-sm"
+          >
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-gray-500">
@@ -156,7 +172,12 @@ export default function AuditLogTable({
               </tr>
             ) : (
               rows.map((row, i) => (
-                <tr key={`${row._id ?? i}`} className="hover:bg-gray-50">
+                <motion.tr
+                  key={`${row._id ?? i}`}
+                  variants={rowVariants}
+                  transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                  className="hover:bg-gray-50"
+                >
                   <td className="px-4 py-2 whitespace-nowrap text-gray-700">
                     {fmt(row.createdAt)}
                   </td>
@@ -183,10 +204,10 @@ export default function AuditLogTable({
                           .join(", ")
                       : "—"}
                   </td>
-                </tr>
+                </motion.tr>
               ))
             )}
-          </tbody>
+          </motion.tbody>
         </table>
       </div>
 
