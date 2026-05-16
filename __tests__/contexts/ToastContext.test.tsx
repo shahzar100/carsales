@@ -7,7 +7,7 @@
  * - 🔒 Security: Error handling, preventing context misuse
  */
 import React from "react";
-import { render, screen, waitFor, act, renderHook } from "@testing-library/react";
+import { render, screen, act, renderHook } from "@testing-library/react";
 import { ToastProvider, useToast } from "@/contexts/ToastContext";
 import { DEFAULT_TOAST_DURATION } from "@/contexts/types";
 

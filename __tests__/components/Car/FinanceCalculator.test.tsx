@@ -21,7 +21,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 // motion hooks here so they pass values through synchronously — the
 // numeric calculation itself is what we're testing.
 jest.mock("motion/react", () => {
-  const React = require("react");
   const actual = jest.requireActual("motion/react");
   return {
     ...actual,

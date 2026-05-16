@@ -9,7 +9,7 @@
  */
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { Wrench, Settings, Battery } from "lucide-react";
+import { Wrench, Settings } from "lucide-react";
 import DetailingPackageGrid from "@/components/Services/Detailing/DetailingPackageGrid";
 import RepairServiceGrid from "@/components/Services/Repairs/RepairServiceGrid";
 import EmergencyBanner from "@/components/Services/Repairs/EmergencyBanner";

@@ -8,7 +8,6 @@ import {
   render,
   screen,
   fireEvent,
-  waitFor,
   cleanup,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -181,6 +180,7 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
                 data-testid={`product-${product.id}`}
               >
                 <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> used in test fixture to exercise sanitizeUrl/sanitizeText output directly; next/image would obscure the URL under test */}
                   <img
                     src={sanitizeUrl(product.image)}
                     alt={sanitizeText(product.name)}
@@ -430,7 +430,6 @@ describe("CarParts & Shop Components - SECURITY & DATA INTEGRITY TESTS", () => {
     });
 
     it("MUST enforce quantity limits and validation", async () => {
-      const mockProductClick = jest.fn();
       const mockAddToCart = jest.fn();
 
       // Create a component that allows custom quantity input

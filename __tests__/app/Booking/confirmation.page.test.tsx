@@ -11,7 +11,6 @@
  * - 🎯 Usability: contact card prefers `bookingsEmail`, falls back to
  *   `email`; tel: + mailto: links use the businessInfo values
  */
-import React from "react";
 import { render, screen } from "@testing-library/react";
 
 const mockGetBusinessInfo = jest.fn();

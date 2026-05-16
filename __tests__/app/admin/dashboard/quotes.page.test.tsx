@@ -12,7 +12,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 
 const mockIsAuthenticated = jest.fn();
-const mockRedirect = jest.fn(() => {
+const mockRedirect = jest.fn((_url: string) => {
   throw new Error("REDIRECTED");
 });
 const mockFind = jest.fn();
