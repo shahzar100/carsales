@@ -17,7 +17,7 @@
  *   network errors caught by the surrounding try/catch
  */
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 
 const mockToastSuccess = jest.fn();
 const mockToastError = jest.fn();
@@ -35,7 +35,7 @@ jest.mock("@/hooks/useToast", () => ({
 // ref so individual tests can drive the flow.
 let viewingTabProps: any = null;
 let cancelModalProps: any = null;
-let detailsModalProps: any = null;
+let _detailsModalProps: any = null;
 
 jest.mock("@/components/Admin", () => ({
   ViewingBookingsTab: (props: any) => {
@@ -52,7 +52,7 @@ jest.mock("@/components/Admin", () => ({
     return <div data-testid="cancel-modal" />;
   },
   BookingDetailsModal: (props: any) => {
-    detailsModalProps = props;
+    _detailsModalProps = props;
     return (
       <div data-testid="details-modal">
         <span data-testid="details-id">{props.booking?._id}</span>
@@ -76,7 +76,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   viewingTabProps = null;
   cancelModalProps = null;
-  detailsModalProps = null;
+  _detailsModalProps = null;
   fetchMock = jest.fn();
   (global as unknown as { fetch: jest.Mock }).fetch = fetchMock;
 });

@@ -6,13 +6,12 @@
  * - 🎯 Usability: Default state, reset functionality
  */
 import React from "react";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   FilterProvider,
   useFilters,
   type FilterState,
-  type FilterAction,
 } from "@/contexts/FilterContext";
 
 // Test consumer that exposes state and dispatch

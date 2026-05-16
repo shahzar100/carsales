@@ -516,7 +516,6 @@ describe("Car Filtering Utilities", () => {
         ...defaultFilters,
         searchTerm: "'; DROP TABLE cars; --",
       };
-      const result = filterCars(testCars, filters);
 
       expect(() => filterCars(testCars, filters)).not.toThrow();
     });

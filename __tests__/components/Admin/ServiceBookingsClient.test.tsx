@@ -31,7 +31,7 @@ jest.mock("@/hooks/useToast", () => ({
 
 let serviceTabProps: any = null;
 let cancelModalProps: any = null;
-let detailsModalProps: any = null;
+let _detailsModalProps: any = null;
 
 jest.mock("@/components/Admin", () => ({
   ServiceBookingsTab: (props: any) => {
@@ -47,7 +47,7 @@ jest.mock("@/components/Admin", () => ({
     return <div data-testid="cancel-modal" />;
   },
   BookingDetailsModal: (props: any) => {
-    detailsModalProps = props;
+    _detailsModalProps = props;
     return (
       <div data-testid="details-modal">
         <span data-testid="details-id">{props.booking?._id}</span>
@@ -71,7 +71,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   serviceTabProps = null;
   cancelModalProps = null;
-  detailsModalProps = null;
+  _detailsModalProps = null;
   fetchMock = jest.fn();
   (global as unknown as { fetch: jest.Mock }).fetch = fetchMock;
 });

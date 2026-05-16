@@ -274,7 +274,6 @@ describe("/api/admin/users/password", () => {
       );
 
       const response = await POST(request);
-      const data = await response.json();
 
       expect(response.status).toBe(400);
     });

@@ -32,7 +32,6 @@ describe("/api/admin/shop", () => {
       await shopInfo.insertOne(testShopInfo);
       await client.close();
 
-      const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET();
       const data = await response.json();
 
@@ -42,7 +41,6 @@ describe("/api/admin/shop", () => {
     });
 
     it("should return seed data when no shop info exists", async () => {
-      const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET();
       const data = await response.json();
 
@@ -57,7 +55,6 @@ describe("/api/admin/shop", () => {
     it("should return 401 for unauthenticated user", async () => {
       mockIsAuthenticated.mockResolvedValue(false);
 
-      const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET();
       const data = await response.json();
 
@@ -70,7 +67,6 @@ describe("/api/admin/shop", () => {
     it("should return 500 when GET throws an error", async () => {
       mockIsAuthenticated.mockRejectedValue(new Error("DB connection failed"));
 
-      const request = new NextRequest("http://localhost:3000/api/admin/shop");
       const response = await GET();
       const data = await response.json();
 

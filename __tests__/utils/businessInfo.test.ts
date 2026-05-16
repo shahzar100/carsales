@@ -1,5 +1,4 @@
 import { getBusinessInfo, updateBusinessInfo } from "@/lib/utils/businessInfo";
-import { getTestCollections } from "./testUtils";
 
 describe("businessInfo utility", () => {
   describe("getBusinessInfo", () => {

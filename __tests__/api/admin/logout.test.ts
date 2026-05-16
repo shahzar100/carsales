@@ -10,7 +10,6 @@
 import { POST } from "@/app/api/admin/logout/route";
 
 // Mock auth - use inline function to avoid hoisting issues
-const mockDestroy = jest.fn();
 jest.mock("@/lib/utils/auth", () => {
   const destroy = jest.fn();
   return {

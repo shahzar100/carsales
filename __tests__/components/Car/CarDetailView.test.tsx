@@ -24,7 +24,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 
 const mockUpdateViewing = jest.fn();
 const mockToggleSaved = jest.fn();
-const mockIsSaved = jest.fn(() => false);
+const mockIsSaved = jest.fn((_id: string) => false);
 
 jest.mock("@/contexts/ViewingContext", () => ({
   useViewing: () => ({

@@ -8,7 +8,6 @@
  * - 📋 Functional: Session retrieval correctness
  * - 🎯 Usability: Proper session status responses
  */
-import { NextRequest } from "next/server";
 import { GET } from "@/app/api/admin/session/route";
 
 // Mock session management
