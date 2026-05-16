@@ -39,6 +39,20 @@ jest.mock("@/lib/utils/audit", () => ({
   recordAudit: (...args: unknown[]) => mockRecordAudit(...args),
 }));
 
+// Rate limiter is module-level state in the real implementation, so
+// every test in this file would otherwise share a counter (and every
+// request comes in as IP "unknown"). Mock it allow-all for the suite;
+// the dedicated 429 test below installs its own block-all stub.
+const mockRateLimitCheck = jest
+  .fn()
+  .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+jest.mock("@/lib/utils/rateLimit", () => ({
+  createRateLimiter: () => ({
+    check: (...args: unknown[]) => mockRateLimitCheck(...args),
+    reset: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
 function makeRequest(body: unknown) {
   return new NextRequest("http://localhost:3000/api/admin/2fa/verify", {
     method: "POST",
@@ -55,6 +69,27 @@ describe("POST /api/admin/2fa/verify", () => {
     mockSession.save.mockReset();
     mockVerifyTotpCode.mockReset();
     mockRecordAudit.mockReset();
+    mockRateLimitCheck
+      .mockReset()
+      .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+  });
+
+  it("🔒 returns 429 when the per-IP TOTP attempt cap is hit", async () => {
+    // 6-digit TOTP is brute-forceable in hours without a cap. The
+    // limiter is shared across warm instances via KV in production;
+    // here we just assert the route honours its allow/deny verdict.
+    mockRateLimitCheck.mockResolvedValueOnce({
+      allowed: false,
+      remaining: 0,
+      resetIn: 60_000,
+    });
+    mockSession.isLoggedIn = true;
+    mockSession.username = "u";
+    mockSession.pendingTotpSecret = "JBSWY3DPEHPK3PXP";
+
+    const res = await POST(makeRequest({ code: "123456" }));
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBeTruthy();
   });
 
   it("🔒 returns 401 when there is no session", async () => {
@@ -102,6 +137,36 @@ describe("POST /api/admin/2fa/verify", () => {
     mockVerifyTotpCode.mockReturnValue(true);
     const res = await POST(makeRequest({ code: "123456" }));
     expect(res.status).toBe(404);
+  });
+
+  it("🔒 returns 409 when the user is already 2FA-enrolled (re-enrol hijack guard)", async () => {
+    mockSession.isLoggedIn = true;
+    mockSession.username = "already-enrolled";
+    mockSession.pendingTotpSecret = "ATTACKER-CONTROLLED-SECRET";
+    mockVerifyTotpCode.mockReturnValue(true);
+
+    const { adminUsers, client } = await getTestCollections();
+    await adminUsers.insertOne({
+      username: "already-enrolled",
+      passwordHash: "x",
+      totpEnabled: true,
+      totpSecret: "ORIGINAL-USER-SECRET",
+    } as never);
+    await client.close();
+
+    const res = await POST(makeRequest({ code: "123456" }));
+    expect(res.status).toBe(409);
+    const data = await res.json();
+    expect(data.error).toContain("already enabled");
+
+    // The legitimate secret must be untouched — no DB write happened.
+    const { adminUsers: u2, client: c2 } = await getTestCollections();
+    const saved = await u2.findOne({ username: "already-enrolled" });
+    expect(saved?.totpSecret).toBe("ORIGINAL-USER-SECRET");
+    expect(saved?.totpEnabled).toBe(true);
+    await c2.close();
+
+    expect(mockRecordAudit).not.toHaveBeenCalled();
   });
 
   it("persists totpEnabled + secret, clears pending, and audit-logs on success", async () => {

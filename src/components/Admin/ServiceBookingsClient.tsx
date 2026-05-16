@@ -58,7 +58,7 @@ export default function ServiceBookingsClient({ initialBookings }: Props) {
     }
 
     try {
-      const response = await fetch("/api/bookings/cancel", {
+      const response = await fetch("/api/admin/bookings/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
