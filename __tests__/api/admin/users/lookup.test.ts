@@ -13,16 +13,19 @@ import { GET } from "@/app/api/admin/users/lookup/route";
 import { getTestCollections } from "../../../utils/testUtils";
 import bcrypt from "bcryptjs";
 
-// Mock authentication
+// Mock authentication. The route is now manager+ gated (Fix 5) — the
+// previous `isAuthenticated()` check let the `staff` role enumerate
+// the admin user list. Each test sets the role-check verdict it
+// wants; default is manager-or-above (true).
 jest.mock("@/lib/utils/auth", () => ({
-  isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const { hasMinimumRole: mockHasMinimumRole } = require("@/lib/utils/auth");
 
 describe("/api/admin/users/lookup", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true);
   });
 
   afterEach(async () => {
@@ -115,6 +118,22 @@ describe("/api/admin/users/lookup", () => {
 
       expect(response.status).toBe(400);
       expect(data.error).toContain("required");
+    });
+
+    it("🔒 returns 403 for a staff-role session (manager+ only)", async () => {
+      // hasMinimumRole("manager") returns false when the session's
+      // role is "staff" — exercising that branch confirms the route
+      // refuses staff-tier enumeration of the admin user list.
+      mockHasMinimumRole.mockResolvedValue(false);
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/users/lookup?q=testadmin"
+      );
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(data.error).toBe("Forbidden");
     });
 
     it("should return 404 when user not found", async () => {
