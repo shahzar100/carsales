@@ -3,7 +3,18 @@ import { getAdminUsersCollection } from "@/lib/models";
 import { getSession } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
 import { verifyTotpCode } from "@/lib/utils/twoFactor";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
+
+// (Fix 4 / security) 5 attempts per 15-minute window per IP. Mirrors
+// the login limiter — a 6-digit TOTP is brute-forceable without a cap
+// (1e6 search space, ~5 reqs/s on a warm Lambda gets you in within a
+// few hours). Backed by Vercel KV when configured so the counter is
+// shared across warm instances; in-memory fallback otherwise.
+const verifyLimiter = createRateLimiter("admin-2fa-verify", {
+  maxRequests: 5,
+  windowMs: 15 * 60 * 1000,
+});
 
 /**
  * Finalise 2FA enrolment.
@@ -14,6 +25,26 @@ import { logError } from "@/lib/utils/observability";
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // (Fix 4 / security) Rate limit before doing any session / DB work —
+    // we want the 429 to fire on the first attempt past the cap, not
+    // after we've leaked timing info via a DB lookup.
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    const { allowed, resetIn } = await verifyLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil(resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     const session = await getSession();
     if (!session.isLoggedIn || !session.username) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

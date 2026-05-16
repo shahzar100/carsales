@@ -32,6 +32,19 @@ jest.mock("@/lib/utils/audit", () => ({
   recordAudit: (...args: unknown[]) => mockRecordAudit(...args),
 }));
 
+// Rate limiter is module-level state in the real implementation. Mock
+// it allow-all for the suite; the 429 test below installs its own
+// block-all stub.
+const mockRateLimitCheck = jest
+  .fn()
+  .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+jest.mock("@/lib/utils/rateLimit", () => ({
+  createRateLimiter: () => ({
+    check: (...args: unknown[]) => mockRateLimitCheck(...args),
+    reset: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
 function makeRequest(body: unknown) {
   return new NextRequest("http://localhost:3000/api/admin/2fa/disable", {
     method: "POST",
@@ -56,6 +69,22 @@ describe("POST /api/admin/2fa/disable", () => {
     mockSession.isLoggedIn = false;
     mockSession.username = undefined;
     mockRecordAudit.mockReset();
+    mockRateLimitCheck
+      .mockReset()
+      .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+  });
+
+  it("🔒 returns 429 when the per-IP disable-attempt cap is hit", async () => {
+    mockRateLimitCheck.mockResolvedValueOnce({
+      allowed: false,
+      remaining: 0,
+      resetIn: 60_000,
+    });
+    mockSession.isLoggedIn = true;
+    mockSession.username = "u";
+    const res = await POST(makeRequest({ password: "anything" }));
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBeTruthy();
   });
 
   it("🔒 returns 401 when not signed in", async () => {
