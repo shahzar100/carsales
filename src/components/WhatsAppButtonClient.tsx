@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
+import { motion } from "motion/react";
 
 interface Props {
   phone: string;
@@ -53,15 +54,37 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
   const href = `https://wa.me/${normalised}?text=${encodeURIComponent(message)}`;
 
   return (
-    <a
+    <motion.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 hover:shadow-xl active:scale-95 sm:right-6 sm:bottom-6"
+      initial={{ scale: 0, opacity: 0, rotate: -45 }}
+      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 360,
+        damping: 22,
+        delay: 0.6,
+      }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      className="fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-emerald-900/30 hover:shadow-xl sm:right-6 sm:bottom-6"
     >
-      <MessageCircle className="h-7 w-7" fill="currentColor" strokeWidth={0} />
+      {/* Soft ambient pulse ring — draws the eye without being obtrusive. */}
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-full bg-[#25D366]"
+        animate={{ scale: [1, 1.45], opacity: [0.4, 0] }}
+        transition={{
+          duration: 2.2,
+          repeat: Infinity,
+          ease: "easeOut",
+          repeatDelay: 0.6,
+        }}
+      />
+      <MessageCircle className="relative h-7 w-7" fill="currentColor" strokeWidth={0} />
       <span className="sr-only">WhatsApp</span>
-    </a>
+    </motion.a>
   );
 }

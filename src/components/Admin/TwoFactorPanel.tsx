@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ShieldCheck, ShieldOff, AlertCircle } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/Helpful/Buttons/Button";
 
 interface Props {
@@ -99,44 +100,105 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
-        {enabled ? (
-          <ShieldCheck className="h-6 w-6 text-green-600" />
-        ) : (
-          <ShieldOff className="h-6 w-6 text-gray-400" />
-        )}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={enabled ? "on" : "off"}
+            initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
+            transition={{ type: "spring", stiffness: 460, damping: 22 }}
+            className="inline-flex"
+          >
+            {enabled ? (
+              <ShieldCheck className="h-6 w-6 text-green-600" />
+            ) : (
+              <ShieldOff className="h-6 w-6 text-gray-400" />
+            )}
+          </motion.span>
+        </AnimatePresence>
         <div>
           <h2 className="text-lg font-semibold">Two-factor authentication</h2>
-          <p className="text-sm text-gray-600">
+          <motion.p
+            key={enabled ? "on-text" : "off-text"}
+            initial={{ opacity: 0, y: -3 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-sm text-gray-600"
+          >
             {enabled
               ? "Enabled — you'll be asked for a 6-digit code at every login."
               : "Not enabled. Add a second factor to harden the account."}
-          </p>
+          </motion.p>
         </div>
       </div>
 
-      {error && (
-        <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            key={error}
+            initial={{ opacity: 0, y: -4, height: 0, marginTop: 0 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              marginTop: 16,
+              x: [0, -6, 6, -4, 4, -2, 0],
+              transition: {
+                opacity: { duration: 0.18 },
+                y: { duration: 0.18 },
+                height: { duration: 0.18 },
+                marginTop: { duration: 0.18 },
+                x: { duration: 0.36, ease: "easeOut" },
+              },
+            }}
+            exit={{ opacity: 0, y: -4, height: 0, marginTop: 0, transition: { duration: 0.15 } }}
+            style={{ overflow: "hidden" }}
+            className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Enrolment flow */}
+      <AnimatePresence mode="wait" initial={false}>
       {!enabled && step === "idle" && (
-        <Button
-          type="button"
-          onClick={startEnrol}
-          loading={loading}
+        <motion.div
+          key="enable-btn"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22 }}
           className="mt-6"
         >
-          Enable 2FA
-        </Button>
+          <Button
+            type="button"
+            onClick={startEnrol}
+            loading={loading}
+          >
+            Enable 2FA
+          </Button>
+        </motion.div>
       )}
 
       {step === "verifying" && (
-        <form onSubmit={verifyCode} className="mt-6 space-y-4">
+        <motion.form
+          key="verify-form"
+          onSubmit={verifyCode}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+          className="mt-6 space-y-4"
+        >
           {qrSrc && (
-            <div className="flex flex-col items-center gap-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 360, damping: 24, delay: 0.1 }}
+              className="flex flex-col items-center gap-2"
+            >
               <Image
                 src={qrSrc}
                 alt="2FA QR code"
@@ -147,7 +209,7 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               <p className="text-xs text-gray-500">
                 Scan with Google Authenticator, 1Password, Authy, …
               </p>
-            </div>
+            </motion.div>
           )}
           <details className="text-sm text-gray-600">
             <summary className="cursor-pointer">Can&apos;t scan? Show secret</summary>
@@ -186,22 +248,39 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               Cancel
             </Button>
           </div>
-        </form>
+        </motion.form>
       )}
 
       {enabled && step === "idle" && (
-        <Button
-          type="button"
-          onClick={() => setStep("disabling")}
-          variant="ghost"
-          className="mt-6 text-red-600"
+        <motion.div
+          key="disable-btn"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22 }}
+          className="mt-6"
         >
-          Disable 2FA
-        </Button>
+          <Button
+            type="button"
+            onClick={() => setStep("disabling")}
+            variant="ghost"
+            className="text-red-600"
+          >
+            Disable 2FA
+          </Button>
+        </motion.div>
       )}
 
       {step === "disabling" && (
-        <form onSubmit={disable} className="mt-6 space-y-4">
+        <motion.form
+          key="disable-form"
+          onSubmit={disable}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+          className="mt-6 space-y-4"
+        >
           <label className="block text-sm font-medium text-gray-700">
             Confirm with your current password
           </label>
@@ -226,8 +305,9 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               Cancel
             </Button>
           </div>
-        </form>
+        </motion.form>
       )}
+      </AnimatePresence>
     </section>
   );
 }

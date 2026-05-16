@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 /**
  * Day 9 / Fix 9.6 — site-wide search bar.
@@ -25,6 +26,7 @@ export default function SearchBar({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [value, setValue] = useState("");
+  const [focused, setFocused] = useState(false);
 
   // Keep the input in sync with the URL when the user lands on BrowseFleet
   // via a search link. Doesn't re-clobber what they're typing because the
@@ -47,26 +49,37 @@ export default function SearchBar({
   };
 
   return (
-    <form
+    <motion.form
       role="search"
       onSubmit={handleSubmit}
+      animate={{ scale: focused ? 1.01 : 1 }}
+      transition={{ type: "spring", stiffness: 460, damping: 28 }}
       className={`relative flex items-center ${className}`}
     >
       <label htmlFor="site-search" className="sr-only">
         Search the fleet
       </label>
-      <Search
-        className="pointer-events-none absolute left-3 h-4 w-4 text-gray-400"
+      <motion.span
+        animate={{
+          scale: focused ? 1.1 : 1,
+          color: focused ? "#dc2626" : "#9ca3af",
+        }}
+        transition={{ type: "spring", stiffness: 420, damping: 22 }}
+        className="pointer-events-none absolute left-3 inline-flex"
         aria-hidden="true"
-      />
+      >
+        <Search className="h-4 w-4" />
+      </motion.span>
       <input
         id="site-search"
         type="search"
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         placeholder={placeholder}
         className="w-full rounded-full border border-gray-200 bg-white py-2 pr-4 pl-9 text-sm shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
       />
-    </form>
+    </motion.form>
   );
 }

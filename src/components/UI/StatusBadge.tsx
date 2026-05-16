@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Status pill — replaces inline `getStatusColor` and `getStatusBadge`
  * helpers scattered across car list cards, admin tables, and booking
@@ -13,6 +15,7 @@
  */
 
 import React from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 type KnownStatus =
   // Cars
@@ -72,13 +75,21 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   size = "md",
   className = "",
 }) => {
-  const style = getStatusStyles(status);
   return (
-    <span
-      className={`inline-flex items-center rounded-full font-semibold capitalize tracking-wide ${SIZE_CLASSES[size]} ${style} ${className}`}
-    >
-      {status.replace(/-/g, " ")}
-    </span>
+    // Re-keyed by `status` so changing the value (e.g. pending → confirmed
+    // in admin) re-runs the pop-in animation instead of silently swapping.
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.span
+        key={status}
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.7 }}
+        transition={{ type: "spring", stiffness: 460, damping: 24 }}
+        className={`inline-flex items-center rounded-full font-semibold capitalize tracking-wide ${SIZE_CLASSES[size]} ${getStatusStyles(status)} ${className}`}
+      >
+        {status.replace(/-/g, " ")}
+      </motion.span>
+    </AnimatePresence>
   );
 };
 

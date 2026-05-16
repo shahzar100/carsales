@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { useViewing } from "@/contexts/ViewingContext";
 import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import { useSavedCars } from "@/contexts/SavedCarsContext";
@@ -204,14 +205,25 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                   }}
                   className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-950 sm:aspect-[16/10] sm:rounded-2xl focus:ring-2 focus:ring-red-500 focus:outline-none"
                 >
-                  <Image
-                    src={allImages[activeImageIndex] || FALLBACK_IMAGE}
-                    alt={carTitle}
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                  />
+                  <AnimatePresence initial={false} mode="wait">
+                    <motion.div
+                      key={activeImageIndex}
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.99 }}
+                      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={allImages[activeImageIndex] || FALLBACK_IMAGE}
+                        alt={carTitle}
+                        fill
+                        className="object-cover"
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
 
                   {/* Bottom + top gradient for control legibility */}
                   <div
@@ -273,7 +285,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                   {/* Prev/Next — desktop only */}
                   {totalImages > 1 && (
                     <>
-                      <button
+                      <motion.button
                         type="button"
                         aria-label="Previous image"
                         onClick={() =>
@@ -281,20 +293,26 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                             (prev) => (prev - 1 + totalImages) % totalImages
                           )
                         }
-                        className="absolute top-1/2 left-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/75 sm:flex"
+                        whileHover={{ scale: 1.1, x: -2 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                        className="absolute top-1/2 left-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronLeft className="h-[22px] w-[22px]" />
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         type="button"
                         aria-label="Next image"
                         onClick={() =>
                           setActiveImageIndex((prev) => (prev + 1) % totalImages)
                         }
-                        className="absolute top-1/2 right-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/75 sm:flex"
+                        whileHover={{ scale: 1.1, x: 2 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                        className="absolute top-1/2 right-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronRight className="h-[22px] w-[22px]" />
-                      </button>
+                      </motion.button>
                     </>
                   )}
 
@@ -327,7 +345,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                     style={{ scrollbarWidth: "none" }}
                   >
                     {allImages.map((img, i) => (
-                      <button
+                      <motion.button
                         key={i}
                         type="button"
                         onClick={() => setActiveImageIndex(i)}
@@ -335,9 +353,12 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         aria-current={
                           i === activeImageIndex ? "true" : undefined
                         }
+                        whileHover={{ scale: 1.06, y: -2 }}
+                        whileTap={{ scale: 0.94 }}
+                        transition={{ type: "spring", stiffness: 460, damping: 22 }}
                         className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg sm:h-[84px] sm:w-[84px] ${
                           i === activeImageIndex
-                            ? "ring-2 ring-red-600"
+                            ? "opacity-100"
                             : "ring-1 ring-gray-200 opacity-80 hover:opacity-100"
                         }`}
                       >
@@ -348,7 +369,14 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                           className="object-cover"
                           sizes="84px"
                         />
-                      </button>
+                        {i === activeImageIndex && (
+                          <motion.span
+                            layoutId="gallery-thumb-ring"
+                            transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                            className="pointer-events-none absolute inset-0 rounded-lg ring-2 ring-red-600"
+                          />
+                        )}
+                      </motion.button>
                     ))}
                   </div>
                 )}

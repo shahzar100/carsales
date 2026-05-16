@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "motion/react";
 
 interface PaginationProps {
   currentPage: number;
@@ -120,15 +121,18 @@ const Pagination: React.FC<PaginationProps> = ({
       {/* Right side — controls */}
       <div className="flex items-center gap-1.5">
         {/* Previous */}
-        <button
+        <motion.button
           onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
+          whileHover={currentPage === 1 ? undefined : { scale: 1.05, x: -2 }}
+          whileTap={currentPage === 1 ? undefined : { scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 420, damping: 20 }}
+          className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Prev</span>
-        </button>
+        </motion.button>
 
         {/* Page Numbers */}
         <div className="flex items-center gap-1 px-1">
@@ -138,33 +142,46 @@ const Pagination: React.FC<PaginationProps> = ({
                 ···
               </span>
             ) : (
-              <button
+              <motion.button
                 key={page}
                 onClick={() => handlePageChange(page as number)}
-                className={`min-w-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                whileHover={{ scale: 1.08, y: -1 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 460, damping: 22 }}
+                className={`relative min-w-10 rounded-lg px-3 py-2 text-sm font-semibold ${
                   currentPage === page
-                    ? "bg-red-600 text-white shadow-md"
+                    ? "text-white"
                     : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"
                 }`}
               >
-                {page}
-              </button>
+                {currentPage === page && (
+                  <motion.span
+                    layoutId="pagination-active"
+                    transition={{ type: "spring", stiffness: 460, damping: 32 }}
+                    className="absolute inset-0 rounded-lg bg-red-600 shadow-md"
+                  />
+                )}
+                <span className="relative">{page}</span>
+              </motion.button>
             )
           )}
         </div>
 
         {/* Next */}
-        <button
+        <motion.button
           onClick={() =>
             handlePageChange(Math.min(totalPages, currentPage + 1))
           }
           disabled={currentPage === totalPages}
-          className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
+          whileHover={currentPage === totalPages ? undefined : { scale: 1.05, x: 2 }}
+          whileTap={currentPage === totalPages ? undefined : { scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 420, damping: 20 }}
+          className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>
           <ChevronRight className="h-4 w-4" />
-        </button>
+        </motion.button>
       </div>
     </div>
   );

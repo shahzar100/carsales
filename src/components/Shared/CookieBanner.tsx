@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 
 /**
  * Cookie consent banner with granular GDPR controls.
@@ -153,15 +154,19 @@ export default function CookieBanner() {
     setPrefs((p) => ({ ...p, [key]: !p[key] }));
   };
 
-  if (!visible) return null;
-
   return (
-    <div
+    <AnimatePresence>
+    {visible && (
+    <motion.div
       ref={dialogRef}
       role="dialog"
       aria-modal="false"
       aria-labelledby="cookie-banner-title"
       aria-live="polite"
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 40, scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 360, damping: 30, delay: 0.15 }}
       className="fixed inset-x-3 bottom-3 z-100 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl sm:bottom-6 sm:p-5"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -209,18 +214,29 @@ export default function CookieBanner() {
         )}
       </div>
 
+      <AnimatePresence initial={false}>
       {showCustomize && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="overflow-hidden"
+        >
         <div className="mt-4 border-t border-gray-200 pt-4">
           <p className="text-sm font-semibold text-gray-900">
             Cookie preferences
           </p>
           <ul className="mt-3 space-y-3">
-            {(Object.keys(CATEGORY_COPY) as Category[]).map((key) => {
+            {(Object.keys(CATEGORY_COPY) as Category[]).map((key, idx) => {
               const { label, description, locked } = CATEGORY_COPY[key];
               const checked = locked ? true : prefs[key];
               return (
-                <li
+                <motion.li
                   key={key}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 + 0.1, duration: 0.2 }}
                   className="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5"
                 >
                   <div className="min-w-0">
@@ -250,9 +266,13 @@ export default function CookieBanner() {
                       aria-label={`${label} cookies`}
                     />
                     <span className="h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-red-600 peer-focus-visible:ring-2 peer-focus-visible:ring-red-200" />
-                    <span className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+                    <motion.span
+                      className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow"
+                      animate={{ x: checked ? 16 : 0 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
                   </label>
-                </li>
+                </motion.li>
               );
             })}
           </ul>
@@ -280,7 +300,11 @@ export default function CookieBanner() {
             </button>
           </div>
         </div>
+        </motion.div>
       )}
-    </div>
+      </AnimatePresence>
+    </motion.div>
+    )}
+    </AnimatePresence>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { Toast as ToastType } from "@/contexts/types";
 
 interface ToastProps {
@@ -47,19 +48,15 @@ const toastStyles = {
 };
 
 export default function Toast({ toast, onRemove }: ToastProps) {
-  const [isVisible, setIsVisible] = useState(false);
   const [progress, setProgress] = useState(100);
-  const [isRemoving, setIsRemoving] = useState(false);
+  const [present, setPresent] = useState(true);
 
   const Icon = toastIcons[toast.type];
   const styles = toastStyles[toast.type];
 
   useEffect(() => {
-    // Animate in
-    const showTimer = setTimeout(() => setIsVisible(true), 50);
-
     // Progress bar animation (only if not persistent and has duration)
-    let progressTimer: NodeJS.Timeout;
+    let progressTimer: NodeJS.Timeout | undefined;
     if (!toast.persistent && toast.duration && toast.duration > 0) {
       const updateInterval = 50; // Update every 50ms
       const decrement = (updateInterval / toast.duration) * 100;
@@ -73,22 +70,11 @@ export default function Toast({ toast, onRemove }: ToastProps) {
     }
 
     return () => {
-      clearTimeout(showTimer);
       if (progressTimer) clearInterval(progressTimer);
     };
   }, [toast.persistent, toast.duration]);
 
-  const handleRemove = () => {
-    if (isRemoving) return;
-
-    setIsRemoving(true);
-    setIsVisible(false);
-
-    // Wait for exit animation before removing
-    setTimeout(() => {
-      onRemove(toast.id);
-    }, 300);
-  };
+  const handleRemove = () => setPresent(false);
 
   const handleAction = () => {
     if (toast.action) {
@@ -97,65 +83,80 @@ export default function Toast({ toast, onRemove }: ToastProps) {
   };
 
   return (
-    <div
-      role="alert"
-      className={`relative mb-3 w-full max-w-md transform rounded-lg p-4 transition-all duration-300 ease-in-out ${styles.container} ${
-        isVisible
-          ? "translate-x-0 scale-100 opacity-100"
-          : "translate-x-full scale-95 opacity-0"
-      } ${isRemoving ? "translate-x-full scale-95 opacity-0" : ""} `}
-    >
-      {/* Progress bar */}
-      {!toast.persistent && toast.duration && toast.duration > 0 && (
-        <div className="absolute right-0 bottom-0 left-0 h-1 overflow-hidden rounded-b-lg bg-gray-200">
-          <div
-            className={`h-full transition-all duration-50 ease-linear ${styles.progress}`}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
-
-      <div className="flex items-start">
-        {/* Icon */}
-        <div className="shrink-0 pt-0.5">
-          <Icon className={`h-5 w-5 ${styles.icon}`} />
-        </div>
-
-        {/* Content */}
-        <div className="ml-3 min-w-0 flex-1">
-          <div className={`text-sm font-semibold ${styles.title}`}>
-            {toast.title}
-          </div>
-          {toast.message && (
-            <div className={`mt-1 text-sm ${styles.message}`}>
-              {toast.message}
+    <AnimatePresence onExitComplete={() => onRemove(toast.id)}>
+      {present && (
+        <motion.div
+          role="alert"
+          layout
+          initial={{ x: 380, scale: 0.9, opacity: 0 }}
+          animate={{ x: 0, scale: 1, opacity: 1 }}
+          exit={{ x: 380, scale: 0.9, opacity: 0, transition: { duration: 0.2 } }}
+          transition={{ type: "spring", stiffness: 360, damping: 28 }}
+          className={`relative mb-3 w-full max-w-md rounded-lg p-4 ${styles.container}`}
+        >
+          {/* Progress bar */}
+          {!toast.persistent && toast.duration && toast.duration > 0 && (
+            <div className="absolute right-0 bottom-0 left-0 h-1 overflow-hidden rounded-b-lg bg-gray-200">
+              <div
+                className={`h-full transition-all duration-50 ease-linear ${styles.progress}`}
+                style={{ width: `${progress}%` }}
+              />
             </div>
           )}
 
-          {/* Action button */}
-          {toast.action && (
-            <div className="mt-3">
-              <button
-                onClick={handleAction}
-                className={`text-sm font-medium hover:underline focus:outline-none ${styles.title}`}
+          <div className="flex items-start">
+            {/* Icon */}
+            <motion.div
+              className="shrink-0 pt-0.5"
+              initial={{ scale: 0, rotate: -90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 460, damping: 18, delay: 0.08 }}
+            >
+              <Icon className={`h-5 w-5 ${styles.icon}`} />
+            </motion.div>
+
+            {/* Content */}
+            <div className="ml-3 min-w-0 flex-1">
+              <div className={`text-sm font-semibold ${styles.title}`}>
+                {toast.title}
+              </div>
+              {toast.message && (
+                <div className={`mt-1 text-sm ${styles.message}`}>
+                  {toast.message}
+                </div>
+              )}
+
+              {/* Action button */}
+              {toast.action && (
+                <div className="mt-3">
+                  <motion.button
+                    onClick={handleAction}
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    className={`text-sm font-medium hover:underline focus:outline-none ${styles.title}`}
+                  >
+                    {toast.action.label}
+                  </motion.button>
+                </div>
+              )}
+            </div>
+
+            {/* Close button */}
+            <div className="ml-4 shrink-0">
+              <motion.button
+                onClick={handleRemove}
+                aria-label="Close notification"
+                whileHover={{ scale: 1.15, rotate: 90 }}
+                whileTap={{ scale: 0.85 }}
+                transition={{ type: "spring", stiffness: 420, damping: 16 }}
+                className="inline-flex text-gray-400 hover:text-gray-600 focus:text-gray-600 focus:outline-none"
               >
-                {toast.action.label}
-              </button>
+                <X className="h-4 w-4" />
+              </motion.button>
             </div>
-          )}
-        </div>
-
-        {/* Close button */}
-        <div className="ml-4 shrink-0">
-          <button
-            onClick={handleRemove}
-            aria-label="Close notification"
-            className="inline-flex text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:text-gray-600 focus:outline-none"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-    </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

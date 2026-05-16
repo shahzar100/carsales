@@ -5,7 +5,6 @@ import {
   HelpCircle,
   Phone,
   Mail,
-  ChevronDown,
   Car,
   Wrench,
   Shield,
@@ -15,6 +14,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import FAQAccordion from "@/components/Helpful/FAQAccordion";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -41,30 +41,6 @@ interface FAQCategory {
   icon: React.ElementType;
   title: string;
   items: FAQItem[];
-}
-
-function FAQAccordion({ items }: { items: FAQItem[] }) {
-  return (
-    <div className="space-y-3">
-      {items.map((item) => (
-        <details
-          key={item.question}
-          className="group rounded-xl border border-gray-200 bg-white transition-all duration-200 open:border-red-200 open:shadow-md hover:border-red-200 hover:shadow-sm"
-        >
-          <summary className="flex cursor-pointer items-center justify-between gap-4 px-6 py-4 text-left text-base font-semibold text-gray-900 marker:content-none [&::-webkit-details-marker]:hidden">
-            {item.question}
-            <ChevronDown
-              size={18}
-              className="shrink-0 text-gray-400 transition-transform duration-200 group-open:rotate-180 group-open:text-red-500"
-            />
-          </summary>
-          <div className="border-t border-gray-100 px-6 py-4 text-sm leading-relaxed text-gray-600">
-            {item.answer}
-          </div>
-        </details>
-      ))}
-    </div>
-  );
 }
 
 export default async function FAQ() {

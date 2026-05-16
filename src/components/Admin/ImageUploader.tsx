@@ -2,6 +2,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { Upload, X, Loader2, AlertCircle, ImagePlus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
@@ -186,7 +187,7 @@ export default function ImageUploader({
     <div className="space-y-3">
       {/* Drop zone */}
       {canUploadMore && (
-        <button
+        <motion.button
           type="button"
           onClick={() => inputRef.current?.click()}
           onDragOver={(e) => {
@@ -195,6 +196,10 @@ export default function ImageUploader({
           }}
           onDragLeave={() => setDragActive(false)}
           onDrop={handleDrop}
+          animate={{ scale: dragActive ? 1.02 : 1 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          transition={{ type: "spring", stiffness: 380, damping: 26 }}
           className={`flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-8 text-center transition-colors ${
             dragActive
               ? "border-red-500 bg-red-50"
@@ -202,18 +207,29 @@ export default function ImageUploader({
           }`}
           aria-label="Upload images"
         >
-          {dragActive ? (
-            <ImagePlus className="mb-2 h-8 w-8 text-red-500" />
-          ) : (
-            <Upload className="mb-2 h-8 w-8 text-gray-400" />
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={dragActive ? "drop" : "idle"}
+              initial={{ scale: 0.6, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.6, opacity: 0, rotate: 10 }}
+              transition={{ type: "spring", stiffness: 460, damping: 20 }}
+              className="mb-2 inline-flex"
+            >
+              {dragActive ? (
+                <ImagePlus className="h-8 w-8 text-red-500" />
+              ) : (
+                <Upload className="h-8 w-8 text-gray-400" />
+              )}
+            </motion.span>
+          </AnimatePresence>
           <span className="text-sm font-medium text-gray-700">
             {dragActive ? "Drop to upload" : "Click or drag images here"}
           </span>
           <span className="mt-1 text-xs text-gray-500">
             JPEG, PNG, WebP, AVIF — max 10 MB
           </span>
-        </button>
+        </motion.button>
       )}
 
       <input
@@ -231,32 +247,61 @@ export default function ImageUploader({
       />
 
       {/* Error */}
-      {error && (
-        <div className="flex items-center gap-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            key={error}
+            initial={{ opacity: 0, y: -4, height: 0 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              x: [0, -6, 6, -4, 4, -2, 0],
+              transition: {
+                opacity: { duration: 0.18 },
+                y: { duration: 0.18 },
+                height: { duration: 0.18 },
+                x: { duration: 0.36, ease: "easeOut" },
+              },
+            }}
+            exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
+            style={{ overflow: "hidden" }}
+            className="flex items-center gap-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Uploading progress */}
-      {uploading.map((file) => (
-        <div
-          key={file.id}
-          className="flex items-center gap-3 rounded-md border border-gray-200 px-3 py-2"
-        >
-          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-red-600" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-gray-700">{file.name}</p>
-            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-              <div
-                className="h-full rounded-full bg-red-600 transition-[width] duration-300"
-                style={{ width: `${file.progress}%` }}
-              />
+      <AnimatePresence>
+        {uploading.map((file) => (
+          <motion.div
+            key={file.id}
+            layout
+            initial={{ opacity: 0, y: -6, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, scale: 0.96, height: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            style={{ overflow: "hidden" }}
+            className="flex items-center gap-3 rounded-md border border-gray-200 px-3 py-2"
+          >
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-red-600" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm text-gray-700">{file.name}</p>
+              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                <motion.div
+                  className="h-full rounded-full bg-red-600"
+                  animate={{ width: `${file.progress}%` }}
+                  transition={{ type: "spring", stiffness: 220, damping: 28 }}
+                />
+              </div>
             </div>
-          </div>
-          <span className="text-xs text-gray-500">{file.progress}%</span>
-        </div>
-      ))}
+            <span className="text-xs text-gray-500 tabular-nums">{file.progress}%</span>
+          </motion.div>
+        ))}
+      </AnimatePresence>
 
       {/* Image previews */}
       {existingImages.length > 0 && (
@@ -267,34 +312,47 @@ export default function ImageUploader({
               : "flex"
           }
         >
-          {existingImages.map((url, i) => (
-            <div
-              key={url}
-              className="group relative overflow-hidden rounded-lg border border-gray-200"
-            >
-              <Image
-                src={url}
-                alt={`Upload ${i + 1}`}
-                width={200}
-                height={150}
-                className="h-32 w-full object-cover"
-                unoptimized
-              />
-              {multiple && i === 0 && existingImages.length > 1 && (
-                <span className="absolute bottom-1 left-1 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                  Main
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => handleRemove(url)}
-                className="absolute top-1 right-1 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                aria-label={`Remove image ${i + 1}`}
+          <AnimatePresence mode="popLayout">
+            {existingImages.map((url, i) => (
+              <motion.div
+                key={url}
+                layout
+                initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.2 } }}
+                transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                className="group relative overflow-hidden rounded-lg border border-gray-200"
               >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ))}
+                <Image
+                  src={url}
+                  alt={`Upload ${i + 1}`}
+                  width={200}
+                  height={150}
+                  className="h-32 w-full object-cover"
+                  unoptimized
+                />
+                {multiple && i === 0 && existingImages.length > 1 && (
+                  <motion.span
+                    layout
+                    className="absolute bottom-1 left-1 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white"
+                  >
+                    Main
+                  </motion.span>
+                )}
+                <motion.button
+                  type="button"
+                  onClick={() => handleRemove(url)}
+                  whileHover={{ scale: 1.15, rotate: 90 }}
+                  whileTap={{ scale: 0.85 }}
+                  transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                  className="absolute top-1 right-1 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                  aria-label={`Remove image ${i + 1}`}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </motion.button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "motion/react";
 import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import {
   MapPin,
@@ -10,6 +11,20 @@ import {
   Twitter,
   Instagram,
 } from "lucide-react";
+
+const columnVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const socialHover = { scale: 1.18, rotate: -6 };
+const socialTap = { scale: 0.9 };
+const socialSpring = { type: "spring" as const, stiffness: 420, damping: 18 };
 
 export default function Footer() {
   const { businessInfo } = useBusinessInfo();
@@ -37,9 +52,15 @@ export default function Footer() {
     <footer className="w-full border-t border-gray-200 bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-8 text-gray-700 sm:px-6 sm:py-12">
         {/* Main Footer Content */}
-        <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+        >
           {/* Company Info */}
-          <div>
+          <motion.div variants={columnVariants}>
             <h3 className="heading-3 mb-4">{name}</h3>
             <p className="mb-4 text-sm text-gray-700">{description}</p>
             <div className="space-y-2 text-sm text-gray-700">
@@ -84,10 +105,10 @@ export default function Footer() {
                 </p>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Browse & Services */}
-          <div>
+          <motion.div variants={columnVariants}>
             <h4 className="heading-4 mb-4">Browse & Services</h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -139,10 +160,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* Support & Info */}
-          <div>
+          <motion.div variants={columnVariants}>
             <h4 className="heading-4 mb-4">Support & Info</h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -170,10 +191,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* Admin & Legal */}
-          <div>
+          <motion.div variants={columnVariants}>
             <h4 className="heading-4 mb-4">Admin & Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -201,8 +222,8 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 pt-6">
@@ -212,37 +233,46 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex space-x-4 md:mt-0">
               {social?.facebook && (
-                <Link
+                <motion.a
                   href={social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
+                  whileHover={socialHover}
+                  whileTap={socialTap}
+                  transition={socialSpring}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Facebook</span>
                   <Facebook size={20} />
-                </Link>
+                </motion.a>
               )}
               {social?.twitter && (
-                <Link
+                <motion.a
                   href={social.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
+                  whileHover={socialHover}
+                  whileTap={socialTap}
+                  transition={socialSpring}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Twitter</span>
                   <Twitter size={20} />
-                </Link>
+                </motion.a>
               )}
               {social?.instagram && (
-                <Link
+                <motion.a
                   href={social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
+                  whileHover={socialHover}
+                  whileTap={socialTap}
+                  transition={socialSpring}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-red-600"
                 >
                   <span className="sr-only">Instagram</span>
                   <Instagram size={20} />
-                </Link>
+                </motion.a>
               )}
             </div>
           </div>

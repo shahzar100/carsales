@@ -28,6 +28,13 @@
 import React from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { motion } from "motion/react";
+
+const MotionLink = motion.create(Link);
+
+const TAP = { scale: 0.97 };
+const HOVER = { scale: 1.02 };
+const SPRING = { type: "spring" as const, stiffness: 420, damping: 22, mass: 0.6 };
 
 type ButtonVariant =
   | "primary"
@@ -181,6 +188,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
   const cls = buildClassName({ variant, size, fullWidth, className });
   const inner = renderInner(children, icon, iconPosition, loading);
+  const interactive = !(disabled || loading);
 
   if ("href" in props && props.href) {
     // Disabled link — render a non-interactive span styled like the button.
@@ -205,43 +213,52 @@ const Button: React.FC<ButtonProps> = (props) => {
 
     if (isExternal) {
       return (
-        <a
+        <motion.a
           href={props.href}
           target={props.target}
           rel={props.target === "_blank" ? "noopener noreferrer" : undefined}
           className={cls}
           aria-label={ariaLabel}
           onClick={props.onClick}
+          whileHover={HOVER}
+          whileTap={TAP}
+          transition={SPRING}
         >
           {inner}
-        </a>
+        </motion.a>
       );
     }
 
     return (
-      <Link
+      <MotionLink
         href={props.href}
         target={props.target}
         className={cls}
         aria-label={ariaLabel}
         onClick={props.onClick}
+        whileHover={HOVER}
+        whileTap={TAP}
+        transition={SPRING}
       >
         {inner}
-      </Link>
+      </MotionLink>
     );
   }
 
   const buttonProps = props as ButtonAsButtonProps;
   return (
-    <button
+    <motion.button
       type={buttonProps.type ?? "button"}
       disabled={disabled || loading}
       className={cls}
       aria-label={ariaLabel}
       onClick={buttonProps.onClick}
+      whileHover={interactive ? HOVER : undefined}
+      whileTap={interactive ? TAP : undefined}
+      transition={SPRING}
     >
       {inner}
-    </button>
+    </motion.button>
   );
 };
 

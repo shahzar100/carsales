@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useSavedCars } from "@/contexts/SavedCarsContext";
 import type { CarInterface } from "@/lib/interfaces";
 import CarListCard from "@/components/Car/CarListCard";
@@ -88,22 +89,42 @@ export default function SavedCarsList() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-600">
-          {cars.length} saved {cars.length === 1 ? "car" : "cars"}
+          <motion.span
+            key={cars.length}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="inline-block tabular-nums"
+          >
+            {cars.length}
+          </motion.span>{" "}
+          saved {cars.length === 1 ? "car" : "cars"}
         </p>
-        <button
+        <motion.button
           type="button"
           onClick={() => {
             if (window.confirm("Clear all saved cars?")) clear();
           }}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 460, damping: 22 }}
           className="text-sm font-medium text-gray-600 hover:text-red-600"
         >
           Clear all
-        </button>
+        </motion.button>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {cars.map((car) => (
-          <CarListCard key={String(car._id)} car={car} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {cars.map((car) => (
+            <motion.div
+              key={String(car._id)}
+              layout
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+            >
+              <CarListCard car={car} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );

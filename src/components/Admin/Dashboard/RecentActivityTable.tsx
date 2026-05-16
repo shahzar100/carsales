@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import { motion } from "motion/react";
 import { ActivityItem } from "./types";
 import { Wrench, Eye, Clock } from "lucide-react";
 import { formatDate, formatRelativeTime } from "@/lib/utils/format";
@@ -38,6 +40,15 @@ const typeBadge = (type: "service" | "viewing") =>
     </span>
   );
 
+const rowVariants = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0 },
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04 } },
+};
 
 const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
   <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -67,10 +78,17 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
               <th className="px-6 py-3 text-right">Created</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <motion.tbody
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="divide-y divide-gray-50"
+          >
             {data.map((item) => (
-              <tr
+              <motion.tr
                 key={item.reference}
+                variants={rowVariants}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
                 className="transition-colors hover:bg-gray-50/50"
               >
                 <td className="px-6 py-3 text-xs font-medium whitespace-nowrap">
@@ -94,9 +112,9 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
                 <td className="px-6 py-3 text-right text-xs whitespace-nowrap text-gray-400">
                   {item.createdAt ? formatRelativeTime(item.createdAt) : "—"}
                 </td>
-              </tr>
+              </motion.tr>
             ))}
-          </tbody>
+          </motion.tbody>
         </table>
       </div>
     )}

@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import { useAccountContact } from "@/hooks/useAccountContact";
 import {
   ArrowRight,
@@ -198,6 +199,8 @@ export default function BookingFlow({
       : null;
 
   const [step, setStep] = useState(1);
+  // +1 = moving forward, -1 = moving back. Drives the slide direction.
+  const [direction, setDirection] = useState(1);
   const [data, setData] = useState<BookingState>({
     ...INITIAL,
     service: prefillService,
@@ -251,6 +254,7 @@ export default function BookingFlow({
   // ── Step navigation ────────────────────────────────────────
   const goNext = useCallback(() => {
     setError(null);
+    setDirection(1);
     setStep((s) => Math.min(5, s + 1));
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -259,6 +263,7 @@ export default function BookingFlow({
 
   const goBack = useCallback(() => {
     setError(null);
+    setDirection(-1);
     setStep((s) => Math.max(1, s - 1));
   }, []);
 
@@ -441,74 +446,90 @@ export default function BookingFlow({
         onBack={step > 1 ? goBack : undefined}
       />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 pb-14 sm:px-6">
-        {step === 1 && (
-          <Step1
-            prefill={prefillService && !prefillDismissed ? prefillService : null}
-            onPrefillChange={() => setPrefillDismissed(true)}
-            selected={data.service}
-            onSelect={(k) => {
-              // Changing the service must reset the package selection.
-              setData((d) => ({ ...d, service: k, packageId: "" }));
-              setError(null);
+      <div className="mx-auto w-full max-w-7xl flex-1 overflow-hidden px-4 pb-14 sm:px-6">
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={{
+              enter: (d: number) => ({ opacity: 0, x: d * 40 }),
+              center: { opacity: 1, x: 0 },
+              exit: (d: number) => ({ opacity: 0, x: d * -40 }),
             }}
-            onContinue={handleStep1Continue}
-            error={error}
-          />
-        )}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {step === 1 && (
+              <Step1
+                prefill={prefillService && !prefillDismissed ? prefillService : null}
+                onPrefillChange={() => setPrefillDismissed(true)}
+                selected={data.service}
+                onSelect={(k) => {
+                  // Changing the service must reset the package selection.
+                  setData((d) => ({ ...d, service: k, packageId: "" }));
+                  setError(null);
+                }}
+                onContinue={handleStep1Continue}
+                error={error}
+              />
+            )}
 
-        {step === 2 && selectedService && (
-          <Step2
-            service={selectedService.key}
-            serviceName={selectedService.name}
-            packages={packages}
-            selectedId={data.packageId}
-            onSelect={(id) => {
-              update("packageId", id);
-            }}
-            onContinue={handleStep2Continue}
-            error={error}
-          />
-        )}
+            {step === 2 && selectedService && (
+              <Step2
+                service={selectedService.key}
+                serviceName={selectedService.name}
+                packages={packages}
+                selectedId={data.packageId}
+                onSelect={(id) => {
+                  update("packageId", id);
+                }}
+                onContinue={handleStep2Continue}
+                error={error}
+              />
+            )}
 
-        {step === 3 && (
-          <Step3
-            data={data}
-            update={update}
-            currentYear={currentYear}
-            onContinue={handleStep3Continue}
-            error={error}
-          />
-        )}
+            {step === 3 && (
+              <Step3
+                data={data}
+                update={update}
+                currentYear={currentYear}
+                onContinue={handleStep3Continue}
+                error={error}
+              />
+            )}
 
-        {step === 4 && (
-          <Step4
-            data={data}
-            update={update}
-            onContinue={handleStep4Continue}
-            onTogglePurpose={(p) =>
-              setData((d) => ({ ...d, purpose: p, date: "", time: "" }))
-            }
-            error={error}
-          />
-        )}
+            {step === 4 && (
+              <Step4
+                data={data}
+                update={update}
+                onContinue={handleStep4Continue}
+                onTogglePurpose={(p) =>
+                  setData((d) => ({ ...d, purpose: p, date: "", time: "" }))
+                }
+                error={error}
+              />
+            )}
 
-        {step === 5 && selectedService && selectedPackage && (
-          <Step5
-            data={data}
-            update={update}
-            service={SERVICE_LABELS[selectedService.key]}
-            packageName={selectedPackage.name}
-            packagePrice={selectedPackage.price}
-            onSubmit={submit}
-            submitting={submitting}
-            submitted={submitted}
-            bookingRef={bookingRef}
-            setTurnstileToken={setTurnstileToken}
-            error={error}
-            onReturnHome={() => router.push("/")}
-          />
-        )}
+            {step === 5 && selectedService && selectedPackage && (
+              <Step5
+                data={data}
+                update={update}
+                service={SERVICE_LABELS[selectedService.key]}
+                packageName={selectedPackage.name}
+                packagePrice={selectedPackage.price}
+                onSubmit={submit}
+                submitting={submitting}
+                submitted={submitted}
+                bookingRef={bookingRef}
+                setTurnstileToken={setTurnstileToken}
+                error={error}
+                onReturnHome={() => router.push("/")}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

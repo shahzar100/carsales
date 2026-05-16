@@ -2,9 +2,20 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import FilterSection from "./FilterSection";
 import Button from "@/components/Helpful/Buttons/Button";
 import { CarPartInterface } from "@/lib/interfaces";
+
+const partVariants = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0 },
+};
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
 
 interface CarPartsGridProps {
   parts: CarPartInterface[];
@@ -88,10 +99,21 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
 
       {/* Parts Grid */}
       {filteredParts.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          <AnimatePresence mode="popLayout">
           {filteredParts.map((part) => (
-            <div
+            <motion.div
               key={String(part._id)}
+              variants={partVariants}
+              layout
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              transition={{ type: "spring", stiffness: 360, damping: 28 }}
+              whileHover={{ y: -4 }}
               className="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
             >
               {/* Part Image */}
@@ -164,16 +186,22 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+          </AnimatePresence>
+        </motion.div>
       ) : (
-        <div className="py-12 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="py-12 text-center"
+        >
           <div className="mb-2 text-lg text-gray-500">No parts found</div>
           <div className="text-sm text-gray-400">
             Try adjusting your filters to see more results
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );

@@ -3,6 +3,7 @@ import React from "react";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "motion/react";
 import {
   Fuel,
   Gauge,
@@ -50,11 +51,14 @@ const CarListCard: React.FC<CarListCardProps> = ({
   ];
 
   const cardContent = (
-    <div
-      className={`group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition-all duration-300 ${
-        !isAdmin
-          ? "hover:-translate-y-0.5 hover:shadow-lg hover:ring-gray-300"
-          : ""
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ type: "spring", stiffness: 320, damping: 28 }}
+      whileHover={!isAdmin ? { y: -4 } : undefined}
+      className={`group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition-shadow duration-300 ${
+        !isAdmin ? "hover:shadow-lg hover:ring-gray-300" : ""
       }`}
     >
       <div className="flex flex-col sm:flex-row">
@@ -219,20 +223,22 @@ const CarListCard: React.FC<CarListCardProps> = ({
                     variant="icon"
                     size="sm"
                   />
-                  <Link
-                    href={`/BrowseFleet/${car._id}`}
-                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-[0.98]"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Details
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}>
+                    <Link
+                      href={`/BrowseFleet/${car._id}`}
+                      className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md"
+                    >
+                      <Eye className="h-4 w-4" />
+                      View Details
+                    </Link>
+                  </motion.div>
                 </div>
               </>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return cardContent;

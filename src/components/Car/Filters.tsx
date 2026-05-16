@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useFilters } from "@/contexts/FilterContext";
 import { CarInterface } from "@/lib/interfaces";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -70,11 +71,20 @@ const Filters: React.FC<FiltersProps> = ({
             <h2 className="heading-4 text-sm">Filters</h2>
             <p className="caption">
               {filteredCount} of {totalCount} vehicles
-              {activeCount > 0 && (
-                <span className="badge-sm badge-brand ml-1.5">
-                  {activeCount} active
-                </span>
-              )}
+              <AnimatePresence>
+                {activeCount > 0 && (
+                  <motion.span
+                    key={activeCount}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.6 }}
+                    transition={{ type: "spring", stiffness: 480, damping: 20 }}
+                    className="badge-sm badge-brand ml-1.5 inline-flex"
+                  >
+                    {activeCount} active
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </p>
           </div>
         </div>
@@ -136,72 +146,83 @@ const Filters: React.FC<FiltersProps> = ({
       </div>
 
       {/* Advanced Filters */}
-      {showAdvanced && (
-        <div className="section divider">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <RangeInput
-              label="Year"
-              minValue={state.yearMin}
-              maxValue={state.yearMax}
-              onMinChange={(v) =>
-                dispatch({ type: "SET_YEAR_MIN", payload: v })
-              }
-              onMaxChange={(v) =>
-                dispatch({ type: "SET_YEAR_MAX", payload: v })
-              }
-              minPlaceholder="From"
-              maxPlaceholder="To"
-            />
+      <AnimatePresence initial={false}>
+        {showAdvanced && (
+          <motion.div
+            key="advanced"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="section divider">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <RangeInput
+                  label="Year"
+                  minValue={state.yearMin}
+                  maxValue={state.yearMax}
+                  onMinChange={(v) =>
+                    dispatch({ type: "SET_YEAR_MIN", payload: v })
+                  }
+                  onMaxChange={(v) =>
+                    dispatch({ type: "SET_YEAR_MAX", payload: v })
+                  }
+                  minPlaceholder="From"
+                  maxPlaceholder="To"
+                />
 
-            <RangeInput
-              label="Mileage"
-              minValue={state.mileageMin}
-              maxValue={state.mileageMax}
-              onMinChange={(v) =>
-                dispatch({ type: "SET_MILEAGE_MIN", payload: v })
-              }
-              onMaxChange={(v) =>
-                dispatch({ type: "SET_MILEAGE_MAX", payload: v })
-              }
-            />
+                <RangeInput
+                  label="Mileage"
+                  minValue={state.mileageMin}
+                  maxValue={state.mileageMax}
+                  onMinChange={(v) =>
+                    dispatch({ type: "SET_MILEAGE_MIN", payload: v })
+                  }
+                  onMaxChange={(v) =>
+                    dispatch({ type: "SET_MILEAGE_MAX", payload: v })
+                  }
+                />
 
-            <FilterSelect
-              label="Doors"
-              value={state.doors}
-              onChange={(v) => dispatch({ type: "SET_DOORS", payload: v })}
-              options={uniqueDoors.map((d) => ({
-                value: d.toString(),
-                label: `${d} doors`,
-              }))}
-              placeholder="Any"
-            />
+                <FilterSelect
+                  label="Doors"
+                  value={state.doors}
+                  onChange={(v) => dispatch({ type: "SET_DOORS", payload: v })}
+                  options={uniqueDoors.map((d) => ({
+                    value: d.toString(),
+                    label: `${d} doors`,
+                  }))}
+                  placeholder="Any"
+                />
 
-            <FilterSelect
-              label="Colour"
-              value={state.colour}
-              onChange={(v) => dispatch({ type: "SET_COLOUR", payload: v })}
-              options={uniqueColours.map((c) => ({ value: c, label: c }))}
-              placeholder="All Colours"
-            />
+                <FilterSelect
+                  label="Colour"
+                  value={state.colour}
+                  onChange={(v) => dispatch({ type: "SET_COLOUR", payload: v })}
+                  options={uniqueColours.map((c) => ({ value: c, label: c }))}
+                  placeholder="All Colours"
+                />
 
-            {/* Features Select Buttons */}
-            <div className="sm:col-span-2 lg:col-span-4">
-              <CarFeatures
-                allFeatures={allFeatures}
-                selectedFeatures={state.features}
-                onToggle={(feature) =>
-                  dispatch({ type: "TOGGLE_FEATURE", payload: feature })
-                }
-                onClearAll={() =>
-                  state.features.forEach((f) =>
-                    dispatch({ type: "TOGGLE_FEATURE", payload: f })
-                  )
-                }
-              />
+                {/* Features Select Buttons */}
+                <div className="sm:col-span-2 lg:col-span-4">
+                  <CarFeatures
+                    allFeatures={allFeatures}
+                    selectedFeatures={state.features}
+                    onToggle={(feature) =>
+                      dispatch({ type: "TOGGLE_FEATURE", payload: feature })
+                    }
+                    onClearAll={() =>
+                      state.features.forEach((f) =>
+                        dispatch({ type: "TOGGLE_FEATURE", payload: f })
+                      )
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

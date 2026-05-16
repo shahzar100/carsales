@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react";
+import { motion } from "motion/react";
 import Button from "@/components/UI/Button";
 
 /**
@@ -30,8 +31,33 @@ type Profile = {
 };
 
 function Banner({ kind, children }: { kind: "ok" | "err"; children: string }) {
+  // Re-key by `kind+children` so changing message replays the entry animation.
   return (
-    <div
+    <motion.div
+      key={`${kind}-${children}`}
+      initial={{ opacity: 0, y: -4, height: 0 }}
+      animate={
+        kind === "err"
+          ? {
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              x: [0, -6, 6, -4, 4, -2, 0],
+              transition: {
+                opacity: { duration: 0.18 },
+                y: { duration: 0.18 },
+                height: { duration: 0.18 },
+                x: { duration: 0.36, ease: "easeOut" },
+              },
+            }
+          : {
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+            }
+      }
+      style={{ overflow: "hidden" }}
       className={`flex items-start gap-2 rounded-lg p-3 text-sm ${
         kind === "ok"
           ? "bg-emerald-50 text-emerald-700"
@@ -44,7 +70,7 @@ function Banner({ kind, children }: { kind: "ok" | "err"; children: string }) {
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
       )}
       <span>{children}</span>
-    </div>
+    </motion.div>
   );
 }
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, AlertCircle, CheckCircle2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/UI/Button";
 
 /**
@@ -59,26 +60,59 @@ export default function ResetPasswordForm({ token }: { token: string }) {
 
   if (done) {
     return (
-      <div className="text-center">
-        <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 360, damping: 26 }}
+        className="text-center"
+      >
+        <motion.div
+          initial={{ scale: 0, rotate: -90 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
+          className="mx-auto inline-block"
+        >
+          <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+        </motion.div>
         <h2 className="mt-3 text-lg font-semibold text-gray-900">
           Password updated
         </h2>
         <p className="mt-1 text-sm text-gray-600">
           Taking you to the sign-in page…
         </p>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {error && (
-        <div className="flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            key={error}
+            initial={{ opacity: 0, y: -4, height: 0 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              height: "auto",
+              x: [0, -6, 6, -4, 4, -2, 0],
+              transition: {
+                opacity: { duration: 0.18 },
+                y: { duration: 0.18 },
+                height: { duration: 0.18 },
+                x: { duration: 0.36, ease: "easeOut" },
+              },
+            }}
+            exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div>
         <label

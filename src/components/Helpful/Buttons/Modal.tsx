@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { motion } from "motion/react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface ModalProps {
@@ -112,13 +113,16 @@ const Modal = ({
   if (!mounted) return null;
 
   return createPortal(
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.18 }}
       className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div
+      <motion.div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
@@ -128,6 +132,9 @@ const Modal = ({
         // variant). The focus trap relies on `document.activeElement`
         // being inside the dialog.
         tabIndex={-1}
+        initial={{ opacity: 0, scale: 0.92, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }}
         className={`relative max-h-[90vh] overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-2xl ${sizeClasses[size]} ${
           variant === "default" ? "flex flex-col gap-4 p-8" : ""
         }`}
@@ -137,29 +144,35 @@ const Modal = ({
             <h2 id="modal-title" className="text-xl font-bold">
               {title}
             </h2>
-            <button
+            <motion.button
               onClick={onClose}
               aria-label="Close"
-              className="group flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-red-700"
+              whileHover={{ scale: 1.05, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 420, damping: 18 }}
+              className="group flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700"
             >
               <X />
-            </button>
+            </motion.button>
           </div>
         )}
 
         {variant === "clean" && (
-          <button
+          <motion.button
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-3 right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-all hover:bg-gray-200 hover:text-gray-700"
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 420, damping: 18 }}
+            className="absolute top-3 right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
           >
             <X className="h-4 w-4" />
-          </button>
+          </motion.button>
         )}
 
         {children}
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>,
     document.body
   );
 };
