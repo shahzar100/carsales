@@ -120,6 +120,7 @@ describe("Dropdown & Navigation Components - ACCESSIBILITY & INTERACTION TESTS",
 
       return (
         <div ref={dropdownRef} className="relative w-full" data-testid={testId}>
+          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- test intentionally asserts aria-required is present on the trigger button (see "MUST validate required field accessibility") */}
           <button
             type="button"
             disabled={disabled}
@@ -747,7 +748,6 @@ describe("Dropdown & Navigation Components - ACCESSIBILITY & INTERACTION TESTS",
         </div>
       );
 
-      const menuItems = screen.getAllByRole("menuitem");
       const closeButton = screen.getByLabelText(/close menu/i);
 
       // STRICT: Focus should be trapped within menu

@@ -1,4 +1,3 @@
-import { NextRequest } from "next/server";
 import { GET } from "@/app/api/about/route";
 import { getTestCollections, createTestShopInfo } from "../utils/testUtils";
 

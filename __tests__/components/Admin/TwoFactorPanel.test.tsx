@@ -19,7 +19,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 // `qrcode` is dynamic-imported inside the component. Mock the module so
 // tests don't have to spin up the real library — we just need to know it
 // was called with the right URI.
-const mockToDataURL = jest.fn(async () => "data:image/png;base64,QR");
+const mockToDataURL = jest.fn(async (..._args: unknown[]) => "data:image/png;base64,QR");
 jest.mock("qrcode", () => ({
   __esModule: true,
   default: { toDataURL: (...args: unknown[]) => mockToDataURL(...args) },

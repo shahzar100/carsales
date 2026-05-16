@@ -11,4 +11,5 @@ export const v4 = (): string => {
   return `${randomHex(8)}-${randomHex(4)}-4${randomHex(3)}-${randomHex(4)}-${randomHex(12)}`;
 };
 
-export default { v4 };
+const uuidMock = { v4 };
+export default uuidMock;

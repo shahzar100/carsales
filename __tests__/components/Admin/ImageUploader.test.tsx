@@ -28,7 +28,10 @@ beforeEach(() => {
     ).randomUUID !== "function"
   ) {
     (globalThis.crypto as Crypto & { randomUUID: () => string }).randomUUID =
-      () => `test-uuid-${Math.random().toString(36).slice(2, 10)}`;
+      () =>
+        `test-uuid-${Math.random()
+          .toString(36)
+          .slice(2, 10)}` as `${string}-${string}-${string}-${string}-${string}`;
   }
 });
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
-import { Wrench, CheckCircle, Clock } from "lucide-react";
+import { Wrench } from "lucide-react";
 import ServiceHero from "@/components/Services/Common/ServiceHero";
 
 expect.extend(toHaveNoViolations);
