@@ -15,6 +15,9 @@ const customJestConfig = {
     "<rootDir>/__tests__/api/",
     "<rootDir>/__tests__/utils/businessInfo",
     "<rootDir>/__tests__/utils/middleware",
+    // node-only tests with a MongoMemoryServer dependency — they live in
+    // __tests__/utils/ but only the api config has the mongo setup hook.
+    "<rootDir>/__tests__/utils/getDashboardData",
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
@@ -48,7 +51,7 @@ const jestConfigFn = createJestConfig(customJestConfig);
 module.exports = async () => {
   const config = await jestConfigFn();
   config.transformIgnorePatterns = [
-    "/node_modules/(?!(bson|mongodb|geist)/)",
+    "/node_modules/(?!(bson|mongodb|geist|next-auth|@auth|@panva|jose|oauth4webapi|preact-render-to-string|preact)/)",
     "^.+\\.module\\.(css|sass|scss)$",
   ];
   return config;

@@ -20,6 +20,10 @@ jest.mock("@/lib/utils/auth", () => ({
     const bcrypt = require("bcryptjs");
     return bcrypt.hash(pwd, 10);
   }),
+  // The route audit-logs each password change via getSession().username,
+  // and gates "admin can reset another admin's password" through hasMinimumRole.
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
+  hasMinimumRole: jest.fn(async () => true),
 }));
 const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
@@ -46,7 +50,11 @@ describe("/api/admin/users/password", () => {
   });
 
   describe("POST - Reset Password", () => {
-    it("should reset password and return new password", async () => {
+    // Reset flow no longer rotates the password directly — it emails a
+    // time-limited reset link and only updates the password once the user
+    // submits a new one through that link. Asserting that change here.
+
+    it("issues a hashed reset token and emails the user", async () => {
       const { adminUsers, client } = await getTestCollections();
       const oldHash = await bcrypt.hash("old-password", 10);
       await adminUsers.insertOne({
@@ -69,18 +77,26 @@ describe("/api/admin/users/password", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.password).toBeDefined();
-      expect(data.password).toMatch(/^.{4}-.{4}-.{4}-.{4}$/); // format: XXXX-XXXX-XXXX-XXXX
-      expect(data.message).toContain("reset");
+      expect(data.emailSent).toBe(true);
+      expect(data.message).toMatch(/reset/i);
+      // Plaintext password must NOT come back in the response.
+      expect(data.password).toBeUndefined();
+
+      const { adminUsers: u2, client: c2 } = await getTestCollections();
+      const saved = await u2.findOne({ username: "testuser" });
+      expect(saved?.resetToken).toMatch(/^[a-f0-9]{64}$/); // sha-256 hex
+      expect(saved?.resetTokenExpiry).toBeInstanceOf(Date);
+      // password hash is left alone until the user completes the flow
+      expect(saved?.passwordHash).toBe(oldHash);
+      await c2.close();
     });
 
-    it("should update the password hash in the database", async () => {
+    it("stamps the user's updatedAt on reset-token issue", async () => {
       const { adminUsers, client } = await getTestCollections();
-      const oldHash = await bcrypt.hash("old-password", 10);
       await adminUsers.insertOne({
         username: "testuser2",
         email: "test2@example.com",
-        passwordHash: oldHash,
+        passwordHash: await bcrypt.hash("old-password", 10),
       });
       await client.close();
 
@@ -91,16 +107,12 @@ describe("/api/admin/users/password", () => {
           body: JSON.stringify({ action: "reset", username: "testuser2" }),
         }
       );
-
       await POST(request);
 
-      // Verify the hash was changed
-      const { adminUsers: users2, client: client2 } =
-        await getTestCollections();
-      const updatedUser = await users2.findOne({ username: "testuser2" });
-      expect(updatedUser?.passwordHash).not.toBe(oldHash);
-      expect(updatedUser?.updatedAt).toBeDefined();
-      await client2.close();
+      const { adminUsers: u2, client: c2 } = await getTestCollections();
+      const updated = await u2.findOne({ username: "testuser2" });
+      expect(updated?.updatedAt).toBeInstanceOf(Date);
+      await c2.close();
     });
   });
 

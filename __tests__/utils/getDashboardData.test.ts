@@ -82,6 +82,16 @@ describe("getDashboardData (Mongo aggregation)", () => {
     const viewing = await getCarViewingBookingsCollection();
     const users = await getAdminUsersCollection();
 
+    // Drop fixture data left behind by the previous `it()` — otherwise
+    // the `bookingReference` unique index throws E11000 when this
+    // beforeEach re-seeds BK-N references that already exist.
+    await Promise.all([
+      cars.deleteMany({}),
+      service.deleteMany({}),
+      viewing.deleteMany({}),
+      users.deleteMany({}),
+    ]);
+
     await cars.insertMany([
       makeCar({ status: "available", price: 4000, fuel: "Petrol" }),
       makeCar({ status: "available", price: 8000, fuel: "Diesel" }),

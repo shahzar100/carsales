@@ -17,6 +17,10 @@ jest.mock("@/lib/utils/auth", () => ({
   hashPassword: jest.fn((pwd: string) => Promise.resolve(`hashed_${pwd}`)),
   isAuthenticated: jest.fn(),
   hasMinimumRole: jest.fn(),
+  // POST / user-creation calls getSession() for the audit log; without
+  // this mock every "happy path" assertion gets a 500 from
+  // `(0 , _auth.getSession) is not a function`.
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
 const {
   isAuthenticated: mockIsAuthenticated,
@@ -382,7 +386,10 @@ describe("/api/admin/users", () => {
   });
 
   describe("📋 Functional Correctness Standards", () => {
-    it("should create a new user successfully", async () => {
+    it("should create a new user successfully (setup-email flow)", async () => {
+      // WEBSITE_REVIEW #11 / DAY_PLAN Fix 2.3: passwords are no longer
+      // returned in the response — they're sent as a setup link to the
+      // user's email. Test the new contract.
       const request = new NextRequest("http://localhost:3000/api/admin/users", {
         method: "POST",
         body: JSON.stringify({
@@ -397,26 +404,34 @@ describe("/api/admin/users", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.message).toContain("created successfully");
-      expect(data.password).toBeDefined();
+      expect(data.message).toContain("Setup email sent");
+      expect(data.emailSent).toBe(true);
+      // Plaintext password must NOT leak back over the wire.
+      expect(data.password).toBeUndefined();
     });
 
-    it("should return generated password in response", async () => {
+    it("🔒 stores a placeholder hash + setup token on the new user", async () => {
+      const { adminUsers } = await getTestCollections();
       const request = new NextRequest("http://localhost:3000/api/admin/users", {
         method: "POST",
         body: JSON.stringify({
-          username: "pwdtest",
-          email: "pwd@example.com",
+          username: "tokenuser",
+          email: "token@example.com",
           role: "manager",
         }),
       });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(data.password).toBeDefined();
-      expect(typeof data.password).toBe("string");
-      expect(data.password.length).toBeGreaterThan(0);
+      await POST(request);
+      const saved = await adminUsers.findOne({ username: "tokenuser" });
+      expect(saved?.passwordHash).toBeDefined();
+      // resetToken is stored hashed (sha256 hex = 64 chars) so a DB leak
+      // can't be used to hijack the setup link.
+      expect(saved?.resetToken).toMatch(/^[a-f0-9]{64}$/);
+      expect(saved?.resetTokenExpiry).toBeInstanceOf(Date);
+      // ~1h TTL
+      const ttl =
+        (saved!.resetTokenExpiry as Date).getTime() - Date.now();
+      expect(ttl).toBeGreaterThan(50 * 60 * 1000);
+      expect(ttl).toBeLessThanOrEqual(60 * 60 * 1000);
     });
 
     it("should save user to database with correct fields", async () => {
@@ -468,48 +483,49 @@ describe("/api/admin/users", () => {
     });
   });
 
-  describe("🔒 Security Standards - Password Generation", () => {
-    it("should generate strong password with proper format", async () => {
+  describe("🔒 Security Standards - Setup Token Uniqueness", () => {
+    // The "generated password" tests were superseded by the setup-email
+    // flow — passwords are no longer returned over the wire. We instead
+    // assert the new server-stored setup-token contract: unique per user,
+    // SHA-256-hashed at rest, never echoed back in the response.
+    it("never echoes a plaintext password or raw setup token in the response", async () => {
       const request = new NextRequest("http://localhost:3000/api/admin/users", {
         method: "POST",
         body: JSON.stringify({
-          username: "strongpwd",
-          email: "strong@example.com",
+          username: "noecho",
+          email: "noecho@example.com",
           role: "staff",
         }),
       });
-
       const response = await POST(request);
       const data = await response.json();
-
-      // Password should be in format: xxxx-xxxx-xxxx-xxxx
-      expect(data.password).toMatch(
-        /^[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}-[A-Za-z0-9!@#$%&*]{4}$/
-      );
+      expect(data.password).toBeUndefined();
+      expect(data.resetToken).toBeUndefined();
+      expect(data.passwordHash).toBeUndefined();
     });
 
-    it("should generate unique passwords for each user", async () => {
-      const passwords = new Set();
-
-      for (let i = 0; i < 10; i++) {
+    it("issues a unique setup-token hash per user", async () => {
+      const { adminUsers } = await getTestCollections();
+      const tokens = new Set<string>();
+      for (let i = 0; i < 5; i++) {
         const request = new NextRequest(
           "http://localhost:3000/api/admin/users",
           {
             method: "POST",
             body: JSON.stringify({
-              username: `user${i}`,
-              email: `user${i}@example.com`,
+              username: `unique${i}`,
+              email: `unique${i}@example.com`,
               role: "staff",
             }),
           }
         );
-
-        const response = await POST(request);
-        const data = await response.json();
-        passwords.add(data.password);
+        await POST(request);
       }
-
-      expect(passwords.size).toBe(10);
+      const saved = await adminUsers
+        .find({ username: { $regex: /^unique\d$/ } })
+        .toArray();
+      for (const u of saved) tokens.add(u.resetToken as string);
+      expect(tokens.size).toBe(5);
     });
   });
 

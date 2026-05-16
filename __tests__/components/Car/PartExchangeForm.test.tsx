@@ -16,7 +16,19 @@
 import React from "react";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useSession } from "next-auth/react";
 import PartExchangeForm from "@/components/Car/PartExchangeForm";
+
+// The form prefills name + email from the signed-in session via
+// `useAccountContact` and the email input is read-only. The session is
+// globally mocked to `unauthenticated`; the submission path needs an
+// authenticated session so the email lands in the POST body.
+beforeEach(() => {
+  (useSession as unknown as jest.Mock).mockReturnValue({
+    data: { user: { name: "Jane Doe", email: "jane@example.com" } },
+    status: "authenticated",
+  });
+});
 
 // PartExchangeForm renders <label> and <input> as siblings without
 // `htmlFor`/`id` association, so RTL's getByLabelText can't find them.

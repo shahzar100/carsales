@@ -67,9 +67,14 @@ describe("validation utilities", () => {
       }
     });
 
-    it("should sanitize XSS in email input", () => {
+    it("should reject XSS-style payloads as invalid (regex denies < and >)", () => {
+      // validateEmail is intentionally NOT an anti-XSS sanitizer (see
+      // src/lib/utils/validation.ts header). It instead rejects the
+      // payload at the regex boundary because `<` and `>` are not
+      // allowed in the local-part character class. React escapes any
+      // output at render time.
       const result = validateEmail('<script>alert("xss")</script>@evil.com');
-      expect(result.sanitized).not.toContain("<script>");
+      expect(result.valid).toBe(false);
     });
   });
 

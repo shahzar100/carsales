@@ -56,8 +56,16 @@ function discoverRoutes(dir: string, prefix = ""): string[] {
 
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (!entry.isDirectory()) {
-      // A page.tsx at this level means this prefix is a valid route
-      if (entry.name === "page.tsx" || entry.name === "page.ts") {
+      // A page.tsx at this level means this prefix is a valid route.
+      // route.ts / route.tsx also counts — email templates link to API
+      // endpoints like /api/auth/verify-email which only exist as a
+      // route handler. Skipping them produced false positives.
+      if (
+        entry.name === "page.tsx" ||
+        entry.name === "page.ts" ||
+        entry.name === "route.tsx" ||
+        entry.name === "route.ts"
+      ) {
         routes.push(prefix || "/");
       }
       continue;
@@ -65,12 +73,9 @@ function discoverRoutes(dir: string, prefix = ""): string[] {
 
     const folderName = entry.name;
 
-    // Skip api/ routes, private folders (_), and special Next.js folders
-    if (
-      folderName === "api" ||
-      folderName.startsWith("_") ||
-      folderName.startsWith(".")
-    ) {
+    // Private folders (_), special Next.js folders. We DO recurse into
+    // /api so its route handlers register as resolvable URLs.
+    if (folderName.startsWith("_") || folderName.startsWith(".")) {
       continue;
     }
 

@@ -14,6 +14,16 @@ jest.mock("@/components/Main/Form/CarViewingForm", () => {
   };
 });
 
+// CarViewing now wraps the form in <BookingAuthGate> (account required).
+// We're testing the CarViewing shell, not the auth gate itself — so
+// pass-through the gate so the form renders deterministically.
+jest.mock("@/components/Account/BookingAuthGate", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
 // Mock VehicleDetails
 jest.mock("@/components/Shared/VehicleDetails", () => {
   return function MockVehicleDetails({
