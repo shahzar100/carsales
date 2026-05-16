@@ -1,46 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { waitUntil } from "@vercel/functions";
+import React from "react";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
 } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
-import { getCustomerIdentity } from "@/lib/utils/customerAuth";
+import { isAuthenticated } from "@/lib/utils/auth";
 import { sendEmail } from "@/emails/send";
 import { BookingCancellation } from "@/emails/BookingCancellation";
 import { logError, logEvent } from "@/lib/utils/observability";
-import React from "react";
 
-// (Fix 2 / security) Tight schema replaces the original
-// `const { bookingReference, type, reason } = body` destructure. Without
-// this, a body of `{"bookingReference": {"$gt": ""}}` forged a Mongo
-// operator filter and matched the first non-cancelled booking in the
-// collection.
-//
-// The reference regex anchors to the BK- shape the booking generator
-// produces (`src/lib/utils/booking.ts#generateBookingReference`). The
-// `type` enum mirrors the canonical customer-facing booking taxonomy
-// used by `src/app/api/account/bookings/route.ts` plus the two enquiry
-// kinds that have their own collections. Only `service` + `viewing`
-// have cancel semantics today; the other types fall through to a 400
-// from the type switch below, but listing them here keeps the schema
-// honest if/when those routes grow a cancel path.
+// Mirror of the public `/api/bookings/cancel` schema. Kept verbatim so
+// the two routes stay structurally identical — if a field tightens on
+// the customer side, this side should follow.
 const cancelSchema = z.object({
   bookingReference: z.string().regex(/^BK-[A-Z0-9]{6}$/i),
   type: z.enum(["service", "viewing", "reservation", "quote", "part-exchange"]),
   reason: z.string().min(1).max(500),
 });
 
+// Admin-side counterpart to /api/bookings/cancel. The customer route
+// scopes cancellation to the booking owner's email; admins need to be
+// able to cancel any booking from the dashboard. Auth is the admin
+// iron-session (same gate as the rest of /api/admin/**).
 export async function POST(request: NextRequest) {
   try {
-    // (Fix 2 / security) Customer iron-session was the wrong auth here —
-    // it gated the route on admin login, so the only people who could
-    // cancel were admins, and any admin could cancel anyone's booking.
-    // Cancellation is a customer-initiated action; switch to the
-    // customer Auth.js session and scope by the email on the booking.
-    const customer = await getCustomerIdentity();
-    if (!customer) {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -81,10 +69,6 @@ export async function POST(request: NextRequest) {
       collection = await getCarViewingBookingsCollection();
       booking = await collection.findOne({ bookingReference });
     } else {
-      // reservation / quote / part-exchange aren't wired through this
-      // route yet — the zod enum still accepts them so the validation
-      // error tells the client "wrong type for this endpoint" instead
-      // of swallowing the request as a generic 400.
       return NextResponse.json(
         { error: "Invalid booking type" },
         { status: 400 }
@@ -95,15 +79,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // (Fix 2 / security) Even with a valid reference, only the booking's
-    // owner gets to cancel it. Case-insensitive on the customer email
-    // because `getCustomerIdentity()` lowercases the account email but
-    // legacy bookings predate that normalisation.
-    const bookingEmail = booking.customerInfo?.email ?? "";
-    if (bookingEmail.toLowerCase() !== customer.email.toLowerCase()) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     if (booking.status === "cancelled") {
       return NextResponse.json(
         { error: "Booking is already cancelled" },
@@ -111,10 +86,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Compare-and-set so two simultaneous cancels don't both fire the email
-    // and overwrite each other's audit fields. (CODEBASE_ISSUES C6.)
-    // Only the first request whose updateOne actually transitions the row
-    // gets to send the cancellation email.
     const updateResult = await collection.updateOne(
       { bookingReference, status: { $ne: "cancelled" } },
       {
@@ -128,15 +99,12 @@ export async function POST(request: NextRequest) {
     );
 
     if (updateResult.modifiedCount !== 1) {
-      // Another request just cancelled it. Treat as success-shaped — the
-      // booking is in the desired terminal state — but skip the email.
       return NextResponse.json({
         success: true,
         message: "Booking already cancelled",
       });
     }
 
-    // Send cancellation email in the background after responding
     const customerEmail = booking.customerInfo.email;
     waitUntil(
       (async () => {
@@ -161,13 +129,13 @@ export async function POST(request: NextRequest) {
           });
 
           if (!emailResult.success) {
-            logEvent("booking.cancel.email_send_failed", {
+            logEvent("admin.booking.cancel.email_send_failed", {
               error: String(emailResult.error),
             });
           }
         } catch (emailError) {
           logError(emailError, {
-            route: "POST /api/bookings/cancel",
+            route: "POST /api/admin/bookings/cancel",
             op: "send_cancellation_email",
           });
         }
@@ -179,7 +147,7 @@ export async function POST(request: NextRequest) {
       message: "Booking cancelled successfully and customer notified",
     });
   } catch (error) {
-    logError(error, { route: "POST /api/bookings/cancel" });
+    logError(error, { route: "POST /api/admin/bookings/cancel" });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

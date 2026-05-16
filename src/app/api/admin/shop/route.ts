@@ -117,11 +117,24 @@ export async function PUT(request: NextRequest) {
       typeof body.googleMapsUrl === "string" &&
       body.googleMapsUrl.trim().length > 0
     ) {
+      // (Fix 3 / security) `new URL("javascript:alert(1)")` parses
+      // cleanly — the URL constructor only checks the grammar, not the
+      // scheme. Without the explicit `https:` check below, a compromised
+      // admin could ship a `javascript:` href to every public visitor
+      // via the contact page's "Visit" link. The render-side helper
+      // `safeExternalHref` in `src/lib/utils/url.ts` is the matching
+      // defence in depth.
+      let parsedMapsUrl: URL | null = null;
       try {
-        new URL(body.googleMapsUrl as string);
+        parsedMapsUrl = new URL(body.googleMapsUrl as string);
       } catch {
         validationErrors.push(
           "Google Maps URL is not a valid URL (expected https://...)"
+        );
+      }
+      if (parsedMapsUrl && parsedMapsUrl.protocol !== "https:") {
+        validationErrors.push(
+          "Google Maps URL must use https:// — other protocols are not allowed"
         );
       }
     }

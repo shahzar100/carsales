@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { BlackRedSection } from "@/components/Services/Common";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import { safeExternalHref } from "@/lib/utils/url";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -46,9 +47,19 @@ export default async function Contact() {
   const googleMapsUrl = businessInfo.googleMapsUrl;
 
   const fullAddress = `${address}, ${city}, ${state} ${zip}`.trim();
-  const mapsHref =
-    googleMapsUrl ||
-    `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`;
+  // (Fix 3 / security) Belt-and-braces protocol gate at render: even
+  // though the admin shop write handler rejects non-`https:` Google
+  // Maps URLs at the API boundary, legacy rows / DB-direct edits could
+  // still surface a `javascript:` href here. `safeExternalHref` returns
+  // `undefined` for anything that isn't `https:`. We fall back to the
+  // computed maps.google.com search URL (always `https:`) when the
+  // admin URL is missing OR unsafe, and only suppress the link entirely
+  // when even the fallback can't be built — i.e. address is empty.
+  const safeAdminMapsUrl = safeExternalHref(googleMapsUrl);
+  const fallbackMapsHref = fullAddress
+    ? `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`
+    : undefined;
+  const mapsHref = safeAdminMapsUrl ?? fallbackMapsHref;
 
   const dayOrder = [
     "monday",
@@ -164,14 +175,20 @@ export default async function Contact() {
                 <p className="mb-4 text-sm text-gray-600">
                   Come see our showroom
                 </p>
-                <Link
-                  href={mapsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base font-semibold text-red-600 transition-colors hover:text-red-500"
-                >
-                  {address}, {city}
-                </Link>
+                {mapsHref ? (
+                  <Link
+                    href={mapsHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-base font-semibold text-red-600 transition-colors hover:text-red-500"
+                  >
+                    {address}, {city}
+                  </Link>
+                ) : (
+                  <span className="text-base font-semibold text-gray-700">
+                    {address}, {city}
+                  </span>
+                )}
               </div>
             </div>
           </div>

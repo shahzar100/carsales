@@ -219,6 +219,61 @@ describe("/api/admin/shop", () => {
       );
     });
 
+    it("🔒 rejects a javascript: googleMapsUrl with 400 (protocol allowlist)", async () => {
+      // `new URL("javascript:alert(1)")` parses cleanly — the URL
+      // constructor only checks grammar, not scheme. Without the
+      // explicit `https:` allowlist a compromised admin could ship a
+      // `javascript:` href to every public visitor via the contact page.
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...validShopData,
+          googleMapsUrl: "javascript:alert(1)",
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/https/i);
+    });
+
+    it("🔒 rejects an http: googleMapsUrl with 400 (https-only allowlist)", async () => {
+      // http: is downgrade-attack-friendly even though it's not a
+      // script-execution scheme — we keep the link to https-only for
+      // public business URLs.
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...validShopData,
+          googleMapsUrl: "http://maps.example.com/?q=foo",
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/https/i);
+    });
+
+    it("accepts a valid https googleMapsUrl", async () => {
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...validShopData,
+          googleMapsUrl: "https://maps.google.com/?q=test",
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PUT(request);
+      expect(response.status).toBe(200);
+    });
+
     it("should return 500 when update throws an error", async () => {
       // Use jest.resetModules + doMock to override updateBusinessInfo
       jest.resetModules();
