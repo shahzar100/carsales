@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import {
   User,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import Button from "@/components/UI/Button";
+import { useApi } from "@/hooks/useApi";
 
 /**
  * The "Settings" tab of the account dashboard: edit display name, set or
@@ -78,7 +79,6 @@ export default function AccountSettings() {
   const { update } = useSession();
 
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loadError, setLoadError] = useState(false);
 
   // Per-card form state.
   const [name, setName] = useState("");
@@ -94,28 +94,20 @@ export default function AccountSettings() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/account/profile", { cache: "no-store" });
-        const json = await res.json();
-        if (!res.ok || !json.success) {
-          if (!cancelled) setLoadError(true);
-          return;
-        }
-        if (!cancelled) {
-          setProfile(json.data);
-          setName(json.data.name);
-        }
-      } catch {
-        if (!cancelled) setLoadError(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // (#cleanup) On-mount profile fetch via useApi. We still mirror the
+  // resolved profile into a local state slot so the password card can
+  // toggle hasPassword optimistically after a successful save without
+  // re-fetching the profile.
+  const init = useMemo<RequestInit>(() => ({ cache: "no-store" }), []);
+  const { error: loadErrorMsg } = useApi<Profile>("/api/account/profile", {
+    init,
+    onSuccess: (data) => {
+      const next = data as Profile;
+      setProfile(next);
+      setName(next.name);
+    },
+  });
+  const loadError = loadErrorMsg !== null;
 
   async function saveName(e: React.FormEvent) {
     e.preventDefault();

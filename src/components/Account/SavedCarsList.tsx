@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSavedCars } from "@/contexts/SavedCarsContext";
 import type { CarInterface } from "@/lib/interfaces";
 import CarListCard from "@/components/Car/CarListCard";
 import EmptyState from "@/components/UI/EmptyState";
+import { useApi } from "@/hooks/useApi";
+
+type AvailableCarsResponse = { cars: CarInterface[] };
 
 /**
  * The saved-cars grid, without page chrome — used as the "Saved" tab of
@@ -21,43 +24,30 @@ import EmptyState from "@/components/UI/EmptyState";
  */
 export default function SavedCarsList() {
   const { savedIds, clear } = useSavedCars();
-  const [cars, setCars] = useState<CarInterface[]>([]);
-  const [loading, setLoading] = useState(true);
+  // (#cleanup) Skip the network call entirely when nothing is saved —
+  // pass null as the URL and useApi short-circuits.
+  const init = useMemo<RequestInit>(() => ({ cache: "no-store" }), []);
+  const { data, error, loading: fetchLoading } = useApi<AvailableCarsResponse>(
+    savedIds.length === 0 ? null : "/api/admin/cars?limit=500&status=available",
+    { init }
+  );
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      if (savedIds.length === 0) {
-        setCars([]);
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      try {
-        const res = await fetch("/api/admin/cars?limit=500&status=available", {
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          if (!cancelled) setCars([]);
-          return;
-        }
-        const json = await res.json();
-        const list: CarInterface[] = (json?.data?.cars ?? []) as CarInterface[];
-        const setIds = new Set(savedIds);
-        if (!cancelled) {
-          setCars(list.filter((c) => c._id && setIds.has(String(c._id))));
-        }
-      } catch {
-        if (!cancelled) setCars([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [savedIds]);
+  // Filter the fetched cars down to the saved set. An error from the
+  // hook (non-2xx or network failure) gracefully falls through to the
+  // same empty grid the original effect produced.
+  const cars: CarInterface[] = (() => {
+    if (savedIds.length === 0 || error || !data) return [];
+    const setIds = new Set(savedIds);
+    return (data.cars ?? []).filter(
+      (c) => c._id && setIds.has(String(c._id))
+    );
+  })();
+
+  // Match the original "loading until we have a definite answer" rule:
+  // empty savedIds → not loading; otherwise loading until the hook
+  // resolves to data or error.
+  const loading =
+    savedIds.length > 0 && fetchLoading && !data && !error;
 
   if (loading) {
     return <p className="text-sm text-gray-500">Loading your saved cars…</p>;

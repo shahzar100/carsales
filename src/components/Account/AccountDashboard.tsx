@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -16,6 +16,12 @@ import SavedCarsList from "./SavedCarsList";
 import BookingsList, { type ActivityItem } from "./BookingsList";
 import AccountSettings from "./AccountSettings";
 import EmailVerificationBanner from "./EmailVerificationBanner";
+import { useApi } from "@/hooks/useApi";
+
+type BookingsResponse = {
+  upcoming?: ActivityItem[];
+  history?: ActivityItem[];
+};
 
 /**
  * The single customer dashboard. Saved cars, upcoming bookings and
@@ -61,41 +67,20 @@ export default function AccountDashboard({
     isTabId(initialTab) ? initialTab : "saved"
   );
 
-  const [bookings, setBookings] = useState<{
-    upcoming: ActivityItem[];
-    history: ActivityItem[];
-  }>({ upcoming: [], history: [] });
-  const [bookingsLoading, setBookingsLoading] = useState(true);
-  const [bookingsError, setBookingsError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/account/bookings", {
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          if (!cancelled) setBookingsError(true);
-          return;
-        }
-        const json = await res.json();
-        if (!cancelled && json?.success) {
-          setBookings({
-            upcoming: json.data.upcoming ?? [],
-            history: json.data.history ?? [],
-          });
-        }
-      } catch {
-        if (!cancelled) setBookingsError(true);
-      } finally {
-        if (!cancelled) setBookingsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // (#cleanup) Replaces the hand-rolled useEffect+cancelled-flag fetch
+  // with the shared useApi hook. The init object is memoised so the
+  // hook's dep array stays stable across re-renders.
+  const init = useMemo<RequestInit>(() => ({ cache: "no-store" }), []);
+  const {
+    data: bookingsData,
+    error: bookingsErrorMsg,
+    loading: bookingsLoading,
+  } = useApi<BookingsResponse>("/api/account/bookings", { init });
+  const bookings = {
+    upcoming: bookingsData?.upcoming ?? [],
+    history: bookingsData?.history ?? [],
+  };
+  const bookingsError = bookingsErrorMsg !== null;
 
   const selectTab = useCallback(
     (id: TabId) => {
