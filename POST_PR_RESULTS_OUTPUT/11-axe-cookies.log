@@ -1,0 +1,2392 @@
+
+Running 11 tests using 4 workers
+
+/Services violations= [33m1[39m color-contrast
+/ violations= [33m2[39m color-contrast,heading-order
+/BrowseFleet violations= [33m2[39m color-contrast,select-name
+/CarParts violations= [33m2[39m color-contrast,heading-order
+  ✘   2 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /CarParts (4.4s)
+  ✘   3 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /BrowseFleet (4.4s)
+  ✘   4 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /Services (4.2s)
+  ✘   1 [chromium] › e2e/axe-public.spec.ts:18:7 › axe / (4.2s)
+/FAQ violations= [33m2[39m color-contrast,region
+/contact violations= [33m3[39m color-contrast,heading-order,region
+  ✘   5 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /FAQ (2.7s)
+/privacy violations= [33m2[39m color-contrast,region
+/terms violations= [33m2[39m color-contrast,region
+  ✘   8 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /contact (3.0s)
+  ✘   7 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /privacy (2.9s)
+  ✘   6 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /terms (3.0s)
+Cookies set on / before consent: [
+  {
+    "name": "authjs.csrf-token",
+    "value": "74b04570dcaec8ba7fd2cca7472dae6d236bd81701bafcb36bd4245ea67107da%7Cade90acccc16d79e783ab051a36220ab5b92a09136ee3ee9066ec1406212fd86",
+    "domain": "localhost",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "authjs.callback-url",
+    "value": "http%3A%2F%2Flocalhost%3A3000",
+    "domain": "localhost",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
+  ✓  10 [chromium] › e2e/cookies.spec.ts:3:5 › cookies before consent are first-party / non-tracking (1.2s)
+/register violations= [33m3[39m color-contrast,heading-order,region
+/login violations= [33m3[39m color-contrast,heading-order,region
+  ✘  11 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /register (1.8s)
+  ✘   9 [chromium] › e2e/axe-public.spec.ts:18:7 › axe /login (1.9s)
+
+
+  1) [chromium] › e2e/axe-public.spec.ts:18:7 › axe / ──────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 419[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".tracking-\\[0\\.18em\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/BrowseFleet\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"BrowseFleet\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase\">Vehicles</div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"BrowseFleet\"] > .justify-between.flex.items-center:nth-child(1) > .text-right > .text-\\[10\\.5px\\].tracking-\\[0\\.14em\\].uppercase",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/BrowseFleet\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"BrowseFleet\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"text-[12px] font-medium text-gray-500 transition-colors group-hover:text-gray-300\">Learn more</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"BrowseFleet\"] > .mt-auto.pt-4.border-t > .text-\\[12px\\].group-hover\\:text-gray-300.font-medium",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/Book\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"Book\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase\">To book</div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"Book\"] > .justify-between.flex.items-center:nth-child(1) > .text-right > .text-\\[10\\.5px\\].tracking-\\[0\\.14em\\].uppercase",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/Book\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"Book\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"text-[12px] font-medium text-gray-500 transition-colors group-hover:text-gray-300\">Learn more</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"Book\"] > .mt-auto.pt-4.border-t > .text-\\[12px\\].group-hover\\:text-gray-300.font-medium",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/AboutUs\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"AboutUs\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase\">Hard sells</div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"AboutUs\"] > .justify-between.flex.items-center:nth-child(1) > .text-right > .text-\\[10\\.5px\\].tracking-\\[0\\.14em\\].uppercase",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/AboutUs\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"AboutUs\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"text-[12px] font-medium text-gray-500 transition-colors group-hover:text-gray-300\">Learn more</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"AboutUs\"] > .mt-auto.pt-4.border-t > .text-\\[12px\\].group-hover\\:text-gray-300.font-medium",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/contact\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"contact\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase\">Avg rating</div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"contact\"] > .justify-between.flex.items-center:nth-child(1) > .text-right > .text-\\[10\\.5px\\].tracking-\\[0\\.14em\\].uppercase",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#0f0f0f",[39m
+    [31m+               "contrastRatio": 3.96,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<a class=\"group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors hover:border-white/[0.14] hover:bg-white/[0.04]\" href=\"/contact\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"contact\"]",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"border-t border-white/[0.06] bg-[#0a0a0a]\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4)",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.96 (foreground color: #6a7282, background color: #0f0f0f, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"text-[12px] font-medium text-gray-500 transition-colors group-hover:text-gray-300\">Learn more</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > section:nth-child(4) > .py-20.lg\\:px-8.max-w-7xl > .mt-14.lg\\:grid-cols-4.sm\\:grid-cols-2 > .p-6.flex-col[href$=\"contact\"] > .mt-auto.pt-4.border-t > .text-\\[12px\\].group-hover\\:text-gray-300.font-medium",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the order of headings is semantically correct",[39m
+    [31m+     "help": "Heading levels should only increase by one",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=playwright",[39m
+    [31m+     "id": "heading-order",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "heading-order",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Heading order invalid",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Heading order invalid",[39m
+    [31m+         "html": "<h3 class=\"text-lg font-bold text-white sm:text-xl\">2023 BMW X5</h3>",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .min-h-screen.bg-\\[\\#0a0a0a\\] > .bg-black.z-50 > .container.py-14.sm\\:py-20 > .sm\\:gap-10.lg\\:grid-cols-2.lg\\:gap-16 > .relative > .gap-0.bg-linear-to-b.from-white\\/6 > .space-y-4.p-5.sm\\:p-6 > div:nth-child(1) > .text-lg.sm\\:text-xl",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.semantics",[39m
+    [31m+       "best-practice",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe--chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe--chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe--chromium/error-context.md
+
+  2) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /BrowseFleet ───────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 635[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<p class=\"caption\">64 of 64 vehicles</p>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".caption",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#fbfcfd",[39m
+    [31m+               "contrastRatio": 2.53,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"section-muted\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".section-muted",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\" for=\"fleet-search\">Search</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".label-sm[for=\"fleet-search\"]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#fbfcfd",[39m
+    [31m+               "contrastRatio": 2.53,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"section-muted\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".section-muted",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Make</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-3.sm\\:grid-cols-2.grid > div:nth-child(2) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#fbfcfd",[39m
+    [31m+               "contrastRatio": 2.53,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"section-muted\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".section-muted",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.53 (foreground color: #99a1af, background color: #fbfcfd, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Price (£)</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-3.sm\\:grid-cols-2.grid > div:nth-child(3) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Year</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-4.sm\\:grid-cols-2.grid > div:nth-child(1) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Mileage</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-4.sm\\:grid-cols-2.grid > div:nth-child(2) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Doors</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-4.sm\\:grid-cols-2.grid > div:nth-child(3) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm\">Colour</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "div:nth-child(4) > .label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "8.3pt (11px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"card\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".card",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<label class=\"label-sm mb-0\">Features</label>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".mb-0.label-sm",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "12.0pt (16px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".p-5.rounded-2xl.ring-gray-200",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"px-1.5 text-gray-400\">···</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".px-1\\.5.text-gray-400",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure select element has an accessible name",[39m
+    [31m+     "help": "Select element must have an accessible name",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/select-name?application=playwright",[39m
+    [31m+     "id": "select-name",[39m
+    [31m+     "impact": "critical",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "implicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an implicit (wrapped) <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "explicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an explicit <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-label attribute does not exist or is empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-labelledby",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "messageKey": "noAttr",[39m
+    [31m+             },[39m
+    [31m+             "id": "non-empty-title",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element has no title attribute",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "presentational-role",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element does not have an implicit (wrapped) <label>[39m
+    [31m+   Element does not have an explicit <label>[39m
+    [31m+   aria-label attribute does not exist or is empty[39m
+    [31m+   aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty[39m
+    [31m+   Element has no title attribute[39m
+    [31m+   Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+         "html": "<select class=\"select\"><option value=\"all\">All Makes</option><option value=\"BMW\">BMW</option><option value=\"Honda\">Honda</option><option value=\"Toyota\">Toyota</option></select>",[39m
+    [31m+         "impact": "critical",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".lg\\:grid-cols-3.sm\\:grid-cols-2.grid > div:nth-child(2) > select",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "implicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an implicit (wrapped) <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "explicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an explicit <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-label attribute does not exist or is empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-labelledby",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "messageKey": "noAttr",[39m
+    [31m+             },[39m
+    [31m+             "id": "non-empty-title",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element has no title attribute",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "presentational-role",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element does not have an implicit (wrapped) <label>[39m
+    [31m+   Element does not have an explicit <label>[39m
+    [31m+   aria-label attribute does not exist or is empty[39m
+    [31m+   aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty[39m
+    [31m+   Element has no title attribute[39m
+    [31m+   Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+         "html": "<select class=\"select\"><option value=\"all\">Any</option><option value=\"3\">3 doors</option><option value=\"4\">4 doors</option><option value=\"5\">5 doors</option></select>",[39m
+    [31m+         "impact": "critical",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "div:nth-child(3) > select",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "implicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an implicit (wrapped) <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "explicit-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element does not have an explicit <label>",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-label",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-label attribute does not exist or is empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "aria-labelledby",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "messageKey": "noAttr",[39m
+    [31m+             },[39m
+    [31m+             "id": "non-empty-title",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element has no title attribute",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "presentational-role",[39m
+    [31m+             "impact": "critical",[39m
+    [31m+             "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element does not have an implicit (wrapped) <label>[39m
+    [31m+   Element does not have an explicit <label>[39m
+    [31m+   aria-label attribute does not exist or is empty[39m
+    [31m+   aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty[39m
+    [31m+   Element has no title attribute[39m
+    [31m+   Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",[39m
+    [31m+         "html": "<select class=\"select\"><option value=\"all\">All Colours</option><option value=\"Black\">Black</option><option value=\"Blue\">Blue</option><option value=\"White\">White</option></select>",[39m
+    [31m+         "impact": "critical",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "div:nth-child(4) > select",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.forms",[39m
+    [31m+       "wcag2a",[39m
+    [31m+       "wcag412",[39m
+    [31m+       "section508",[39m
+    [31m+       "section508.22.n",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT5.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.4.1.2",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-11.1.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-BrowseFleet-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-BrowseFleet-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-BrowseFleet-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-BrowseFleet-chromium/error-context.md
+
+  3) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /CarParts ──────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 91[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the order of headings is semantically correct",[39m
+    [31m+     "help": "Heading levels should only increase by one",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=playwright",[39m
+    [31m+     "id": "heading-order",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "heading-order",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Heading order invalid",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Heading order invalid",[39m
+    [31m+         "html": "<h3 class=\"heading-3 mb-2 line-clamp-2\">Brake Pad Set</h3>",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "#main-content > .py-8.max-w-7xl.mx-auto > .gap-6.lg\\:grid-cols-3.xl\\:grid-cols-4 > .transition-shadow.hover\\:shadow-md.rounded-xl:nth-child(1) > .p-4 > .heading-3",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.semantics",[39m
+    [31m+       "best-practice",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-CarParts-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-CarParts-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-CarParts-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-CarParts-chromium/error-context.md
+
+  4) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /Services ──────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 58[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-Services-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-Services-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-Services-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-Services-chromium/error-context.md
+
+  5) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /contact ───────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 128[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the order of headings is semantically correct",[39m
+    [31m+     "help": "Heading levels should only increase by one",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=playwright",[39m
+    [31m+     "id": "heading-order",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "heading-order",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Heading order invalid",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Heading order invalid",[39m
+    [31m+         "html": "<h3 class=\"heading-3 mb-2\">Call Us</h3>",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".p-8.text-center.border-gray-100:nth-child(1) > .mb-2.heading-3",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.semantics",[39m
+    [31m+       "best-practice",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity: 1; transfor...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-contact-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-contact-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-contact-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-contact-chromium/error-context.md
+
+  6) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /FAQ ───────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 95[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity: 0; transfor...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-FAQ-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-FAQ-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-FAQ-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-FAQ-chromium/error-context.md
+
+  7) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /privacy ───────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 130[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#000000",[39m
+    [31m+               "contrastRatio": 4.34,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "10.5pt (14px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 4.34 (foreground color: #6a7282, background color: #000000, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"relative overflow-hidden bg-black text-white\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".overflow-hidden",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 4.34 (foreground color: #6a7282, background color: #000000, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<p class=\"mt-6 text-sm text-gray-500\">Last updated: March 2026</p>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".mt-6",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity: 1; transfor...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-privacy-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-privacy-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-privacy-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-privacy-chromium/error-context.md
+
+  8) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /terms ─────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 130[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#000000",[39m
+    [31m+               "contrastRatio": 4.34,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "10.5pt (14px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 4.34 (foreground color: #6a7282, background color: #000000, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<section class=\"relative overflow-hidden bg-black text-white\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".overflow-hidden",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 4.34 (foreground color: #6a7282, background color: #000000, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<p class=\"mt-6 text-sm text-gray-500\">Last updated: March 2026</p>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".mt-6",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity: 1; transfor...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-terms-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-terms-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-terms-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-terms-chromium/error-context.md
+
+  9) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /login ─────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 163[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"rounded-2xl bg-white p-8 shadow-xl\" style=\"opacity: 1; transform: none;\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".p-8",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"flex items-center gap-3 text-xs text-gray-400\"><span class=\"h-px flex-1 bg-gray-200\"></span>OR<span class=\"h-px flex-1 bg-gray-200\"></span></div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-xs",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the order of headings is semantically correct",[39m
+    [31m+     "help": "Heading levels should only increase by one",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=playwright",[39m
+    [31m+     "id": "heading-order",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "heading-order",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Heading order invalid",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Heading order invalid",[39m
+    [31m+         "html": "<h3 class=\"heading-3 mb-4\">Minimal Motor</h3>",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "h3",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.semantics",[39m
+    [31m+       "best-practice",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity:0;transform:...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-login-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-login-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-login-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-login-chromium/error-context.md
+
+  10) [chromium] › e2e/axe-public.spec.ts:18:7 › axe /register ─────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -   1[39m
+    [31m+ Received  + 163[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",[39m
+    [31m+     "help": "Elements must meet minimum color contrast ratio thresholds",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",[39m
+    [31m+     "id": "color-contrast",[39m
+    [31m+     "impact": "serious",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#161616",[39m
+    [31m+               "contrastRatio": 3.74,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#6a7282",[39m
+    [31m+               "fontSize": "7.9pt (10.5px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<header class=\"sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   "header",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 3.74 (foreground color: #6a7282, background color: #161616, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<span class=\"mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase\">Car Sales &amp; Services</span>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-\\[10\\.5px\\]",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "bgColor": "#ffffff",[39m
+    [31m+               "contrastRatio": 2.6,[39m
+    [31m+               "expectedContrastRatio": "4.5:1",[39m
+    [31m+               "fgColor": "#99a1af",[39m
+    [31m+               "fontSize": "9.0pt (12px)",[39m
+    [31m+               "fontWeight": "normal",[39m
+    [31m+               "messageKey": null,[39m
+    [31m+             },[39m
+    [31m+             "id": "color-contrast",[39m
+    [31m+             "impact": "serious",[39m
+    [31m+             "message": "Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+             "relatedNodes": Array [[39m
+    [31m+               Object {[39m
+    [31m+                 "html": "<div class=\"rounded-2xl bg-white p-8 shadow-xl\" style=\"opacity: 1; transform: none;\">",[39m
+    [31m+                 "target": Array [[39m
+    [31m+                   ".p-8",[39m
+    [31m+                 ],[39m
+    [31m+               },[39m
+    [31m+             ],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Element has insufficient color contrast of 2.6 (foreground color: #99a1af, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",[39m
+    [31m+         "html": "<div class=\"flex items-center gap-3 text-xs text-gray-400\"><span class=\"h-px flex-1 bg-gray-200\"></span>OR<span class=\"h-px flex-1 bg-gray-200\"></span></div>",[39m
+    [31m+         "impact": "serious",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".text-xs.gap-3.text-gray-400",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.color",[39m
+    [31m+       "wcag2aa",[39m
+    [31m+       "wcag143",[39m
+    [31m+       "TTv5",[39m
+    [31m+       "TT13.c",[39m
+    [31m+       "EN-301-549",[39m
+    [31m+       "EN-9.1.4.3",[39m
+    [31m+       "ACT",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-3.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure the order of headings is semantically correct",[39m
+    [31m+     "help": "Heading levels should only increase by one",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=playwright",[39m
+    [31m+     "id": "heading-order",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": null,[39m
+    [31m+             "id": "heading-order",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Heading order invalid",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Heading order invalid",[39m
+    [31m+         "html": "<h3 class=\"heading-3 mb-4\">Minimal Motor</h3>",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           "h3",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.semantics",[39m
+    [31m+       "best-practice",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+   Object {[39m
+    [31m+     "description": "Ensure all page content is contained by landmarks",[39m
+    [31m+     "help": "All page content should be contained by landmarks",[39m
+    [31m+     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=playwright",[39m
+    [31m+     "id": "region",[39m
+    [31m+     "impact": "moderate",[39m
+    [31m+     "nodes": Array [[39m
+    [31m+       Object {[39m
+    [31m+         "all": Array [],[39m
+    [31m+         "any": Array [[39m
+    [31m+           Object {[39m
+    [31m+             "data": Object {[39m
+    [31m+               "isIframe": false,[39m
+    [31m+             },[39m
+    [31m+             "id": "region",[39m
+    [31m+             "impact": "moderate",[39m
+    [31m+             "message": "Some page content is not contained by landmarks",[39m
+    [31m+             "relatedNodes": Array [],[39m
+    [31m+           },[39m
+    [31m+         ],[39m
+    [31m+         "failureSummary": "Fix any of the following:[39m
+    [31m+   Some page content is not contained by landmarks",[39m
+    [31m+         "html": "<a href=\"https://wa.me/440000...\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Chat with us on What...\" class=\"fixed right-5 bottom...\" tabindex=\"0\" style=\"opacity:0;transform:...\">",[39m
+    [31m+         "impact": "moderate",[39m
+    [31m+         "none": Array [],[39m
+    [31m+         "target": Array [[39m
+    [31m+           ".right-5",[39m
+    [31m+         ],[39m
+    [31m+       },[39m
+    [31m+     ],[39m
+    [31m+     "tags": Array [[39m
+    [31m+       "cat.keyboard",[39m
+    [31m+       "best-practice",[39m
+    [31m+       "RGAAv4",[39m
+    [31m+       "RGAA-9.2.1",[39m
+    [31m+     ],[39m
+    [31m+   },[39m
+    [31m+ ][39m
+
+      20 |     const r = await new AxeBuilder({ page }).analyze();
+      21 |     // Don't fail the run — collect and report only.
+    > 22 |     expect.soft(r.violations).toEqual([]);
+         |                               ^
+      23 |     // eslint-disable-next-line no-console
+      24 |     console.log(
+      25 |       path,
+        at /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/axe-public.spec.ts:22:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/axe-public-axe-register-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-register-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/axe-public-axe-register-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/axe-public-axe-register-chromium/error-context.md
+
+  10 failed
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe / ───────────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /BrowseFleet ────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /CarParts ───────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /Services ───────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /contact ────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /FAQ ────────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /privacy ────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /terms ──────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /login ──────────────────────────────────────────
+    [chromium] › e2e/axe-public.spec.ts:18:7 › axe /register ───────────────────────────────────────
+  1 passed (15.5s)
