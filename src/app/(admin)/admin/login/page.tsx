@@ -2,6 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { AdminForm } from "@/components/Admin";
+import AuthShell from "@/components/Account/AuthShell";
 
 /**
  * Admin login page.
@@ -15,16 +16,13 @@ export default async function AdminAuthPage() {
   if (authed) redirect("/admin/dashboard");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold">Admin Portal</h1>
-        </div>
-        <AdminForm />
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Protected area. Authorized personnel only.
-        </p>
-      </div>
-    </div>
+    <AuthShell
+      title="Admin Portal"
+      subtitle=""
+      variant="admin"
+      footer={{ prompt: "Protected area. Authorized personnel only." }}
+    >
+      <AdminForm />
+    </AuthShell>
   );
 }
