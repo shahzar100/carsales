@@ -4,6 +4,7 @@ import { Lock, User, AlertCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "@/components/Helpful/Buttons/Button";
+import { InfoBanner } from "@/components/Form/FormPrimitives";
 
 const AdminForm = () => {
   const [username, setUsername] = useState("");
@@ -162,28 +163,14 @@ const AdminForm = () => {
 
       <AnimatePresence>
         {error && (
-          <motion.div
+          <InfoBanner
             key={error}
-            initial={{ opacity: 0, y: -4, height: 0 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              height: "auto",
-              x: [0, -6, 6, -4, 4, -2, 0],
-              transition: {
-                opacity: { duration: 0.18 },
-                y: { duration: 0.18 },
-                height: { duration: 0.18 },
-                x: { duration: 0.36, ease: "easeOut" },
-              },
-            }}
-            exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
-            style={{ overflow: "hidden" }}
-            className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+            variant="error"
+            animated
+            icon={<AlertCircle className="h-4 w-4 shrink-0" />}
           >
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{error}</span>
-          </motion.div>
+            {error}
+          </InfoBanner>
         )}
       </AnimatePresence>
 

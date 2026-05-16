@@ -195,13 +195,59 @@ export const InfoBanner: React.FC<{
   children: React.ReactNode;
   variant?: BannerVariant;
   className?: string;
-}> = ({ children, variant = "info", className = "" }) => (
-  <div
-    className={`rounded-lg border px-4 py-3 text-sm ${bannerStyles[variant]} ${className}`}
-  >
-    {children}
-  </div>
-);
+  /**
+   * Optional leading icon (e.g. <AlertCircle className="h-4 w-4 shrink-0" />).
+   * When present we wrap it + the children in a flex row so the icon sits
+   * to the left of the text.
+   */
+  icon?: React.ReactNode;
+  /**
+   * When true, wrap the banner in the standard fade-in + horizontal shake
+   * presentation used for form error banners across the auth pages. Pair
+   * with `key={message}` on the parent if you want it to re-shake on each
+   * new error string.
+   */
+  animated?: boolean;
+}> = ({ children, variant = "info", className = "", icon, animated = false }) => {
+  const base = `rounded-lg border text-sm ${bannerStyles[variant]} ${className}`;
+  const inner = icon ? (
+    <div className="flex items-start gap-2 px-4 py-3">
+      {icon}
+      <span>{children}</span>
+    </div>
+  ) : (
+    <div className="px-4 py-3">{children}</div>
+  );
+
+  if (!animated) {
+    return <div className={base}>{inner}</div>;
+  }
+
+  // Same motion spec the inline auth error banners were using before
+  // they migrated to InfoBanner — single source of truth for the shake.
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4, height: 0 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        height: "auto",
+        x: [0, -6, 6, -4, 4, -2, 0],
+        transition: {
+          opacity: { duration: 0.18 },
+          y: { duration: 0.18 },
+          height: { duration: 0.18 },
+          x: { duration: 0.36, ease: "easeOut" },
+        },
+      }}
+      exit={{ opacity: 0, y: -4, height: 0, transition: { duration: 0.15 } }}
+      style={{ overflow: "hidden" }}
+      className={base}
+    >
+      {inner}
+    </motion.div>
+  );
+};
 
 // ═════════════════════════════════════════════════════════════
 // Selection Card  (radio-like card with optional checklist)

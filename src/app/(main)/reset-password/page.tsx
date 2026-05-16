@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AlertCircle } from "lucide-react";
 import AuthShell from "@/components/Account/AuthShell";
 import ResetPasswordForm from "@/components/Account/ResetPasswordForm";
+import { InfoBanner } from "@/components/Form/FormPrimitives";
 
 export const metadata: Metadata = {
   title: "Reset password",
@@ -34,16 +35,16 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       {tokenLooksValid ? (
         <ResetPasswordForm token={token!} />
       ) : (
-        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          <div>
-            <p className="font-medium">This reset link is invalid.</p>
-            <p className="mt-1">
-              It may have expired or been mistyped. Request a fresh one from
-              the link below.
-            </p>
-          </div>
-        </div>
+        <InfoBanner
+          variant="error"
+          icon={<AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
+        >
+          <p className="font-medium">This reset link is invalid.</p>
+          <p className="mt-1">
+            It may have expired or been mistyped. Request a fresh one from
+            the link below.
+          </p>
+        </InfoBanner>
       )}
     </AuthShell>
   );

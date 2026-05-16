@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, AlertCircle, CheckCircle } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
+import { InfoBanner } from "@/components/Form/FormPrimitives";
 
 interface Props {
   token: string;
@@ -117,10 +118,12 @@ export default function ResetPasswordForm({ token }: Props) {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
+        <InfoBanner
+          variant="error"
+          icon={<AlertCircle className="h-4 w-4 shrink-0" />}
+        >
+          {error}
+        </InfoBanner>
       )}
 
       <Button type="submit" loading={loading} size="lg" customWidth="w-full">
