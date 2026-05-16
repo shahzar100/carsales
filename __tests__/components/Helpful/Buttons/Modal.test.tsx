@@ -103,4 +103,55 @@ describe("Modal", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveClass("sm:max-w-sm");
   });
+
+  describe("focus trap (CODEBASE_ISSUES G3)", () => {
+    it("🎯 Tab from the LAST focusable cycles back to the dialog's first (the close button)", async () => {
+      await act(async () => {
+        render(
+          <Modal onClose={jest.fn()} title="Trap">
+            <button data-testid="first">First</button>
+            <button data-testid="last">Last</button>
+          </Modal>
+        );
+      });
+      // The Modal renders its own close button before the user's children,
+      // so the dialog's first focusable is the close X (aria-label="Close").
+      const closeBtn = screen.getByLabelText("Close");
+      const last = screen.getByTestId("last");
+      last.focus();
+      fireEvent.keyDown(document, { key: "Tab" });
+      expect(document.activeElement).toBe(closeBtn);
+    });
+
+    it("🎯 Shift+Tab from the FIRST focusable (close button) cycles to the last", async () => {
+      await act(async () => {
+        render(
+          <Modal onClose={jest.fn()} title="Trap">
+            <button data-testid="first">First</button>
+            <button data-testid="last">Last</button>
+          </Modal>
+        );
+      });
+      const closeBtn = screen.getByLabelText("Close");
+      const last = screen.getByTestId("last");
+      closeBtn.focus();
+      fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+      expect(document.activeElement).toBe(last);
+    });
+
+    it("🎯 non-Tab keys are passed through unchanged", async () => {
+      await act(async () => {
+        render(
+          <Modal onClose={jest.fn()} title="Trap">
+            <button data-testid="only">Only</button>
+          </Modal>
+        );
+      });
+      // Pressing a non-Tab key should not move focus or throw.
+      const only = screen.getByTestId("only");
+      only.focus();
+      fireEvent.keyDown(document, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(only);
+    });
+  });
 });

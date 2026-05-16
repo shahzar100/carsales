@@ -130,4 +130,94 @@ describe("useApi", () => {
 
     expect(onError).toHaveBeenCalledWith("Boom");
   });
+
+  it("captures network errors (fetch rejection) with the Error message", async () => {
+    global.fetch = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("DNS resolution failed"));
+    const onError = jest.fn();
+
+    const { result } = renderHook(() => useApi("/api/x", { onError }));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe("DNS resolution failed");
+    expect(result.current.data).toBeNull();
+    expect(onError).toHaveBeenCalledWith("DNS resolution failed");
+  });
+
+  it("falls back to 'Network error' when fetch rejects with a non-Error value", async () => {
+    global.fetch = jest.fn().mockRejectedValueOnce("plain-string-rejection");
+
+    const { result } = renderHook(() => useApi("/api/x"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe("Network error");
+  });
+
+  it("falls back to a generic status error when body is a JSON-but-not-envelope shape", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 502,
+      json: async () => ({ totally: "unrelated" }),
+    });
+
+    const { result } = renderHook(() => useApi("/api/x"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toMatch(/502/);
+  });
+
+  it("aborts the in-flight request when the component unmounts before settle", async () => {
+    let resolve: ((v: unknown) => void) | undefined;
+    const abortSpy = jest.fn();
+    global.fetch = jest.fn((_: unknown, opts?: { signal?: AbortSignal }) => {
+      opts?.signal?.addEventListener("abort", abortSpy);
+      return new Promise((r) => {
+        resolve = r;
+      });
+    }) as unknown as typeof fetch;
+
+    const { unmount } = renderHook(() => useApi("/api/x"));
+    unmount();
+    expect(abortSpy).toHaveBeenCalled();
+    // Settling the pending promise after unmount should be a no-op (no
+    // state-update warnings).
+    resolve?.({
+      ok: true,
+      json: async () => ({ success: true, data: "late" }),
+    });
+  });
+
+  it("aborts the previous request when refetch is called before the first settles", async () => {
+    const signals: AbortSignal[] = [];
+    let resolveFirst: ((v: unknown) => void) | undefined;
+    global.fetch = jest
+      .fn()
+      .mockImplementationOnce(
+        (_: unknown, opts?: { signal?: AbortSignal }) => {
+          if (opts?.signal) signals.push(opts.signal);
+          return new Promise((r) => {
+            resolveFirst = r;
+          });
+        }
+      )
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, data: "second" }),
+      });
+
+    const { result } = renderHook(() => useApi<string>("/api/x"));
+    await act(async () => {
+      await result.current.refetch();
+    });
+
+    expect(signals[0].aborted).toBe(true);
+    expect(result.current.data).toBe("second");
+    // Clean up the pending first promise so jest worker exits.
+    resolveFirst?.({
+      ok: true,
+      json: async () => ({ success: true, data: "ignored" }),
+    });
+  });
 });

@@ -1,3 +1,9 @@
+/**
+ * @jest-environment node
+ *
+ * Uses NextRequest which depends on the global `Request` constructor —
+ * available in Jest's node environment, NOT in jsdom.
+ */
 import { proxy } from "@/proxy";
 import { NextRequest } from "next/server";
 

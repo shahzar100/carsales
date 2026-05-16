@@ -10,7 +10,16 @@
 
 process.env.MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/jest-placeholder";
-process.env.NODE_ENV = process.env.NODE_ENV || "test";
+// Force NODE_ENV=test so `react/index.js` loads the development build
+// (which exports `React.act`, required by @testing-library/react@16).
+// next/jest's config loading appears to leave NODE_ENV at "production" in
+// worker processes, breaking jsdom test suites otherwise.
+Object.defineProperty(process.env, "NODE_ENV", {
+  value: "test",
+  writable: true,
+  configurable: true,
+  enumerable: true,
+});
 process.env.SESSION_SECRET =
   process.env.SESSION_SECRET ||
   "test-session-secret-at-least-32-characters-long";

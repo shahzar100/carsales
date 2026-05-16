@@ -5,9 +5,12 @@ import { NextRequest } from "next/server";
 import { GET, PUT } from "@/app/api/admin/shop/route";
 import { getTestCollections, createTestShopInfo } from "../../utils/testUtils";
 
-// Mock authentication
+// Mock authentication. The route also calls `getSession()` for audit
+// logging — without mocking that the PUT path throws
+// `(0, _auth.getSession) is not a function`.
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
 const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 

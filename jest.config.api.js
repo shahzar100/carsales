@@ -32,7 +32,7 @@ const jestConfigFn = createJestConfig(customJestConfig);
 module.exports = async () => {
   const config = await jestConfigFn();
   config.transformIgnorePatterns = [
-    "/node_modules/(?!(bson|mongodb|geist)/)",
+    "/node_modules/(?!(bson|mongodb|geist|next-auth|@auth|@panva|jose|oauth4webapi|preact-render-to-string|preact)/)",
     "^.+\\.module\\.(css|sass|scss)$",
   ];
   return config;

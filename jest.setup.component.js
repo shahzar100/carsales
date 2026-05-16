@@ -27,6 +27,17 @@ jest.mock("next/router", () => ({
   },
 }));
 
+// Mock next-auth/react: many client components now call `useSession()`.
+// Without this, every render in tests would need an explicit
+// `<SessionProvider>` wrapper. Individual tests can still override.
+jest.mock("next-auth/react", () => ({
+  useSession: jest.fn(() => ({ data: null, status: "unauthenticated" })),
+  signIn: jest.fn(),
+  signOut: jest.fn(),
+  getSession: jest.fn(async () => null),
+  SessionProvider: ({ children }) => children,
+}));
+
 // Mock Next.js navigation
 jest.mock("next/navigation", () => ({
   useRouter() {

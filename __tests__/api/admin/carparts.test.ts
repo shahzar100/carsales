@@ -15,6 +15,9 @@ import { getTestCollections } from "../../utils/testUtils";
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  // Mutating routes call getSession() for the audit log — must be mocked
+  // or POST/PUT/DELETE throw `(0 , _auth.getSession) is not a function`.
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
 const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 

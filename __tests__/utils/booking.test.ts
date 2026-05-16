@@ -10,6 +10,8 @@
 import {
   generateBookingReference,
   generateQuoteReference,
+  generateReservationReference,
+  generatePartExchangeReference,
   formatDate,
   formatTime,
 } from "@/lib/utils/booking";
@@ -93,6 +95,53 @@ describe("Booking Utilities", () => {
         expect(bookingRef.startsWith("BK-")).toBe(true);
         expect(quoteRef.startsWith("QT-")).toBe(true);
         expect(bookingRef).not.toBe(quoteRef);
+      });
+    });
+
+    describe("generateReservationReference (#30 — same shape as bookings)", () => {
+      it("generates an RS-XXXXXX reference", () => {
+        const ref = generateReservationReference();
+        expect(ref).toMatch(/^RS-[A-Z0-9]{6}$/);
+        expect(ref.length).toBe(9);
+      });
+
+      it("issues unique references across 100 calls", () => {
+        const refs = new Set(
+          Array.from({ length: 100 }, () => generateReservationReference())
+        );
+        expect(refs.size).toBe(100);
+      });
+
+      it("never collides with a freshly-generated booking ref", () => {
+        const r = generateReservationReference();
+        const b = generateBookingReference();
+        expect(r).not.toBe(b);
+        expect(r.startsWith("RS-")).toBe(true);
+        expect(b.startsWith("BK-")).toBe(true);
+      });
+    });
+
+    describe("generatePartExchangeReference (#31)", () => {
+      it("generates a PX-XXXXXX reference", () => {
+        const ref = generatePartExchangeReference();
+        expect(ref).toMatch(/^PX-[A-Z0-9]{6}$/);
+        expect(ref.length).toBe(9);
+      });
+
+      it("issues unique references across 100 calls", () => {
+        const refs = new Set(
+          Array.from({ length: 100 }, () => generatePartExchangeReference())
+        );
+        expect(refs.size).toBe(100);
+      });
+
+      it("uses the documented prefix family — BK/QT/RS/PX all distinct", () => {
+        const bk = generateBookingReference();
+        const qt = generateQuoteReference();
+        const rs = generateReservationReference();
+        const px = generatePartExchangeReference();
+        const prefixes = [bk, qt, rs, px].map((r) => r.slice(0, 3));
+        expect(new Set(prefixes).size).toBe(4);
       });
     });
   });

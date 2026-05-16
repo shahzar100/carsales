@@ -19,6 +19,9 @@ import {
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  // Audit-log writes pull the actor from getSession; without this mock the
+  // PUT path throws `(0 , _auth.getSession) is not a function` → 500.
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
 const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
@@ -260,10 +263,22 @@ describe("/api/admin/bookings", () => {
       const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
       const { serviceAppointments, client } = await getTestCollections();
 
+      // Each insert needs a unique appointment slot — the
+      // `uniq_active_service_slot` index disallows two active bookings on
+      // the same date/time pair. Iterate dates so the loop seeds cleanly.
+      const baseDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      validStatuses.forEach((_, i) => void i);
+      let offset = 0;
       for (const status of validStatuses) {
+        offset += 1;
+        const apptDate = new Date(baseDate.getTime() + offset * 86400000)
+          .toISOString()
+          .slice(0, 10);
         const inserted = await serviceAppointments.insertOne(
           createTestServiceAppointment({
             bookingReference: `BK-${status.toUpperCase().slice(0, 6).padEnd(6, "0")}`,
+            appointmentDate: apptDate,
+            appointmentTime: "10:00 AM",
           })
         );
 

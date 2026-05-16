@@ -68,4 +68,46 @@ describe("useScrollLock", () => {
     rerender({ active: false });
     expect(document.body.style.overflow).toBe("");
   });
+
+  it("compensates for the disappearing scrollbar when present", () => {
+    // Force innerWidth > clientWidth so the hook calculates a non-zero
+    // scrollbar width and pads the body to keep the layout from shifting.
+    const originalInner = window.innerWidth;
+    const originalClient = Object.getOwnPropertyDescriptor(
+      document.documentElement,
+      "clientWidth"
+    );
+    Object.defineProperty(window, "innerWidth", {
+      value: 1024,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, "clientWidth", {
+      value: 1009,
+      configurable: true,
+    });
+
+    const { unmount } = renderHook(() => useScrollLock(true));
+    // The hook reads the scrollbar width on lock and pads the body, so
+    // the inline style is "<scrollbarWidth>px".
+    expect(document.body.style.paddingRight).toBe("15px");
+    unmount();
+
+    // Restore the mocks for downstream tests.
+    Object.defineProperty(window, "innerWidth", {
+      value: originalInner,
+      configurable: true,
+    });
+    if (originalClient) {
+      Object.defineProperty(
+        document.documentElement,
+        "clientWidth",
+        originalClient
+      );
+    }
+  });
+
+  it("__resetScrollLockForTests is a no-op when nothing is locked", () => {
+    expect(() => __resetScrollLockForTests()).not.toThrow();
+    expect(document.body.style.overflow).toBe("");
+  });
 });

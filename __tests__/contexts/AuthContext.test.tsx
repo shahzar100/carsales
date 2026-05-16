@@ -61,7 +61,10 @@ describe("AuthContext", () => {
   });
 
   describe("📋 Functional Standards", () => {
-    it("should show loading state initially", async () => {
+    it("should render children immediately without a blocking loader", () => {
+      // (#10) AuthContext intentionally renders children straight away —
+      // the server-side layout in (admin)/admin/dashboard/layout.tsx is
+      // the actual gate. No "Loading dashboard..." spinner anymore.
       mockFetch.mockResolvedValue({
         json: async () => ({ isLoggedIn: true }),
       });
@@ -72,7 +75,8 @@ describe("AuthContext", () => {
         </AuthProvider>
       );
 
-      expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
+      expect(screen.queryByText(/loading dashboard/i)).not.toBeInTheDocument();
+      expect(screen.getByTestId("status")).toBeInTheDocument();
     });
 
     it("should check session on mount and show content when authenticated", async () => {
@@ -173,7 +177,11 @@ describe("AuthContext", () => {
   });
 
   describe("🔒 Security Standards", () => {
-    it("should redirect to login when not authenticated", async () => {
+    it("should NOT redirect from the client even when /api/admin/session reports unauthenticated", async () => {
+      // (#10) Client-side redirection was removed — the server-side
+      // layout guard handles access control. AuthContext must NEVER
+      // call router.push() from its session check, regardless of the
+      // session response.
       mockFetch.mockResolvedValue({
         json: async () => ({ isLoggedIn: false }),
       });
@@ -190,8 +198,9 @@ describe("AuthContext", () => {
       });
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith("/admin/login");
+        expect(screen.getByTestId("status")).toHaveTextContent("logged-out");
       });
+      expect(mockPush).not.toHaveBeenCalledWith("/admin/login");
     });
 
     it("should not redirect when already on login page", async () => {

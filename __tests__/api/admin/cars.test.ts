@@ -5,9 +5,21 @@ import { NextRequest } from "next/server";
 import { GET, POST, PUT, DELETE } from "@/app/api/admin/cars/route";
 import { getTestCollections, createTestCar } from "../../utils/testUtils";
 
-// Mock authentication
+// Mock authentication. Routes also call `getSession()` for audit logging —
+// without that mock, every mutating path throws
+// `(0 , _auth.getSession) is not a function` and returns 500.
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  getSession: jest.fn(async () => ({ username: "test-admin" })),
+}));
+
+// next/cache's revalidatePath() requires a static-generation store that
+// only exists during a real Next request — in jest it throws
+// "Invariant: static generation store missing". The route's audit-log /
+// DB writes still happen normally, so neutralising the cache hint is safe.
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
 }));
 const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
 
