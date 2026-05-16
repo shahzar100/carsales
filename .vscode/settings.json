@@ -9,11 +9,18 @@
   "jest.virtualFolders": [
     {
       "name": "components",
-      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.js"
+      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.js",
+      "coverageFormatter": "GutterFormatter"
     },
     {
       "name": "api",
-      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.api.js"
+      "jestCommandLine": "NODE_ENV=test npx jest --config jest.config.api.js",
+      "coverageFormatter": "GutterFormatter"
     }
-  ]
+  ],
+  "jest.coverageColors": {
+    "uncovered": "rgba(255, 99, 71, 0.3)",
+    "covered": "rgba(34, 197, 94, 0.2)",
+    "partially-covered": "rgba(234, 179, 8, 0.3)"
+  }
 }

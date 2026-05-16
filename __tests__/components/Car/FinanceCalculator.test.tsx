@@ -13,6 +13,43 @@
  */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+// The result panel renders prices via an internal `AnimatedPrice` helper
+// that springs from initial → target via `motion/react`'s `useSpring`.
+// jsdom has no `requestAnimationFrame`-driven spring engine, so the
+// displayed value stays at the initial value forever. Override the two
+// motion hooks here so they pass values through synchronously — the
+// numeric calculation itself is what we're testing.
+jest.mock("motion/react", () => {
+  const React = require("react");
+  const actual = jest.requireActual("motion/react");
+  return {
+    ...actual,
+    useMotionValue: (initial: number) => {
+      const ref = { current: initial };
+      const subs: Array<(v: number) => void> = [];
+      return {
+        get: () => ref.current,
+        set: (v: number) => {
+          ref.current = v;
+          subs.forEach((cb) => cb(v));
+        },
+        on: (_e: string, cb: (v: number) => void) => {
+          subs.push(cb);
+          // Fire once with the current value so initial display matches.
+          cb(ref.current);
+          return () => {
+            const i = subs.indexOf(cb);
+            if (i >= 0) subs.splice(i, 1);
+          };
+        },
+      };
+    },
+    useSpring: (source: { get: () => number; on: (e: string, cb: (v: number) => void) => () => void }) =>
+      source,
+  };
+});
+
 import FinanceCalculator from "@/components/Car/FinanceCalculator";
 
 // `formatPrice` renders the £ symbol via Intl.NumberFormat which can split

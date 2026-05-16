@@ -170,6 +170,11 @@ describe("Authentication Utilities", () => {
       it("should have secure session options in production", () => {
         process.env.SESSION_SECRET =
           "a_test_secret_that_is_at_least_32_chars_long!!";
+        // Production also requires AUTH_SECRET — Auth.js uses it for the
+        // customer-session JWTs (added to env.ts after customer auth landed).
+        process.env.AUTH_SECRET =
+          process.env.AUTH_SECRET ||
+          "a_test_auth_secret_that_is_at_least_32_chars_long!!";
         (process.env as Record<string, string | undefined>).NODE_ENV =
           "production";
 

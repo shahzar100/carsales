@@ -38,6 +38,38 @@ jest.mock("next-auth/react", () => ({
   SessionProvider: ({ children }) => children,
 }));
 
+// Narrow mock for motion/react: keep `motion.*` and `motion.create()` as
+// the real implementation (so class-name / style assertions still pass),
+// but flatten `AnimatePresence` to a passthrough so exit animations don't
+// keep elements in the DOM after `expect(...).not.toBeInTheDocument()`
+// checks. This was the root cause of the previously-flaky Dropdown +
+// NavMenu + SaveCarButton + WhyChooseHome + Modal tests.
+//
+// Also fire `onExitComplete` synchronously when the children disappear
+// between renders — that's how Toast triggers `onRemove(toast.id)` after
+// the user clicks Close.
+jest.mock("motion/react", () => {
+  const actual = jest.requireActual("motion/react");
+  const React = require("react");
+  return {
+    ...actual,
+    AnimatePresence: ({ children, onExitComplete }) => {
+      const hadChildrenRef = React.useRef(false);
+      const hasChildren = React.Children.toArray(children).some(Boolean);
+      // useLayoutEffect (not useEffect) so the callback fires synchronously
+      // after the commit — useEffect can be delayed by tests using fake
+      // timers (Toast does), which makes onExitComplete miss its window.
+      React.useLayoutEffect(() => {
+        if (hadChildrenRef.current && !hasChildren && onExitComplete) {
+          onExitComplete();
+        }
+        hadChildrenRef.current = hasChildren;
+      });
+      return children;
+    },
+  };
+});
+
 // Mock Next.js navigation
 jest.mock("next/navigation", () => ({
   useRouter() {

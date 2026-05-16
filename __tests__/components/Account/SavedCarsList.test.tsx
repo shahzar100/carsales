@@ -135,8 +135,15 @@ describe("SavedCarsList", () => {
     );
     expect(screen.getByText("Audi A4")).toBeInTheDocument();
     expect(screen.queryByText("BMW 320d")).not.toBeInTheDocument();
-    // The count copy reflects the filtered list (2 saved cars).
-    expect(screen.getByText(/2 saved cars/i)).toBeInTheDocument();
+    // The count copy reflects the filtered list (2 saved cars). Text is
+    // fragmented across `<motion.span>{count}</motion.span> saved cars`,
+    // so reach for the containing <p> via its specific tag + match the
+    // flattened textContent.
+    const ps = Array.from(document.querySelectorAll("p")).filter((p) =>
+      /\bsaved cars?\b/i.test(p.textContent ?? "")
+    );
+    expect(ps.length).toBeGreaterThanOrEqual(1);
+    expect(ps[0].textContent).toMatch(/2\s+saved cars/i);
   });
 
   it("📋 singular 'car' label when exactly one car renders", async () => {
@@ -174,7 +181,11 @@ describe("SavedCarsList", () => {
     });
     render(<SavedCarsList />);
     await waitFor(() =>
-      expect(screen.getByText(/1 saved car$/i)).toBeInTheDocument()
+      expect(
+        Array.from(document.querySelectorAll("p")).some((p) =>
+          /\b1\s+saved car\b/i.test(p.textContent ?? "")
+        )
+      ).toBe(true)
     );
   });
 

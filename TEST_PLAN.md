@@ -660,6 +660,73 @@ Combined suite after this session: **221 suites / 2342 tests passing** across bo
 
 ---
 
+## 3t. Session-21 additions: Next.js page shells (admin dashboard + booking flow)
+
+Coverage report flagged `src/app/**/page.tsx` as a near-uniform 0% — these
+are the server-component pages we'd been deliberately skipping. This
+session knocks out the ones with **real branching** (auth gates, status
+whitelists, query parsing) and leaves the static marketing pages
+(AboutUs, AccidentClaims, terms, privacy, FAQ) since their value is
+visual, not behavioural.
+
+Pattern: `const ui = await Page({ searchParams: Promise.resolve(...) }); render(ui);`,
+plus the unauth path tested via `await expect(Page(...)).rejects.toThrow("REDIRECTED")`
+(the `redirect()` mock throws a sentinel so the page bails like real
+Next.js does). MongoDB collections are stubbed to a tiny chainable cursor.
+
+Also: excluded [`__tests__/utils/auth.test.ts`](__tests__/utils/auth.test.ts)
+from the jsdom config — it's a server-only test (pokes `process.env.NODE_ENV`
+and re-requires iron-session). Was running under both configs and
+duplicating in the VS Code Test Explorer.
+
+| File | Page | Tests | Focus |
+| ---- | ---- | ----- | ----- |
+| [`__tests__/app/admin/dashboard/status.page.test.tsx`](__tests__/app/admin/dashboard/status.page.test.tsx) | `/admin/dashboard/status` | 2 | 🔒 unauth → `redirect("/admin/login")` before any fetch; 📋 resolved `getHealthData()` threaded into `<StatusDashboard initialHealth>` |
+| [`__tests__/app/admin/dashboard/quotes.page.test.tsx`](__tests__/app/admin/dashboard/quotes.page.test.tsx) | `/admin/dashboard/quotes` | 5 | 🔒 unauth + no-DB read; 📋 no `?status` → empty Mongo filter; valid status threads through; 🔒 invalid status silently dropped from filter (but kept in URL state for form); sort/limit/serialize wiring |
+| [`__tests__/app/admin/dashboard/reservations.page.test.tsx`](__tests__/app/admin/dashboard/reservations.page.test.tsx) | `/admin/dashboard/reservations` | 4 | Same shape as quotes — different `VALID_STATUSES` list (pending/confirmed/cancelled/expired) |
+| [`__tests__/app/admin/dashboard/part-exchange.page.test.tsx`](__tests__/app/admin/dashboard/part-exchange.page.test.tsx) | `/admin/dashboard/part-exchange` | 4 | Same shape — statuses are pending/valued/accepted/declined |
+| [`__tests__/app/admin/dashboard/viewing.page.test.tsx`](__tests__/app/admin/dashboard/viewing.page.test.tsx) | `/admin/dashboard/viewing` | 2 | 🔒 unauth + no DB read; 📋 sorted serialised bookings threaded into ViewingBookingsClient's `initialBookings` |
+| [`__tests__/app/admin/dashboard/audit.page.test.tsx`](__tests__/app/admin/dashboard/audit.page.test.tsx) | `/admin/dashboard/audit` | 12 | 🔒 unauth → `/admin/login`; **manager/staff redirected to `/admin/dashboard`** (audit is admin-only); whitespace-only actor/action filters dropped; trimmed when supplied; 🔒 targetType whitelist enforced; cursor parsed to `Date` → `{ createdAt: { $lt: <date> } }`; bad cursor silently dropped; over-fetches PAGE_SIZE+1 to determine `nextCursor`; distinct actors/actions sorted before passing to the table |
+| [`__tests__/app/admin/dashboard/cars-edit.page.test.tsx`](__tests__/app/admin/dashboard/cars-edit.page.test.tsx) | `/admin/dashboard/cars/edit/[_id]` | 4 | 🔒 invalid ObjectId never hits the DB; missing car → "Vehicle not found" UI; `findOne` errors swallowed via `logError`; found car → EditCarForm with serialised doc + subtitle "year make model" |
+| [`__tests__/app/Booking/confirmation.page.test.tsx`](__tests__/app/Booking/confirmation.page.test.tsx) | `/Booking/confirmation` | 6 | 📋 missing `?ref` → "Invalid Confirmation Link" fallback; with `ref` → reference + 3-step next-steps + `/Booking/lookup?ref=<>` deep-link; 🎯 `?email` shows up in the "sent to" copy, falls back to generic line without; contact card prefers `bookingsEmail` over `email`; `tel:` from `businessInfo.phone` |
+| [`__tests__/app/saved.page.test.tsx`](__tests__/app/saved.page.test.tsx) | `/saved` | 2 | Thin shell — renders `<SavedCarsPage />`; 🔒 metadata exports `robots: { index: false, follow: true }` (private list, follow allowed) |
+| [`__tests__/app/BrowseFleet.page.test.tsx`](__tests__/app/BrowseFleet.page.test.tsx) | `/BrowseFleet` | 5 | 📋 default params → page 1 / empty filter / facets union over the **available-only** dataset (not filtered set); 🎯 hero badge uses live `totalAvailable`; 📋 facets always run with `{ status: "available" }` filter; pagination skip = (page-1) × perPage; breadcrumb + SEO scaffolding always rendered |
+
+**Session-21 totals: 46 new test cases across 10 new files; +1 jest.config.js exclusion (auth.test.ts).**
+
+Combined suite after this session: **230 suites / 2360 tests passing** across both configs (171 + 59). jsdom statement coverage **50.96%** (was 49.25%) — first time above 50%.
+
+### Session 21 continuation: page-shell sweep + AnimatePresence mock
+
+Picked up the long-tail of `src/app/**/page.tsx` files still at 0% — auth
+shells, detail pages, the booking + review pages, and the client-side
+admin shop settings page.
+
+Also fixed a class of test-pollution failures introduced by the
+framer-motion migration: `AnimatePresence` defers unmounts so
+`expect(...).not.toBeInTheDocument()` after a state change kept failing
+in jsdom (Dropdown, NavMenu, SaveCarButton, WhyChooseHome, Modal,
+CancelBookingModal). Mocked **only** `AnimatePresence` in
+[`jest.setup.component.js`](jest.setup.component.js) — `motion.*` /
+`motion.create(Component)` keep the real implementation so class-name
+and style assertions still pass.
+
+| File | Pages | Tests | Focus |
+| ---- | ----- | ----- | ----- |
+| [`__tests__/app/customer-auth.pages.test.tsx`](__tests__/app/customer-auth.pages.test.tsx) | `/login`, `/register`, `/forgot-password`, `/reset-password`, `/account` | 10 | 🔒 signed-in users redirected away from login/register (no form flash); /account redirects signed-out users to `/login?callbackUrl=/account`; reset-password's 64-hex token regex blocks the form mount on malformed links; 📋 footer link wiring + AccountDashboard receives session user |
+| [`__tests__/app/admin/admin-shells.pages.test.tsx`](__tests__/app/admin/admin-shells.pages.test.tsx) | `/admin/login`, `/admin/reset-password`, `/admin/dashboard/{account, add, cars}` | 12 | 🔒 admin/login redirects authed admins → `/admin/dashboard`; admin/reset-password's 64-hex token gate; dashboard/account unauth-redirect fires BEFORE DB read, and 'user not found in DB' is treated the same as unauth (defensive); 📋 TwoFactorPanel receives `initialEnabled` from `totpEnabled === true` (false on undefined); cars page threads `cars + bookings` arrays through to CarView |
+| [`__tests__/app/detail-pages.test.tsx`](__tests__/app/detail-pages.test.tsx) | `/Booking/[_id]`, `/BrowseFleet/[_id]` (page + `generateMetadata`) | 10 | 📋 BrowseFleet detail's schema.org `Vehicle` JSON-LD shape (name, manufacturer, offers.price, AutoDealer seller); 🔒 status drives `offers.availability` (`InStock` / `PreOrder` / `OutOfStock`); BreadcrumbList wiring; 🎯 similar-cars fallback (fuel match < 4 → "any available" query); 🔒 `getCar` swallows DB errors via `logError`; `generateMetadata` not-found branch sets `robots: { index: false }`; OG image falls back to `/car.jpg` when car has no image |
+| [`__tests__/app/Book-review.pages.test.tsx`](__tests__/app/Book-review.pages.test.tsx) | `/Book`, `/review` | 6 | 📋 Book page threads `detailingPackages + tintOptions` from businessInfo into `BookingFlow`; defensive `?? []` for missing fields; 🔒 review page rejects malformed `?ref` (calls `validateBookingReference`) and shows error branch; CTA prefers `googleMapsUrl` over `/contact` fallback; valid ref renders the reference in the success card |
+| [`__tests__/app/admin/dashboard/shop.page.test.tsx`](__tests__/app/admin/dashboard/shop.page.test.tsx) | `/admin/dashboard/shop` | 8 | 📋 GET `/api/admin/shop` → mounts `BusinessInfoForm` with payload; PUT body matches edited shopInfo; per-status toast title selection (400 → "Validation Error", 401 → "Unauthorized", else "Update Failed"); 🎯 GET success=false → "Load Failed" + empty-state; network rejects → "Connection Error" (GET) / "Network Error" (PUT) with the JS error msg. Stabilised toast mock for the `useCallback([toast])` dep loop |
+
+**Session-21 continuation totals: 46 new test cases across 5 new files + 1 jest.setup mock.**
+
+Combined Session 21 final: **15 new files / 92 new tests + 1 jest config exclusion + 1 jest setup mock**.
+
+Combined suite after this session: **235 suites / 2406 tests passing**; 3 pre-existing failures (StepStrip, Toast, WhyChooseHome) caused by source-side framer-motion rewrites that fragment text across `<motion.span>` boundaries — those need test rewrites (not a mock fix), out of scope for this coverage session. jsdom statement coverage **53.67%** (was 50.96%).
+
+---
+
 ## 4. What 100% would actually take
 
 A realistic path to ~90% statement coverage on the parts that matter
