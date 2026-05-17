@@ -31,6 +31,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Strip the `X-Powered-By: Next.js` response header. ZAP baseline flagged
+  // this 5× as framework disclosure; no functional consumer.
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       {
