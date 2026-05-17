@@ -91,6 +91,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 onItemsPerPageChange(Number(e.target.value));
                 onPageChange(1);
               }}
+              aria-label="Items per page"
               className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-100"
             >
               {itemsPerPageOptions.map((opt) => (
