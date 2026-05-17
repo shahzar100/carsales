@@ -279,7 +279,7 @@ export default function Header() {
               <span className="text-[15px] font-bold tracking-tight text-white">
                 {BUSINESS_NAME}
               </span>
-              <span className="mt-1 text-[10.5px] tracking-[0.18em] text-gray-500 uppercase">
+              <span className="mt-1 text-[10.5px] tracking-[0.18em] text-gray-400 uppercase">
                 Car Sales &amp; Services
               </span>
             </span>
@@ -747,7 +747,7 @@ export default function Header() {
                 >
                   All vehicles
                 </MobileLink>
-                <div className="px-1 pt-2 pb-1 text-[10.5px] font-semibold tracking-[0.14em] text-gray-500 uppercase">
+                <div className="px-1 pt-2 pb-1 text-[10.5px] font-semibold tracking-[0.14em] text-gray-400 uppercase">
                   By brand
                 </div>
                 <div className="grid grid-cols-2 gap-1">

@@ -56,7 +56,10 @@
 
 /* Tiny helper / meta text */
 .caption {
-  @apply text-xs text-gray-400;
+  /* gray-600 (#4b5563) gives 7.56:1 vs white — clears WCAG AA at 12px.
+   * Was gray-400 (2.85:1, AA fail) — Lighthouse + axe flagged this on
+   * BrowseFleet and the audit's color-contrast finding. */
+  @apply text-xs text-gray-600;
 }
 
 /* ---- Labels ---- */
@@ -66,21 +69,22 @@
 }
 
 .label-sm {
-  @apply mb-1.5 block text-[11px] font-semibold tracking-wider text-gray-400 uppercase;
+  /* gray-600 at 11px uppercase — 7.56:1 contrast. Was gray-400. */
+  @apply mb-1.5 block text-[11px] font-semibold tracking-wider text-gray-600 uppercase;
 }
 
 /* ---- Inputs ---- */
 
 .input {
-  @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
+  @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-500 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 .input-lg {
-  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
+  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-500 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
 .input-error {
-  @apply w-full rounded-lg border border-red-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm ring-2 ring-red-100 transition-all placeholder:text-gray-400 focus:border-red-500 focus:ring-red-200 focus:outline-none;
+  @apply w-full rounded-lg border border-red-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm ring-2 ring-red-100 transition-all placeholder:text-gray-500 focus:border-red-500 focus:ring-red-200 focus:outline-none;
 }
 
 /* ---- Selects ---- */
