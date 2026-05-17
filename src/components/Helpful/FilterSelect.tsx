@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 
 interface FilterSelectProps {
   label: string;
@@ -16,13 +16,18 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   options,
   placeholder = "All",
 }) => {
+  const selectId = useId();
   return (
     <div>
-      <label className="label-sm">{label}</label>
+      <label htmlFor={selectId} className="label-sm">
+        {label}
+      </label>
       <select
+        id={selectId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="select"
+        aria-label={label}
       >
         <option value="all">{placeholder}</option>
         {options.map((opt) => (
