@@ -48,3 +48,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# build artefacts
+.next/
+build-debug.log
+build.log
+POST_PR_RESULTS_OUTPUT/
+
+# Playwright run artefacts
+test-results/
+playwright-report/
