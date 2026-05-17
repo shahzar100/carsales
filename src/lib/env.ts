@@ -108,6 +108,16 @@ function validateServerEnv() {
         "EMAIL_FROM must be set to a real address in production"
       );
     }
+    if (!parsed.data.CRON_SECRET) {
+      // The /api/cron/review-invites route is exposed at the network edge.
+      // Without CRON_SECRET, the route returns 500 on every Vercel cron
+      // invocation, silently breaking review-invite emails. Fail at boot
+      // so the misconfiguration is loud, not quiet.
+      throw new Error(
+        "CRON_SECRET must be set in production — generate with " +
+          "`node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"`"
+      );
+    }
   }
 
   return parsed.data;

@@ -306,6 +306,46 @@ describe("Authentication Utilities", () => {
   });
 
   describe("Module-level production guard", () => {
+    it("should throw when CRON_SECRET is missing in production", () => {
+      // env.ts hard-requires CRON_SECRET in production so a misconfigured
+      // deploy fails at boot rather than 500ing on every Vercel cron tick.
+      const originalNodeEnv = process.env.NODE_ENV;
+      const originalCronSecret = process.env.CRON_SECRET;
+      const originalSession = process.env.SESSION_SECRET;
+      const originalAuth = process.env.AUTH_SECRET;
+      const originalEmailFrom = process.env.EMAIL_FROM;
+
+      // Satisfy the earlier production guards so we reach the CRON one.
+      process.env.SESSION_SECRET = "a".repeat(32);
+      process.env.AUTH_SECRET = "b".repeat(32);
+      process.env.EMAIL_FROM = "real@example.com";
+      delete process.env.CRON_SECRET;
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: "production",
+        writable: true,
+        configurable: true,
+      });
+
+      expect(() => {
+        jest.isolateModules(() => {
+          require("@/lib/utils/auth");
+        });
+      }).toThrow(/CRON_SECRET must be set in production/);
+
+      Object.defineProperty(process.env, "NODE_ENV", {
+        value: originalNodeEnv,
+        writable: true,
+        configurable: true,
+      });
+      if (originalCronSecret !== undefined) process.env.CRON_SECRET = originalCronSecret;
+      if (originalSession !== undefined) process.env.SESSION_SECRET = originalSession;
+      else delete process.env.SESSION_SECRET;
+      if (originalAuth !== undefined) process.env.AUTH_SECRET = originalAuth;
+      else delete process.env.AUTH_SECRET;
+      if (originalEmailFrom !== undefined) process.env.EMAIL_FROM = originalEmailFrom;
+      else delete process.env.EMAIL_FROM;
+    });
+
     it("should throw when SESSION_SECRET is missing in production", () => {
       // The throw now originates in src/lib/env.ts (validateServerEnv),
       // which auth.ts imports. Behaviour is preserved: importing auth in
