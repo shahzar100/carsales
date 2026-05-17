@@ -4,6 +4,9 @@ import AuthShell from "@/components/Account/AuthShell";
 import ResetPasswordForm from "@/components/Account/ResetPasswordForm";
 import { InfoBanner } from "@/components/Form/FormPrimitives";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Reset password",
   description: "Choose a new password for your account.",

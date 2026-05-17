@@ -22,6 +22,9 @@ import { RepairServiceGrid } from "@/components/Services/Repairs";
 import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
+// Cached per-page (no longer force-dynamic via layout). Audit #1.
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   title: "Car Repair Services",
   description:

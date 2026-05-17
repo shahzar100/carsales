@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import AccountDashboard from "@/components/Account/AccountDashboard";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "My account",
   description:

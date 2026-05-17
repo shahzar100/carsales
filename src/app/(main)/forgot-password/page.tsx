@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import AuthShell from "@/components/Account/AuthShell";
 import ForgotPasswordForm from "@/components/Account/ForgotPasswordForm";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Forgot password",
   description: "Request a link to reset your account password.",

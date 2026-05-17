@@ -26,6 +26,9 @@ import { getCarsCollection } from "@/lib/models";
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
 
+// Cached per-page (no longer force-dynamic via layout). Audit #1.
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `About Us — ${businessName}`,
   description:
