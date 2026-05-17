@@ -5,6 +5,9 @@ import { auth } from "@/auth";
 import AuthShell from "@/components/Account/AuthShell";
 import LoginForm from "@/components/Account/LoginForm";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Sign in",
   description:

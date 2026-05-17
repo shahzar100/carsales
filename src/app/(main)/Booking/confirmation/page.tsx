@@ -4,6 +4,9 @@ import { CheckCircle, Calendar, Mail, Phone, Car } from "lucide-react";
 import Link from "next/link";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Booking Confirmed",
   robots: { index: false, follow: false },

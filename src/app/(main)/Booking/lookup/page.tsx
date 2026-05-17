@@ -32,6 +32,10 @@
 
 "use client";
 import React, { useState, useEffect, useCallback, Suspense } from "react";
+// No route segment config: this is a client component using useSearchParams,
+// so Next already opts out of static prerender. Re-adding `export const
+// dynamic` would error ("dynamic is not a valid export from a client
+// component"). (Audit #1.)
 import {
   Search,
   Calendar,

@@ -5,6 +5,11 @@ import WhyChooseHome from "@/components/Home/WhyChooseHome";
 import { getLatestCars } from "@/lib/models";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
+// Home shows the 6 latest cars + featured vehicles. Cache for 60 s so a
+// fresh upload appears within a minute. (Audit #1; layout no longer
+// force-dynamic.)
+export const revalidate = 60;
+
 const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "MMC Leeds";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 

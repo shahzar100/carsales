@@ -21,6 +21,9 @@ import type { AccentColor } from "@/components/Services/Common/PackageCard";
 import { JsonLd } from "@/components/SEO/JsonLd";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
+// Cached per-page (no longer force-dynamic via layout). Audit #1.
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Our Services",
   description:

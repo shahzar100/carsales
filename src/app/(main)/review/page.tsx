@@ -5,6 +5,9 @@ import { Star, ExternalLink, Heart } from "lucide-react";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { validateBookingReference } from "@/lib/utils/validation";
 
+// Per-user / per-request; must not cache. (Audit #1.)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Leave a Review",
   description: "Share your experience with us — we'd love to hear how we did.",

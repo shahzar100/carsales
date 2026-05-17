@@ -91,7 +91,13 @@ function validateServerEnv() {
   // Production hard-requires SESSION_SECRET. Ditto for the EMAIL_FROM
   // default — `noreply@yourdomain.com` would send real emails from a
   // nonsense address. (CODEBASE_ISSUES H3.)
-  if (parsed.data.NODE_ENV === "production") {
+  //
+  // Skip during `next build` (NEXT_PHASE === "phase-production-build").
+  // Build collects route metadata under NODE_ENV=production but a local
+  // build won't have prod-only secrets in .env.local — the validation
+  // belongs at server boot, not at compile.
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+  if (parsed.data.NODE_ENV === "production" && !isBuildPhase) {
     if (!parsed.data.SESSION_SECRET) {
       throw new Error(
         "SESSION_SECRET must be set in production (min 32 characters)"

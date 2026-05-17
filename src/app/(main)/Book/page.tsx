@@ -5,6 +5,9 @@ import BookingFlow from "@/components/Booking/Flow/BookingFlow";
 import BookingAuthGate from "@/components/Account/BookingAuthGate";
 import "./booking-flow.css";
 
+// Cached per-page (no longer force-dynamic via layout). Audit #1.
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   title: "Book a Service",
   description:

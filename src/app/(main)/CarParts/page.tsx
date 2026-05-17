@@ -7,6 +7,9 @@ import { BlackRedSection, ServiceHero } from "@/components/Services/Common";
 import { CarPartInterface } from "@/lib/interfaces";
 import { getCarPartsCollection, serializeDocument } from "@/lib/models";
 
+// Cached per-page (no longer force-dynamic via layout). Audit #1.
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Car Parts & Accessories",
   description:
