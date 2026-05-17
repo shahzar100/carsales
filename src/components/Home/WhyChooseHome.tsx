@@ -97,7 +97,7 @@ export default function WhyChooseHome() {
                     <div className="text-[20px] leading-none font-extrabold tracking-tight text-white tabular-nums">
                       <CountUp value={f.stat} />
                     </div>
-                    <div className="mt-1 text-[10.5px] tracking-[0.14em] text-gray-500 uppercase">
+                    <div className="mt-1 text-[10.5px] tracking-[0.14em] text-gray-400 uppercase">
                       {f.statLabel}
                     </div>
                   </div>
@@ -109,7 +109,7 @@ export default function WhyChooseHome() {
                   {f.body}
                 </p>
                 <div className="mt-auto flex items-center justify-between border-t border-white/[0.06] pt-4">
-                  <span className="text-[12px] font-medium text-gray-500 transition-colors group-hover:text-gray-300">
+                  <span className="text-[12px] font-medium text-gray-400 transition-colors group-hover:text-gray-200">
                     Learn more
                   </span>
                   <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.04] text-gray-400 transition-colors group-hover:border-red-500 group-hover:bg-red-500 group-hover:text-white">

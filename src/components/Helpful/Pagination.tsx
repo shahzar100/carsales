@@ -139,7 +139,11 @@ const Pagination: React.FC<PaginationProps> = ({
         <div className="flex items-center gap-1 px-1">
           {getPageNumbers(currentPage, totalPages).map((page, idx) =>
             page === "..." ? (
-              <span key={`ellipsis-${idx}`} className="px-1.5 text-gray-400">
+              <span
+                key={`ellipsis-${idx}`}
+                aria-hidden="true"
+                className="px-1.5 text-gray-500"
+              >
                 ···
               </span>
             ) : (

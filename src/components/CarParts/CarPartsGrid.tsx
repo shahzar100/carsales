@@ -168,7 +168,9 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                 <div className="mb-3">
                   <span
                     className={`text-sm font-medium ${
-                      part.inStock ? "text-emerald-600" : "text-red-600"
+                      // emerald-700 / red-700 to clear WCAG AA contrast on white
+                      // (was emerald-600 / red-600 — borderline pass at 14px).
+                      part.inStock ? "text-emerald-700" : "text-red-700"
                     }`}
                   >
                     {part.inStock ? "In Stock" : "Out of Stock"}
