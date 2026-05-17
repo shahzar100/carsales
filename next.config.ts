@@ -25,6 +25,20 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
+  // Cross-origin isolation. COEP is deliberately omitted: enabling
+  // `require-corp` would block the Cloudflare Turnstile widget and S3
+  // image hosts (neither sends CORP headers), and we have no SAB usage
+  // to justify the breakage. `same-origin` for COOP isolates the
+  // browsing-context group from any window.opener; `same-site` for CORP
+  // still allows our own S3/CloudFront assets.
+  {
+    key: "Cross-Origin-Opener-Policy",
+    value: "same-origin",
+  },
+  {
+    key: "Cross-Origin-Resource-Policy",
+    value: "same-site",
+  },
   // Content-Security-Policy is set per-request in src/middleware.ts so it
   // can include a fresh `'nonce-...'` for script-src on every page render.
   // See Day 12.1.
