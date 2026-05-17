@@ -17,25 +17,30 @@ import type { NextRequest } from "next/server";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-function buildCsp(nonce: string): string {
+function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: false }): string {
   // `'strict-dynamic'` lets scripts loaded by nonced scripts run without
   // their own nonce — required for Next.js's RSC payload script that injects
   // further script tags during hydration. The Cloudflare host is needed for
   // the Turnstile widget; frame-src is needed for the challenge iframe.
   //
-  // style-src keeps `'unsafe-inline'`. Audited 2026-05-13: 12 non-email
-  // `style={{...}}` attributes, all with runtime-dynamic values
+  // style-src normally keeps `'unsafe-inline'`. Audited 2026-05-13: 12
+  // non-email `style={{...}}` attributes, all with runtime-dynamic values
   // (skeleton widths, toast progress %, image-upload %, dynamic z-index)
-  // that can't move to Tailwind classes. `next/font` also injects inline
-  // `<style>` blocks with @font-face declarations to avoid CLS. Dropping
-  // `'unsafe-inline'` would need a per-build hash allow-list and a
-  // refactor of every dynamic inline style — the cost/benefit doesn't
-  // justify it given style-src XSS is a much weaker class of attack than
-  // the script-src XSS that the nonce above already closes.
+  // that can't move to Tailwind classes. `motion/react` adds many more at
+  // runtime. `next/font` also injects inline `<style>` blocks with
+  // @font-face declarations to avoid CLS. Dropping `'unsafe-inline'` would
+  // need every animated component rewritten — cost/benefit doesn't justify
+  // it given style-src XSS is a much weaker class than the script-src XSS
+  // the nonce above already closes.
+  //
+  // We still emit a Content-Security-Policy-Report-Only mirror with the
+  // tighter `style-src 'self'` so we gather telemetry on what would break
+  // before we flip to enforce. Reports go to /api/csp-report.
+  const styleSrc = opts.reportOnly ? "style-src 'self'" : "style-src 'self' 'unsafe-inline'";
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${isProduction ? "" : " 'unsafe-eval'"}`,
-    "style-src 'self' 'unsafe-inline'",
+    styleSrc,
     "img-src 'self' https://res.cloudinary.com https://*.cloudfront.net data: blob:",
     "font-src 'self' data:",
     "connect-src 'self' https://*.s3.*.amazonaws.com https://challenges.cloudflare.com",
@@ -43,6 +48,7 @@ function buildCsp(nonce: string): string {
     "frame-ancestors 'self'",
     "base-uri 'self'",
     "form-action 'self'",
+    "report-uri /api/csp-report",
   ];
   return directives.join("; ");
 }
@@ -97,6 +103,7 @@ export function proxy(request: NextRequest) {
 
   const nonce = generateNonce();
   const csp = buildCsp(nonce);
+  const cspReportOnly = buildCsp(nonce, { reportOnly: true });
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
@@ -104,6 +111,7 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("Content-Security-Policy-Report-Only", cspReportOnly);
   return response;
 }
 
