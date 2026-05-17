@@ -31,6 +31,7 @@ const eslintConfig = [
     ignores: [
       "node_modules/**",
       ".next/**",
+      ".claude/**",
       "out/**",
       "build/**",
       "coverage/**",
@@ -38,6 +39,7 @@ const eslintConfig = [
       "e2e/**",
       "playwright-report/**",
       "test-results/**",
+      "POST_PR_RESULTS_OUTPUT/**",
       "next-env.d.ts",
     ],
   },
