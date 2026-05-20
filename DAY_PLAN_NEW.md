@@ -51,13 +51,13 @@
 - New public `GET /api/cars?ids=…` endpoint returns the available cars for a set of ids. `SavedCarsPage` and the account `SavedCarsList` now use it instead of the admin-only `/api/admin/cars` (which 401'd every customer and returned a response shape the components couldn't read) — the Saved Cars feature works again.
 - `/api/bookings/lookup` now accepts `QT-` quote references and the lookup page renders the quote — the quote success screen links here and previously errored. `RS-`/`PX-` references were descoped: nothing in the app links them to the lookup page (no live bug), and supporting them needs per-type rendering on the lookup page — left as a follow-up.
 
-## Day 5 — Admin tooling ⬜
+## Day 5 — Admin tooling ✅
 
-**Branch:** `day-5-admin-fixes`
+**Branch:** `day-5-admin-fixes` · **Status:** ✅ Done & merged
 
-- Fix `CarActions` edit/view routes and wire the dead Delete + Featured-toggle handlers in the cars Table/List views.
-- `UserForm` / `PasswordForm` success screens reflect the real email-link flow (they currently show an empty password box).
-- `Form.tsx` shows a success state and surfaces the server's error message.
+- The cars **Table and List views** are usable again. `CarActions` (the per-row "Actions" menu) linked Edit/View to non-existent routes and its Delete button did nothing — it now routes Edit to the real edit page, View to the public listing, and Delete opens a confirmation dialog and actually deletes. The dead Featured-toggle stars are replaced by a shared, wired `FeaturedToggle` component.
+- `UserForm` / `PasswordForm` no longer promise a password that does not exist. The APIs email the user a secure setup/reset link; the forms' success screens and copy now say so (they previously rendered an empty "copy this password" card). _Follow-up:_ PasswordForm's "reset" and "reminder" options both just email a reset link — the two-option UI is now accurate but redundant and could be collapsed.
+- `Form.tsx` (the shared multi-step form engine) now shows a success banner and disables the submit button after a successful submit — preventing duplicate submissions — and surfaces the server's actual error message instead of a generic one.
 
 ## Day 6 — Security hardening ⬜
 
@@ -84,3 +84,4 @@
 - **2026-05-20** — Day 2 complete: shared `BOOKING_SLOTS` constant (fixes `:30`-slot rejection across all booking forms + validator) and server-fetched `/Booking/[_id]` (fixes "No Car Selected" on refresh/share), merged to `main`. `tsc` + 78 targeted tests + `next build` green; the 5 pre-existing test failures noted above are unrelated.
 - **2026-05-20** — Day 3 complete: header + `WhyChooseHome` CTAs re-routed off the broken `/Book` path to `/BrowseFleet`; finance-calculator `/Enquiry` 404 and empty `tel:` fixed; sold/reserved cars no longer show a bookable CTA. Merged to `main`. `tsc` + full suite (zero new failures, +3 tests) + `next build` green.
 - **2026-05-20** — Day 4 complete: public `/api/cars?ids=` endpoint + Saved Cars feature rewired (was 401-broken for every customer), and `/Booking/lookup` now supports `QT-` quote tracking. Merged to `main`. `tsc` + API tests (14, incl. the new `/api/cars` suite) + jsdom suite + `next build` green; zero new failures.
+- **2026-05-20** — Day 5 complete: admin cars Table/List Edit/View/Delete + Featured toggle wired (were all dead); `UserForm`/`PasswordForm` no longer show a fake password; `Form.tsx` gained a success state + real error messages. Merged to `main`. `tsc` + jsdom suite (zero new failures, +3 tests) + `next build` green.

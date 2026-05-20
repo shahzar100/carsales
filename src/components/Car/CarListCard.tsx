@@ -15,6 +15,7 @@ import {
   Star,
 } from "lucide-react";
 import CarActions from "@/components/Admin/Navigation/CarActions";
+import FeaturedToggle from "@/components/Admin/Navigation/FeaturedToggle";
 import ShareButton from "@/components/SEO/ShareButton";
 import SaveCarButton from "@/components/Car/SaveCarButton";
 import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
@@ -180,20 +181,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
               <>
                 {/* Admin: Featured toggle + Actions */}
                 <div className="flex items-center gap-3">
-                  <button
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition-all ${
-                      car.featured
-                        ? "bg-red-50 text-red-600 ring-2 ring-red-200 hover:scale-110"
-                        : "bg-gray-100 text-gray-400 ring-1 ring-gray-200 hover:bg-red-50 hover:text-red-500"
-                    }`}
-                    title={car.featured ? "Unfeature" : "Feature"}
-                    aria-label={car.featured ? "Unfeature car" : "Feature car"}
-                  >
-                    <Star
-                      className="h-4 w-4"
-                      fill={car.featured ? "currentColor" : "none"}
-                    />
-                  </button>
+                  <FeaturedToggle car={car} />
                   <span className="text-xs text-gray-400">
                     Added {formatDate(car.createdAt)}
                   </span>

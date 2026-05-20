@@ -6,7 +6,6 @@ import {
   SummaryRow,
   SummaryCard,
   SelectionCard,
-  CopyableCode,
   InfoBanner,
   Badge,
 } from "../../Form/FormPrimitives";
@@ -55,9 +54,7 @@ const PasswordForm = () => {
   const [lookupError, setLookupError] = useState("");
   const [lookingUp, setLookingUp] = useState(false);
 
-  // Result state
-  const [newPassword, setNewPassword] = useState("");
-  const [emailSent, setEmailSent] = useState(false);
+  // Result state — both actions email a reset link; nothing to copy.
   const [done, setDone] = useState(false);
 
   const update = <K extends keyof PasswordFormData>(
@@ -117,11 +114,11 @@ const PasswordForm = () => {
               selected={data.action === "reset"}
               onSelect={() => update("action", "reset")}
               title="Reset Password"
-              description="Generate a new password for a user"
+              description="Email the user a secure password-reset link"
               items={[
-                "Old password is revoked immediately",
-                "New strong password auto-generated",
-                "Must be copied and given to the user",
+                "Sends a reset email to the user",
+                "Link expires after 1 hour",
+                "The user sets their own new password",
               ]}
               activeColour="border-red-500 bg-red-50/50"
             />
@@ -133,7 +130,7 @@ const PasswordForm = () => {
               items={[
                 "Sends email to user's address",
                 "Includes a secure reset link",
-                "Link expires after 24 hours",
+                "Link expires after 1 hour",
               ]}
               activeColour="border-gray-500 bg-gray-50/50"
             />
@@ -214,21 +211,16 @@ const PasswordForm = () => {
         icon: <ClipboardList className="h-5 w-5" />,
         content: (
           <div className="space-y-5">
-            {done && data.action === "reset" && newPassword ? (
-              <CopyableCode
-                value={newPassword}
-                title="Password Reset Successful"
-                description="A new strong password has been generated. Copy it now — it cannot be retrieved after you leave this page."
-              />
-            ) : done && data.action === "reminder" && emailSent ? (
+            {done ? (
               <InfoBanner variant="success">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 shrink-0" />
                   <div>
-                    <span className="font-medium">Password reminder sent!</span>{" "}
-                    An email with password reset instructions has been sent to{" "}
-                    <span className="font-medium">{foundUser?.email}</span>. The
-                    link will expire in 24 hours.
+                    <span className="font-medium">Reset email sent.</span> A
+                    secure password-reset link has been sent to{" "}
+                    <span className="font-medium">{foundUser?.email}</span>. It
+                    expires in 1 hour, and the user sets their own new password
+                    from it.
                   </div>
                 </div>
               </InfoBanner>
@@ -259,25 +251,12 @@ const PasswordForm = () => {
                   </SummaryRow>
                 </SummaryCard>
 
-                <InfoBanner
-                  variant={data.action === "reset" ? "warning" : "info"}
-                >
-                  {data.action === "reset" ? (
-                    <>
-                      <span className="font-medium">Warning:</span> This will
-                      immediately revoke the user&apos;s current password and
-                      generate a new one. The user will not be able to log in
-                      with their old password.
-                    </>
-                  ) : (
-                    <>
-                      <span className="font-medium">Note:</span> An email with a
-                      password reset link will be sent to{" "}
-                      <span className="font-medium">{foundUser?.email}</span>.
-                      Their current password will remain active until they use
-                      the link.
-                    </>
-                  )}
+                <InfoBanner variant="info">
+                  <span className="font-medium">Note:</span> A secure
+                  password-reset link will be emailed to{" "}
+                  <span className="font-medium">{foundUser?.email}</span>. Their
+                  current password stays active until they use the link to set
+                  a new one.
                 </InfoBanner>
               </>
             )}
@@ -285,16 +264,7 @@ const PasswordForm = () => {
         ),
       },
     ],
-    [
-      data,
-      foundUser,
-      lookingUp,
-      lookupError,
-      done,
-      newPassword,
-      emailSent,
-      lookupUser,
-    ]
+    [data, foundUser, lookingUp, lookupError, done, lookupUser]
   );
 
   // ── Submit ─────────────────────────────────────────────────
@@ -316,16 +286,12 @@ const PasswordForm = () => {
       throw new Error(result.error || "Action failed");
     }
 
-    if (data.action === "reset") {
-      setNewPassword(result.password);
-    } else {
-      setEmailSent(true);
-    }
+    // Both "reset" and "reminder" email the user a secure reset link —
+    // no password is generated or returned.
     setDone(true);
   };
 
-  const submitLabel =
-    data.action === "reset" ? "Reset Password" : "Send Reminder";
+  const submitLabel = "Send Reset Email";
 
   return (
     <Form steps={steps} onSubmit={handleSubmit} submitLabel={submitLabel} />

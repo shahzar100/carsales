@@ -29,6 +29,7 @@ const Form: React.FC<FormProps> = ({
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [stepError, setStepError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
@@ -81,8 +82,16 @@ const Form: React.FC<FormProps> = ({
     try {
       await onSubmit();
       setCompletedSteps((prev) => new Set([...prev, currentStep]));
-    } catch {
-      setStepError("Something went wrong. Please try again.");
+      setSubmitted(true);
+    } catch (err) {
+      // Surface the server's actual message — forms throw
+      // `new Error(result.error)` on a failed submit — so the admin can
+      // see what went wrong instead of a generic string.
+      setStepError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -183,6 +192,13 @@ const Form: React.FC<FormProps> = ({
           </div>
         )}
 
+        {/* Success Message — shown once the submit resolves. */}
+        {submitted && !stepError && (
+          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+            ✓ Submitted successfully.
+          </div>
+        )}
+
         <div>{steps[currentStep].content}</div>
       </div>
 
@@ -199,7 +215,7 @@ const Form: React.FC<FormProps> = ({
           <SubmitButton
             label={submitLabel}
             loading={isSubmitting}
-            disabled={!isCurrentStepValid}
+            disabled={!isCurrentStepValid || submitted}
           />
         ) : (
           <NextButton onClick={goToNext} disabled={!isCurrentStepValid} />

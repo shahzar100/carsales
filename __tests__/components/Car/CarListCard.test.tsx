@@ -24,6 +24,15 @@ jest.mock("@/contexts/SavedCarsContext", () => ({
   useSavedCars: () => mockUseSavedCars(),
 }));
 
+// The admin variant's CarActions + FeaturedToggle read router + toast.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  usePathname: () => "/admin/dashboard/cars",
+}));
+jest.mock("@/contexts/ToastContext", () => ({
+  useToast: () => ({ success: jest.fn(), error: jest.fn() }),
+}));
+
 import CarListCard from "@/components/Car/CarListCard";
 import type { CarInterface } from "@/lib/interfaces";
 

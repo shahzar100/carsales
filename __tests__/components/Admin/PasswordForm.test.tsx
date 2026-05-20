@@ -95,10 +95,10 @@ describe("PasswordForm Component", () => {
     it("shows reset card description items", () => {
       render(<PasswordForm />);
       expect(
-        screen.getByText("Old password is revoked immediately")
+        screen.getByText("Sends a reset email to the user")
       ).toBeInTheDocument();
       expect(
-        screen.getByText("New strong password auto-generated")
+        screen.getByText("The user sets their own new password")
       ).toBeInTheDocument();
     });
 
@@ -237,42 +237,37 @@ describe("PasswordForm Component", () => {
       await user.click(screen.getByText("Next"));
     };
 
-    it("shows reset-specific warning banner", async () => {
+    it("shows the reset-email info banner", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reset(user);
 
       expect(
-        screen.getByText(/immediately revoke the user's current password/i)
+        screen.getByText(/password-reset link will be emailed/i)
       ).toBeInTheDocument();
     });
 
-    it("shows Reset Password as submit label", async () => {
+    it("shows 'Send Reset Email' as the submit label", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reset(user);
 
-      // The submit button should say "Reset Password"
-      const submitButtons = screen.getAllByText("Reset Password");
-      const button = submitButtons.find((el) => el.closest("button") !== null);
-      expect(button).toBeTruthy();
+      expect(
+        screen.getByText("Send Reset Email").closest("button")
+      ).toBeTruthy();
     });
 
-    it("submits reset and shows new password", async () => {
+    it("submits the reset and confirms the email was sent", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reset(user);
 
-      // Mock the password endpoint
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ password: "NewPass456!" }),
+        json: async () => ({ success: true, emailSent: true }),
       });
 
-      // Click the submit button (there may be multiple "Reset Password" texts)
-      const submitButtons = screen.getAllByText("Reset Password");
-      const button = submitButtons.find((el) => el.closest("button") !== null);
-      await user.click(button!);
+      await user.click(screen.getByText("Send Reset Email"));
 
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalledWith("/api/admin/users/password", {
@@ -282,10 +277,10 @@ describe("PasswordForm Component", () => {
         });
       });
 
+      // No password is shown — the user receives a reset link by email.
       await waitFor(() => {
-        expect(screen.getByText("NewPass456!")).toBeInTheDocument();
+        expect(screen.getByText(/reset email sent/i)).toBeInTheDocument();
       });
-      expect(screen.getByText("Password Reset Successful")).toBeInTheDocument();
     });
   });
 
@@ -312,36 +307,35 @@ describe("PasswordForm Component", () => {
       await user.click(screen.getByText("Next"));
     };
 
-    it("shows reminder-specific info banner", async () => {
+    it("shows the reset-email info banner for the reminder flow", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reminder(user);
 
       expect(
-        screen.getByText(/email with a password reset link will be sent/i)
+        screen.getByText(/password-reset link will be emailed/i)
       ).toBeInTheDocument();
     });
 
-    it("shows Send Reminder as submit label", async () => {
+    it("shows 'Send Reset Email' as the submit label (reminder flow)", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reminder(user);
 
-      expect(screen.getByText("Send Reminder")).toBeInTheDocument();
+      expect(screen.getByText("Send Reset Email")).toBeInTheDocument();
     });
 
-    it("submits reminder and shows email-sent confirmation", async () => {
+    it("submits the reminder and confirms the email was sent", async () => {
       const user = userEvent.setup();
       render(<PasswordForm />);
       await goToStep3Reminder(user);
 
-      // Mock the password endpoint
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ message: "Reminder sent" }),
+        json: async () => ({ success: true, emailSent: true }),
       });
 
-      await user.click(screen.getByText("Send Reminder"));
+      await user.click(screen.getByText("Send Reset Email"));
 
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalledWith("/api/admin/users/password", {
@@ -352,9 +346,7 @@ describe("PasswordForm Component", () => {
       });
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/Password reminder sent!/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/reset email sent/i)).toBeInTheDocument();
       });
     });
   });
