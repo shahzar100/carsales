@@ -1,30 +1,28 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import CarViewing from "@/components/CarViewing";
+import type { CarInterface } from "@/lib/interfaces";
 
-// Mock ViewingContext
+// Mock ViewingContext — CarViewing seeds it on mount from `initialCar`.
 jest.mock("@/contexts/ViewingContext", () => ({
   useViewing: jest.fn(),
 }));
 
-// Mock CarViewingForm
+// Mock CarViewingForm — we're testing the CarViewing shell, not the form.
 jest.mock("@/components/Main/Form/CarViewingForm", () => {
   return function MockCarViewingForm() {
     return <div data-testid="car-viewing-form">Car Viewing Form</div>;
   };
 });
 
-// CarViewing now wraps the form in <BookingAuthGate> (account required).
-// We're testing the CarViewing shell, not the auth gate itself — so
-// pass-through the gate so the form renders deterministically.
+// CarViewing wraps the form in <BookingAuthGate> (account required).
+// Pass-through the gate so the form renders deterministically.
 jest.mock("@/components/Account/BookingAuthGate", () => ({
   __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock VehicleDetails
+// Mock VehicleDetails.
 jest.mock("@/components/Shared/VehicleDetails", () => {
   return function MockVehicleDetails({
     vehicle,
@@ -43,51 +41,62 @@ import { useViewing } from "@/contexts/ViewingContext";
 
 const mockUseViewing = useViewing as jest.MockedFunction<typeof useViewing>;
 
+const mockCar: CarInterface = {
+  _id: "car-123",
+  make: "Toyota",
+  model: "Camry",
+  year: 2023,
+  price: 25000,
+  mileage: 5000,
+  fuel: "Petrol",
+  transmission: "Automatic",
+  doors: 4,
+  colour: "Red",
+  image: "/car.jpg",
+  status: "available",
+  featured: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 describe("CarViewing", () => {
-  it("renders no car selected when no viewing booking", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("renders the car details and the booking form from the server-fetched car", () => {
     mockUseViewing.mockReturnValue({
-      viewingBooking: { carDetails: null },
+      viewingBooking: {},
       updateViewingBooking: jest.fn(),
     } as unknown as ReturnType<typeof useViewing>);
 
-    render(<CarViewing />);
-    expect(screen.getByText("No Car Selected")).toBeInTheDocument();
-  });
+    render(<CarViewing initialCar={mockCar} />);
 
-  it("renders Browse Our Fleet link when no car selected", () => {
-    mockUseViewing.mockReturnValue({
-      viewingBooking: { carDetails: null },
-      updateViewingBooking: jest.fn(),
-    } as unknown as ReturnType<typeof useViewing>);
-
-    render(<CarViewing />);
-    expect(screen.getByText("Browse Our Fleet")).toHaveAttribute(
-      "href",
-      "/BrowseFleet"
+    expect(screen.getByText("Book Your Car Viewing")).toBeInTheDocument();
+    expect(screen.getByTestId("vehicle-details")).toHaveTextContent(
+      "Toyota Camry"
     );
+    expect(screen.getByTestId("car-viewing-form")).toBeInTheDocument();
   });
 
-  it("renders car details and form when car is selected", () => {
+  it("seeds the viewing context from the server-fetched car on mount", () => {
+    const updateViewingBooking = jest.fn();
     mockUseViewing.mockReturnValue({
-      viewingBooking: {
-        carDetails: {
+      viewingBooking: {},
+      updateViewingBooking,
+    } as unknown as ReturnType<typeof useViewing>);
+
+    render(<CarViewing initialCar={mockCar} />);
+
+    // This is the fix for the "No Car Selected" bug — the form's submit
+    // payload reads carId / carDetails from the context.
+    expect(updateViewingBooking).toHaveBeenCalledWith(
+      expect.objectContaining({
+        carId: "car-123",
+        carDetails: expect.objectContaining({
           make: "Toyota",
           model: "Camry",
           year: 2023,
-          price: 25000,
-          image: "/car.jpg",
-          fuel: "Petrol",
-          doors: 4,
-          colour: "Red",
-          mileage: 5000,
-        },
-      },
-      updateViewingBooking: jest.fn(),
-    } as unknown as ReturnType<typeof useViewing>);
-
-    render(<CarViewing />);
-    expect(screen.getByText("Book Your Car Viewing")).toBeInTheDocument();
-    expect(screen.getByTestId("vehicle-details")).toBeInTheDocument();
-    expect(screen.getByTestId("car-viewing-form")).toBeInTheDocument();
+        }),
+      })
+    );
   });
 });

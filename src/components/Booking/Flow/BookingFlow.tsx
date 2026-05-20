@@ -32,6 +32,7 @@ import {
 } from "../../Form/FormPrimitives";
 import TurnstileWidget from "../../Form/TurnstileWidget";
 import { formatDate } from "@/lib/utils/format";
+import { BOOKING_SLOT_OPTIONS } from "@/lib/utils/bookingSlots";
 import type {
   DetailingPackage,
   TintOption,
@@ -48,23 +49,10 @@ const maxDate = () => {
 };
 const capLength = (s: string) => s.slice(0, 1000);
 
-const TIME_SLOTS = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-].map((t) => ({ value: t, label: t }));
+// Bookable time slots — sourced from the shared BOOKING_SLOTS constant so
+// the form only ever offers slots the booking API will accept (previously
+// the :30 slots here were silently rejected by validateAppointmentTime).
+const TIME_SLOTS = BOOKING_SLOT_OPTIONS;
 
 // Static repair sub-services — no admin-managed list exists for these.
 const REPAIR_PACKAGES: Array<{ id: string; label: string; description: string }> =

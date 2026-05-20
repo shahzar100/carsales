@@ -20,6 +20,8 @@ import {
 import { useViewing } from "@/contexts/ViewingContext";
 import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
 import TurnstileWidget from "@/components/Form/TurnstileWidget";
+import { BOOKING_SLOTS } from "@/lib/utils/bookingSlots";
+import { formatTime as formatSlotLabel } from "@/lib/utils/booking";
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,17 +38,12 @@ const maxDate = () => {
 // source of truth; cap at 500 to keep textareas reasonable.
 const capLength = (input: string): string => input.slice(0, 500);
 
-const timeSlots = [
-  { value: "09:00", label: "09:00–10:00" },
-  { value: "10:00", label: "10:00–11:00" },
-  { value: "11:00", label: "11:00–12:00" },
-  { value: "12:00", label: "12:00–13:00" },
-  { value: "14:00", label: "14:00–15:00" },
-  { value: "15:00", label: "15:00–16:00" },
-  { value: "16:00", label: "16:00–17:00" },
-  { value: "17:00", label: "17:00–18:00" },
-  { value: "18:00", label: "18:00–19:00" },
-];
+// Time-slot options — values come from the shared BOOKING_SLOTS constant
+// (also enforced server-side); the label is the one-hour viewing window.
+const timeSlots = BOOKING_SLOTS.map((value) => ({
+  value,
+  label: formatSlotLabel(value),
+}));
 
 const formatTime = (val: string) =>
   timeSlots.find((t) => t.value === val)?.label ?? val;

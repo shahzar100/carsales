@@ -99,18 +99,7 @@ export function validateFutureDate(dateStr: string): boolean {
  * Validate that an appointment time is one of the known slots.
  */
 export function validateAppointmentTime(time: string): boolean {
-  const validTimes = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-  ];
-  return validTimes.includes(time);
+  return isValidBookingSlot(time);
 }
 
 /**
@@ -118,6 +107,7 @@ export function validateAppointmentTime(time: string): boolean {
  * stays consistent across the codebase. Prefer importing `createRateLimiter`
  * from `@/lib/utils/rateLimit` directly in new code.
  */
+import { isValidBookingSlot } from "./bookingSlots";
 import { createRateLimiter } from "./rateLimit";
 
 const legacyRateLimitCache = new Map<

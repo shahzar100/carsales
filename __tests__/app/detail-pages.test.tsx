@@ -85,9 +85,25 @@ beforeEach(() => {
 
 // ── Booking/[_id] ────────────────────────────────────────────
 describe("(main)/Booking/[_id] page", () => {
-  it("📋 renders CarViewing client component inside the layout", async () => {
+  it("📋 server-fetches the car by [_id] and renders CarViewing", async () => {
+    mockFindOne.mockResolvedValue({
+      _id: "507f1f77bcf86cd799439011",
+      make: "Tesla",
+      model: "Model 3",
+      year: 2023,
+      price: 35000,
+      mileage: 12000,
+      fuel: "Electric",
+      transmission: "Automatic",
+      doors: 4,
+      colour: "White",
+      status: "available",
+    });
     const Page = (await import("@/app/(main)/Booking/[_id]/page")).default;
-    render(Page());
+    const ui = await Page({
+      params: Promise.resolve({ _id: "507f1f77bcf86cd799439011" }),
+    });
+    render(ui);
     expect(screen.getByTestId("car-viewing")).toBeInTheDocument();
   });
 });

@@ -9,6 +9,7 @@ import {
   SummaryCard,
 } from "../../Form/FormPrimitives";
 import { UserRound, CalendarDays, Wrench, ClipboardList } from "lucide-react";
+import { BOOKING_SLOT_OPTIONS } from "@/lib/utils/bookingSlots";
 
 // ── Form data shape ──────────────────────────────────────────
 interface AppointmentFormData {
@@ -42,12 +43,9 @@ const statusOptions = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-const timeSlots = Array.from({ length: 17 }, (_, i) => {
-  const hour = 9 + Math.floor(i / 2);
-  const min = i % 2 === 0 ? "00" : "30";
-  const label = `${hour.toString().padStart(2, "0")}:${min}`;
-  return { value: label, label };
-});
+// Bookable time slots — shared with the customer booking flow and the
+// server validator so admin-created appointments only use accepted times.
+const timeSlots = BOOKING_SLOT_OPTIONS;
 
 // ── Helpers ──────────────────────────────────────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
