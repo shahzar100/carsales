@@ -519,30 +519,54 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
 
                 {/* CTA stack */}
                 <div className="flex flex-col gap-2.5">
-                  <Link
-                    href={`/Booking/${car._id}`}
-                    onClick={handleBookingClick}
-                    className="group flex items-center gap-3.5 rounded-xl bg-red-600 p-4 text-left text-white shadow-[0_10px_20px_-8px_rgba(220,38,38,0.45)] transition-all hover:-translate-y-0.5 hover:bg-red-700"
-                  >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-white/20">
-                      <CalendarCheck
-                        className="h-5 w-5"
+                  {car.status === "available" ? (
+                    <Link
+                      href={`/Booking/${car._id}`}
+                      onClick={handleBookingClick}
+                      className="group flex items-center gap-3.5 rounded-xl bg-red-600 p-4 text-left text-white shadow-[0_10px_20px_-8px_rgba(220,38,38,0.45)] transition-all hover:-translate-y-0.5 hover:bg-red-700"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-white/20">
+                        <CalendarCheck className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <span className="flex-1">
+                        <span className="block text-base font-bold tracking-tight sm:text-[17px]">
+                          Book a viewing
+                        </span>
+                        <span className="mt-0.5 block text-xs font-medium text-white/85">
+                          Free · no deposit · pick a time today
+                        </span>
+                      </span>
+                      <ArrowRight
+                        className="h-[18px] w-[18px] transition-transform group-hover:translate-x-1"
                         aria-hidden="true"
                       />
-                    </span>
-                    <span className="flex-1">
-                      <span className="block text-base font-bold tracking-tight sm:text-[17px]">
-                        Book a viewing
+                    </Link>
+                  ) : (
+                    /* Sold / reserved cars are not bookable — point the
+                       customer at cars they can actually view. */
+                    <Link
+                      href="/BrowseFleet"
+                      className="group flex items-center gap-3.5 rounded-xl border border-gray-200 bg-gray-50 p-4 text-left transition-colors hover:border-red-600 hover:bg-red-50"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-gray-200 text-gray-600">
+                        <Tag className="h-5 w-5" aria-hidden="true" />
                       </span>
-                      <span className="mt-0.5 block text-xs font-medium text-white/85">
-                        Free · no deposit · pick a time today
+                      <span className="flex-1">
+                        <span className="block text-base font-bold tracking-tight text-gray-900 sm:text-[17px]">
+                          {car.status === "reserved"
+                            ? "This car is reserved"
+                            : "This car has been sold"}
+                        </span>
+                        <span className="mt-0.5 block text-xs font-medium text-gray-500">
+                          Browse our available cars for similar options
+                        </span>
                       </span>
-                    </span>
-                    <ArrowRight
-                      className="h-[18px] w-[18px] transition-transform group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
-                  </Link>
+                      <ArrowRight
+                        className="h-[18px] w-[18px] text-gray-400 transition-transform group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  )}
 
                   <div className="grid grid-cols-2 gap-2.5">
                     <a
@@ -776,7 +800,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
       {car.status === "available" && (
         <section className="border-t border-gray-100 bg-gray-50">
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
-            <FinanceCalculator price={car.price} />
+            <FinanceCalculator price={car.price} phone={phone} />
             {/* Reserve + part-exchange are account-only — one gate covers
                 both forms so a signed-out visitor sees a single prompt. */}
             {car._id && (
@@ -798,36 +822,42 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
         </section>
       )}
 
-      {/* ── Mobile sticky bar ─────────────────────────────────── */}
-      <div
-        aria-hidden={!stickyVisible}
-        className={`fixed right-0 bottom-0 left-0 z-40 flex items-center gap-3 border-t border-gray-200 bg-white p-3 shadow-[0_-10px_25px_-10px_rgba(0,0,0,0.15)] transition-transform duration-300 lg:hidden ${
-          stickyVisible ? "translate-y-0" : "translate-y-full"
-        }`}
-      >
-        <div className="flex min-w-0 shrink-0 flex-col">
-          <div className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-            {car.make} {car.model}
+      {/* ── Mobile sticky bar — only for bookable (available) cars ── */}
+      {car.status === "available" && (
+        <>
+          <div
+            aria-hidden={!stickyVisible}
+            className={`fixed right-0 bottom-0 left-0 z-40 flex items-center gap-3 border-t border-gray-200 bg-white p-3 shadow-[0_-10px_25px_-10px_rgba(0,0,0,0.15)] transition-transform duration-300 lg:hidden ${
+              stickyVisible ? "translate-y-0" : "translate-y-full"
+            }`}
+          >
+            <div className="flex min-w-0 shrink-0 flex-col">
+              <div className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                {car.make} {car.model}
+              </div>
+              <div className="text-xl font-extrabold leading-none tracking-tight text-gray-900 tabular-nums">
+                {formatPrice(car.price)}
+              </div>
+              <div className="mt-0.5 text-[10px] font-bold tracking-wide text-emerald-600 uppercase">
+                Drive away
+              </div>
+            </div>
+            <Link
+              href={`/Booking/${car._id}`}
+              onClick={handleBookingClick}
+              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] bg-red-600 px-3 py-3.5 text-[15px] font-bold tracking-tight text-white shadow-[0_8px_16px_-6px_rgba(220,38,38,0.45)]"
+            >
+              <CalendarCheck className="h-[18px] w-[18px]" />
+              Book viewing
+            </Link>
           </div>
-          <div className="text-xl font-extrabold leading-none tracking-tight text-gray-900 tabular-nums">
-            {formatPrice(car.price)}
-          </div>
-          <div className="mt-0.5 text-[10px] font-bold tracking-wide text-emerald-600 uppercase">
-            Drive away
-          </div>
-        </div>
-        <Link
-          href={`/Booking/${car._id}`}
-          onClick={handleBookingClick}
-          className="flex flex-1 items-center justify-center gap-2 rounded-[10px] bg-red-600 px-3 py-3.5 text-[15px] font-bold tracking-tight text-white shadow-[0_8px_16px_-6px_rgba(220,38,38,0.45)]"
-        >
-          <CalendarCheck className="h-[18px] w-[18px]" />
-          Book viewing
-        </Link>
-      </div>
 
-      {/* Spacer for sticky bar */}
-      {stickyVisible && <div className="h-24 lg:hidden" aria-hidden="true" />}
+          {/* Spacer for sticky bar */}
+          {stickyVisible && (
+            <div className="h-24 lg:hidden" aria-hidden="true" />
+          )}
+        </>
+      )}
     </div>
   );
 };

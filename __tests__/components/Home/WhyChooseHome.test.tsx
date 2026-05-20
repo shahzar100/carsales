@@ -4,7 +4,7 @@
  * Standards coverage:
  * - 📋 Functional: renders the section heading, eyebrow, intro copy, and
  *   one feature card per FEATURES entry with the right href, title, stat
- *   and CTA; bottom rail Book a Viewing link points at /Book
+ *   and CTA; bottom rail Book a Viewing link points at /BrowseFleet
  */
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -29,7 +29,7 @@ describe("WhyChooseHome", () => {
     const noPressure = screen.getByText("No Pressure").closest("a");
     const expert = screen.getByText("Expert Advice").closest("a");
     expect(quality).toHaveAttribute("href", "/BrowseFleet");
-    expect(booking).toHaveAttribute("href", "/Book");
+    expect(booking).toHaveAttribute("href", "/BrowseFleet");
     expect(noPressure).toHaveAttribute("href", "/AboutUs");
     expect(expert).toHaveAttribute("href", "/contact");
   });
@@ -45,9 +45,9 @@ describe("WhyChooseHome", () => {
     expect(screen.getByText("Avg rating")).toBeInTheDocument();
   });
 
-  it("has a closing 'Book a Viewing' CTA pointing at /Book", () => {
+  it("has a closing 'Book a Viewing' CTA pointing at /BrowseFleet", () => {
     render(<WhyChooseHome />);
     const cta = screen.getByText("Book a Viewing").closest("a");
-    expect(cta).toHaveAttribute("href", "/Book");
+    expect(cta).toHaveAttribute("href", "/BrowseFleet");
   });
 });

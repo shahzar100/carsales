@@ -328,16 +328,18 @@ export default function Header() {
               <Search size={20} />
             </button>
 
-            {/* Primary CTA */}
+            {/* Primary CTA — the viewing funnel starts at the fleet list
+                (you pick a car, then book a viewing on it). Visible at all
+                breakpoints. */}
             <Link
-              href="/Book"
-              onClick={() => handleNav("/Book", "Book a Viewing")}
+              href="/BrowseFleet"
+              onClick={() => handleNav("/BrowseFleet", "Browse Cars")}
               className={
-                "hidden h-10 items-center gap-1.5 rounded-lg bg-red-600 px-4 text-[13.5px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(220,38,38,0.6)] transition-colors hover:bg-red-700 sm:inline-flex " +
+                "inline-flex h-10 items-center gap-1.5 rounded-lg bg-red-600 px-4 text-[13.5px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(220,38,38,0.6)] transition-colors hover:bg-red-700 " +
                 FOCUS_RING
               }
             >
-              Book a Viewing
+              Browse Cars
               <ArrowRight size={15} />
             </Link>
 
@@ -598,8 +600,8 @@ export default function Header() {
                       </div>
                       <div className="mt-auto p-2">
                         <Link
-                          href="/Book"
-                          onClick={() => handleNav("/Book", "Book a Viewing")}
+                          href="/BrowseFleet"
+                          onClick={() => handleNav("/BrowseFleet", "Browse Cars")}
                           className={
                             "group flex items-center justify-between rounded-lg bg-gradient-to-br from-red-600 to-red-700 p-3 transition-colors hover:from-red-500 hover:to-red-600 " +
                             FOCUS_RING
@@ -607,7 +609,7 @@ export default function Header() {
                         >
                           <span className="text-white">
                             <span className="block text-[13px] font-bold">
-                              Book a viewing
+                              Browse our cars
                             </span>
                             <span className="mt-0.5 block text-[11.5px] text-red-100/80">
                               7 days, no pressure
@@ -872,14 +874,14 @@ export default function Header() {
           <div className="border-t border-white/[0.06] bg-[#0a0a0a]">
             <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
               <Link
-                href="/Book"
-                onClick={() => handleNav("/Book", "Book a Viewing")}
+                href="/BrowseFleet"
+                onClick={() => handleNav("/BrowseFleet", "Browse Cars")}
                 className={
                   "group inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-red-600 text-[15px] font-semibold text-white transition-colors hover:bg-red-700 " +
                   FOCUS_RING
                 }
               >
-                Book a Viewing
+                Browse Cars
                 <ArrowRight
                   size={16}
                   className="transition-transform group-hover:translate-x-0.5"
