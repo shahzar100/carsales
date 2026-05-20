@@ -40,7 +40,7 @@ const FEATURES: Feature[] = [
     icon: CalendarCheck,
     stat: "60s",
     statLabel: "To book",
-    href: "/Book",
+    href: "/BrowseFleet",
   },
   {
     title: "No Pressure",
@@ -132,7 +132,7 @@ export default function WhyChooseHome() {
             </div>
           </div>
           <Link
-            href="/Book"
+            href="/BrowseFleet"
             className="inline-flex h-11 items-center gap-2 rounded-lg bg-red-600 px-5 text-[13.5px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(220,38,38,0.6)] transition-colors hover:bg-red-700"
           >
             Book a Viewing

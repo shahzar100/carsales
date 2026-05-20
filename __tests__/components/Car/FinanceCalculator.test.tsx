@@ -6,7 +6,7 @@
  *   0% APR fallback to even split; deposit slider, term select, APR slider
  *   all drive the computed result reactively
  * - 🎯 Usability: minimum 10% deposit hint shown; disclaimer present;
- *   "Get a finance quote" CTA encodes the inputs into the /Enquiry href
+ *   "Get a finance quote" CTA encodes the inputs into the /contact href
  *   so admins can see what numbers the customer was looking at
  * - 🔒 Security: indicative-only disclaimer prevents the calculator being
  *   read as a credit offer (regulatory hint, asserted here too)
@@ -131,17 +131,29 @@ describe("FinanceCalculator", () => {
     expect(monthlyText).not.toMatch(/-/);
   });
 
-  it("📋 encodes price/deposit/term/apr into the /Enquiry CTA href", () => {
+  it("📋 encodes price/deposit/term/apr into the /contact CTA href", () => {
     render(<FinanceCalculator price={20000} />);
     const cta = screen.getByText(/get a finance quote/i).closest("a");
     expect(cta).toBeTruthy();
     const href = cta!.getAttribute("href") ?? "";
-    expect(href).toContain("/Enquiry?");
+    expect(href).toContain("/contact?");
     expect(href).toContain("price=20000");
     expect(href).toContain("deposit=2000");
     expect(href).toContain("term=48");
     expect(href).toContain("apr=9.9");
     expect(href).toContain("subject=Finance%20quote%20request");
+  });
+
+  it("🎯 'Speak to our team' is a tel: link when a phone is supplied", () => {
+    render(<FinanceCalculator price={20000} phone="0113 252 6041" />);
+    const cta = screen.getByText(/speak to our team/i).closest("a");
+    expect(cta).toHaveAttribute("href", "tel:01132526041");
+  });
+
+  it("🎯 'Speak to our team' falls back to /contact when no phone is supplied", () => {
+    render(<FinanceCalculator price={20000} />);
+    const cta = screen.getByText(/speak to our team/i).closest("a");
+    expect(cta).toHaveAttribute("href", "/contact");
   });
 
   it("🎯 shows the minimum-10% deposit recommendation", () => {

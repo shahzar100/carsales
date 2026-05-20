@@ -214,6 +214,18 @@ describe("CarDetailView", () => {
     );
   });
 
+  it("📋 sold / reserved cars expose no bookable '/Booking/' CTA", () => {
+    render(<CarDetailView car={{ ...baseCar, status: "sold" }} />);
+    const bookingLinks = screen
+      .getAllByRole("link")
+      .filter((a) => a.getAttribute("href")?.startsWith("/Booking/"));
+    expect(bookingLinks).toHaveLength(0);
+    // The desktop CTA is replaced with a "browse available cars" link.
+    expect(
+      screen.getByText(/this car has been sold/i).closest("a")
+    ).toHaveAttribute("href", "/BrowseFleet");
+  });
+
   it("📋 tel: link strips whitespace from the business phone", () => {
     render(<CarDetailView car={baseCar} />);
     const telLinks = screen

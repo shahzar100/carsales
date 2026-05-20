@@ -24,6 +24,8 @@ function AnimatedPrice({ value, className }: { value: number; className?: string
 
 interface Props {
   price: number;
+  /** Business phone — drives the "Speak to our team" tel: link. */
+  phone?: string;
 }
 
 /**
@@ -38,11 +40,11 @@ interface Props {
  * where P = price - deposit, r = APR/100, n = term (months).
  *
  * If APR is 0 we fall back to even monthly splits to avoid NaN. The
- * "Get a finance quote" CTA links to /Enquiry with the figures
+ * "Get a finance quote" CTA links to /contact with the figures
  * pre-filled in the URL so admins know what the customer was looking
  * at when they ask for a quote.
  */
-export default function FinanceCalculator({ price }: Props) {
+export default function FinanceCalculator({ price, phone }: Props) {
   const minDeposit = Math.round(price * 0.1);
   const [deposit, setDeposit] = useState<number>(minDeposit);
   const [termMonths, setTermMonths] = useState<number>(48);
@@ -71,7 +73,7 @@ export default function FinanceCalculator({ price }: Props) {
     };
   }, [price, deposit, termMonths, apr]);
 
-  const enquiryHref = `/Enquiry?subject=${encodeURIComponent(
+  const contactHref = `/contact?subject=${encodeURIComponent(
     "Finance quote request"
   )}&price=${price}&deposit=${deposit}&term=${termMonths}&apr=${apr}`;
 
@@ -197,18 +199,27 @@ export default function FinanceCalculator({ price }: Props) {
       {/* CTAs */}
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <Link
-          href={enquiryHref}
+          href={contactHref}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700"
         >
           <MessageCircle className="h-4 w-4" />
           Get a finance quote
         </Link>
-        <a
-          href={`tel:`}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          Speak to our team
-        </a>
+        {phone ? (
+          <a
+            href={`tel:${phone.replace(/\s/g, "")}`}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            Speak to our team
+          </a>
+        ) : (
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            Speak to our team
+          </Link>
+        )}
       </div>
     </div>
   );

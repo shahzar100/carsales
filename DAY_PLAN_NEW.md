@@ -36,13 +36,13 @@
 - Added a shared `BOOKING_SLOTS` constant (`src/lib/utils/bookingSlots.ts`) consumed by every booking form (`BookingFlow`, `CarViewingForm`, admin `AppointmentForm`) **and** `validateAppointmentTime` — a slot a form offers is now always a slot the API accepts. The forms previously offered `:30` (and `13:00`) slots the server rejected after all 5 steps. The canonical list is the 9 on-the-hour slots the validator already enforced, so nothing new became bookable — to enable half-hour appointments, add the `:30` entries to that one constant.
 - `/Booking/[_id]` now server-fetches the car by its `_id` and passes it to `<CarViewing>`, which seeds the viewing context — fixes "No Car Selected" on refresh / shared link / bookmark / new tab. An unknown id returns a 404.
 
-## Day 3 — Customer CTAs ⬜
+## Day 3 — Customer CTAs ✅
 
-**Branch:** `day-3-cta-fixes`
+**Branch:** `day-3-cta-fixes` · **Status:** ✅ Done & merged
 
-- Header "Book a Viewing" CTA → `/BrowseFleet`, visible at all breakpoints (also the two `WhyChooseHome` mis-routes).
-- Finance calculator "Get a finance quote" → a real route (currently `/Enquiry`, a 404); "Speak to our team" empty `tel:` link fixed.
-- Gate the car-detail "Book a viewing" CTA on `car.status === "available"` — sold/reserved cars are currently bookable.
+- The three header "Book a Viewing" CTAs now route to `/BrowseFleet` (not `/Book`, the service flow) — relabelled "Browse Cars", and the desktop CTA is visible at all breakpoints (was hidden below 640px). The two `WhyChooseHome` mis-routes (`/Book` → `/BrowseFleet`) are fixed too.
+- Finance calculator: "Get a finance quote" now routes to `/contact` (was `/Enquiry`, a 404); "Speak to our team" now uses a real `tel:` link from `businessInfo.phone` (was an empty `tel:`).
+- The car-detail "Book a viewing" CTA (desktop card + mobile sticky bar) is gated on `car.status === "available"` — sold/reserved cars show a "browse available cars" link instead of a bookable CTA.
 
 ## Day 4 — Saved cars & booking lookup ⬜
 
@@ -82,3 +82,4 @@
 
 - **2026-05-20** — Day 1 complete: build restored (StatCard/KPIGrid icon refactor finished, admin-login index fix kept), merged to `main`.
 - **2026-05-20** — Day 2 complete: shared `BOOKING_SLOTS` constant (fixes `:30`-slot rejection across all booking forms + validator) and server-fetched `/Booking/[_id]` (fixes "No Car Selected" on refresh/share), merged to `main`. `tsc` + 78 targeted tests + `next build` green; the 5 pre-existing test failures noted above are unrelated.
+- **2026-05-20** — Day 3 complete: header + `WhyChooseHome` CTAs re-routed off the broken `/Book` path to `/BrowseFleet`; finance-calculator `/Enquiry` 404 and empty `tel:` fixed; sold/reserved cars no longer show a bookable CTA. Merged to `main`. `tsc` + full suite (zero new failures, +3 tests) + `next build` green.

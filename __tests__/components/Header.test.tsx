@@ -46,10 +46,10 @@ describe("Header", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the Book a Viewing call to action", () => {
+  it("renders the primary Browse Cars call to action", () => {
     render(<Header />);
-    const cta = screen.getAllByRole("link", { name: /book a viewing/i })[0];
-    expect(cta).toHaveAttribute("href", "/Book");
+    const cta = screen.getAllByRole("link", { name: /browse cars/i })[0];
+    expect(cta).toHaveAttribute("href", "/BrowseFleet");
   });
 
   it("exposes Account and Menu dropdown triggers", () => {
