@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import crypto from "crypto";
 import { hashPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
@@ -9,6 +10,7 @@ import { recordAudit } from "@/lib/utils/audit";
 const consumeLimiter = createRateLimiter("password-reset-consume", {
   maxRequests: 3,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 const PASSWORD_MIN = 12;
@@ -34,9 +36,7 @@ function isValidPassword(pw: string): boolean {
  */
 export async function POST(request: NextRequest) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await consumeLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(

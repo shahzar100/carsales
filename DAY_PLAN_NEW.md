@@ -59,14 +59,14 @@
 - `UserForm` / `PasswordForm` no longer promise a password that does not exist. The APIs email the user a secure setup/reset link; the forms' success screens and copy now say so (they previously rendered an empty "copy this password" card). _Follow-up:_ PasswordForm's "reset" and "reminder" options both just email a reset link — the two-option UI is now accurate but redundant and could be collapsed.
 - `Form.tsx` (the shared multi-step form engine) now shows a success banner and disables the submit button after a successful submit — preventing duplicate submissions — and surfaces the server's actual error message instead of a generic one.
 
-## Day 6 — Security hardening ⬜
+## Day 6 — Security hardening ✅
 
-**Branch:** `day-6-security`
+**Branch:** `day-6-security` · **Status:** ✅ Done & merged
 
-- Remove the production-seeding write from `GET /api/carparts`.
-- Role-gate the admin write routes with `hasMinimumRole("manager")`.
-- Zod `.strict()` + `$`-key reject on the `admin/carparts` PUT.
-- `CRON_SECRET` constant-time compare; `x-forwarded-for` → `ipAddress(request)`; KV rate-limiter fail-closed for security limiters.
+- `GET /api/carparts` no longer auto-seeds the collection — a public, unauthenticated GET was performing a DB write (and could quietly resurrect mock inventory in production). An empty collection now returns `[]`; real inventory comes from the admin API.
+- Every admin **write** route (POST/PUT/PATCH/DELETE on cars, carparts, bookings, bookings/cancel, part-exchange, quotes, reservations, shop, upload, upload/delete) is now gated with `hasMinimumRole("manager")` — a read-only `staff` session can still GET but gets a 403 on any mutation. GET handlers are unchanged.
+- The `admin/carparts` PUT spread its request body straight into a Mongo `$set`. It now strict-parses with a Zod `.strict()` schema and rejects `$`-prefixed / dotted / `__proto__` keys outright — closing the mass-assignment / operator-injection hole.
+- `CRON_SECRET` is compared in constant time (SHA-256 + `timingSafeEqual`) instead of `!==`. The spoofable `x-forwarded-for` IP parse is replaced with `ipAddress(request)` across all 13 rate-limited routes. The KV rate-limiter gained a `failClosed` option; the 10 credential-guarding limiters (login, 2FA, password reset/change, magic link) now fail **closed** on a KV outage so it can't open an unlimited brute-force window.
 
 ## Day 7 — Content, trust & ops ⬜
 
@@ -85,3 +85,4 @@
 - **2026-05-20** — Day 3 complete: header + `WhyChooseHome` CTAs re-routed off the broken `/Book` path to `/BrowseFleet`; finance-calculator `/Enquiry` 404 and empty `tel:` fixed; sold/reserved cars no longer show a bookable CTA. Merged to `main`. `tsc` + full suite (zero new failures, +3 tests) + `next build` green.
 - **2026-05-20** — Day 4 complete: public `/api/cars?ids=` endpoint + Saved Cars feature rewired (was 401-broken for every customer), and `/Booking/lookup` now supports `QT-` quote tracking. Merged to `main`. `tsc` + API tests (14, incl. the new `/api/cars` suite) + jsdom suite + `next build` green; zero new failures.
 - **2026-05-20** — Day 5 complete: admin cars Table/List Edit/View/Delete + Featured toggle wired (were all dead); `UserForm`/`PasswordForm` no longer show a fake password; `Form.tsx` gained a success state + real error messages. Merged to `main`. `tsc` + jsdom suite (zero new failures, +3 tests) + `next build` green.
+- **2026-05-20** — Day 6 complete: security hardening — removed the public-GET seeding write from `/api/carparts`; role-gated all admin write routes with `hasMinimumRole("manager")`; Zod-`.strict()` + `$`-key reject on the `admin/carparts` PUT; `CRON_SECRET` constant-time compare; `x-forwarded-for` → `ipAddress()` across 13 routes; KV limiter fails closed for the 10 credential limiters. 37 files (26 source incl. `src/auth.ts`, 11 tests). Merged to `main`. `tsc` + API suite (zero new failures, +5 tests; baseline-confirmed) + jsdom suite + `next build` green.

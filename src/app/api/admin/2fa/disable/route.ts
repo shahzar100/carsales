@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { getAdminUsersCollection } from "@/lib/models";
 import { getSession, verifyPassword } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
@@ -13,6 +14,7 @@ import { logError } from "@/lib/utils/observability";
 const disableLimiter = createRateLimiter("admin-2fa-disable", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 /**
@@ -25,9 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // (Fix 4 / security) Rate limit before any session / DB work so a
     // capped attacker can't probe response timing.
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await disableLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(

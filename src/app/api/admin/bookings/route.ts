@@ -4,12 +4,13 @@ import {
   getCarViewingBookingsCollection,
   serializeDocument,
 } from "@/lib/models";
-import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { ObjectId, Document } from "mongodb";
 import { recordAudit } from "@/lib/utils/audit";
 import {
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
@@ -75,6 +76,10 @@ export async function PUT(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return unauthorized();
+    }
+
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     const body = await request.json();

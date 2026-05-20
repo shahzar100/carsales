@@ -13,13 +13,17 @@ import { GET, PATCH } from "@/app/api/admin/reservations/route";
 
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
   getSession: jest.fn().mockResolvedValue({ username: "admin-test" }),
 }));
 jest.mock("@/lib/utils/audit", () => ({
   recordAudit: jest.fn().mockResolvedValue(undefined),
 }));
 
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 const { recordAudit: mockRecordAudit } = require("@/lib/utils/audit");
 
 // Each fixture gets a unique carId because the reservations collection
@@ -52,6 +56,7 @@ describe("/api/admin/reservations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true);
+    mockHasMinimumRole.mockResolvedValue(true);
   });
 
   // ── GET ─────────────────────────────────────────────────────

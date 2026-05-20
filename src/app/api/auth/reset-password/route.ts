@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { z } from "zod";
+import { ipAddress } from "@vercel/functions";
 
 import { getUsersCollection } from "@/lib/models";
 import { hashPassword } from "@/lib/utils/auth";
@@ -26,6 +27,7 @@ import { ok, badRequest, tooManyRequests, serverError } from "@/lib/utils/apiRes
 const consumeLimiter = createRateLimiter("customerPasswordResetConsume", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 const schema = z.object({
@@ -38,9 +40,7 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await consumeLimiter.check(ip);
     if (!allowed) {
       return tooManyRequests("Too many attempts. Please try again later.", {

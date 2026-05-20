@@ -13,8 +13,12 @@ import { NextRequest } from "next/server";
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 // Mock S3 utility
 jest.mock("@/lib/utils/s3", () => ({
@@ -29,6 +33,7 @@ describe("/api/admin/upload/delete", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true); // Default to manager+
     mockDeleteS3Object.mockResolvedValue({ success: true });
   });
 

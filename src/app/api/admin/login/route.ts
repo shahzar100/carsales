@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { getSession, verifyPassword } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
@@ -11,6 +12,7 @@ import { verifyTotpCode } from "@/lib/utils/twoFactor";
 const loginLimiter = createRateLimiter("login", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 /**
@@ -27,9 +29,7 @@ const DUMMY_PASSWORD_HASH =
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await loginLimiter.check(ip);
 
     if (!allowed) {

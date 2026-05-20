@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
+import { ipAddress, waitUntil } from "@vercel/functions";
 import crypto from "crypto";
 import {
   getSession,
@@ -20,6 +20,7 @@ import { recordAudit } from "@/lib/utils/audit";
 const passwordActionLimiter = createRateLimiter("admin-password-action", {
   maxRequests: 10,
   windowMs: 60 * 60 * 1000,
+  failClosed: true,
 });
 
 /**
@@ -59,9 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Rate limit (per-IP) ────────────────────────────────
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await passwordActionLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(

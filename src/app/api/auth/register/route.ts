@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { waitUntil } from "@vercel/functions";
+import { ipAddress, waitUntil } from "@vercel/functions";
 
 import { getUsersCollection } from "@/lib/models";
 import { hashPassword } from "@/lib/utils/auth";
@@ -45,9 +45,7 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await registerLimiter.check(ip);
     if (!allowed) {
       return tooManyRequests(

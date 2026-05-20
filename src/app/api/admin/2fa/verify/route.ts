@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { getAdminUsersCollection } from "@/lib/models";
 import { getSession } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
@@ -14,6 +15,7 @@ import { logError } from "@/lib/utils/observability";
 const verifyLimiter = createRateLimiter("admin-2fa-verify", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 /**
@@ -28,9 +30,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // (Fix 4 / security) Rate limit before doing any session / DB work —
     // we want the 429 to fire on the first attempt past the cap, not
     // after we've leaked timing info via a DB lookup.
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await verifyLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(

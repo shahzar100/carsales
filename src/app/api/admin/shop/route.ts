@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { serializeDocument } from "@/lib/models";
-import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
 import { getBusinessInfo, updateBusinessInfo } from "@/lib/utils/businessInfo";
 import type { ShopInfo } from "@/lib/interfaces";
@@ -8,6 +8,7 @@ import {
   ok,
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   fail,
 } from "@/lib/utils/apiResponse";
@@ -41,6 +42,10 @@ export async function PUT(request: NextRequest) {
       return unauthorized(
         "Authentication required to update business settings"
       );
+    }
+
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     let body: Record<string, unknown>;

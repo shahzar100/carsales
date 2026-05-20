@@ -227,6 +227,24 @@ describe("createRateLimiter", () => {
       expect(result.allowed).toBe(true);
     });
 
+    it("fails closed when failClosed is set and KV errors", async () => {
+      global.fetch = jest.fn(async () => ({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      })) as never;
+      const limiter = createRateLimiter("kv-fail-closed", {
+        maxRequests: 1,
+        windowMs: 60000,
+        failClosed: true,
+      });
+      const result = await limiter.check("ip-1");
+      // A credential-guarding limiter must NOT open an unlimited
+      // brute-force window when the KV backend is down.
+      expect(result.allowed).toBe(false);
+      expect(result.remaining).toBe(0);
+    });
+
     it("reset() issues DEL", async () => {
       const limiter = createRateLimiter("kv-reset", {
         maxRequests: 1,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
+import { ipAddress, waitUntil } from "@vercel/functions";
 import crypto from "crypto";
 import React from "react";
 import { getSession, hashPassword, hasMinimumRole } from "@/lib/utils/auth";
@@ -21,9 +21,7 @@ const validRoles = ["staff", "manager", "admin"] as const;
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, remaining, resetIn } = await userCreateLimiter.check(ip);
     if (!allowed) {
       return NextResponse.json(

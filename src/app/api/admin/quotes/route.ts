@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { getQuotesCollection, serializeDocument } from "@/lib/models";
-import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
 import {
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
@@ -75,6 +76,10 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     if (!(await isAuthenticated())) return unauthorized();
+
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
+    }
 
     const body = await request.json().catch(() => null);
     const parsed = patchSchema.safeParse(body);

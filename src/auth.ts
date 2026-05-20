@@ -6,6 +6,8 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import React from "react";
 
+import { ipAddress } from "@vercel/functions";
+
 import clientPromise from "@/lib/mongodb";
 import { getUsersCollection } from "@/lib/models";
 import { verifyPassword } from "@/lib/utils/auth";
@@ -46,6 +48,7 @@ const credentialsSchema = z.object({
 const customerLoginLimiter = createRateLimiter("customerLogin", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 // Magic-link guard, keyed by the *recipient email* — without it, the
@@ -54,6 +57,7 @@ const customerLoginLimiter = createRateLimiter("customerLogin", {
 const magicLinkLimiter = createRateLimiter("customerMagicLink", {
   maxRequests: 3,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 /**
@@ -127,9 +131,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(raw, request) {
         // Per-IP rate limit before touching the DB or hashing.
-        const ip =
-          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-          "unknown";
+        const ip = ipAddress(request) || "unknown";
         const { allowed } = await customerLoginLimiter.check(ip);
         if (!allowed) throw new RateLimitedSignin();
 

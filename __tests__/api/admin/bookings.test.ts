@@ -19,16 +19,21 @@ import {
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
   // Audit-log writes pull the actor from getSession; without this mock the
   // PUT path throws `(0 , _auth.getSession) is not a function` → 500.
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 describe("/api/admin/bookings", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true);
+    mockHasMinimumRole.mockResolvedValue(true);
   });
 
   afterEach(async () => {

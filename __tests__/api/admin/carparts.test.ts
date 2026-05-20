@@ -15,16 +15,22 @@ import { getTestCollections } from "../../utils/testUtils";
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  // Write routes (POST/PUT/DELETE) are role-gated with hasMinimumRole.
+  hasMinimumRole: jest.fn(),
   // Mutating routes call getSession() for the audit log — must be mocked
   // or POST/PUT/DELETE throw `(0 , _auth.getSession) is not a function`.
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 describe("/api/admin/carparts", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true); // Default to manager/admin
   });
 
   afterEach(async () => {
@@ -238,6 +244,26 @@ describe("/api/admin/carparts", () => {
       expect(data.error).toBe("Unauthorized");
     });
 
+    it("should return 403 when the session lacks the manager role", async () => {
+      // Authenticated, but a read-only `staff` session.
+      mockHasMinimumRole.mockResolvedValue(false);
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "POST",
+          body: JSON.stringify(validCarPartData),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(data.error).toMatch(/manager/i);
+    });
+
     it("should return 500 when POST throws an error", async () => {
       mockIsAuthenticated.mockRejectedValue(new Error("DB error"));
 
@@ -387,6 +413,71 @@ describe("/api/admin/carparts", () => {
 
       expect(response.status).toBe(401);
       expect(data.error).toBe("Unauthorized");
+    });
+
+    it("should return 403 when the session lacks the manager role", async () => {
+      mockHasMinimumRole.mockResolvedValue(false);
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            _id: "507f1f77bcf86cd799439011",
+            name: "Updated",
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await PUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(data.error).toMatch(/manager/i);
+    });
+
+    it("should reject a PUT body with a MongoDB-operator key", async () => {
+      // `$set` spread into the update would be operator injection — the
+      // strict schema + key scan must reject it before the DB write.
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            _id: "507f1f77bcf86cd799439011",
+            $set: { price: 0 },
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await PUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toMatch(/invalid field names/i);
+    });
+
+    it("should reject a PUT body with an unknown field (strict schema)", async () => {
+      const request = new NextRequest(
+        "http://localhost:3000/api/admin/carparts",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            _id: "507f1f77bcf86cd799439011",
+            name: "Renamed",
+            bogusField: "nope",
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const response = await PUT(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBeDefined();
     });
 
     it("should return 500 when PUT throws an error", async () => {
