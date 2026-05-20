@@ -28,7 +28,9 @@ export default function SavedCarsList() {
   // pass null as the URL and useApi short-circuits.
   const init = useMemo<RequestInit>(() => ({ cache: "no-store" }), []);
   const { data, error, loading: fetchLoading } = useApi<AvailableCarsResponse>(
-    savedIds.length === 0 ? null : "/api/admin/cars?limit=500&status=available",
+    savedIds.length === 0
+      ? null
+      : `/api/cars?ids=${encodeURIComponent(savedIds.join(","))}`,
     { init }
   );
 

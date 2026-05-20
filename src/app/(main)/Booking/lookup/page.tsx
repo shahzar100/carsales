@@ -52,21 +52,31 @@ import { formatDate, formatTime } from "@/lib/utils/booking";
 import { formatPrice } from "@/lib/utils/format";
 
 interface Booking {
-  bookingReference: string;
+  bookingReference?: string;
+  quoteReference?: string;
   customerInfo: {
     name: string;
     email: string;
     phone: string;
   };
-  appointmentDate: string;
-  appointmentTime: string;
+  // Appointment fields are absent on quote requests.
+  appointmentDate?: string;
+  appointmentTime?: string;
   status: string;
   serviceType?: string;
+  serviceDetails?: string;
   carDetails?: {
     make: string;
     model: string;
     year: number;
     price: number;
+  };
+  // Quote requests carry the customer's vehicle instead of a carDetails.
+  vehicle?: {
+    make: string;
+    model: string;
+    year: number;
+    registration?: string;
   };
   cancellationReason?: string;
 }
@@ -176,6 +186,22 @@ function BookingLookupContent() {
         icon: <XCircle className="h-4 w-4" />,
         text: "Cancelled",
       },
+      // Quote-request statuses.
+      responded: {
+        color: "bg-blue-100 text-blue-700",
+        icon: <CheckCircle className="h-4 w-4" />,
+        text: "Responded",
+      },
+      accepted: {
+        color: "bg-emerald-100 text-emerald-700",
+        icon: <CheckCircle className="h-4 w-4" />,
+        text: "Accepted",
+      },
+      expired: {
+        color: "bg-gray-100 text-gray-700",
+        icon: <XCircle className="h-4 w-4" />,
+        text: "Expired",
+      },
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -244,9 +270,13 @@ function BookingLookupContent() {
             <div className="bg-linear-to-r from-gray-900 to-red-900 p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="mb-1 text-sm opacity-90">Booking Reference</p>
+                  <p className="mb-1 text-sm opacity-90">
+                    {bookingType === "quote"
+                      ? "Quote Reference"
+                      : "Booking Reference"}
+                  </p>
                   <h2 className="text-2xl font-bold">
-                    {booking.bookingReference}
+                    {booking.bookingReference ?? booking.quoteReference}
                   </h2>
                 </div>
                 <div>{getStatusBadge(booking.status)}</div>
@@ -264,53 +294,103 @@ function BookingLookupContent() {
             )}
 
             <div className="space-y-6 p-6">
-              {/* Appointment Details */}
-              <div>
-                <h3 className="heading-3 mb-4">Appointment Details</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Calendar className="mt-0.5 h-5 w-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Date</p>
-                      <p className="font-medium text-gray-900">
-                        {formatDate(booking.appointmentDate)}
-                      </p>
-                    </div>
+              {/* Appointment / quote details */}
+              {bookingType === "quote" ? (
+                <div>
+                  <h3 className="heading-3 mb-4">Quote Details</h3>
+                  <div className="space-y-3">
+                    {booking.serviceType && (
+                      <div className="flex items-start gap-3">
+                        <Car className="mt-0.5 h-5 w-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">Service</p>
+                          <p className="font-medium text-gray-900">
+                            {booking.serviceType}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {booking.vehicle && (
+                      <div className="flex items-start gap-3">
+                        <Car className="mt-0.5 h-5 w-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">Vehicle</p>
+                          <p className="font-medium text-gray-900">
+                            {booking.vehicle.year} {booking.vehicle.make}{" "}
+                            {booking.vehicle.model}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {booking.serviceDetails && (
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="mt-0.5 h-5 w-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">Details</p>
+                          <p className="font-medium text-gray-900">
+                            {booking.serviceDetails}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Clock className="mt-0.5 h-5 w-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Time</p>
-                      <p className="font-medium text-gray-900">
-                        {formatTime(booking.appointmentTime)}
-                      </p>
-                    </div>
-                  </div>
-                  {bookingType === "service" && booking.serviceType && (
+                  <p className="mt-4 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+                    This is a quote request — we&apos;ll email your quote to{" "}
+                    {booking.customerInfo.email} shortly.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="heading-3 mb-4">Appointment Details</h3>
+                  <div className="space-y-3">
                     <div className="flex items-start gap-3">
-                      <Car className="mt-0.5 h-5 w-5 text-gray-400" />
+                      <Calendar className="mt-0.5 h-5 w-5 text-gray-400" />
                       <div>
-                        <p className="text-sm text-gray-500">Service Type</p>
+                        <p className="text-sm text-gray-500">Date</p>
                         <p className="font-medium text-gray-900">
-                          {booking.serviceType}
+                          {booking.appointmentDate
+                            ? formatDate(booking.appointmentDate)
+                            : "—"}
                         </p>
                       </div>
                     </div>
-                  )}
-                  {bookingType === "viewing" && booking.carDetails && (
-                    <div className="mt-3 rounded-lg bg-gray-50 p-4">
-                      <p className="mb-2 text-sm text-gray-500">Vehicle</p>
-                      <h4 className="heading-3">
-                        {booking.carDetails.year} {booking.carDetails.make}{" "}
-                        {booking.carDetails.model}
-                      </h4>
-                      <p className="mt-1 text-lg font-bold text-red-600">
-                        {formatPrice(booking.carDetails.price)}
-                      </p>
+                    <div className="flex items-start gap-3">
+                      <Clock className="mt-0.5 h-5 w-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Time</p>
+                        <p className="font-medium text-gray-900">
+                          {booking.appointmentTime
+                            ? formatTime(booking.appointmentTime)
+                            : "—"}
+                        </p>
+                      </div>
                     </div>
-                  )}
+                    {bookingType === "service" && booking.serviceType && (
+                      <div className="flex items-start gap-3">
+                        <Car className="mt-0.5 h-5 w-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">Service Type</p>
+                          <p className="font-medium text-gray-900">
+                            {booking.serviceType}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {bookingType === "viewing" && booking.carDetails && (
+                      <div className="mt-3 rounded-lg bg-gray-50 p-4">
+                        <p className="mb-2 text-sm text-gray-500">Vehicle</p>
+                        <h4 className="heading-3">
+                          {booking.carDetails.year} {booking.carDetails.make}{" "}
+                          {booking.carDetails.model}
+                        </h4>
+                        <p className="mt-1 text-lg font-bold text-red-600">
+                          {formatPrice(booking.carDetails.price)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Customer Information */}
               <div>
@@ -338,7 +418,7 @@ function BookingLookupContent() {
               </div>
 
               {/* Action Note */}
-              {booking.status !== "cancelled" && (
+              {bookingType !== "quote" && booking.status !== "cancelled" && (
                 <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                   <p className="text-sm text-red-800">
                     If you need to cancel or reschedule your appointment, please

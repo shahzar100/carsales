@@ -6,7 +6,7 @@
  * by the saved-ids set, drops ids that no longer map to an available car.
  *
  * Standards coverage:
- * - 📋 Functional: fetches /api/admin/cars?limit=500&status=available;
+ * - 📋 Functional: fetches /api/cars?ids=…;
  *   filters by savedIds; skips fetch when savedIds is empty; cancel-flag
  *   prevents state updates after unmount
  * - 🎯 Usability: loading copy → empty-state with link to /BrowseFleet →
@@ -126,7 +126,7 @@ describe("SavedCarsList", () => {
     render(<SavedCarsList />);
     await waitFor(() =>
       expect(fetchMock).toHaveBeenCalledWith(
-        "/api/admin/cars?limit=500&status=available",
+        expect.stringContaining("/api/cars?ids="),
         expect.objectContaining({ cache: "no-store" })
       )
     );

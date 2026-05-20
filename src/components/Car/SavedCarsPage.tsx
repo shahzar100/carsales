@@ -12,11 +12,9 @@ import CarListCard from "./CarListCard";
  * Day 10 / Fix 10.4 — the customer-facing "Saved cars" page.
  *
  * Reads the saved-ids from SavedCarsContext, then fetches the full car
- * records from the existing /api/admin/cars endpoint (filtered by
- * status:available in buildCarMongoFilter — sold cars naturally drop off
- * when re-fetched). If a saved id no longer maps to an available car,
- * it's filtered out of the displayed list but kept in storage in case
- * the seller marks it available again.
+ * records from the public /api/cars?ids= endpoint, which only returns
+ * available cars — so a saved car that has since sold simply drops off
+ * the displayed list while staying in storage in case it's relisted.
  *
  * The list is localStorage-backed for signed-out visitors and synced to
  * the customer's account once signed in (see SavedCarsContext) — the
@@ -38,12 +36,11 @@ export default function SavedCarsPage() {
       }
       setLoading(true);
       try {
-        // Fetch a fresh page from BrowseFleet and filter client-side.
-        // Saved lists are capped at 50 entries so a single request that
-        // pulls available cars is plenty; if we ever grow past one page
-        // of fleet results, add a `?ids=` server endpoint instead.
+        // Fetch the full records for the saved ids from the public
+        // /api/cars endpoint. It returns only available cars, so a saved
+        // car that has since sold drops off the list automatically.
         const res = await fetch(
-          `/api/admin/cars?limit=500&status=available`,
+          `/api/cars?ids=${encodeURIComponent(savedIds.join(","))}`,
           { cache: "no-store" }
         );
         if (!res.ok) {

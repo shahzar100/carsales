@@ -12,7 +12,7 @@
 ## ⚠️ Known blockers (pre-existing — not introduced by this plan)
 
 - **Production deploys have been failing since 2026-05-17.** `next build` prerenders DB-backed pages and the Vercel build environment cannot reach MongoDB Atlas (`MongoServerSelectionError`). Each day's PR merges, but the Vercel deploy fails. The fix is infrastructure-side (Atlas Network Access allowlist / cluster status / Vercel `MONGODB_URI`) — see `HANDOVER_MASTER_AUDIT_2026-05-20.md`.
-- **5 pre-existing unit-test failures** on `main` (`ViewingBookingsClient`, `ServiceBookingsClient`, `Toast` ×2, `WhyChooseHome`) — unrelated to this plan; to be cleared as part of the Day 7 CI work.
+- **Pre-existing test failures on `main`** — 5 in the jsdom/component suite (`ViewingBookingsClient`, `ServiceBookingsClient`, `Toast` ×2, `WhyChooseHome`) and 7 in the API suite (`auth` + admin-route tests throwing on a missing `CRON_SECRET` — a test-env setup gap). All unrelated to this plan; to be cleared as part of the Day 7 CI work.
 
 ## Status legend
 
@@ -44,12 +44,12 @@
 - Finance calculator: "Get a finance quote" now routes to `/contact` (was `/Enquiry`, a 404); "Speak to our team" now uses a real `tel:` link from `businessInfo.phone` (was an empty `tel:`).
 - The car-detail "Book a viewing" CTA (desktop card + mobile sticky bar) is gated on `car.status === "available"` — sold/reserved cars show a "browse available cars" link instead of a bookable CTA.
 
-## Day 4 — Saved cars & booking lookup ⬜
+## Day 4 — Saved cars & booking lookup ✅
 
-**Branch:** `day-4-saved-and-lookup`
+**Branch:** `day-4-saved-and-lookup` · **Status:** ✅ Done & merged
 
-- New public `GET /api/cars?ids=…` endpoint; rewire `SavedCarsPage` + account `SavedCarsList` (both currently call the admin-only endpoint → 401, and read the wrong response shape).
-- `/api/bookings/lookup` accepts `QT-` / `RS-` / `PX-` references — quote tracking is currently broken.
+- New public `GET /api/cars?ids=…` endpoint returns the available cars for a set of ids. `SavedCarsPage` and the account `SavedCarsList` now use it instead of the admin-only `/api/admin/cars` (which 401'd every customer and returned a response shape the components couldn't read) — the Saved Cars feature works again.
+- `/api/bookings/lookup` now accepts `QT-` quote references and the lookup page renders the quote — the quote success screen links here and previously errored. `RS-`/`PX-` references were descoped: nothing in the app links them to the lookup page (no live bug), and supporting them needs per-type rendering on the lookup page — left as a follow-up.
 
 ## Day 5 — Admin tooling ⬜
 
@@ -83,3 +83,4 @@
 - **2026-05-20** — Day 1 complete: build restored (StatCard/KPIGrid icon refactor finished, admin-login index fix kept), merged to `main`.
 - **2026-05-20** — Day 2 complete: shared `BOOKING_SLOTS` constant (fixes `:30`-slot rejection across all booking forms + validator) and server-fetched `/Booking/[_id]` (fixes "No Car Selected" on refresh/share), merged to `main`. `tsc` + 78 targeted tests + `next build` green; the 5 pre-existing test failures noted above are unrelated.
 - **2026-05-20** — Day 3 complete: header + `WhyChooseHome` CTAs re-routed off the broken `/Book` path to `/BrowseFleet`; finance-calculator `/Enquiry` 404 and empty `tel:` fixed; sold/reserved cars no longer show a bookable CTA. Merged to `main`. `tsc` + full suite (zero new failures, +3 tests) + `next build` green.
+- **2026-05-20** — Day 4 complete: public `/api/cars?ids=` endpoint + Saved Cars feature rewired (was 401-broken for every customer), and `/Booking/lookup` now supports `QT-` quote tracking. Merged to `main`. `tsc` + API tests (14, incl. the new `/api/cars` suite) + jsdom suite + `next build` green; zero new failures.
