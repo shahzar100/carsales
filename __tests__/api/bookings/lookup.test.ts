@@ -64,6 +64,36 @@ describe("/api/bookings/lookup", () => {
       );
     });
 
+    it("should find a quote request by its QT- reference", async () => {
+      const { quotes, client } = await getTestCollections();
+      await quotes.insertOne({
+        quoteReference: "QT-QUOT01",
+        customerInfo: {
+          name: "Quinn Quote",
+          email: "quinn@example.com",
+          phone: "555-0199",
+        },
+        serviceType: "Detailing — Gold",
+        serviceDetails: "",
+        vehicle: { make: "Audi", model: "A4", year: 2022 },
+        status: "pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      await client.close();
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/bookings/lookup?ref=QT-QUOT01&email=quinn@example.com"
+      );
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.data.type).toBe("quote");
+      expect(data.data.booking.quoteReference).toBe("QT-QUOT01");
+    });
+
     it("should return 400 when booking reference is missing", async () => {
       const request = new NextRequest(
         "http://localhost:3000/api/bookings/lookup"

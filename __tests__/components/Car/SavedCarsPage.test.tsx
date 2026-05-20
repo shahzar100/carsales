@@ -2,7 +2,7 @@
  * Tests for src/components/Car/SavedCarsPage.tsx
  *
  * Standards coverage:
- * - 📋 Functional: fetches /api/admin/cars?limit=500&status=available on
+ * - 📋 Functional: fetches /api/cars?ids=… on
  *   mount when savedIds is non-empty; filters the response by savedIds;
  *   skips the fetch when savedIds is empty
  * - 🎯 Usability: distinct sub-heading for authenticated vs unauthenticated
@@ -80,7 +80,7 @@ describe("SavedCarsPage", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("📋 fetches available cars from /api/admin/cars and filters by savedIds", async () => {
+  it("📋 fetches saved cars from /api/cars and filters by savedIds", async () => {
     mockUseSavedCars.mockReturnValue({
       savedIds: ["car-1", "car-3"],
       clear: mockClear,
@@ -150,7 +150,7 @@ describe("SavedCarsPage", () => {
     render(<SavedCarsPage />);
     await waitFor(() =>
       expect(fetchMock).toHaveBeenCalledWith(
-        "/api/admin/cars?limit=500&status=available",
+        expect.stringContaining("/api/cars?ids="),
         expect.objectContaining({ cache: "no-store" })
       )
     );

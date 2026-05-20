@@ -2,10 +2,12 @@ import { NextRequest } from "next/server";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
+  getQuotesCollection,
   serializeDocument,
 } from "@/lib/models";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { verifyTurnstileToken } from "@/lib/utils/turnstile";
+import { validateBookingReference } from "@/lib/utils/validation";
 import { logError } from "@/lib/utils/observability";
 import {
   ok,
@@ -49,8 +51,9 @@ export async function GET(request: NextRequest) {
       return badRequest("Booking reference is required");
     }
 
-    // Validate booking reference format (BK-XXXXXX)
-    if (!/^BK-[A-Z0-9]{6}$/i.test(ref)) {
+    // Validate reference format — BK-XXXXXX (service / viewing booking)
+    // or QT-XXXXXX (quote request).
+    if (!validateBookingReference(ref)) {
       return badRequest("Invalid booking reference format");
     }
 
@@ -67,6 +70,20 @@ export async function GET(request: NextRequest) {
     const captcha = await verifyTurnstileToken(turnstileToken, ip);
     if (!captcha.ok) {
       return badRequest("CAPTCHA verification failed");
+    }
+
+    // Quote requests (QT-XXXXXX) live in their own collection and have no
+    // appointment slot — look them up separately from bookings.
+    if (ref.startsWith("QT-")) {
+      const quotesCollection = await getQuotesCollection();
+      const quote = await quotesCollection.findOne({ quoteReference: ref });
+      if (
+        !quote ||
+        quote.customerInfo?.email?.toLowerCase() !== email.toLowerCase()
+      ) {
+        return notFound("Booking not found");
+      }
+      return ok({ type: "quote", booking: serializeDocument(quote) });
     }
 
     const serviceCollection = await getServiceAppointmentsCollection();
