@@ -277,15 +277,37 @@ export async function getAdminUsersCollection(): Promise<
     const db = await getDb();
     adminUsersCollection = db.collection<AdminUser>("adminUsers");
 
+    // Reconcile the `email_1` index. Older deployments created it without
+    // unique+sparse; the current schema wants both. Recreating with the
+    // same name but different options throws — so detect the mismatch,
+    // drop, and recreate. (Audit fix for e2e-regressions: every admin
+    // login throw was IndexOptionsConflict here.)
+    await reconcileAdminEmailIndex(adminUsersCollection);
+
     await adminUsersCollection.createIndexes([
       { key: { username: 1 }, unique: true },
-      // Sparse so existing rows without an email don't block creation.
-      // Unique so concurrent POSTs can't create two admins with the same
-      // email. (CODEBASE_ISSUES C7.)
-      { key: { email: 1 }, unique: true, sparse: true },
     ]);
   }
   return adminUsersCollection;
+}
+
+async function reconcileAdminEmailIndex(
+  collection: Collection<AdminUser>
+): Promise<void> {
+  type IndexInfo = { name: string; key: Record<string, number>; unique?: boolean; sparse?: boolean };
+  const existing = (await collection
+    .listIndexes()
+    .toArray()) as unknown as IndexInfo[];
+  const emailIdx = existing.find(
+    (i) => i.key && Object.keys(i.key).length === 1 && i.key.email === 1
+  );
+  const want = { unique: true, sparse: true };
+
+  if (emailIdx && (emailIdx.unique !== want.unique || emailIdx.sparse !== want.sparse)) {
+    await collection.dropIndex(emailIdx.name);
+  }
+  // Idempotent: createIndex is a no-op if a matching index already exists.
+  await collection.createIndex({ email: 1 }, { unique: true, sparse: true });
 }
 
 // ── Quotes ───────────────────────────────────────────────────

@@ -26,21 +26,21 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
     <StatCard
       label="Total Cars"
       value={kpis.totalCars}
-      icon={Car}
+      icon={<Car className="h-6 w-6" />}
       colour="bg-red-100 text-red-600"
       subtext={`${kpis.availableCars} available · ${kpis.soldCars} sold · ${kpis.reservedCars} reserved`}
     />
     <StatCard
       label="Inventory Value"
       value={formatPrice(kpis.totalInventoryValue)}
-      icon={PoundSterling}
+      icon={<PoundSterling className="h-6 w-6" />}
       colour="bg-emerald-100 text-emerald-600"
       subtext={`${formatPrice(kpis.totalSoldValue)} sold value`}
     />
     <StatCard
       label="Service Bookings"
       value={kpis.totalServiceBookings}
-      icon={Calendar}
+      icon={<Calendar className="h-6 w-6" />}
       colour="bg-gray-100 text-gray-900"
       subtext={`${kpis.pendingServiceBookings} pending · ${kpis.confirmedServiceBookings} confirmed`}
       badge={
@@ -54,7 +54,7 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
     <StatCard
       label="Car Viewings"
       value={kpis.totalViewingBookings}
-      icon={Eye}
+      icon={<Eye className="h-6 w-6" />}
       colour="bg-amber-100 text-amber-600"
       subtext={`${kpis.pendingViewingBookings} pending · ${kpis.confirmedViewingBookings} confirmed`}
       badge={
@@ -68,28 +68,28 @@ const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => (
     <StatCard
       label="Completed Services"
       value={kpis.completedServiceBookings}
-      icon={CheckCircle}
+      icon={<CheckCircle className="h-6 w-6" />}
       colour="bg-green-100 text-green-600"
       subtext={`${kpis.cancelledServiceBookings} cancelled`}
     />
     <StatCard
       label="Completed Viewings"
       value={kpis.completedViewingBookings}
-      icon={TrendingUp}
+      icon={<TrendingUp className="h-6 w-6" />}
       colour="bg-sky-100 text-sky-600"
       subtext={`${kpis.cancelledViewingBookings} cancelled`}
     />
     <StatCard
       label="Pending Total"
       value={kpis.pendingServiceBookings + kpis.pendingViewingBookings}
-      icon={Clock}
+      icon={<Clock className="h-6 w-6" />}
       colour="bg-orange-100 text-orange-600"
       subtext="Across all booking types"
     />
     <StatCard
       label="Admin Users"
       value={kpis.totalUsers}
-      icon={Users}
+      icon={<Users className="h-6 w-6" />}
       colour="bg-rose-100 text-rose-600"
       subtext="Active admin accounts"
     />
