@@ -9,6 +9,11 @@
 - Each PR is merged to `main` → **auto-deploys to production via Vercel**.
 - `tsc` + tests + `next build` are run locally before every merge.
 
+## ⚠️ Known blockers (pre-existing — not introduced by this plan)
+
+- **Production deploys have been failing since 2026-05-17.** `next build` prerenders DB-backed pages and the Vercel build environment cannot reach MongoDB Atlas (`MongoServerSelectionError`). Each day's PR merges, but the Vercel deploy fails. The fix is infrastructure-side (Atlas Network Access allowlist / cluster status / Vercel `MONGODB_URI`) — see `HANDOVER_MASTER_AUDIT_2026-05-20.md`.
+- **5 pre-existing unit-test failures** on `main` (`ViewingBookingsClient`, `ServiceBookingsClient`, `Toast` ×2, `WhyChooseHome`) — unrelated to this plan; to be cleared as part of the Day 7 CI work.
+
 ## Status legend
 
 ✅ Done & merged · 🔄 In progress · ⬜ Planned
@@ -24,12 +29,12 @@
 - Update `StatCard.test.tsx` to the new `icon` prop shape.
 - Result: `tsc --noEmit`, `next build`, and the Dashboard tests all pass.
 
-## Day 2 — Booking-flow blockers ⬜
+## Day 2 — Booking-flow blockers ✅
 
-**Branch:** `day-2-booking-flow`
+**Branch:** `day-2-booking-flow` · **Status:** ✅ Done & merged
 
-- One shared `BOOKING_SLOTS` constant consumed by every booking form **and** `validateAppointmentTime` — fixes `:30`-slot service bookings being rejected with "Invalid appointment time" after all 5 steps (also fixes the admin `AppointmentForm`).
-- Make `/Booking/[_id]` a server component that fetches the car by `_id` — fixes "No Car Selected" on refresh / shared link / bookmark / new tab.
+- Added a shared `BOOKING_SLOTS` constant (`src/lib/utils/bookingSlots.ts`) consumed by every booking form (`BookingFlow`, `CarViewingForm`, admin `AppointmentForm`) **and** `validateAppointmentTime` — a slot a form offers is now always a slot the API accepts. The forms previously offered `:30` (and `13:00`) slots the server rejected after all 5 steps. The canonical list is the 9 on-the-hour slots the validator already enforced, so nothing new became bookable — to enable half-hour appointments, add the `:30` entries to that one constant.
+- `/Booking/[_id]` now server-fetches the car by its `_id` and passes it to `<CarViewing>`, which seeds the viewing context — fixes "No Car Selected" on refresh / shared link / bookmark / new tab. An unknown id returns a 404.
 
 ## Day 3 — Customer CTAs ⬜
 
@@ -76,3 +81,4 @@
 ## Progress log
 
 - **2026-05-20** — Day 1 complete: build restored (StatCard/KPIGrid icon refactor finished, admin-login index fix kept), merged to `main`.
+- **2026-05-20** — Day 2 complete: shared `BOOKING_SLOTS` constant (fixes `:30`-slot rejection across all booking forms + validator) and server-fetched `/Booking/[_id]` (fixes "No Car Selected" on refresh/share), merged to `main`. `tsc` + 78 targeted tests + `next build` green; the 5 pre-existing test failures noted above are unrelated.
