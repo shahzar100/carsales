@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
 
 // ═════════════════════════════════════════════════════════════
@@ -10,7 +9,14 @@ import { motion } from "motion/react";
 interface StatCardProps {
   label: string;
   value: string | number;
-  icon: LucideIcon;
+  /**
+   * Rendered icon element, e.g. `<Car className="h-6 w-6" />`.
+   * Was previously `icon: LucideIcon` (a component reference); Next 16
+   * forbids passing function references from server → client components.
+   * A React element is serialisable across the RSC boundary, so callers
+   * render the icon themselves and pass the JSX.
+   */
+  icon: React.ReactNode;
   /** Tailwind classes for the icon background, e.g. "bg-red-100 text-red-600" */
   colour: string;
   /** Optional sub-text shown below the value */
@@ -22,7 +28,7 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
-  icon: Icon,
+  icon,
   colour,
   subtext,
   badge,
@@ -40,7 +46,7 @@ const StatCard: React.FC<StatCardProps> = ({
       transition={{ type: "spring", stiffness: 420, damping: 18 }}
       className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${colour}`}
     >
-      <Icon className="h-6 w-6" />
+      {icon}
     </motion.div>
     <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2">
