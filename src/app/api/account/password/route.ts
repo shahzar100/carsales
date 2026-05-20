@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { ipAddress } from "@vercel/functions";
 
 import { auth } from "@/auth";
 import { getUsersCollection } from "@/lib/models";
@@ -31,6 +32,7 @@ import {
 const limiter = createRateLimiter("customerPasswordChange", {
   maxRequests: 5,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 const schema = z.object({
@@ -47,9 +49,7 @@ export async function POST(request: NextRequest) {
     const email = session?.user?.email;
     if (!email) return unauthorized("You must be signed in");
 
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await limiter.check(ip);
     if (!allowed) {
       return tooManyRequests("Too many attempts. Please try again later.", {

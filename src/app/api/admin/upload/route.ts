@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/utils/auth";
+import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import {
   generatePresignedUploadUrl,
   getPublicUrl,
@@ -28,6 +28,13 @@ export async function POST(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!(await hasMinimumRole("manager"))) {
+      return NextResponse.json(
+        { error: "Forbidden — manager role required" },
+        { status: 403 }
+      );
     }
 
     let body: Record<string, unknown>;

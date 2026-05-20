@@ -10,14 +10,19 @@ import { getTestCollections, createTestShopInfo } from "../../utils/testUtils";
 // `(0, _auth.getSession) is not a function`.
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 describe("/api/admin/shop", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true); // Default to manager+
   });
 
   afterEach(async () => {
@@ -286,6 +291,7 @@ describe("/api/admin/shop", () => {
       // Re-mock auth since resetModules clears it
       jest.doMock("@/lib/utils/auth", () => ({
         isAuthenticated: jest.fn().mockResolvedValue(true),
+        hasMinimumRole: jest.fn().mockResolvedValue(true),
       }));
       jest.doMock("@/lib/models", () => {
         const actual = jest.requireActual("@/lib/models");

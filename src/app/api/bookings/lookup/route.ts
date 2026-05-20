@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
@@ -26,9 +27,7 @@ const lookupLimiter = createRateLimiter("bookingLookup", {
 export async function GET(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await lookupLimiter.check(ip);
 
     if (!allowed) {

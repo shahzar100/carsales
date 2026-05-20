@@ -1,21 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import {
   getCarPartsCollection,
   CarPartInterface,
   serializeDocument,
 } from "@/lib/models";
-import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { ObjectId } from "mongodb";
 import {
   ok,
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
 import { deleteS3Objects } from "@/lib/utils/s3";
 import { logError } from "@/lib/utils/observability";
 import { recordAudit } from "@/lib/utils/audit";
+
+// ── Car-part update schema ───────────────────────────────────
+// PUT spreads the validated object straight into a Mongo `$set`. A
+// `.strict()` schema is the gate that stops mass-assignment: it rejects
+// ANY key not listed here — including `$`-prefixed operator keys
+// (`$set`, `$where`, …) and dotted paths. Every field is optional so a
+// PUT can patch any subset.
+const carPartUpdateSchema = z
+  .object({
+    name: z.string().min(1).max(200),
+    brand: z.string().min(1).max(100),
+    category: z.string().min(1).max(100),
+    price: z.coerce.number().nonnegative().max(10_000_000),
+    image: z.string().max(2000),
+    condition: z.enum(["New", "Used", "Refurbished"]),
+    compatibility: z.string().max(500),
+    description: z.string().max(5000),
+    inStock: z.boolean(),
+  })
+  .partial()
+  .strict();
 
 export async function GET(_request: NextRequest) {
   try {
@@ -42,6 +65,11 @@ export async function POST(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return unauthorized();
+    }
+    // Writes are manager-or-above. A read-only `staff` session can list
+    // car parts (GET) but cannot create, update or delete them.
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     const body = await request.json();
@@ -102,6 +130,9 @@ export async function PUT(request: NextRequest) {
     if (!authenticated) {
       return unauthorized();
     }
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
+    }
 
     const body = await request.json();
     const { _id, ...updateData } = body;
@@ -110,10 +141,28 @@ export async function PUT(request: NextRequest) {
       return badRequest("Invalid or missing car part ID");
     }
 
+    // Reject Mongo-operator / prototype-pollution keys outright (clear
+    // message), then strict-parse so only known car-part fields survive
+    // into the `$set` below.
+    if (
+      Object.keys(updateData).some(
+        (k) => k.startsWith("$") || k.includes(".") || k === "__proto__"
+      )
+    ) {
+      return badRequest("Update contains invalid field names");
+    }
+
+    const parsed = carPartUpdateSchema.safeParse(updateData);
+    if (!parsed.success) {
+      return badRequest(
+        parsed.error.issues[0]?.message ?? "Invalid car part data"
+      );
+    }
+
     const carPartsCollection = await getCarPartsCollection();
 
     const updatedPart = {
-      ...updateData,
+      ...parsed.data,
       updatedAt: new Date(),
     };
 
@@ -132,7 +181,7 @@ export async function PUT(request: NextRequest) {
       action: "carPart.update",
       targetType: "carPart",
       targetId: String(_id),
-      metadata: { fields: Object.keys(updateData) },
+      metadata: { fields: Object.keys(parsed.data) },
     });
 
     return ok(serializeDocument({ _id, ...updatedPart }));
@@ -147,6 +196,9 @@ export async function DELETE(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return unauthorized();
+    }
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     const { searchParams } = new URL(request.url);

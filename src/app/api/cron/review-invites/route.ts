@@ -17,6 +17,7 @@
  *   duplicate review requests.
  */
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import type { Collection, Document } from "mongodb";
 import {
   getServiceAppointmentsCollection,
@@ -33,6 +34,21 @@ const BATCH_LIMIT = 50;
 
 // Allow up to 60s for processing a batch of emails
 export const maxDuration = 60;
+
+/**
+ * Constant-time comparison of the incoming `Authorization` header against
+ * the expected `Bearer <CRON_SECRET>` value.
+ *
+ * Both sides are SHA-256 hashed first so `timingSafeEqual` always receives
+ * equal-length buffers. A plain `!==` (or a length check before comparing)
+ * leaks how many leading bytes matched via response timing — enough, over
+ * many requests, to recover the secret byte by byte.
+ */
+function timingSafeMatch(received: string | null, expected: string): boolean {
+  const a = crypto.createHash("sha256").update(received ?? "").digest();
+  const b = crypto.createHash("sha256").update(expected).digest();
+  return crypto.timingSafeEqual(a, b);
+}
 
 type BookingType = "service" | "viewing";
 
@@ -105,7 +121,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (cronSecret && !timingSafeMatch(authHeader, `Bearer ${cronSecret}`)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -5,7 +5,7 @@ import {
   CarInterface,
   serializeDocument,
 } from "@/lib/models";
-import { getSession, isAuthenticated } from "@/lib/utils/auth";
+import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
@@ -14,6 +14,7 @@ import {
   ok,
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
@@ -130,6 +131,10 @@ export async function POST(request: NextRequest) {
       return unauthorized();
     }
 
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
+    }
+
     const body = await request.json();
     const parsed = carSchema.safeParse(body);
 
@@ -185,6 +190,10 @@ export async function PUT(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return unauthorized();
+    }
+
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     const body = await request.json();
@@ -245,6 +254,10 @@ export async function DELETE(request: NextRequest) {
     const authenticated = await isAuthenticated();
     if (!authenticated) {
       return unauthorized();
+    }
+
+    if (!(await hasMinimumRole("manager"))) {
+      return forbidden("Manager role required");
     }
 
     const { searchParams } = new URL(request.url);

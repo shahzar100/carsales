@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 
 import { auth } from "@/auth";
 import { getUsersCollection } from "@/lib/models";
@@ -69,9 +70,7 @@ export async function POST(request: NextRequest) {
     const email = session?.user?.email;
     if (!email) return unauthorized("You must be signed in");
 
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await resendLimiter.check(ip);
     if (!allowed) {
       return tooManyRequests("Too many requests. Please try again later.", {

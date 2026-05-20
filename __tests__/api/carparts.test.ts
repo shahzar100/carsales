@@ -4,8 +4,8 @@
  * Tests for /api/carparts route (src/app/api/carparts/route.ts)
  *
  * Standards coverage:
- * - 📋 Functional: GET all car parts, query param filtering, seed logic
- * - 🔒 Security: Proper error responses
+ * - 📋 Functional: GET all car parts, query param filtering, empty collection
+ * - 🔒 Security: Proper error responses; public GET performs no DB writes
  * - 🎯 Usability: Meaningful response shape
  */
 import { NextRequest } from "next/server";
@@ -218,27 +218,19 @@ describe("/api/carparts", () => {
       expect(data.data[0].condition).toBe("New");
     });
 
-    // ── Seed data logic ─────────────────────────────────────
+    // ── Empty collection (no seeding) ────────────────────────
 
-    it("should return seeded data when collection is empty", async () => {
-      // Don't seed anything — the endpoint should auto-seed
+    it("should return an empty array when the collection is empty", async () => {
+      // Auto-seeding was removed: a public GET must never write to the DB.
+      // An empty collection now returns []; real inventory is created via
+      // the admin API (POST /api/admin/carparts).
       const request = new NextRequest("http://localhost:3000/api/carparts");
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      // Should have seeded data (not empty)
-      expect(data.data.length).toBeGreaterThan(0);
-      // Each seeded part should have the required shape
-      for (const part of data.data) {
-        expect(part).toHaveProperty("name");
-        expect(part).toHaveProperty("brand");
-        expect(part).toHaveProperty("category");
-        expect(part).toHaveProperty("price");
-        expect(part).toHaveProperty("condition");
-        expect(part).toHaveProperty("inStock");
-      }
+      expect(data.data).toEqual([]);
     });
 
     // ── Error handling ──────────────────────────────────────

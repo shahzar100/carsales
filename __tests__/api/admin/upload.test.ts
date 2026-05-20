@@ -15,8 +15,12 @@ import { NextRequest } from "next/server";
 
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 jest.mock("@/lib/utils/s3", () => ({
   generatePresignedUploadUrl: jest.fn(),
@@ -46,6 +50,7 @@ describe("POST /api/admin/upload", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true);
+    mockHasMinimumRole.mockResolvedValue(true);
     mockGenerateUrl.mockResolvedValue("https://signed.example/u/123");
     mockGetPublicUrl.mockReturnValue("https://cdn.example/cars/uuid-x.jpg");
   });

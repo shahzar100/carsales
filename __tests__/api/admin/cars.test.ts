@@ -10,6 +10,7 @@ import { getTestCollections, createTestCar } from "../../utils/testUtils";
 // `(0 , _auth.getSession) is not a function` and returns 500.
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
 
@@ -21,12 +22,16 @@ jest.mock("next/cache", () => ({
   revalidatePath: jest.fn(),
   revalidateTag: jest.fn(),
 }));
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 
 describe("/api/admin/cars", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true); // Default to authenticated
+    mockHasMinimumRole.mockResolvedValue(true); // Default to manager+
   });
 
   afterEach(async () => {

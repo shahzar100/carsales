@@ -9,13 +9,17 @@ import { GET, PATCH } from "@/app/api/admin/part-exchange/route";
 
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
+  hasMinimumRole: jest.fn(),
   getSession: jest.fn().mockResolvedValue({ username: "admin-test" }),
 }));
 jest.mock("@/lib/utils/audit", () => ({
   recordAudit: jest.fn().mockResolvedValue(undefined),
 }));
 
-const { isAuthenticated: mockIsAuthenticated } = require("@/lib/utils/auth");
+const {
+  isAuthenticated: mockIsAuthenticated,
+  hasMinimumRole: mockHasMinimumRole,
+} = require("@/lib/utils/auth");
 const { recordAudit: mockRecordAudit } = require("@/lib/utils/audit");
 
 const makeEnquiry = (overrides: Record<string, unknown> = {}) => ({
@@ -44,6 +48,7 @@ describe("/api/admin/part-exchange", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true);
+    mockHasMinimumRole.mockResolvedValue(true);
   });
 
   describe("GET", () => {

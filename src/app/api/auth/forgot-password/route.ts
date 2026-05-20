@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { z } from "zod";
-import { waitUntil } from "@vercel/functions";
+import { ipAddress, waitUntil } from "@vercel/functions";
 import React from "react";
 
 import { getUsersCollection } from "@/lib/models";
@@ -32,6 +32,7 @@ const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 const forgotLimiter = createRateLimiter("customerPasswordReset", {
   maxRequests: 3,
   windowMs: 15 * 60 * 1000,
+  failClosed: true,
 });
 
 const schema = z.object({
@@ -40,9 +41,7 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = ipAddress(request) || "unknown";
     const { allowed, resetIn } = await forgotLimiter.check(ip);
     if (!allowed) {
       return tooManyRequests("Too many requests. Please try again later.", {

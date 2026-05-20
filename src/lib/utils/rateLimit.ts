@@ -22,6 +22,17 @@ interface RateLimiterOptions {
   maxRequests: number;
   /** Time window in milliseconds */
   windowMs: number;
+  /**
+   * What to do when the KV backend is unreachable (network blip / outage).
+   *  - `false` / omitted — fail **open**: allow the request. Correct for
+   *    anti-abuse limiters where a KV blip shouldn't take a feature down.
+   *  - `true` — fail **closed**: deny the request. Correct for limiters
+   *    that guard credentials (login, password reset, 2FA): a KV outage
+   *    must not silently become an unlimited brute-force window.
+   *
+   * Only affects the KV backend; the in-memory backend never errors.
+   */
+  failClosed?: boolean;
 }
 
 export interface RateLimitResult {
@@ -153,13 +164,14 @@ function kvLimiter(name: string, opts: RateLimiterOptions): RateLimiter {
           resetIn,
         };
       } catch (error) {
-        // Network blip or KV outage shouldn't lock everyone out — fall open
-        // and log. We keep the in-memory limiter as a soft safety net for
-        // the duration of this warm instance only.
+        // KV outage. Anti-abuse limiters fail OPEN — one bad request beats
+        // locking every user out. Credential-guarding limiters
+        // (`failClosed: true`) fail CLOSED — an outage must not silently
+        // open an unlimited brute-force window.
         logError(error, { context: "rateLimit.kvCheck", limiter: name });
         return {
-          allowed: true,
-          remaining: opts.maxRequests,
+          allowed: !opts.failClosed,
+          remaining: opts.failClosed ? 0 : opts.maxRequests,
           resetIn: opts.windowMs,
         };
       }
@@ -179,10 +191,14 @@ function kvLimiter(name: string, opts: RateLimiterOptions): RateLimiter {
  * Create a named rate limiter with the given options.
  *
  * @example
- * const loginLimiter = createRateLimiter("login", { maxRequests: 5, windowMs: 15 * 60 * 1000 });
+ * const loginLimiter = createRateLimiter("login", {
+ *   maxRequests: 5,
+ *   windowMs: 15 * 60 * 1000,
+ *   failClosed: true, // a credential limiter — deny on KV outage
+ * });
  *
  * export async function POST(req: NextRequest) {
- *   const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+ *   const ip = ipAddress(req) || "unknown";
  *   const { allowed, remaining, resetIn } = await loginLimiter.check(ip);
  *   if (!allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
  *   // ...
