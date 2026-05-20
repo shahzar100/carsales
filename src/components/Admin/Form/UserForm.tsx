@@ -8,7 +8,6 @@ import {
   Badge,
   InfoBanner,
   SelectionCard,
-  CopyableCode,
 } from "../../Form/FormPrimitives";
 import { UserRound, ShieldCheck, ClipboardList } from "lucide-react";
 
@@ -48,7 +47,6 @@ const UserForm = () => {
     email: "",
     role: "",
   });
-  const [generatedPassword, setGeneratedPassword] = useState("");
   const [isCreated, setIsCreated] = useState(false);
 
   const update = (field: keyof UserFormData, value: string) => {
@@ -93,9 +91,9 @@ const UserForm = () => {
               />
             </div>
             <InfoBanner>
-              <strong>Note:</strong> A strong password will be automatically
-              generated when you submit. You&apos;ll be able to copy it on the
-              confirmation screen.
+              <strong>Note:</strong> When you submit, the new user is emailed a
+              secure link to set their own password — no password is shown
+              here or stored in plain text.
             </InfoBanner>
           </div>
         ),
@@ -161,12 +159,19 @@ const UserForm = () => {
         icon: <ClipboardList className="h-5 w-5" />,
         content: (
           <div className="space-y-5">
-            {isCreated && generatedPassword ? (
-              <CopyableCode
-                value={generatedPassword}
-                title="User Created Successfully"
-                description="A strong password has been generated. Copy it now — it cannot be retrieved after you leave this page."
-              />
+            {isCreated ? (
+              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-6 text-center">
+                <ShieldCheck className="mx-auto mb-3 h-12 w-12 text-emerald-500" />
+                <h4 className="mb-1 text-lg font-semibold text-emerald-800">
+                  User created
+                </h4>
+                <p className="text-sm text-emerald-700">
+                  A setup email has been sent to{" "}
+                  <span className="font-semibold">{data.email}</span>. They use
+                  the secure link in it to set their own password — no password
+                  is shown here.
+                </p>
+              </div>
             ) : (
               <>
                 <SummaryCard title="New Admin User">
@@ -175,7 +180,7 @@ const UserForm = () => {
                   <SummaryRow label="Role">{roleBadge(data.role)}</SummaryRow>
                   <SummaryRow
                     label="Password"
-                    value="Auto-generated on submit"
+                    value="Set by the user via emailed link"
                   />
                 </SummaryCard>
 
@@ -206,7 +211,7 @@ const UserForm = () => {
         ),
       },
     ],
-    [data, generatedPassword, isCreated]
+    [data, isCreated]
   );
 
   const handleSubmit = async () => {
@@ -226,7 +231,6 @@ const UserForm = () => {
       throw new Error(result.error || "Failed to create user");
     }
 
-    setGeneratedPassword(result.password);
     setIsCreated(true);
   };
 

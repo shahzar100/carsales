@@ -2,8 +2,9 @@
  * Tests for src/components/Admin/Navigation/CarActions.tsx
  *
  * Standards coverage:
- * - 📋 Functional: renders an Actions dropdown with Edit / View / Delete
- *   entries; the Edit and View hrefs include the car id
+ * - 📋 Functional: renders an Actions dropdown with Edit / View / Delete;
+ *   Edit points at the real admin edit route, View at the public listing;
+ *   Delete opens a confirmation dialog (it no longer silently no-ops).
  */
 import React from "react";
 import { render as rtlRender, screen, fireEvent } from "@testing-library/react";
@@ -11,12 +12,24 @@ import CarActions from "@/components/Admin/Navigation/CarActions";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import type { CarInterface } from "@/lib/interfaces";
 
-// NavLink children rely on NavigationContext for click-side-effects —
-// wrap renders in the provider so the component tree resolves.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  usePathname: () => "/admin/dashboard/cars",
+}));
+jest.mock("@/contexts/ToastContext", () => ({
+  useToast: () => ({ success: jest.fn(), error: jest.fn() }),
+}));
+
+// NavLink children rely on NavigationContext for click side-effects.
 const render = (ui: React.ReactElement) =>
   rtlRender(<NavigationProvider>{ui}</NavigationProvider>);
 
-const car = { _id: "car-123" } as unknown as CarInterface;
+const car = {
+  _id: "car-123",
+  year: 2023,
+  make: "Tesla",
+  model: "Model 3",
+} as unknown as CarInterface;
 
 describe("CarActions", () => {
   it("renders an Actions toggle button", () => {
@@ -26,25 +39,21 @@ describe("CarActions", () => {
     ).toBeInTheDocument();
   });
 
-  it("📋 includes Edit/View links and a Delete button (all carrying the car id)", () => {
+  it("📋 Edit links to the real admin edit route; View to the public listing", () => {
     render(<CarActions car={car} />);
-    // The dropdown is `group-hover` driven in CSS, so children are in the
-    // DOM regardless — assertions can find them directly.
     const edit = screen.getByText("Edit Car").closest("a");
-    const view = screen.getByText("View Car").closest("a");
-    expect(edit).toHaveAttribute("href", "/admin/car/edit/car-123");
-    expect(view).toHaveAttribute("href", "/admin/car/view/car-123");
-    expect(
-      screen.getByRole("button", { name: /delete car/i })
-    ).toBeInTheDocument();
+    const view = screen.getByText("View Listing").closest("a");
+    expect(edit).toHaveAttribute(
+      "href",
+      "/admin/dashboard/cars/edit/car-123"
+    );
+    expect(view).toHaveAttribute("href", "/BrowseFleet/car-123");
   });
 
-  it("a Delete button click doesn't accidentally navigate", () => {
+  it("📋 clicking Delete opens a confirmation dialog", () => {
     render(<CarActions car={car} />);
-    // The delete button is a plain <button> without an onClick — the
-    // dropdown component wraps it. Clicking should not throw.
-    expect(() =>
-      fireEvent.click(screen.getByRole("button", { name: /delete car/i }))
-    ).not.toThrow();
+    expect(screen.queryByText("Delete car?")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /delete car/i }));
+    expect(screen.getByText("Delete car?")).toBeInTheDocument();
   });
 });

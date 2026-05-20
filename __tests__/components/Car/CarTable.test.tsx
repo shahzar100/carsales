@@ -14,6 +14,16 @@ import { NavigationProvider } from "@/contexts/NavigationContext";
 import CarTable from "@/components/Car/CarTable";
 import type { CarInterface } from "@/lib/interfaces";
 
+// Each row's CarActions + FeaturedToggle are client components that read
+// the router and toast context.
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  usePathname: () => "/admin/dashboard/cars",
+}));
+jest.mock("@/contexts/ToastContext", () => ({
+  useToast: () => ({ success: jest.fn(), error: jest.fn() }),
+}));
+
 const render = (ui: React.ReactElement) =>
   rtlRender(<NavigationProvider>{ui}</NavigationProvider>);
 

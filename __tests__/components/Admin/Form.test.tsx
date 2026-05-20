@@ -235,7 +235,7 @@ describe("Form Component — Multi-Stage Navigation", () => {
       expect(onSubmit).not.toHaveBeenCalled();
     });
 
-    it("shows a generic error message when onSubmit throws", async () => {
+    it("surfaces the server's error message when onSubmit throws", async () => {
       const user = userEvent.setup();
       onSubmit.mockRejectedValueOnce(new Error("server error"));
       render(<Form steps={buildSteps()} onSubmit={onSubmit} />);
@@ -245,9 +245,7 @@ describe("Form Component — Multi-Stage Navigation", () => {
       await user.click(screen.getByText("Submit"));
 
       await waitFor(() => {
-        expect(
-          screen.getByText("Something went wrong. Please try again.")
-        ).toBeInTheDocument();
+        expect(screen.getByText("server error")).toBeInTheDocument();
       });
     });
   });

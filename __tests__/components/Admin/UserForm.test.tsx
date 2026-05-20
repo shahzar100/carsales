@@ -67,10 +67,10 @@ describe("UserForm Component", () => {
       ).toBeInTheDocument();
     });
 
-    it("shows auto-password info banner", () => {
+    it("shows the setup-email info banner", () => {
       render(<UserForm />);
       expect(
-        screen.getByText(/A strong password will be automatically generated/i)
+        screen.getByText(/emailed a secure link to set their own password/i)
       ).toBeInTheDocument();
     });
   });
@@ -199,7 +199,9 @@ describe("UserForm Component", () => {
 
       expect(screen.getByText("testuser")).toBeInTheDocument();
       expect(screen.getByText("test@example.com")).toBeInTheDocument();
-      expect(screen.getByText("Auto-generated on submit")).toBeInTheDocument();
+      expect(
+        screen.getByText("Set by the user via emailed link")
+      ).toBeInTheDocument();
     });
 
     it("shows role-specific info banner for admin", async () => {
@@ -230,10 +232,10 @@ describe("UserForm Component", () => {
       expect(screen.getByText(/view-only access/i)).toBeInTheDocument();
     });
 
-    it("submits correct payload and shows generated password", async () => {
+    it("submits the correct payload and confirms the user was created", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ password: "SuperSecret123!" }),
+        json: async () => ({ success: true, emailSent: true }),
       });
 
       const user = userEvent.setup();
@@ -254,14 +256,13 @@ describe("UserForm Component", () => {
         });
       });
 
-      // Password display
+      // No password is shown — the new user receives a setup email instead.
       await waitFor(() => {
-        expect(screen.getByText("SuperSecret123!")).toBeInTheDocument();
+        expect(screen.getByText("User created")).toBeInTheDocument();
       });
-      expect(screen.getByText("User Created Successfully")).toBeInTheDocument();
     });
 
-    it("shows error when API returns failure", async () => {
+    it("surfaces the API error when creation fails", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: "Username already exists" }),
@@ -273,10 +274,10 @@ describe("UserForm Component", () => {
 
       await user.click(screen.getByText("Create User"));
 
-      // Form.tsx catches the throw and shows its own generic error message
+      // Form.tsx surfaces the server's actual error message.
       await waitFor(() => {
         expect(
-          screen.getByText("Something went wrong. Please try again.")
+          screen.getByText("Username already exists")
         ).toBeInTheDocument();
       });
     });
