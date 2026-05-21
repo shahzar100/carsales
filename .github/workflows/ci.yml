@@ -1,0 +1,59 @@
+name: CI
+
+# Runs lint, type-check and the test suites on every push to main and
+# every pull request. Before this workflow the only gate between a broken
+# change and production was `next build` on Vercel — a type error like the
+# 2026-05-17 build break shipped straight to a failed deploy. `type-check`
+# below catches exactly that, in the PR, before merge.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same ref so a fast follow-up push doesn't
+# queue behind a stale run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  type-check:
+    name: Type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+      - run: npm run type-check
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+      # jsdom component suite (jest.config.js).
+      - run: npm test
+      # API / route suite — node env, in-memory MongoDB (jest.config.api.js).
+      - run: npx jest --config jest.config.api.js

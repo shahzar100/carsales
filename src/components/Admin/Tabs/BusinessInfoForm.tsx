@@ -1062,7 +1062,7 @@ function RecoveryEditor({
             onChange({ ...recovery, responseTime: e.target.value })
           }
           className={inputClass}
-          placeholder="30-45 minutes within London"
+          placeholder="30-45 minutes within Leeds"
         />
       </div>
 
@@ -1079,7 +1079,7 @@ function RecoveryEditor({
           }
           rows={6}
           className={inputClass}
-          placeholder="Central London&#10;North London&#10;South London"
+          placeholder="Leeds City Centre&#10;North Leeds&#10;South Leeds"
         />
       </div>
 

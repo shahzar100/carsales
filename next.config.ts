@@ -48,7 +48,16 @@ const nextConfig: NextConfig = {
   // Strip the `X-Powered-By: Next.js` response header. ZAP baseline flagged
   // this 5× as framework disclosure; no functional consumer.
   poweredByHeader: false,
+  // Tree-shake barrel imports from large packages — only the icons /
+  // helpers actually referenced get bundled, not the whole library.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "motion"],
+  },
   images: {
+    // Serve AVIF first, then WebP — smaller payloads at the same quality.
+    formats: ["image/avif", "image/webp"],
+    // Optimised images are content-addressed; cache them hard (31 days).
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: "https",

@@ -28,12 +28,12 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Vehicle Recovery Services",
   description:
-    "24/7 breakdown recovery and roadside assistance across London and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
+    "24/7 breakdown recovery and roadside assistance across Leeds and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
   alternates: { canonical: "/Recoveries" },
   openGraph: {
     title: "Vehicle Recovery Services",
     description:
-      "24/7 breakdown recovery and roadside assistance across London. Emergency towing, jump starts, and more from £60.",
+      "24/7 breakdown recovery and roadside assistance across Leeds. Emergency towing, jump starts, and more from £60.",
     url: "/Recoveries",
   },
 };
@@ -125,7 +125,7 @@ const BreakdownRecovery = async () => {
     iconBgColor: "bg-red-100 text-red-700",
     title: "Breakdown Recovery",
     description:
-      "Stranded on the road? Our 24/7 breakdown recovery service gets you back on the move fast. Professional roadside assistance and vehicle recovery across London and the surrounding areas.",
+      "Stranded on the road? Our 24/7 breakdown recovery service gets you back on the move fast. Professional roadside assistance and vehicle recovery across Leeds and the surrounding areas.",
     badges: [
       {
         icon: Clock,
@@ -134,7 +134,7 @@ const BreakdownRecovery = async () => {
       },
       {
         icon: MapPin,
-        text: "London & Surrounding Areas",
+        text: "Leeds & Surrounding Areas",
         color: "text-gray-900",
       },
       {
@@ -153,7 +153,7 @@ const BreakdownRecovery = async () => {
           "@type": "Service",
           name: "Vehicle Recovery Services",
           description:
-            "24/7 breakdown recovery and roadside assistance across London and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
+            "24/7 breakdown recovery and roadside assistance across Leeds and surrounding areas. Emergency towing, jump starts, flat tyre repair, and lockout services from £60.",
           provider: {
             "@type": "AutoDealer",
             name: businessInfo.businessName,
@@ -236,7 +236,7 @@ const BreakdownRecovery = async () => {
       <div className="mb-12 md:mb-20">
         <h2 className="section-title mb-4 text-center">Coverage Area</h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-gray-600">
-          We cover London and the surrounding counties. If you&apos;re unsure
+          We cover Leeds and the surrounding areas. If you&apos;re unsure
           whether we cover your area, give us a call.
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
