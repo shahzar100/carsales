@@ -279,10 +279,10 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
       {cars.length === 0 && (
         <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50">
           <Car className="mb-4 h-12 w-12 text-gray-300" />
-          <p className="text-lg font-semibold text-gray-400">
+          <p className="text-lg font-semibold text-gray-600">
             No vehicles found
           </p>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-gray-600">
             Try adjusting your filters to see more results
           </p>
         </div>

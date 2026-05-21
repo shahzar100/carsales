@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type {
   ShopInfo,
   DetailingPackage,
@@ -245,18 +246,18 @@ const SERVICE_OVERVIEW_SEED: ServiceOverview[] = [
 // ── Recovery info (single doc) ───────────────────────────────
 const RECOVERY_SEED: RecoveryInfo = {
   coverageAreas: [
-    "Central London",
-    "North London",
-    "South London",
-    "East London",
-    "West London",
-    "Greater London",
-    "Surrey",
-    "Kent",
-    "Essex",
-    "Hertfordshire",
-    "Berkshire",
-    "Buckinghamshire",
+    "Leeds City Centre",
+    "North Leeds",
+    "South Leeds",
+    "East Leeds",
+    "West Leeds",
+    "Wakefield",
+    "Bradford",
+    "Harrogate",
+    "York",
+    "Castleford",
+    "Pontefract",
+    "Otley",
   ],
   pricingTiers: [
     {
@@ -267,7 +268,7 @@ const RECOVERY_SEED: RecoveryInfo = {
     { name: "Regional Recovery", price: "From £95", distance: "10–30 miles" },
     { name: "Long Distance", price: "Call Us", distance: "30+ miles" },
   ],
-  responseTime: "30-45 minutes within London",
+  responseTime: "30-45 minutes within Leeds",
 };
 
 // ── Helper: seed a collection if empty ───────────────────────
@@ -291,7 +292,7 @@ async function seedIfEmpty<T extends Document>(
  * Fetch business info from MongoDB, assembled from multiple collections.
  * On first ever read, seeds each collection with initial data.
  */
-export async function getBusinessInfo(): Promise<ShopInfo> {
+async function fetchBusinessInfo(): Promise<ShopInfo> {
   // Fetch all collections in parallel
   const [coreColl, detailingColl, tintColl, overviewColl, recoveryColl] =
     await Promise.all([
@@ -338,6 +339,15 @@ export async function getBusinessInfo(): Promise<ShopInfo> {
 
   return assembled;
 }
+
+/**
+ * Business info, memoised per-request with `React.cache`.
+ *
+ * A single render calls this several times (HeroSection, WhatsAppButton,
+ * layout metadata, the Footer's context …); the cache collapses those
+ * into one set of Mongo round-trips per request instead of N.
+ */
+export const getBusinessInfo = cache(fetchBusinessInfo);
 
 /**
  * Update business info by writing to the appropriate split collections.

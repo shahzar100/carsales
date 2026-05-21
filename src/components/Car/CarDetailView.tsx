@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { CarShareModal } from "@/components/SEO/CarShareCard";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
+import { getOpenStatus } from "@/lib/utils/businessHours";
 import FinanceCalculator from "@/components/Car/FinanceCalculator";
 import ReserveCarForm from "@/components/Car/ReserveCarForm";
 import PartExchangeForm from "@/components/Car/PartExchangeForm";
@@ -65,6 +66,9 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
   const dealerAddress = businessInfo?.address;
   const dealerCity = businessInfo?.city;
   const dealerZip = businessInfo?.zipCode;
+  // Live open/closed status derived from the admin-managed opening hours
+  // — replaces the previously hard-coded "Open now / 7pm" copy.
+  const openStatus = getOpenStatus(businessInfo?.hours);
   const { updateViewingBooking } = useViewing();
   const { isSaved, toggle } = useSavedCars();
   const carIdStr = car._id ? String(car._id) : "";
@@ -580,7 +584,10 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         Call dealer
                       </span>
                       <span className="text-[11px] font-medium leading-snug text-gray-500">
-                        {phone} · open until 7pm
+                        {phone}
+                        {openStatus.isOpen && openStatus.closesAt
+                          ? ` · open until ${openStatus.closesAt}`
+                          : ""}
                       </span>
                     </a>
                     {mapsUrl ? (
@@ -688,11 +695,35 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                       aria-hidden="true"
                     />
                     <div className="text-xs">
-                      <span className="font-semibold text-emerald-400">
-                        Open now
-                      </span>
-                      <br />
-                      Closes 7pm · 7 days a week
+                      {!businessInfo ? (
+                        <>
+                          <span className="font-semibold text-gray-300">
+                            Showroom
+                          </span>
+                          <br />
+                          See opening hours
+                        </>
+                      ) : openStatus.isOpen ? (
+                        <>
+                          <span className="font-semibold text-emerald-400">
+                            Open now
+                          </span>
+                          <br />
+                          {openStatus.closesAt
+                            ? `Closes ${openStatus.closesAt}`
+                            : "See opening hours"}
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-semibold text-gray-300">
+                            Closed now
+                          </span>
+                          <br />
+                          {openStatus.opensAt
+                            ? `Opens ${openStatus.opensAt}`
+                            : "See opening hours"}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -9,7 +9,7 @@ export default function NotFound() {
         <p className="mt-3 text-xl text-gray-600">
           This page could not be found.
         </p>
-        <p className="mt-1 text-gray-400">
+        <p className="mt-1 text-gray-600">
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
       </div>

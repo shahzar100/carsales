@@ -95,7 +95,7 @@ export default async function FAQ() {
         {
           question: "What services do you offer?",
           answer:
-            "We offer professional car detailing (from a mini valet to a full correction detail), window tinting with premium films, and expert mechanical and bodywork repairs.",
+            "We offer professional car detailing (from a mini valet to a complete premium detail), window tinting with premium films, and expert mechanical and bodywork repairs.",
         },
         {
           question: "How do I book a service?",
@@ -105,7 +105,7 @@ export default async function FAQ() {
         {
           question: "How long does detailing take?",
           answer:
-            "Depending on the package, detailing takes between 2-3 hours for our Bronze mini valet up to 2+ days for our Platinum correction detail. We'll confirm the timeframe when you book.",
+            "Depending on the package, detailing takes between 2-3 hours for our Bronze mini valet up to 6-8 hours for our Gold complete detail. We'll confirm the timeframe when you book.",
         },
         {
           question: "Is window tinting legal?",

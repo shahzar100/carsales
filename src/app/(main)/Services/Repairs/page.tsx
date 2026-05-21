@@ -182,7 +182,7 @@ const Repairs = async () => {
               </h3>
               <p className="text-sm text-red-700">
                 24/7 emergency roadside assistance &amp; vehicle recovery across
-                London.
+                Leeds.
               </p>
             </div>
           </div>

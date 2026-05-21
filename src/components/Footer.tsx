@@ -193,18 +193,10 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Admin & Legal */}
+          {/* Legal */}
           <motion.div variants={columnVariants}>
-            <h4 className="heading-4 mb-4">Admin & Legal</h4>
+            <h4 className="heading-4 mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/admin/dashboard"
-                  className="text-gray-700 transition-colors hover:text-red-600"
-                >
-                  Admin Dashboard
-                </Link>
-              </li>
               <li>
                 <Link
                   href="/privacy"

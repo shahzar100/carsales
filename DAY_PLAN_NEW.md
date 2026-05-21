@@ -12,7 +12,7 @@
 ## ⚠️ Known blockers (pre-existing — not introduced by this plan)
 
 - **Production deploys have been failing since 2026-05-17.** `next build` prerenders DB-backed pages and the Vercel build environment cannot reach MongoDB Atlas (`MongoServerSelectionError`). Each day's PR merges, but the Vercel deploy fails. The fix is infrastructure-side (Atlas Network Access allowlist / cluster status / Vercel `MONGODB_URI`) — see `HANDOVER_MASTER_AUDIT_2026-05-20.md`.
-- **Pre-existing test failures on `main`** — 5 in the jsdom/component suite (`ViewingBookingsClient`, `ServiceBookingsClient`, `Toast` ×2, `WhyChooseHome`) and 7 in the API suite (`auth` + admin-route tests throwing on a missing `CRON_SECRET` — a test-env setup gap). All unrelated to this plan; to be cleared as part of the Day 7 CI work.
+- **Pre-existing test failures on `main`** — 5 in the jsdom/component suite (`ViewingBookingsClient`, `ServiceBookingsClient`, `Toast` ×2, `WhyChooseHome`) and 7 in the API suite (`auth`, `getDashboardData`, `2fa/*` and `users/*` — test-env setup gaps: a `CRON_SECRET`/`NODE_ENV` mismatch and a Jest ESM dynamic-import flag). All unrelated to this plan and present on `main` before Day 1 (each day's verification confirmed the same set via `git stash`). The Day 7 CI workflow runs the full suites, so these 12 surface as a red `test` job — `lint` + `type-check` are green. **Clearing the 12 is the recommended immediate follow-up** (it is its own focused debugging task, out of scope for the Day 7 content/ops work).
 
 ## Status legend
 
@@ -68,13 +68,13 @@
 - The `admin/carparts` PUT spread its request body straight into a Mongo `$set`. It now strict-parses with a Zod `.strict()` schema and rejects `$`-prefixed / dotted / `__proto__` keys outright — closing the mass-assignment / operator-injection hole.
 - `CRON_SECRET` is compared in constant time (SHA-256 + `timingSafeEqual`) instead of `!==`. The spoofable `x-forwarded-for` IP parse is replaced with `ipAddress(request)` across all 13 rate-limited routes. The KV rate-limiter gained a `failClosed` option; the 10 credential-guarding limiters (login, 2FA, password reset/change, magic link) now fail **closed** on a KV outage so it can't open an unlimited brute-force window.
 
-## Day 7 — Content, trust & ops ⬜
+## Day 7 — Content, trust & ops ✅
 
-**Branch:** `day-7-content-and-ops`
+**Branch:** `day-7-content-and-ops` · **Status:** ✅ Done & merged
 
-- "London" → "Leeds" across `/Recoveries`, `/Repairs`, `/AboutUs` **and** the `RECOVERY_SEED` data.
-- Remove the admin-dashboard link from the customer footer; fix the FAQ "Platinum" package copy; drive "Open now / 7pm" from `businessInfo.hours`; contrast fixes for `text-gray-400` body text.
-- Add a CI workflow (`lint` + `type-check` + `test`); `next.config.ts` perf flags; `React.cache` on `getCar` / `getBusinessInfo`.
+- **"London" → "Leeds".** A Leeds business was advertising London ~9× — `/Recoveries` (6 strings), `/Repairs`, the admin `BusinessInfoForm` placeholders, **and** the `RECOVERY_SEED` data itself (London boroughs + SE-England counties → Leeds / West Yorkshire areas). `/AboutUs` has no hard-coded "London" — it renders the recovery seed, so fixing the seed fixes it. _Note:_ the seed only applies to a fresh DB — an already-seeded production `recoveryInfo` doc must be corrected once via the admin BusinessInfoForm.
+- **Trust & content.** Removed the "Admin Dashboard" link from the customer footer (it signposted the admin URL to every visitor; column renamed "Legal"). Fixed the FAQ copy advertising a non-existent "Platinum" detailing package (packages are Bronze/Silver/Gold). "Open now / 7pm" on the car-detail page is now derived from `businessInfo.hours` via a new, tested `getOpenStatus()` helper instead of hard-coded. Contrast: the `text-gray-400` body text the audit flagged (`BrowseFleetContent`, `not-found`, `CarPartsGrid`) bumped to `text-gray-600` for WCAG AA.
+- **Ops & perf.** Added `.github/workflows/ci.yml` — `lint` + `type-check` + `test` on every push/PR (the missing gate that let the 2026-05-17 type-error build break ship). `next.config.ts` gained `experimental.optimizePackageImports`, AVIF/WebP image formats and a 31-day image cache TTL. `getBusinessInfo` and the car-detail `getCar` are wrapped in `React.cache` so repeat calls within one render share a single DB round-trip.
 
 ---
 
@@ -86,3 +86,4 @@
 - **2026-05-20** — Day 4 complete: public `/api/cars?ids=` endpoint + Saved Cars feature rewired (was 401-broken for every customer), and `/Booking/lookup` now supports `QT-` quote tracking. Merged to `main`. `tsc` + API tests (14, incl. the new `/api/cars` suite) + jsdom suite + `next build` green; zero new failures.
 - **2026-05-20** — Day 5 complete: admin cars Table/List Edit/View/Delete + Featured toggle wired (were all dead); `UserForm`/`PasswordForm` no longer show a fake password; `Form.tsx` gained a success state + real error messages. Merged to `main`. `tsc` + jsdom suite (zero new failures, +3 tests) + `next build` green.
 - **2026-05-20** — Day 6 complete: security hardening — removed the public-GET seeding write from `/api/carparts`; role-gated all admin write routes with `hasMinimumRole("manager")`; Zod-`.strict()` + `$`-key reject on the `admin/carparts` PUT; `CRON_SECRET` constant-time compare; `x-forwarded-for` → `ipAddress()` across 13 routes; KV limiter fails closed for the 10 credential limiters. 37 files (26 source incl. `src/auth.ts`, 11 tests). Merged to `main`. `tsc` + API suite (zero new failures, +5 tests; baseline-confirmed) + jsdom suite + `next build` green.
+- **2026-05-20** — Day 7 complete: "London"→"Leeds" across `/Recoveries`, `/Repairs`, `BusinessInfoForm` + `RECOVERY_SEED`; footer admin-dashboard link removed; FAQ "Platinum" copy fixed; "Open now/7pm" driven from `businessInfo.hours` via a new tested `getOpenStatus()` helper; `text-gray-400`→`gray-600` contrast fixes; added `.github/workflows/ci.yml` (`lint`+`type-check`+`test`); `next.config.ts` perf flags; `React.cache` on `getBusinessInfo`/`getCar`. Merged to `main`. `lint` + `tsc` + API suite (+8 tests) + jsdom suite + `next build` green; zero new failures. **Plan complete — all 7 days done.**
