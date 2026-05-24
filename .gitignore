@@ -58,3 +58,6 @@ POST_PR_RESULTS_OUTPUT/
 # Playwright run artefacts
 test-results/
 playwright-report/
+
+# Claude Code on the web — agent worktree mounts
+.claude/
