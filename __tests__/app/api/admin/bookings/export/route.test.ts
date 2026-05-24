@@ -11,12 +11,6 @@
  *  - RFC-4180 quoting on values containing `"`, `,` and `\n`
  */
 
-jest.mock("@sentry/nextjs", () => ({
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  init: jest.fn(),
-}));
-
 // Auth mocks — match the patterns used in __tests__/api/admin/bookings.test.ts.
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),

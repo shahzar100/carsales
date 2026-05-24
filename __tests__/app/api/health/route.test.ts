@@ -10,15 +10,6 @@
  *  - kv = "unconfigured" when KV_REST_API_URL is unset
  */
 
-// next/jest's @sentry/nextjs barrel pulls in Next-internals that throw under
-// the bare test env. The observability shim is the only import path that
-// touches it, so a flat module mock is enough.
-jest.mock("@sentry/nextjs", () => ({
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  init: jest.fn(),
-}));
-
 // Mongo client mock — the health route calls `clientPromise` then `.db().command({ ping: 1 })`.
 const mockPing = jest.fn();
 jest.mock("@/lib/mongodb", () => ({
