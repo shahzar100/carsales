@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { serializeDocument } from "@/lib/models";
 import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
@@ -13,6 +14,39 @@ import {
   fail,
 } from "@/lib/utils/apiResponse";
 import { logError } from "@/lib/utils/observability";
+
+/**
+ * (PR #74) Invalidate every public marketing page that pulls business info
+ * via `getBusinessInfo()` so an admin save shows up immediately instead of
+ * waiting on each page's individual `revalidate` window (the home page is
+ * 60s, but other marketing pages can be cached for up to an hour). Mirrors
+ * the `revalidateFleetPaths` helper in `/api/admin/cars/route.ts`. The list
+ * is derived from a grep of `getBusinessInfo` server-component consumers
+ * under `src/app/(main)/`; keep it in sync if a new page starts consuming
+ * the helper.
+ */
+const MARKETING_PATHS_WITH_BUSINESS_INFO = [
+  "/", // HeroSection on the home page
+  "/AboutUs",
+  "/Book",
+  "/Booking/confirmation",
+  "/FAQ",
+  "/Recoveries",
+  "/Services",
+  "/Services/Detailing",
+  "/Services/Repairs",
+  "/Services/Tints",
+  "/contact",
+  "/privacy",
+  "/review",
+  "/terms",
+] as const;
+
+function revalidateBusinessInfoPaths() {
+  for (const path of MARKETING_PATHS_WITH_BUSINESS_INFO) {
+    revalidatePath(path);
+  }
+}
 
 export async function GET() {
   try {
@@ -188,6 +222,8 @@ export async function PUT(request: NextRequest) {
       });
       return fail("Database update failed");
     }
+
+    revalidateBusinessInfoPaths();
 
     const session = await getSession();
     await recordAudit({
