@@ -79,10 +79,6 @@
   @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-500 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
-.input-lg {
-  @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-500 hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
-}
-
 .input-error {
   @apply w-full rounded-lg border border-red-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm ring-2 ring-red-100 transition-all placeholder:text-gray-500 focus:border-red-500 focus:ring-red-200 focus:outline-none;
 }
@@ -93,22 +89,10 @@
   @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
 }
 
-.select-lg {
-  @apply w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none;
-}
-
 /* ---- Cards ---- */
 
 .card {
   @apply overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm;
-}
-
-.card-elevated {
-  @apply overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100;
-}
-
-.card-interactive {
-  @apply overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md;
 }
 
 /* ---- Badges ---- */
@@ -142,28 +126,10 @@
   @apply bg-red-50 text-red-600;
 }
 
-.badge-gray {
-  @apply bg-gray-100 text-gray-700;
-}
-
-/* ---- Tags (removable pills) ---- */
-
-.tag {
-  @apply inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600;
-}
-
-.tag-neutral {
-  @apply inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600;
-}
-
 /* ---- Dividers ---- */
 
 .divider {
   @apply border-t border-gray-100;
-}
-
-.divider-strong {
-  @apply border-t border-gray-200;
 }
 
 /* ---- Section containers ---- */
