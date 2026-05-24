@@ -4,15 +4,17 @@ Cycle close date: 2026-05-24.
 
 ## 1. Overview
 
-This cycle (PRs #58–#71) is the handover-prep pass for the MMC Leeds car-sales site. The cycle ran 2026-05-24 and covers fourteen pull requests against `main`. The headline outcomes:
+This cycle (PRs #58–#87) is the handover-prep pass for the MMC Leeds car-sales site. The cycle ran 2026-05-24 and covers thirty pull requests against `main`. The headline outcomes:
 
 - Removed two features that were out of scope for the live site (Finance calculator, Accident Claims).
 - Fixed the one real keyboard-handler bug in the site and corrected the inflated "170 sites" audit figure in the handover notes.
 - Split the three largest components (`Header`, `BookingFlow`, `BusinessInfoForm`) into focused sibling files without behaviour changes.
-- Wired Sentry behind a DSN gate so the SDK is a true no-op until a DSN is provisioned.
-- Added Lighthouse-driven LCP wins for the homepage hero, BrowseFleet first card, and car-detail page.
-- Repaired six pre-existing broken test suites and lifted jsdom test coverage from 74.82% to 78.46% statements.
-- Produced four standing reference documents at the repo root: `CLAUDE.md`, `HANDOVER_NOTES.md`, `DEPLOYMENT.md`, `ADMIN_GUIDE.md`.
+- Wired Sentry behind a DSN gate so the SDK is a true no-op until a DSN is provisioned. Added a `beforeSend` PII filter that strips bearer-credential-equivalent query params before any event leaves the process.
+- Added Lighthouse-driven LCP wins for the homepage hero, BrowseFleet first card, car-detail page, and the CarParts grid.
+- Repaired six pre-existing broken test suites and unblocked a further nineteen via a global `@sentry/nextjs` jsdom mock; jsdom test coverage moved from 74.82% to 78.46% statements.
+- Shipped two product gaps from PR #74's audit: the admin shop save now revalidates marketing pages, and pending→confirmed booking transitions now email the customer.
+- Added a uptime-monitoring `/api/health` endpoint, admin CSV export for bookings and cars, husky pre-commit hooks, a CI bundle-size budget, MongoDB indexes for hot queries (notably password-reset tokens which were doing full collection scans), and tightened seven security headers.
+- Produced six standing reference documents at the repo root: `CLAUDE.md`, `HANDOVER_NOTES.md`, `DEPLOYMENT.md`, `ADMIN_GUIDE.md`, `INDEX_AUDIT.md`, `CSP_REVIEW.md`.
 
 Every PR listed below has been merged into `main` as of the cycle close date.
 
@@ -34,6 +36,22 @@ Every PR listed below has been merged into `main` as of the cycle close date.
 | #69 | DEPLOYMENT.md + ADMIN_GUIDE.md                                 | docs          | Added day-1 operational runbook + non-technical admin guide at repo root.                          |
 | #70 | 6 broken test suites fixed                                     | tests         | Repaired Toast, WhyChooseHome, two admin booking suites, confirmation page, CarDetailView tests.   |
 | #71 | Perf wins (priority, lazy-load, sizes audit, CSS trim)         | perf          | LCP card `priority`, dynamic-imported reserve/PX/share forms, missing `sizes`, dead CSS removed.   |
+| #72 | husky pre-commit hook (lint-staged + type-check)               | dx            | New pre-commit gate runs eslint on staged files and the full type-check before every commit.       |
+| #73 | HANDOVER_SUMMARY.md (this file)                                | docs          | Day-1 client reference covering the prep cycle, grouped by audience and theme.                     |
+| #74 | Runbook TODOs resolved + sync HANDOVER_NOTES                   | docs          | Replaced five "TODO: confirm with developer" notes in #69 with verified findings; resynced notes.   |
+| #75 | Delete 3 unused components + tests                             | refactor      | Removed `Shared/SearchBar`, `Main/Form/ServiceBookingForm`, `Helpful/Buttons/ShopButton`. -1,331 lines. |
+| #76 | Pre-handover verification report                               | docs          | `VERIFICATION_REPORT.md` — ran every quality gate end-to-end, honestly flagged sandbox blockers.    |
+| #77 | Security review of the prep cycle                              | docs          | `SECURITY_REVIEW.md` — 11 findings (2 High upstream-blocked, 3 Medium with fix PRs queued).         |
+| #78 | `/api/health` + admin CSV export                               | feature       | Public health probe (DB+KV, 60/min rate-limited) + manager-gated CSV downloads for bookings & cars. |
+| #79 | Global `@sentry/nextjs` jsdom mock                             | tests         | Single setup-file mock unblocked 19 test suites; replaced per-test mocks added by #70.              |
+| #80 | Sentry `beforeSend` PII filter                                 | observability | Strips `ref`, `email`, `token`, `turnstileToken`, etc. from event URLs/breadcrumbs (PR #77 Medium #2). |
+| #81 | URL-encode KV rate-limit keys                                  | security      | `encodeURIComponent` + length-bound hash on rate-limit identifiers; closes the `/`-in-email bypass (PR #77 Medium #3). |
+| #82 | CarPartsGrid `fill` + `sizes`                                  | perf          | Switched the parts-grid `<Image>` from fixed-size to `fill`+`sizes` without aspect-ratio regression. |
+| #83 | Bundle-size budget CI                                          | dx            | `size-limit` CI job with current+10% budgets on home, BrowseFleet, car-detail, and aggregate chunks. |
+| #84 | Booking-confirm customer email                                 | feature       | New `BookingConfirmedEmail` template fires on admin pending→confirmed; idempotent, mail failure non-fatal. |
+| #85 | Admin shop save → `revalidatePath`                             | feature       | `PUT /api/admin/shop` now revalidates all 14 public marketing pages that consume `getBusinessInfo()`. |
+| #86 | CSP / security headers tightened                               | security      | `frame-ancestors: 'none'`, `object-src 'none'`, `upgrade-insecure-requests`, `X-Frame-Options: DENY`, stricter Referrer-Policy, 18-feature Permissions-Policy. |
+| #87 | MongoDB index audit + 10 indexes added                         | perf / db     | `INDEX_AUDIT.md` + sparse indexes on `resetToken`/`verifyToken` (were full-scan), compound indexes on `cars`/`bookings` sort paths. |
 
 ## 3. What's new for you (the client)
 
@@ -54,7 +72,11 @@ Every PR listed below has been merged into `main` as of the cycle close date.
 ### If you're an admin
 
 - The Business Info form in `/admin/dashboard/shop` is now nine focused sections under `src/components/Admin/Tabs/BusinessInfo/` (core info, hours, social media, hero stats, detailing packages, tint options, service overviews, recovery, with a shared `Section.tsx` collapsible card and shared `styles.ts` for input/label classes) instead of one 1,143-line file. Same UI, same fields, same save behaviour, same call sites — the test suite (15 tests) is untouched (#61).
-- A non-technical "how to do everything in admin" guide ships as `ADMIN_GUIDE.md` at the repo root — covers login + 2FA enrolment, adding a car step-by-step (including the S3 image upload, the 10 MB / JPEG/PNG/WebP/AVIF limits, and what each `status` value does on the public site), editing every section of the Business Info form and how changes propagate, handling bookings (confirm / mark complete / cancel) and which emails fire automatically, the customer-accounts / reservations / part-exchange / quotes / reports tabs, plus a short "what to do when X breaks" triage list. Unverified claims are flagged `TODO: confirm with developer` (#69).
+- **Shop saves now propagate to the public site within seconds** instead of waiting for the per-page `revalidate` window — `PUT /api/admin/shop` calls `revalidatePath` for all 14 marketing pages that consume `getBusinessInfo()` (#85).
+- **Customers now get a confirmation email when you mark their booking confirmed** (previously only cancellation emailed). New `BookingConfirmedEmail` template covers both service and viewing bookings; idempotent on confirmed→confirmed; the Mongo write still succeeds even if the email transport hiccups (#84).
+- **CSV download for bookings and cars.** New "Export CSV" links on the admin Bookings and Cars list pages — manager+ role only, rate-limited, RFC-4180-quoted output with today's date in the filename (`bookings-2026-05-24.csv`). Use this to extract data into Excel without DB access (#78).
+- **`/api/health` endpoint** for uptime monitoring (UptimeRobot, Pingdom, Better Uptime). Returns 200 + a JSON `{ status, version, checks: { db, kv } }`; returns 503 if any check fails so the monitor can alert on either non-200 OR `checks.<x> !== "ok"`. Public, no auth, 60-requests-per-minute-per-IP rate limit (#78).
+- A non-technical "how to do everything in admin" guide ships as `ADMIN_GUIDE.md` at the repo root — covers login + 2FA enrolment, adding a car step-by-step (including the S3 image upload, the 10 MB / JPEG/PNG/WebP/AVIF limits, and what each `status` value does on the public site), editing every section of the Business Info form and how changes propagate, handling bookings (confirm / mark complete / cancel) and which emails fire automatically, the customer-accounts / reservations / part-exchange / quotes / reports tabs, plus a short "what to do when X breaks" triage list. Five claims were initially flagged `TODO: confirm with developer`; all five have since been replaced with verified findings (#69, #74).
 - The Header's mobile menu, account dropdown, and search sheet are now separate components under `src/components/Header/` — same behaviour but each piece is small enough to edit safely (#66).
 
 ### If you're a developer
@@ -68,6 +90,19 @@ Every PR listed below has been merged into `main` as of the cycle close date.
 - The `observability.ts` shim's PII redactor (which replaces `email`, `phone`, `password`, `token`, etc. with `"[redacted]"`) is still in place — Sentry sees redacted context, not raw values.
 - `.claude/` is gitignored so sub-agent worktrees mounted under `.claude/worktrees/` don't show up in `git status` and don't trip the local stop-hook check (#64).
 - The eight unused CSS utility classes (`input-lg`, `select-lg`, `card-elevated`, `card-interactive`, `badge-gray`, `tag`, `tag-neutral`, `divider-strong`) are gone from `src/app/globals.css` — grep audit confirmed zero call sites in `src/` (#71).
+- **Pre-commit hook** runs `lint-staged` (eslint on staged files) + the full `tsc --noEmit` before every commit. Bypass with `--no-verify` only when absolutely necessary. Husky 9.1.7 + lint-staged 17.0.5 (#72).
+- **Bundle-size budget CI.** New `.github/workflows/size-limit.yml` runs `size-limit` against every PR. Budgets are at current size + 10% (gzipped); regressions fail the check. Tracks home (2.91 kB), BrowseFleet listing (2.73 kB), car-detail (2.75 kB), and aggregate client chunks (681 kB) (#83).
+- **Sentry events no longer carry PII in URLs.** `beforeSendRedact` strips `ref`, `email`, `token`, `turnstileToken`, `password`, `secret`, `apiKey`, `sessionId`, `auth`, `code` from event URLs, breadcrumbs, and `query_string` (all three shapes Sentry accepts). Case-insensitive, snake_case + camelCase variants both covered (#80).
+- **KV rate-limit keys are URL-encoded** so an RFC-5321 email address containing `/` can't split the Upstash REST path and bypass the per-recipient cap. Keys longer than 200 chars are SHA-256-prefixed instead of being passed verbatim, capping KV memory pressure from pathological inputs (#81).
+- **Three dead source files removed** (`Shared/SearchBar.tsx`, `Main/Form/ServiceBookingForm.tsx`, `Helpful/Buttons/ShopButton.tsx`) along with their tests. -1,331 lines net. The agent verified zero production importers via grep before deleting (#75).
+- **CarPartsGrid moved to `fill` + `sizes`** with a fixed aspect-ratio wrapper, so `next/image` now serves a viewport-appropriate variant per card per breakpoint instead of the largest configured source. Aspect ratio preserved exactly via the `h-48` wrapper (#82).
+- **Global `@sentry/nextjs` jest mock.** The SDK's `pagesRouterRoutingInstrumentation` throws at module load under jsdom because the project is App Router only. A single mock in `jest.setup.component.js` covers `captureException` / `captureMessage` / `addBreadcrumb` / `setUser` / `setTag` / `setContext` / `withScope` / `init`, unblocking 19 test suites. Test count moved from 183/202 suites green to **202/202**, 1776/1776 tests (#79).
+- **MongoDB indexes** for hot queries — most importantly **sparse single-field indexes on `resetToken` and `verifyToken`** in `users` and `adminUsers`. Every password-reset / verification-email link click was doing a full collection scan before this; now O(log n). Also compound indexes on `cars` ({status, mileage}, {status, year:-1}, {status, fuel}) for BrowseFleet sort options, and email+createdAt indexes on the three booking collections (#87).
+- **Security headers tightened**: `frame-ancestors: 'none'` (site is never iframed), `object-src 'none'`, `upgrade-insecure-requests`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, 18-feature `Permissions-Policy` block (camera/mic/geolocation/payment/usb/interest-cohort/browsing-topics/etc.). `style-src 'unsafe-inline'` deferred because Motion and `next/font` still rely on it — the report-only CSP mirror continues to collect telemetry (#86).
+- **CSP / security review document** at `CSP_REVIEW.md` records what flipped, what stayed in report-only, and why. Anything irreversible (HSTS preload — already applied earlier) flagged in caps (#86).
+- **MongoDB index audit document** at `INDEX_AUDIT.md` lists every query in the codebase, which fields it filters/sorts on, the required index, and current status (exists / added in #87 / not needed and why) (#87).
+- **Pre-handover verification report** at `VERIFICATION_REPORT.md` ran every quality gate (type-check, lint, jest, build, playwright + axe + cookies specs) end-to-end and distinguished honestly between "passed", "failed", "blocked by sandbox limitation". Real findings are surfaced; the prerender / Chrome-binary blockers are explicitly out of scope (#76).
+- **Security review of the prep cycle** at `SECURITY_REVIEW.md`: 11 findings — 2 High (Next.js 16.2.6 upstream advisories awaiting patches), 3 Medium (all three fixed in PRs #79, #80, #81 — the jsdom jest crash, Sentry PII leak, KV path-split bypass), 2 Low, 4 Info (#77).
 
 ## 4. What's still TODO
 
@@ -95,8 +130,14 @@ Deferred from #67. The booking-flow `ServiceCard` / `PackageCard` components sti
 ### Performance follow-ups flagged by #71
 
 - **`next/font` is not in use anywhere.** UI falls back to the system stack. Introducing `next/font/google` was deliberately left out of #71 — it adds a network dep and needs design sign-off on family selection.
-- **`CarPartsGrid.tsx:122-128`** uses fixed `width={300}/height={192}` inside a responsive grid. Switching to `fill` + `sizes` is desirable but the grid cells are not 1:1, so it was left as a follow-up to avoid an aspect-ratio regression.
-- **Three dead source files retained because they have tests:** `src/components/Shared/SearchBar.tsx`, `src/components/Main/Form/ServiceBookingForm.tsx`, `src/components/Helpful/Buttons/ShopButton.tsx`. None have production importers; removing the source would break the corresponding suites under `__tests__/`.
+- ~~**`CarPartsGrid.tsx:122-128`** uses fixed `width={300}/height={192}` inside a responsive grid.~~ **Resolved in #82** — moved to `fill` + `sizes` with the existing `h-48` wrapper preserving the aspect ratio exactly.
+- ~~**Three dead source files retained because they have tests:** `src/components/Shared/SearchBar.tsx`, `src/components/Main/Form/ServiceBookingForm.tsx`, `src/components/Helpful/Buttons/ShopButton.tsx`.~~ **Resolved in #75** — all three deleted along with their tests; -1,331 lines net.
+
+### Remaining gaps
+
+- **Customer-record admin UI does not exist.** PR #74 confirmed via walking every page under `src/app/(admin)/admin/dashboard/`: there is no UI surfacing the NextAuth `users` collection. The `/api/admin/users/*` routes manage the `adminUsers` collection (staff accounts) only. A `/admin/dashboard/customers` page would be a real day-2 win.
+- **`type-check` is still in the husky pre-commit hook** instead of CI-only. A separate PR tried to move it to CI but was blocked by the harness's write-permission policy on `.husky/` and `.github/workflows/`. The existing `ci.yml` already runs lint + type-check + test in CI, so this is purely a "speed up local commits" follow-up — not a correctness gap.
+- **`next/font` not adopted** (see above).
 
 ### Other items flagged in `HANDOVER_NOTES.md`
 
@@ -113,7 +154,12 @@ Deferred from #67. The booking-flow `ServiceCard` / `PackageCard` components sti
 | `DEPLOYMENT.md`       | Operations runbook — env vars, MongoDB/S3/KV/SMTP setup, cron, first-deploy checklist, failure-mode triage. Landed in #69. |
 | `ADMIN_GUIDE.md`      | Non-technical admin staff guide — login + 2FA, adding a car, editing business info, handling bookings. Landed in #69. |
 | `HANDOVER_NOTES.md`   | Narrative history — what was removed during handover, status of older audit findings, known issues for next dev. |
-| `HANDOVER_SUMMARY.md` | This file — what shipped this cycle (PRs #58–#71), grouped by audience and theme.                             |
+| `HANDOVER_SUMMARY.md` | This file — what shipped this cycle (PRs #58–#87), grouped by audience and theme.                             |
+| `INDEX_AUDIT.md`      | MongoDB index audit — every query, the required index, current status. Landed in #87.                         |
+| `CSP_REVIEW.md`       | CSP / security headers review — current vs proposed, applied vs deferred (with reasons). Landed in #86.        |
+| `VERIFICATION_REPORT.md` | Pre-handover verification — every quality gate run end-to-end, sandbox blockers vs real failures. Landed in #76. |
+| `SECURITY_REVIEW.md`  | Security review of the prep cycle — 11 findings with severity, file:line, and recommended fix. Landed in #77.  |
+| `CONTRIBUTING.md`     | Pre-commit hooks, bundle-size budget rules, how to bypass. Landed in #72 / #83.                                |
 | `SETUP.md`            | Env vars, Sentry wiring detail, staging, backups, secret rotation.                                            |
 | `RUNBOOK.md`          | On-call ops procedures.                                                                                       |
 | `OPERATIONS.md`       | Non-technical day-to-day staff guide (older — `ADMIN_GUIDE.md` supersedes for admin tasks).                   |
