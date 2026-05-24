@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,12 +36,30 @@ import {
   Clock,
   Mail,
 } from "lucide-react";
-import { CarShareModal } from "@/components/SEO/CarShareCard";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 import { getOpenStatus } from "@/lib/utils/businessHours";
-import ReserveCarForm from "@/components/Car/ReserveCarForm";
-import PartExchangeForm from "@/components/Car/PartExchangeForm";
 import BookingAuthGate from "@/components/Account/BookingAuthGate";
+
+// Reserve / part-exchange forms sit below the gallery and the customer
+// has to scroll + sign in before they're useful — code-split them so the
+// initial JS for the detail view only ships the hero/gallery/CTA stack.
+const ReserveCarForm = dynamic(
+  () => import("@/components/Car/ReserveCarForm"),
+  { ssr: false }
+);
+const PartExchangeForm = dynamic(
+  () => import("@/components/Car/PartExchangeForm"),
+  { ssr: false }
+);
+// The share modal only renders on click — keep it out of the initial
+// bundle and only fetch the chunk when the user opens the dialog.
+const CarShareModal = dynamic(
+  () =>
+    import("@/components/SEO/CarShareCard").then((m) => ({
+      default: m.CarShareModal,
+    })),
+  { ssr: false }
+);
 
 interface CarDetailViewProps {
   car: CarInterface;

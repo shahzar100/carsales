@@ -291,8 +291,17 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
       {/* Car list */}
       {cars.length > 0 && (
         <div className="flex flex-col gap-4">
-          {cars.map((car) => (
-            <CarListCard key={String(car._id)} car={car} variant="customer" />
+          {cars.map((car, idx) => (
+            <CarListCard
+              key={String(car._id)}
+              car={car}
+              variant="customer"
+              // First card on page 1 is the likely LCP candidate above
+              // the fold — flag it for eager loading. Subsequent rows
+              // stay lazy so we don't fight the browser's connection
+              // budget on slower networks.
+              priority={filters.page === 1 && idx === 0}
+            />
           ))}
         </div>
       )}

@@ -23,11 +23,19 @@ import { formatPrice, formatMileage, formatDate } from "@/lib/utils/format";
 interface CarListCardProps {
   car: CarInterface;
   variant?: "customer" | "admin";
+  /**
+   * Hint to the renderer that this card sits above the fold (typically
+   * the first card in a list). When true the thumbnail uses `priority`
+   * so it's discovered eagerly and contributes to LCP instead of being
+   * lazy-loaded.
+   */
+  priority?: boolean;
 }
 
 const CarListCard: React.FC<CarListCardProps> = ({
   car,
   variant = "customer",
+  priority = false,
 }) => {
   const isAdmin = variant === "admin";
 
@@ -71,6 +79,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, 320px"
+            priority={priority}
           />
 
           {/* Gradient overlay */}
