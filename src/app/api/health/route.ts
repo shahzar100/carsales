@@ -19,9 +19,23 @@ import { logError } from "@/lib/utils/observability";
  * external calls against this route would still amplify load on Atlas —
  * the limiter is the cost cap, not an anti-abuse measure (hence fail
  * open: a KV blip should not lock our monitor out).
+ *
+ * Process probes (uptime / memory / nodeVersion / region) are included
+ * as informational fields — they never affect the 200/503 contract.
+ * 503 is reserved for DB/KV unavailability only. High memory surfaces
+ * as a soft `warnings: ["high-memory"]` flag on a 200 response so
+ * monitors can chart trend without paging on-call.
  */
 
 const PING_TIMEOUT_MS = 1500;
+
+/**
+ * Soft warning threshold for heap usage. Vercel serverless functions
+ * default to 1024MB memory; 400MB is ~40% of that and a useful early
+ * signal of a leak before the Lambda hits OOM. Adjust if memory size
+ * is tuned in `vercel.json`.
+ */
+const MEMORY_WARN_BYTES = 400 * 1024 * 1024;
 
 const healthLimiter = createRateLimiter("health", {
   maxRequests: 60,
@@ -37,6 +51,14 @@ interface HealthBody {
     db: CheckState;
     kv: CheckState;
   };
+  uptimeSeconds: number;
+  nodeVersion: string;
+  memory: {
+    rss: number;
+    heapUsed: number;
+  };
+  region: string | null;
+  warnings?: string[];
 }
 
 /**
@@ -113,10 +135,24 @@ export async function GET(request: NextRequest) {
   // production. Only "error" counts as a failure.
   const healthy = db === "ok" && kv !== "error";
 
+  const mem = process.memoryUsage();
+  const warnings: string[] = [];
+  if (mem.heapUsed > MEMORY_WARN_BYTES) {
+    warnings.push("high-memory");
+  }
+
   const body: HealthBody = {
     status: healthy ? "ok" : "error",
     version: process.env.npm_package_version || "unknown",
     checks: { db, kv },
+    uptimeSeconds: Math.floor(process.uptime()),
+    nodeVersion: process.versions.node,
+    memory: {
+      rss: mem.rss,
+      heapUsed: mem.heapUsed,
+    },
+    region: process.env.VERCEL_REGION ?? null,
+    ...(warnings.length > 0 ? { warnings } : {}),
   };
 
   return NextResponse.json(body, {
