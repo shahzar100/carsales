@@ -22,3 +22,23 @@ git commit --no-verify -m "wip: ..."
 ```
 
 Do not bypass the hook on commits destined for `main`. CI will re-run the same checks and the PR will fail.
+
+## Bundle size budget
+
+A `Bundle size` GitHub Actions job runs [`size-limit`](https://github.com/ai/size-limit) on every pull request and fails the check if any tracked entrypoint exceeds its budget. Config lives at `.size-limit.json`. Tracked entries today:
+
+- **Home page** — `.next/server/app/(main)/page.js` + its client reference manifest.
+- **BrowseFleet listing** — `.next/server/app/(main)/BrowseFleet/page.js` + its client reference manifest.
+- **Car detail page** — `.next/server/app/(main)/BrowseFleet/[_id]/page.js` + its client reference manifest.
+- **All client chunks** — `.next/static/chunks/*.js`, an aggregate budget for JS shipped to the browser.
+
+Each budget is set at "current gzipped size + ~10%" so we catch regressions, not noise.
+
+To run the check locally:
+
+```sh
+npm run build   # build can fail at prerender without a Mongo URI; bundles are still emitted
+npm run size
+```
+
+When you intentionally grow a tracked bundle (new feature, new dependency), update the matching `limit` in `.size-limit.json` by re-running `npm run size` and adding ~10% headroom on top of the new size. Call out the bump in the PR description with a one-line rationale. If a new high-traffic route appears, add it to `.size-limit.json` in the same PR.
