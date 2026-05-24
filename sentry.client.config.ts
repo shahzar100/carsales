@@ -10,6 +10,7 @@
  * The matching server / edge configs live alongside this file.
  */
 import * as Sentry from "@sentry/nextjs";
+import { beforeSendRedact } from "@/lib/utils/sentryRedact";
 
 const dsn =
   process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN || "";
@@ -24,5 +25,6 @@ if (dsn) {
     environment: process.env.NODE_ENV,
     // Don't ship debug logs to the browser console in production.
     debug: false,
+    beforeSend: beforeSendRedact,
   });
 }
