@@ -37,6 +37,17 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
   // tighter `style-src 'self'` so we gather telemetry on what would break
   // before we flip to enforce. Reports go to /api/csp-report.
   const styleSrc = opts.reportOnly ? "style-src 'self'" : "style-src 'self' 'unsafe-inline'";
+  // frame-ancestors 'none' is the strict equivalent of X-Frame-Options: DENY.
+  // The site is never embedded in an iframe (no partner widgets, no parent
+  // dashboard). X-Frame-Options is set to DENY in next.config.ts so legacy
+  // browsers without CSP support still get the same protection. Tightened
+  // from `'self'` 2026-05-24.
+  //
+  // object-src 'none' kills <object>/<embed>/<applet> plugin loading — we
+  // never use these and they are a legacy XSS surface.
+  //
+  // upgrade-insecure-requests rewrites any stray http:// asset references
+  // to https://; the production deployment is HTTPS-only behind Vercel.
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${isProduction ? "" : " 'unsafe-eval'"}`,
@@ -45,9 +56,11 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     "font-src 'self' data:",
     "connect-src 'self' https://*.s3.*.amazonaws.com https://challenges.cloudflare.com",
     "frame-src https://challenges.cloudflare.com",
-    "frame-ancestors 'self'",
+    "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
     "report-uri /api/csp-report",
   ];
   return directives.join("; ");

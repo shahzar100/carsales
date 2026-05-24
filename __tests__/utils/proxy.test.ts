@@ -135,5 +135,35 @@ describe("proxy", () => {
       expect(csp).toContain("https://challenges.cloudflare.com");
       expect(csp).toMatch(/frame-src[^;]*challenges\.cloudflare\.com/);
     });
+
+    it("denies all framing via frame-ancestors 'none'", () => {
+      const req = createRequest("GET", "/");
+      const res = proxy(req);
+      const csp = res.headers.get("Content-Security-Policy")!;
+      expect(csp).toContain("frame-ancestors 'none'");
+    });
+
+    it("blocks legacy plugin embedding via object-src 'none'", () => {
+      const req = createRequest("GET", "/");
+      const res = proxy(req);
+      const csp = res.headers.get("Content-Security-Policy")!;
+      expect(csp).toContain("object-src 'none'");
+    });
+
+    it("emits upgrade-insecure-requests", () => {
+      const req = createRequest("GET", "/");
+      const res = proxy(req);
+      const csp = res.headers.get("Content-Security-Policy")!;
+      expect(csp).toContain("upgrade-insecure-requests");
+    });
+
+    it("still emits a report-only mirror for tighter style-src observation", () => {
+      const req = createRequest("GET", "/");
+      const res = proxy(req);
+      const reportOnly = res.headers.get("Content-Security-Policy-Report-Only");
+      expect(reportOnly).toBeTruthy();
+      expect(reportOnly).toContain("style-src 'self'");
+      expect(reportOnly).not.toContain("style-src 'self' 'unsafe-inline'");
+    });
   });
 });

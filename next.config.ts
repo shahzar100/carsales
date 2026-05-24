@@ -10,21 +10,39 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
+  // DENY (rather than SAMEORIGIN) matches the new `frame-ancestors 'none'`
+  // CSP directive — the site is never embedded in any iframe, internal or
+  // external. Legacy browsers without CSP fall back to this header.
   {
     key: "X-Frame-Options",
-    value: "SAMEORIGIN",
+    value: "DENY",
   },
   {
     key: "X-Content-Type-Options",
     value: "nosniff",
   },
+  // strict-origin-when-cross-origin is the modern default: same-origin
+  // requests get the full URL as referrer, cross-origin HTTPS requests get
+  // just the origin, and HTTPS→HTTP downgrades send no referrer at all.
+  // Tightened from `origin-when-cross-origin` 2026-05-24.
   {
     key: "Referrer-Policy",
-    value: "origin-when-cross-origin",
+    value: "strict-origin-when-cross-origin",
   },
+  // Disable every feature the app does not use. We do not request the
+  // camera, microphone, geolocation, payment APIs, USB, serial, bluetooth,
+  // HID, MIDI, or accelerometer/gyroscope at any point. Disabling them
+  // means a compromised third-party script (none today, but the limit is
+  // there) cannot prompt the user for them. `interest-cohort=()` and
+  // `browsing-topics=()` opt out of Chrome's behavioural-ad APIs.
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value:
+      "accelerometer=(), autoplay=(), browsing-topics=(), camera=(), " +
+      "display-capture=(), geolocation=(), gyroscope=(), hid=(), " +
+      "interest-cohort=(), magnetometer=(), microphone=(), midi=(), " +
+      "payment=(), publickey-credentials-get=(), screen-wake-lock=(), " +
+      "serial=(), usb=(), xr-spatial-tracking=()",
   },
   // Cross-origin isolation. COEP is deliberately omitted: enabling
   // `require-corp` would block the Cloudflare Turnstile widget and S3
