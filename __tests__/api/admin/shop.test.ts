@@ -13,10 +13,21 @@ jest.mock("@/lib/utils/auth", () => ({
   hasMinimumRole: jest.fn(),
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
+
+// next/cache's revalidatePath() requires a static-generation store that
+// only exists during a real Next request — in jest it throws
+// "Invariant: static generation store missing". Stubbing it lets the route
+// finish normally; the assertions below verify it's still being called.
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
+}));
+
 const {
   isAuthenticated: mockIsAuthenticated,
   hasMinimumRole: mockHasMinimumRole,
 } = require("@/lib/utils/auth");
+const { revalidatePath: mockRevalidatePath } = require("next/cache");
 
 describe("/api/admin/shop", () => {
   beforeEach(() => {
@@ -127,6 +138,81 @@ describe("/api/admin/shop", () => {
       expect(savedShopInfo?.businessName).toBe("Updated Motor Company");
       expect(savedShopInfo?.address).toBe("New Address 456");
       await client.close();
+    });
+
+    it("revalidates every marketing page that consumes getBusinessInfo()", async () => {
+      // Public pages cache via per-page `revalidate` windows (some up to
+      // 1 hour). After an admin save we must explicitly invalidate every
+      // marketing route that calls getBusinessInfo() server-side, or
+      // visitors will see stale phone numbers / hours / packages until the
+      // next revalidate tick. Keep this list aligned with the
+      // MARKETING_PATHS_WITH_BUSINESS_INFO constant in the route file.
+      const expectedPaths = [
+        "/",
+        "/AboutUs",
+        "/Book",
+        "/Booking/confirmation",
+        "/FAQ",
+        "/Recoveries",
+        "/Services",
+        "/Services/Detailing",
+        "/Services/Repairs",
+        "/Services/Tints",
+        "/contact",
+        "/privacy",
+        "/review",
+        "/terms",
+      ];
+
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify(validShopData),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PUT(request);
+      expect(response.status).toBe(200);
+
+      for (const path of expectedPaths) {
+        expect(mockRevalidatePath).toHaveBeenCalledWith(path);
+      }
+      expect(mockRevalidatePath).toHaveBeenCalledTimes(expectedPaths.length);
+    });
+
+    it("does NOT call revalidatePath when the DB write fails", async () => {
+      // If updateBusinessInfo throws we return 500 before the revalidate
+      // call — otherwise we'd be busting caches for a write that never
+      // landed.
+      jest.resetModules();
+      jest.doMock("@/lib/utils/businessInfo", () => ({
+        getBusinessInfo: jest.fn(),
+        updateBusinessInfo: jest
+          .fn()
+          .mockRejectedValue(new Error("DB write error")),
+      }));
+      jest.doMock("@/lib/utils/auth", () => ({
+        isAuthenticated: jest.fn().mockResolvedValue(true),
+        hasMinimumRole: jest.fn().mockResolvedValue(true),
+        getSession: jest.fn(async () => ({ username: "test-admin" })),
+      }));
+      const failRevalidate = jest.fn();
+      jest.doMock("next/cache", () => ({
+        revalidatePath: failRevalidate,
+        revalidateTag: jest.fn(),
+      }));
+      const { PUT: scopedPUT } = require("@/app/api/admin/shop/route");
+
+      const request = new NextRequest("http://localhost:3000/api/admin/shop", {
+        method: "PUT",
+        body: JSON.stringify(validShopData),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await scopedPUT(request);
+      expect(response.status).toBe(500);
+      expect(failRevalidate).not.toHaveBeenCalled();
+
+      jest.resetModules();
     });
 
     it("should create new shop info if none exists (upsert)", async () => {
