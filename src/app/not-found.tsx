@@ -3,22 +3,36 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4">
-      <div className="text-center">
-        <h1 className="text-7xl font-bold text-gray-900">404</h1>
-        <p className="mt-3 text-xl text-gray-600">
-          This page could not be found.
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-16">
+      <div className="max-w-2xl text-center">
+        <p className="text-sm font-semibold tracking-wider text-red-600 uppercase">
+          404
         </p>
-        <p className="mt-1 text-gray-600">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+        <h1 className="page-title mt-2">Page not found</h1>
+        <p className="description mt-4">
+          The page you&apos;re looking for may have moved or been removed.
         </p>
       </div>
-      <Link
-        href="/"
-        className="rounded-lg bg-red-600 px-6 py-2.5 text-white transition-colors hover:bg-red-700"
-      >
-        Back to Home
-      </Link>
-    </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <Link
+          href="/BrowseFleet"
+          className="rounded-lg bg-red-600 px-6 py-2.5 text-center text-white transition-colors hover:bg-red-700"
+        >
+          Browse our fleet
+        </Link>
+        <Link
+          href="/"
+          className="rounded-lg border border-gray-300 px-6 py-2.5 text-center text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          Visit homepage
+        </Link>
+        <Link
+          href="/contact"
+          className="rounded-lg border border-gray-300 px-6 py-2.5 text-center text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          Contact us
+        </Link>
+      </div>
+    </main>
   );
 }
