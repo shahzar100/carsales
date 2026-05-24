@@ -64,9 +64,9 @@ The form is split into collapsible sections:
 - **Service Overviews** — short blurbs for the service overview cards on `/Services`.
 - **Recovery** — copy and contact details for `/Recoveries`.
 
-Click **Save** at the bottom to push changes. The public pages are cached for short windows (60s – 24h depending on the page); admin saves call `revalidatePath` for the affected URLs so visitors see your changes immediately rather than waiting for the timer.
+Click **Save** at the bottom to push changes. The save sends one PUT to `/api/admin/shop` covering every section at once — the form has a single submit button, not one per section.
 
-TODO: confirm with developer that `revalidatePath` runs after every section save in the business-info form (visible behaviour: the public site reflects the change within seconds).
+Heads-up on propagation delay: `PUT /api/admin/shop` (`src/app/api/admin/shop/route.ts`) writes to MongoDB and records an audit entry, but it does **not** call `revalidatePath` or `revalidateTag`. Most marketing pages set `export const revalidate = 3600` (one hour) — `/AboutUs`, `/FAQ`, `/Services`, `/Recoveries`, `/contact`, the terms/privacy pages — so a saved change may not appear publicly until that window expires. The home page revalidates every 60 seconds; `/Services/Tints` every 10 minutes. If you need a change live immediately, ask the developer to trigger a manual redeploy or to add the `revalidatePath` calls (the pattern is already used by `/api/admin/cars`, lines 31–33).
 
 ## Handling bookings
 
@@ -86,7 +86,7 @@ Per booking, you can:
 ### Emails sent automatically
 
 - **On booking** — customer receives a confirmation email with their reference number (`BK-XXXXXX`) and details. They can look the booking up at `/Booking/<id>`.
-- **On admin confirm** — TODO: confirm with developer whether an additional email is sent when an admin moves a booking from `pending` → `confirmed`. The cancel path definitely sends.
+- **On admin confirm** — **no email is sent.** The `PUT /api/admin/bookings` handler (`src/app/api/admin/bookings/route.ts`) updates `status` and writes an audit entry, but does not call `sendEmail` on any status transition other than cancel. If a customer expects a "your booking is confirmed" email, that has to come from you out-of-band (a phone call or a fresh email) or be added to the route.
 - **On cancel** — customer receives a cancellation email with the reason you typed.
 - **On mark completed** — no immediate email. The daily 10:00 UTC cron sends a review-invite 24 hours after completion (one per booking; idempotent so customers don't get duplicates).
 
@@ -96,7 +96,7 @@ To **cancel** requires at least the **manager** role. Staff can view bookings bu
 
 - **`/admin/dashboard`** — the main dashboard surfaces top-level KPIs (registered users among them) and recent activity. There is no dedicated "all customers" tab.
 - Customers can register at `/register`, sign in at `/login` (email/password, magic link, or Google), reset their password at `/forgot-password`, save cars to a wish list (`/saved`), and view their booking history at `/account`.
-- TODO: confirm with developer whether admins have a UI to view/edit a specific customer account. The `users` collection is touched by Auth.js directly; admin-side surfacing may be limited to KPIs only.
+- **There is no admin UI for viewing or editing an individual customer account.** Confirmed by walking every page under `src/app/(admin)/admin/dashboard/`: the tabs are `account` (your own 2FA), `add`, `audit`, `carparts`, `cars`, `part-exchange`, `quotes`, `reservations`, `service`, `shop`, `status`, `viewing` — none of them surface the `users` (Auth.js / NextAuth) collection. Customer accounts are managed by Auth.js directly; if you need to inspect or remove one, the developer has to do it in the Mongo `users` collection. The `/api/admin/users/*` routes only manage **admin staff** (the `adminUsers` collection), not customers.
 
 ## Reservations, part-exchange, quotes
 
@@ -129,7 +129,7 @@ For raw inspection, two more tabs help:
 4. If everything looks right and SMTP is healthy, ask the developer to check the SMTP provider's send log — the API will report `success` even if the SMTP provider later bounces the message.
 
 **"I lost my 2FA device / can't log in with my code"**
-- Another admin (at minimum **admin** role) can reset your password from `/admin/dashboard/users` (TODO: confirm with developer the exact admin-users UI path). Resetting the password does **not** disable 2FA — you'll still need a code.
+- Another admin (at minimum **admin** role) can reset your password from **`/admin/dashboard/add`** → use the "Type" dropdown at the top of the page and pick **"Password"**. Look up the user by username or email, pick "reset", and confirm — the user receives an email with a reset link. Resetting the password does **not** disable 2FA — you'll still need a code afterwards. (Under the hood the form POSTs to `/api/admin/users/password`, which is the only UI surface that calls that route.)
 - To disable 2FA without a code, ask the developer to clear `totpEnabled` and `totpSecret` for your user in the `adminUsers` collection. Then log in with your password and re-enrol 2FA.
 
 **"A car won't save"**
@@ -139,7 +139,8 @@ For raw inspection, two more tabs help:
 - A 400 "Invalid content type" means the file isn't JPEG/PNG/WebP/AVIF. Re-export.
 
 **"The public site doesn't show my edit"**
-- Most public pages cache for 60 seconds. Admin saves invalidate the relevant pages immediately, but if you edited via the API directly (or the invalidate failed), wait a minute and try again.
+- **Car saves** call `revalidatePath` for `/BrowseFleet`, `/`, and the specific car page, so changes appear immediately. If a car edit doesn't show, hard-refresh first (Ctrl+F5).
+- **Business-info saves** (`/admin/dashboard/shop`) do **not** revalidate. Marketing pages cache for up to one hour (`/AboutUs`, `/FAQ`, `/Services`, `/Recoveries`, `/contact`); `/Services/Tints` for 10 minutes; the home page for 60 seconds. If you need a business-info change live faster, ask the developer to redeploy.
 - The home page hero updates on a `featured` toggle for any car.
 
 **"Bookings are being double-booked"**

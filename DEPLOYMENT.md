@@ -94,9 +94,9 @@ Collection accessors in `src/lib/models/index.ts` call `createIndexes` the first
 ## Vercel KV
 
 - Provision via Vercel dashboard → Storage → KV. Connect to the project; Vercel injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
-- Used by `createRateLimiter` (`src/lib/utils/rateLimit.ts`) and the featured-car cache (`src/lib/utils/featuredCarCache.ts`).
+- Used by `createRateLimiter` (`src/lib/utils/rateLimit.ts`) and the featured-car cache (`src/lib/utils/featuredCarCache.ts`). These are the only two runtime consumers of KV — a grep for `KV_REST_API_URL` across `src/` returns exactly these two files (plus a header comment in `src/app/api/admin/login/route.ts` describing the rate-limiter fallback behaviour). No other feature reads or writes KV.
 - Selection is automatic — when both env vars are present the KV backend runs; otherwise an in-memory map.
-- TODO: confirm with developer whether any non-rate-limit features (other than `featuredCarCache`) depend on KV at runtime.
+- The rate limiter is used by ~15 routes (admin login, customer login, magic link, register, forgot/reset password, verify-email, 2FA enroll/verify/disable, account password change, admin users create, admin users password reset, and every public `POST /api/bookings/*` route). All of them share the same KV backend or the same in-memory fallback.
 
 ## Email
 
