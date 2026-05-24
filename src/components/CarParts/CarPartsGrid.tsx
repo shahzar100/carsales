@@ -117,14 +117,19 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
               className="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
             >
               {/* Part Image */}
+              {/* Wrapper keeps `relative h-48` so the rendered box stays the
+                  same 192px-tall card-top — no aspect-ratio regression. The
+                  Image switches to `fill` + `sizes` so next/image actually
+                  serves a viewport-appropriate variant instead of the largest
+                  configured source. Grid: 1/2/3/4 cols at /md/lg/xl. */}
               <div className="relative h-48 overflow-hidden rounded-t-xl bg-gray-100">
                 {part.image ? (
                   <Image
                     src={part.image}
                     alt={part.name}
-                    className="h-full w-full object-cover"
-                    width={300}
-                    height={192}
+                    fill
+                    sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-gray-400">
