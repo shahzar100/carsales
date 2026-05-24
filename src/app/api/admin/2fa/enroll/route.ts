@@ -1,8 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { getAdminUsersCollection } from "@/lib/models";
 import { getSession } from "@/lib/utils/auth";
 import { generateTotpEnrolment } from "@/lib/utils/twoFactor";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
+
+// Mirror the verify / disable limiters (5 per 15 min, fail-closed). The
+// enroll endpoint mints a fresh TOTP secret and stashes it on the
+// session — a hijacked session that can spam this could be used to
+// hammer the DB and rotate session state. failClosed because the
+// enroll → verify chain is a credential-grade flow.
+const enrollLimiter = createRateLimiter("admin-2fa-enroll", {
+  maxRequests: 5,
+  windowMs: 15 * 60 * 1000,
+  failClosed: true,
+});
 
 /**
  * Begin 2FA enrolment for the logged-in admin.
@@ -12,8 +25,23 @@ import { logError } from "@/lib/utils/observability";
  * `/api/admin/2fa/verify`. That prevents an enrol-and-walk-away from
  * locking the account into a secret the user doesn't actually hold.
  */
-export async function POST(): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await enrollLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil(resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     const session = await getSession();
     if (!session.isLoggedIn || !session.username) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

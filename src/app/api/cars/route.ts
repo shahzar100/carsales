@@ -1,8 +1,24 @@
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { ObjectId } from "mongodb";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
-import { ok, badRequest, serverError } from "@/lib/utils/apiResponse";
+import {
+  ok,
+  badRequest,
+  tooManyRequests,
+  serverError,
+} from "@/lib/utils/apiResponse";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
+
+// Public car-lookup-by-id endpoint. Each call runs an indexed `$in`
+// query but the input is attacker-controlled — keep a defensive cap so
+// it can't be pointed at Atlas as an amplification target. 120/min/IP
+// is well above any real "Saved cars" client churn.
+const carsLookupLimiter = createRateLimiter("public-cars-lookup", {
+  maxRequests: 120,
+  windowMs: 60 * 1000,
+});
 
 /**
  * Public car lookup by id — `GET /api/cars?ids=<id>,<id>,…`
@@ -24,6 +40,14 @@ const MAX_IDS = 100;
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carsLookupLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
+    }
+
     const idsParam = new URL(request.url).searchParams.get("ids");
     if (!idsParam) {
       return badRequest("An `ids` query parameter is required");

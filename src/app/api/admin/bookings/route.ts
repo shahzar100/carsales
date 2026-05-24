@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
+import { waitUntil, ipAddress } from "@vercel/functions";
 import React from "react";
 import {
   getServiceAppointmentsCollection,
@@ -14,6 +14,7 @@ import {
   unauthorized,
   forbidden,
   notFound,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
 import { logError, logEvent } from "@/lib/utils/observability";
@@ -21,6 +22,15 @@ import { sendEmail } from "@/emails/send";
 import { BookingConfirmedEmail } from "@/emails/BookingConfirmedEmail";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import type { ServiceAppointment, CarViewingBooking } from "@/lib/interfaces";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
+
+// Defensive per-IP cap on admin booking-status writes. A compromised
+// admin / staff session shouldn't be able to walk through every booking
+// in one sweep. 60/min is well above legitimate dashboard use.
+const adminBookingWriteLimiter = createRateLimiter("admin-booking-write", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -86,6 +96,14 @@ export async function PUT(request: NextRequest) {
 
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await adminBookingWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const body = await request.json();

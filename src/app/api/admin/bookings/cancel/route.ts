@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { waitUntil } from "@vercel/functions";
+import { waitUntil, ipAddress } from "@vercel/functions";
 import React from "react";
 import {
   getServiceAppointmentsCollection,
@@ -8,9 +8,18 @@ import {
 } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { sendEmail } from "@/emails/send";
 import { BookingCancellation } from "@/emails/BookingCancellation";
 import { logError, logEvent } from "@/lib/utils/observability";
+
+// Admin cancel fires a customer email — bound the worst case of a
+// compromised admin session being used as a transactional email cannon.
+// 30 / 5 min per IP is plenty for batch cleanups, painful for a flood.
+const adminCancelLimiter = createRateLimiter("admin-booking-cancel", {
+  maxRequests: 30,
+  windowMs: 5 * 60 * 1000,
+});
 
 // Mirror of the public `/api/bookings/cancel` schema. Kept verbatim so
 // the two routes stay structurally identical — if a field tightens on
@@ -36,6 +45,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },
         { status: 403 }
+      );
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await adminCancelLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+        }
       );
     }
 

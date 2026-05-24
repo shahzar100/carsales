@@ -1,15 +1,26 @@
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { z } from "zod";
 
 import { auth } from "@/auth";
 import { getUsersCollection } from "@/lib/models";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import {
   ok,
   badRequest,
   unauthorized,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+
+// The client PUTs the full saved list on every add/remove, so real
+// users hit this often. 60 writes / 5 min covers that; anything past it
+// is a runaway client or a scraper.
+const savedLimiter = createRateLimiter("customerSavedUpdate", {
+  maxRequests: 60,
+  windowMs: 5 * 60 * 1000,
+});
 
 /**
  * Server-persisted saved-cars list for signed-in customers.
@@ -56,6 +67,14 @@ export async function PUT(request: NextRequest) {
     const session = await auth();
     const email = session?.user?.email;
     if (!email) return unauthorized("You must be signed in");
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await savedLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
+    }
 
     let body: unknown;
     try {

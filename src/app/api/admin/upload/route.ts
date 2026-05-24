@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import {
   generatePresignedUploadUrl,
@@ -6,7 +7,16 @@ import {
   MAX_UPLOAD_BYTES,
 } from "@/lib/utils/s3";
 import { v4 as uuidv4 } from "uuid";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
+
+// Each call mints a presigned S3 URL (a billable AWS round-trip) — cap
+// at 60/min/IP so a stuck client or hijacked manager session can't burn
+// through S3 SigV4 quota on a loop.
+const uploadLimiter = createRateLimiter("admin-upload", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 const ALLOWED_CONTENT_TYPES = [
   "image/jpeg",
@@ -34,6 +44,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },
         { status: 403 }
+      );
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await uploadLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many upload requests. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+        }
       );
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { z } from "zod";
 import {
   getCarPartsCollection,
@@ -13,11 +14,22 @@ import {
   unauthorized,
   forbidden,
   notFound,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { deleteS3Objects } from "@/lib/utils/s3";
 import { logError } from "@/lib/utils/observability";
 import { recordAudit } from "@/lib/utils/audit";
+
+// Defensive cap shared across POST / PUT / DELETE on car parts. A
+// compromised manager session shouldn't be usable to churn the
+// inventory collection or fire S3 deletes en masse. 60/min is well
+// above legitimate dashboard use.
+const carPartsWriteLimiter = createRateLimiter("admin-carparts-write", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 // ── Car-part update schema ───────────────────────────────────
 // PUT spreads the validated object straight into a Mongo `$set`. A
@@ -70,6 +82,14 @@ export async function POST(request: NextRequest) {
     // car parts (GET) but cannot create, update or delete them.
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carPartsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const body = await request.json();
@@ -132,6 +152,14 @@ export async function PUT(request: NextRequest) {
     }
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carPartsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const body = await request.json();
@@ -199,6 +227,14 @@ export async function DELETE(request: NextRequest) {
     }
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carPartsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const { searchParams } = new URL(request.url);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { ipAddress } from "@vercel/functions";
 import { serializeDocument } from "@/lib/models";
 import { getSession, isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { recordAudit } from "@/lib/utils/audit";
@@ -11,8 +12,10 @@ import {
   unauthorized,
   forbidden,
   notFound,
+  tooManyRequests,
   fail,
 } from "@/lib/utils/apiResponse";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 
 /**
@@ -48,6 +51,15 @@ function revalidateBusinessInfoPaths() {
   }
 }
 
+// Shop-info saves are infrequent (a few times a day at most) but each
+// one is a heavy write across five collections and busts the
+// request-scoped cache for every visitor. 20/min keeps legitimate
+// rapid-fire saves working while bounding the worst case.
+const shopWriteLimiter = createRateLimiter("admin-shop-write", {
+  maxRequests: 20,
+  windowMs: 60 * 1000,
+});
+
 export async function GET() {
   try {
     const authenticated = await isAuthenticated();
@@ -80,6 +92,14 @@ export async function PUT(request: NextRequest) {
 
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await shopWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     let body: Record<string, unknown>;

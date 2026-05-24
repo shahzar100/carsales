@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { revalidatePath } from "next/cache";
 import {
   getCarsCollection,
@@ -16,10 +17,21 @@ import {
   unauthorized,
   forbidden,
   notFound,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { deleteS3Objects } from "@/lib/utils/s3";
 import { invalidateFeaturedCarCache } from "@/lib/utils/featuredCarCache";
+
+// Shared write limiter across POST / PUT / DELETE on the cars
+// collection. A compromised manager session shouldn't be usable to
+// rewrite the entire fleet (and trigger fleet-wide revalidations + S3
+// deletes) in one burst. 60/min is well above legitimate dashboard use.
+const carsWriteLimiter = createRateLimiter("admin-cars-write", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 /**
  * (#27) Invalidate the customer-facing fleet pages after any car mutation
@@ -135,6 +147,14 @@ export async function POST(request: NextRequest) {
       return forbidden("Manager role required");
     }
 
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
+    }
+
     const body = await request.json();
     const parsed = carSchema.safeParse(body);
 
@@ -194,6 +214,14 @@ export async function PUT(request: NextRequest) {
 
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const body = await request.json();
@@ -258,6 +286,14 @@ export async function DELETE(request: NextRequest) {
 
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await carsWriteLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const { searchParams } = new URL(request.url);
