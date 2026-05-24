@@ -125,11 +125,18 @@ Three components are large and would benefit from breaking up, but each is high-
 
 Suggested next-quarter work, with the canonical example of the "server component + client island" pattern in `src/app/(admin)/admin/dashboard/viewing/page.tsx` + `src/components/Admin/ViewingBookingsClient.tsx`. There's also an explicit TODO at the top of `src/app/(admin)/admin/dashboard/shop/page.tsx` requesting that exact refactor.
 
-### Accessibility — partial
+### Accessibility — better than the audit suggested
 
-Skip-to-content link, focus rings, image alt text, form labels, ARIA roles on the gallery, and keyboard navigation in the gallery are all in place. What's *not* fully covered:
+Skip-to-content link, focus rings, image alt text, form labels, ARIA roles on the gallery, and keyboard navigation in the gallery are all in place. A late-prep audit (see PR #59) walked every match the earlier "~170 onClick-without-keyboard" figure was based on and found that figure was inflated — it was a raw `cursor-pointer + onClick` grep that counted legitimate `<button>` elements. The reality after a real audit:
 
-- ~170 `cursor-pointer` + `onClick` sites on non-button elements (mostly in admin tables and some marketing components) still lack `onKeyDown` handlers. Hit the top 10–15 visible ones during this prep pass (header dropdown menus, FAQ accordion, cookie banner, share modal, etc.); the long tail remains.
+- **Only one genuine keyboard-handler bug existed** (`CarShareModal` trigger was a `<span onClick>` over an inner button — fixed in PR #59 by converting the wrapper to a real `<button>`).
+- `Form/Dropdown.tsx` has full arrow-key / Enter / Escape navigation at the listbox level, with `aria-activedescendant` set correctly on `role="listbox"` / `role="option"`.
+- `Header.tsx`, `Modal.tsx`, `CookieBanner.tsx` all implement Escape-key handlers and focus management.
+- `FAQAccordion`, `CarFeatures`, `ShareButton`, `TwoFactorPanel`, `NavMenu` — all use real `<button>` or `<motion.button>`.
+- Admin tables — onClick lives on `<button>` children of `<div>` containers; no fake-button divs anywhere in admin.
+
+Remaining minor a11y polish:
+
 - `RangeInput.tsx` min/max inputs could use explicit `aria-label`s.
 - Some custom selection-card components could expose `role="radio"` more explicitly.
 
