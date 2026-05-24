@@ -255,6 +255,102 @@ describe("createRateLimiter", () => {
       await limiter.reset("ip-1");
       expect(calls[0].url).toContain("/del/rl:kv-reset:ip-1");
     });
+
+    // PR #77 finding (Medium #3): an attacker who can supply the limiter
+    // identifier (e.g. an email address to the magic-link route) could
+    // include `/` and split the Upstash REST path, silently bypassing
+    // the per-recipient cap. These tests assert the encoded key is now
+    // safe and that backward-compatible identifiers (alphanumeric, IPs)
+    // are not collateral-damaged.
+    describe("KV key safety", () => {
+      it("URL-encodes a slash in the identifier so it can't split the REST path", async () => {
+        const limiter = createRateLimiter("encode-slash", {
+          maxRequests: 1,
+          windowMs: 60000,
+        });
+        await limiter.check("a/b@example.com");
+        // The slash must appear as %2F in the REST path — otherwise it
+        // becomes a path separator and the limiter is bypassed.
+        const incr = calls.find((c) => c.url.includes("/incr/"));
+        expect(incr).toBeDefined();
+        expect(incr!.url).toContain("/incr/rl:encode-slash:a%2Fb%40example.com");
+        expect(incr!.url).not.toMatch(/\/incr\/rl:encode-slash:a\/b/);
+      });
+
+      it("produces different keys for `a/b@x.com` and `a@x.com` (no collision)", async () => {
+        const limiter = createRateLimiter("encode-distinct", {
+          maxRequests: 5,
+          windowMs: 60000,
+        });
+        await limiter.check("a/b@x.com");
+        const slashUrl = calls.find((c) => c.url.includes("/incr/"))!.url;
+        calls.length = 0;
+        await limiter.check("a@x.com");
+        const plainUrl = calls.find((c) => c.url.includes("/incr/"))!.url;
+        expect(slashUrl).not.toBe(plainUrl);
+      });
+
+      it("URL-encodes a control character / question mark too", async () => {
+        const limiter = createRateLimiter("encode-special", {
+          maxRequests: 1,
+          windowMs: 60000,
+        });
+        await limiter.check("evil?key=value");
+        const incr = calls.find((c) => c.url.includes("/incr/"))!;
+        expect(incr.url).toContain("/incr/rl:encode-special:evil%3Fkey%3Dvalue");
+      });
+
+      it("preserves IPv4 identifiers unchanged (backward-compat)", async () => {
+        const limiter = createRateLimiter("encode-ipv4", {
+          maxRequests: 1,
+          windowMs: 60000,
+        });
+        await limiter.check("192.168.1.1");
+        const incr = calls.find((c) => c.url.includes("/incr/"))!;
+        expect(incr.url).toContain("/incr/rl:encode-ipv4:192.168.1.1");
+      });
+
+      it("hashes identifiers longer than MAX_ID_LEN (deterministic)", async () => {
+        const limiter = createRateLimiter("encode-long", {
+          maxRequests: 5,
+          windowMs: 60000,
+        });
+        const longId = "x".repeat(300);
+        await limiter.check(longId);
+        const url1 = calls.find((c) => c.url.includes("/incr/"))!.url;
+        calls.length = 0;
+        await limiter.check(longId);
+        const url2 = calls.find((c) => c.url.includes("/incr/"))!.url;
+        expect(url1).toContain("/incr/rl:encode-long:sha256");
+        expect(url1.length).toBeLessThan(120); // bounded, not 300+ chars
+        expect(url1).toBe(url2); // deterministic
+      });
+
+      it("a different long input produces a different hash", async () => {
+        const limiter = createRateLimiter("encode-long-distinct", {
+          maxRequests: 5,
+          windowMs: 60000,
+        });
+        await limiter.check("x".repeat(300));
+        const urlX = calls.find((c) => c.url.includes("/incr/"))!.url;
+        calls.length = 0;
+        await limiter.check("y".repeat(300));
+        const urlY = calls.find((c) => c.url.includes("/incr/"))!.url;
+        expect(urlX).not.toBe(urlY);
+      });
+
+      it("also encodes the developer-supplied name (defence in depth)", async () => {
+        // A limiter name containing `/` would also be a path-split risk
+        // if some future caller passed one in. Confirm encoded.
+        const limiter = createRateLimiter("with/slash", {
+          maxRequests: 1,
+          windowMs: 60000,
+        });
+        await limiter.check("ip-1");
+        const incr = calls.find((c) => c.url.includes("/incr/"))!;
+        expect(incr.url).toContain("/incr/rl:with%2Fslash:ip-1");
+      });
+    });
   });
 
   it("purges stale entries when store exceeds 100", async () => {
