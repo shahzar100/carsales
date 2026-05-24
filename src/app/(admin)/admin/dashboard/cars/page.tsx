@@ -24,6 +24,16 @@ export default async function CarsPage() {
   const bookings = await getBookings();
   return (
     <>
+      <div className="mb-4 flex justify-end">
+        <a
+          href="/api/admin/cars/export"
+          download
+          data-testid="export-cars-csv"
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-gray-400 hover:bg-gray-50"
+        >
+          Export CSV
+        </a>
+      </div>
       <CarView bookings={bookings} cars={cars} />
     </>
   );

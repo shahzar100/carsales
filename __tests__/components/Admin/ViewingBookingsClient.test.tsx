@@ -291,6 +291,16 @@ describe("ViewingBookingsClient", () => {
     expect(screen.getByTestId("details-id").textContent).toBe("vb-1");
   });
 
+  it("📋 renders an Export CSV link pointing at /api/admin/bookings/export", () => {
+    render(<ViewingBookingsClient initialBookings={[sampleBooking as any]} />);
+    const link = screen.getByTestId("export-bookings-csv") as HTMLAnchorElement;
+    expect(link).toBeInTheDocument();
+    // jsdom resolves the href against the document base URL, so compare
+    // against the attribute rather than the resolved value.
+    expect(link.getAttribute("href")).toBe("/api/admin/bookings/export");
+    expect(link.hasAttribute("download")).toBe(true);
+  });
+
   it("📋 getStatusBadge renders the per-status colour class", () => {
     render(
       <ViewingBookingsClient initialBookings={[sampleBooking as any]} />

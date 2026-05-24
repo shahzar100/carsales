@@ -268,6 +268,14 @@ describe("ServiceBookingsClient", () => {
     expect(screen.getByTestId("details-id").textContent).toBe("sb-1");
   });
 
+  it("📋 renders an Export CSV link pointing at /api/admin/bookings/export", () => {
+    render(<ServiceBookingsClient initialBookings={[sampleBooking as any]} />);
+    const link = screen.getByTestId("export-bookings-csv") as HTMLAnchorElement;
+    expect(link).toBeInTheDocument();
+    expect(link.getAttribute("href")).toBe("/api/admin/bookings/export");
+    expect(link.hasAttribute("download")).toBe(true);
+  });
+
   it("📋 getStatusBadge renders the per-status colour class", () => {
     render(
       <ServiceBookingsClient initialBookings={[sampleBooking as any]} />
