@@ -19,16 +19,6 @@
 import React from "react";
 import { render, screen, waitFor, act } from "@testing-library/react";
 
-// `@sentry/nextjs` does not load cleanly under jsdom — its
-// pagesRouterRoutingInstrumentation reads from a Next.js internal that is
-// undefined in the test environment. The observability shim is the only
-// path that imports it, so a flat module mock is enough.
-jest.mock("@sentry/nextjs", () => ({
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  init: jest.fn(),
-}));
-
 const mockToastSuccess = jest.fn();
 const mockToastError = jest.fn();
 jest.mock("@/hooks/useToast", () => ({

@@ -7,12 +7,6 @@
  * Mirrors __tests__/app/api/admin/bookings/export/route.test.ts.
  */
 
-jest.mock("@sentry/nextjs", () => ({
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  init: jest.fn(),
-}));
-
 jest.mock("@/lib/utils/auth", () => ({
   isAuthenticated: jest.fn(),
   hasMinimumRole: jest.fn(),

@@ -38,6 +38,25 @@ jest.mock("next-auth/react", () => ({
   SessionProvider: ({ children }) => children,
 }));
 
+// `@sentry/nextjs` does not load cleanly under jsdom — its
+// pagesRouterRoutingInstrumentation reads from a Next.js internal that is
+// undefined in the test environment. `src/lib/utils/observability.ts`
+// imports the SDK eagerly, so anything that pulls in observability (admin
+// clients, API route handlers, etc.) needs this flat mock. Per-test
+// duplicates of this mock are now redundant and have been removed.
+jest.mock("@sentry/nextjs", () => ({
+  captureException: jest.fn(),
+  captureMessage: jest.fn(),
+  addBreadcrumb: jest.fn(),
+  setUser: jest.fn(),
+  setTag: jest.fn(),
+  setContext: jest.fn(),
+  withScope: jest.fn((cb) =>
+    cb({ setTag: jest.fn(), setContext: jest.fn(), setExtra: jest.fn() })
+  ),
+  init: jest.fn(),
+}));
+
 // Narrow mock for motion/react: keep `motion.*` and `motion.create()` as
 // the real implementation (so class-name / style assertions still pass),
 // but flatten `AnimatePresence` to a passthrough so exit animations don't
