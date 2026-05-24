@@ -8,6 +8,7 @@
  *   session until verified; cannot re-enrol when 2FA is already on.
  * - 📋 Functional: returns a base32 secret + otpauth:// URI.
  */
+import { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/2fa/enroll/route";
 import { getTestCollections } from "../../../utils/testUtils";
 
@@ -26,23 +27,56 @@ jest.mock("@/lib/utils/auth", () => ({
   getSession: jest.fn(async () => mockSession),
 }));
 
+// Rate limiter is module-level state — share an allow-all stub across
+// the suite so unrelated tests aren't gated on the IP cap. A dedicated
+// 429 test below installs its own block-all stub.
+const mockRateLimitCheck = jest
+  .fn()
+  .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+jest.mock("@/lib/utils/rateLimit", () => ({
+  createRateLimiter: () => ({
+    check: (...args: unknown[]) => mockRateLimitCheck(...args),
+    reset: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
+function makeRequest() {
+  return new NextRequest("http://localhost:3000/api/admin/2fa/enroll", {
+    method: "POST",
+  });
+}
+
 describe("POST /api/admin/2fa/enroll", () => {
   beforeEach(() => {
     mockSession.isLoggedIn = false;
     mockSession.username = undefined;
     delete mockSession.pendingTotpSecret;
     mockSession.save.mockReset();
+    mockRateLimitCheck
+      .mockReset()
+      .mockResolvedValue({ allowed: true, remaining: 4, resetIn: 0 });
+  });
+
+  it("🔒 returns 429 when the per-IP enroll cap is hit", async () => {
+    mockRateLimitCheck.mockResolvedValueOnce({
+      allowed: false,
+      remaining: 0,
+      resetIn: 60_000,
+    });
+    const res = await POST(makeRequest());
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBeTruthy();
   });
 
   it("🔒 returns 401 when there is no session", async () => {
-    const res = await POST();
+    const res = await POST(makeRequest());
     expect(res.status).toBe(401);
   });
 
   it("returns 404 when the user is missing from the DB", async () => {
     mockSession.isLoggedIn = true;
     mockSession.username = "ghost";
-    const res = await POST();
+    const res = await POST(makeRequest());
     expect(res.status).toBe(404);
   });
 
@@ -59,7 +93,7 @@ describe("POST /api/admin/2fa/enroll", () => {
     } as never);
     await client.close();
 
-    const res = await POST();
+    const res = await POST(makeRequest());
     expect(res.status).toBe(409);
   });
 
@@ -73,7 +107,7 @@ describe("POST /api/admin/2fa/enroll", () => {
     } as never);
     await client.close();
 
-    const res = await POST();
+    const res = await POST(makeRequest());
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(json.secret).toMatch(/^[A-Z2-7]+=*$/); // base32

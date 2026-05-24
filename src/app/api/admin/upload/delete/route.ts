@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
 import { deleteS3Object } from "@/lib/utils/s3";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 
 const ALLOWED_PREFIXES = ["cars/", "parts/"];
+
+// Bound the worst case of a compromised manager session being used to
+// nuke S3 objects in a loop. 60/min is well above legitimate cleanup
+// during car / part deletions.
+const deleteLimiter = createRateLimiter("admin-upload-delete", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +26,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },
         { status: 403 }
+      );
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await deleteLimiter.check(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+        }
       );
     }
 

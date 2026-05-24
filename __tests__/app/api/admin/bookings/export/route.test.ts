@@ -43,8 +43,28 @@ jest.mock("@/lib/models", () => ({
   })),
 }));
 
+// Allow-all rate-limit stub for the suite; one test below installs a
+// block-all stub to assert 429 behaviour.
+const mockRateLimitCheck = jest
+  .fn()
+  .mockResolvedValue({ allowed: true, remaining: 9, resetIn: 0 });
+jest.mock("@/lib/utils/rateLimit", () => ({
+  createRateLimiter: () => ({
+    check: (...args: unknown[]) => mockRateLimitCheck(...args),
+    reset: jest.fn().mockResolvedValue(undefined),
+  }),
+}));
+
+import { NextRequest } from "next/server";
 import { GET } from "@/app/api/admin/bookings/export/route";
 import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
+
+function makeRequest() {
+  return new NextRequest(
+    "http://localhost:3000/api/admin/bookings/export",
+    { method: "GET" }
+  );
+}
 
 const mockIsAuthenticated = isAuthenticated as jest.MockedFunction<
   typeof isAuthenticated
@@ -62,23 +82,37 @@ beforeEach(() => {
   viewingDocs = [];
   mockIsAuthenticated.mockResolvedValue(true);
   mockHasMinimumRole.mockResolvedValue(true);
+  mockRateLimitCheck
+    .mockReset()
+    .mockResolvedValue({ allowed: true, remaining: 9, resetIn: 0 });
 });
 
 describe("GET /api/admin/bookings/export", () => {
+  it("returns 429 when the per-IP export cap is hit", async () => {
+    mockRateLimitCheck.mockResolvedValueOnce({
+      allowed: false,
+      remaining: 0,
+      resetIn: 60_000,
+    });
+    const res = await GET(makeRequest());
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBeTruthy();
+  });
+
   it("returns 401 when not authenticated", async () => {
     mockIsAuthenticated.mockResolvedValue(false);
-    const res = await GET();
+    const res = await GET(makeRequest());
     expect(res.status).toBe(401);
   });
 
   it("returns 403 when authenticated but role < manager", async () => {
     mockHasMinimumRole.mockResolvedValue(false);
-    const res = await GET();
+    const res = await GET(makeRequest());
     expect(res.status).toBe(403);
   });
 
   it("returns text/csv with attachment filename containing today's date", async () => {
-    const res = await GET();
+    const res = await GET(makeRequest());
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toMatch(/text\/csv/);
     const today = new Date().toISOString().slice(0, 10);
@@ -88,7 +122,7 @@ describe("GET /api/admin/bookings/export", () => {
   });
 
   it("emits only the header row when there are no bookings", async () => {
-    const res = await GET();
+    const res = await GET(makeRequest());
     const text = await res.text();
     const lines = text.trimEnd().split("\r\n");
     expect(lines).toHaveLength(1);
@@ -131,7 +165,7 @@ describe("GET /api/admin/bookings/export", () => {
       },
     ];
 
-    const res = await GET();
+    const res = await GET(makeRequest());
     const text = await res.text();
     const lines = text.trimEnd().split("\r\n");
 
@@ -163,7 +197,7 @@ describe("GET /api/admin/bookings/export", () => {
       },
     ];
 
-    const res = await GET();
+    const res = await GET(makeRequest());
     const text = await res.text();
     const lines = text.trimEnd().split("\r\n");
 

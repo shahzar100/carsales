@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import {
@@ -12,10 +13,17 @@ import {
   unauthorized,
   forbidden,
   notFound,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import type { PartExchange } from "@/lib/interfaces";
+
+const writeLimiter = createRateLimiter("admin-part-exchange-write", {
+  maxRequests: 60,
+  windowMs: 60 * 1000,
+});
 
 const VALID_STATUSES = ["pending", "valued", "accepted", "declined"] as const;
 
@@ -84,6 +92,14 @@ export async function PATCH(request: NextRequest) {
 
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await writeLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const body = await request.json().catch(() => null);

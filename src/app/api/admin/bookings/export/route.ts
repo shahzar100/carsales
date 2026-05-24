@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 
 import {
   getServiceAppointmentsCollection,
@@ -8,8 +9,22 @@ import {
   hasMinimumRole,
   isAuthenticated,
 } from "@/lib/utils/auth";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
-import { serverError, unauthorized, forbidden } from "@/lib/utils/apiResponse";
+import {
+  serverError,
+  unauthorized,
+  forbidden,
+  tooManyRequests,
+} from "@/lib/utils/apiResponse";
+
+// Full-collection scans are expensive — cap to 10/min/IP so a stuck
+// admin tab (or a compromised session) can't repeatedly pull the entire
+// bookings + viewings dataset and saturate Atlas IOPS.
+const exportLimiter = createRateLimiter("admin-bookings-export", {
+  maxRequests: 10,
+  windowMs: 60 * 1000,
+});
 
 /**
  * GET /api/admin/bookings/export
@@ -58,11 +73,19 @@ function toIso(value: unknown): string {
   return String(value);
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     if (!(await isAuthenticated())) return unauthorized();
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await exportLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many export requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const [serviceCol, viewingCol] = await Promise.all([

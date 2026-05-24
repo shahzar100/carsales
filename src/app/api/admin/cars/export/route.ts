@@ -1,12 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ipAddress } from "@vercel/functions";
 
 import { getCarsCollection } from "@/lib/models";
 import {
   hasMinimumRole,
   isAuthenticated,
 } from "@/lib/utils/auth";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
-import { serverError, unauthorized, forbidden } from "@/lib/utils/apiResponse";
+import {
+  serverError,
+  unauthorized,
+  forbidden,
+  tooManyRequests,
+} from "@/lib/utils/apiResponse";
+
+// Same cap shape as the bookings export — full-collection scan, capped
+// to 10/min/IP so a stuck client (or a hijacked session) can't keep
+// pulling the whole fleet on a loop.
+const exportLimiter = createRateLimiter("admin-cars-export", {
+  maxRequests: 10,
+  windowMs: 60 * 1000,
+});
 
 /**
  * GET /api/admin/cars/export
@@ -60,11 +75,19 @@ function idAsString(value: unknown): string {
   return String(value);
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     if (!(await isAuthenticated())) return unauthorized();
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
+    }
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await exportLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many export requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
     }
 
     const carsCol = await getCarsCollection();

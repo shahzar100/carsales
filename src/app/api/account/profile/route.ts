@@ -1,16 +1,27 @@
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 import { z } from "zod";
 
 import { auth } from "@/auth";
 import { getUsersCollection } from "@/lib/models";
+import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import {
   ok,
   badRequest,
   unauthorized,
   notFound,
+  tooManyRequests,
   serverError,
 } from "@/lib/utils/apiResponse";
+
+// Light cap: 20 profile edits / 15 min per IP. Real users rename
+// themselves once in a blue moon; this stops a compromised account being
+// used to churn the users collection.
+const profileLimiter = createRateLimiter("customerProfileUpdate", {
+  maxRequests: 20,
+  windowMs: 15 * 60 * 1000,
+});
 
 /**
  * GET  /api/account/profile — the signed-in customer's profile, plus the
@@ -58,6 +69,14 @@ export async function PATCH(request: NextRequest) {
     const session = await auth();
     const email = session?.user?.email;
     if (!email) return unauthorized("You must be signed in");
+
+    const ip = ipAddress(request) || "unknown";
+    const { allowed, resetIn } = await profileLimiter.check(ip);
+    if (!allowed) {
+      return tooManyRequests("Too many requests. Please try again later.", {
+        headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },
+      });
+    }
 
     let body: unknown;
     try {
