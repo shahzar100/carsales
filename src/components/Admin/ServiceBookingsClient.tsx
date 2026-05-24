@@ -153,6 +153,16 @@ export default function ServiceBookingsClient({ initialBookings }: Props) {
 
   return (
     <div>
+      <div className="mb-4 flex justify-end">
+        <a
+          href="/api/admin/bookings/export"
+          download
+          data-testid="export-bookings-csv"
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-gray-400 hover:bg-gray-50"
+        >
+          Export CSV
+        </a>
+      </div>
       {serviceBookings.length > 0 ? (
         <ServiceBookingsTab
           bookings={serviceBookings}
