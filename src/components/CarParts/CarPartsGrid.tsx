@@ -152,7 +152,10 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                   </div>
                 )}
 
-                <h3 className="heading-3 mb-2 line-clamp-2">{part.name}</h3>
+                {/* h2 (not h3) so card titles follow the page h1 (ServiceHero)
+                    without skipping a level. Visual styling unchanged via the
+                    `heading-3` utility. PR #40 axe heading-order. */}
+                <h2 className="heading-3 mb-2 line-clamp-2">{part.name}</h2>
 
                 <p className="mb-3 line-clamp-2 text-sm text-gray-600">
                   {part.description}

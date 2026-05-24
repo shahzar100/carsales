@@ -42,10 +42,17 @@ export default function MainLayout({
       <Footer />
       {/* (#36) Floating WhatsApp button — async server component that
           fetches the business phone, wrapped in Suspense so it never
-          blocks the page render if Mongo is slow. */}
-      <Suspense fallback={null}>
-        <WhatsAppButton />
-      </Suspense>
+          blocks the page render if Mongo is slow.
+
+          Wrapped in <aside> so axe's `region` rule (all content must be
+          in a landmark) doesn't flag the floating <a> as orphan content
+          on text-heavy pages (FAQ/contact/privacy/terms/login/register
+          — PR #40 axe report). */}
+      <aside aria-label="Quick contact">
+        <Suspense fallback={null}>
+          <WhatsAppButton />
+        </Suspense>
+      </aside>
       <CookieBanner />
     </SavedCarsProvider>
   );

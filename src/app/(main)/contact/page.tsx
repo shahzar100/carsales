@@ -129,7 +129,10 @@ export default async function Contact() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
                   <Phone size={28} />
                 </div>
-                <h3 className="heading-3 mb-2">Call Us</h3>
+                {/* h2 (not h3) — first heading after page h1, no h2 in
+                    between. Visual styling unchanged via `heading-3`
+                    utility. PR #40 axe heading-order. */}
+                <h2 className="heading-3 mb-2">Call Us</h2>
                 <p className="mb-4 text-sm text-gray-600">
                   Speak directly with our team
                 </p>
@@ -146,7 +149,7 @@ export default async function Contact() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
                   <Mail size={28} />
                 </div>
-                <h3 className="heading-3 mb-2">Email</h3>
+                <h2 className="heading-3 mb-2">Email</h2>
                 <p className="mb-4 text-sm text-gray-600">
                   We reply within 24 hours
                 </p>
@@ -173,7 +176,7 @@ export default async function Contact() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
                   <MapPin size={28} />
                 </div>
-                <h3 className="heading-3 mb-2">Visit</h3>
+                <h2 className="heading-3 mb-2">Visit</h2>
                 <p className="mb-4 text-sm text-gray-600">
                   Come see our showroom
                 </p>
