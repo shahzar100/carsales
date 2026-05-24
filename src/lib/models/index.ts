@@ -138,6 +138,16 @@ export async function getCarsCollection(): Promise<Collection<CarInterface>> {
       { key: { status: 1, createdAt: -1 } },
       { key: { status: 1, price: 1 } },
       { key: { make: 1, status: 1 } },
+      // Browse Fleet sort options: status pre-filter + the sort key. The
+      // `sort=mileageAsc` and `sort=yearDesc` query strings on the public
+      // listing previously fell back to an in-memory sort over every
+      // "available" car. (INDEX_AUDIT 2026-05-24.)
+      { key: { status: 1, mileage: 1 } },
+      { key: { status: 1, year: -1 } },
+      // Similar-cars lookup on the car detail page is keyed by
+      // `{ status: "available", fuel }`. Cheap to add and removes the
+      // status-only scan when the available fleet grows.
+      { key: { status: 1, fuel: 1 } },
     ]);
   }
   return carsCollection;
@@ -158,6 +168,11 @@ export async function getServiceAppointmentsCollection(): Promise<
       { key: { status: 1 } },
       { key: { appointmentDate: 1, status: 1 } },
       { key: { status: 1, createdAt: -1 } },
+      // The /account/bookings endpoint pulls every booking for a
+      // signed-in customer and presents them newest-first. Without this
+      // compound, the email match used the single-field email index but
+      // then sorted in memory. (INDEX_AUDIT 2026-05-24.)
+      { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Compound index for cron review-invite query
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
@@ -195,6 +210,10 @@ export async function getCarViewingBookingsCollection(): Promise<
       { key: { appointmentDate: 1, status: 1 } },
       { key: { status: 1, createdAt: -1 } },
       { key: { carId: 1, status: 1 } },
+      // /account/bookings sorts by createdAt after filtering by email;
+      // mirrors the same compound on serviceAppointments. (INDEX_AUDIT
+      // 2026-05-24.)
+      { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Compound index for cron review-invite query
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
@@ -286,6 +305,10 @@ export async function getAdminUsersCollection(): Promise<
 
     await adminUsersCollection.createIndexes([
       { key: { username: 1 }, unique: true },
+      // The reset-password consume route looks up rows by the hashed
+      // token. Sparse because only mid-flow rows carry a token. (INDEX_AUDIT
+      // 2026-05-24.)
+      { key: { resetToken: 1 }, sparse: true },
     ]);
   }
   return adminUsersCollection;
@@ -320,6 +343,10 @@ export async function getQuotesCollection(): Promise<Collection<Quote>> {
       { key: { quoteReference: 1 }, unique: true },
       { key: { "customerInfo.email": 1 } },
       { key: { status: 1 } },
+      // Admin Quotes table: optional status filter + sort by createdAt
+      // desc, paginated. Mirrors the same compound on reservations /
+      // partExchanges. (INDEX_AUDIT 2026-05-24.)
+      { key: { status: 1, createdAt: -1 } },
     ]);
   }
   return quotesCollection;
@@ -338,6 +365,10 @@ export async function getCarPartsCollection(): Promise<
       { key: { brand: 1 } },
       { key: { condition: 1 } },
       { key: { price: 1 } },
+      // Admin car-parts page renders newest-first with no other filter;
+      // without this index every render does a full collection scan +
+      // in-memory sort. (INDEX_AUDIT 2026-05-24.)
+      { key: { createdAt: -1 } },
     ]);
   }
   return carPartsCollection;
@@ -357,6 +388,9 @@ export async function getReservationsCollection(): Promise<
       { key: { status: 1 } },
       { key: { "customerInfo.email": 1 } },
       { key: { status: 1, createdAt: -1 } },
+      // /account/bookings sorts customer reservations newest-first.
+      // (INDEX_AUDIT 2026-05-24.)
+      { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Auto-expire pending reservations via TTL on expiresAt.
       { key: { expiresAt: 1 }, expireAfterSeconds: 0 },
       // Only one active (pending/confirmed) reservation per car at a time.
@@ -430,6 +464,11 @@ export async function getUsersCollection(): Promise<
 
     await usersCollection.createIndexes([
       { key: { email: 1 }, unique: true },
+      // Password-reset (forgot-password) and email-verification consume
+      // routes both look up the user by the hashed token in the URL.
+      // Sparse — only mid-flow rows carry a token. (INDEX_AUDIT 2026-05-24.)
+      { key: { resetToken: 1 }, sparse: true },
+      { key: { verifyToken: 1 }, sparse: true },
     ]);
   }
   return usersCollection;
