@@ -61,7 +61,12 @@ export default function Footer() {
         >
           {/* Company Info */}
           <motion.div variants={columnVariants}>
-            <h3 className="heading-3 mb-4">{name}</h3>
+            {/* h2 (not h3) so the footer block opens at the same
+                section level as page sections (h2 → h3 columns below).
+                Login/register only have a page h1, so a footer h3
+                without a preceding h2 tripped axe heading-order on
+                PR #40. Visual styling preserved via `heading-3`. */}
+            <h2 className="heading-3 mb-4">{name}</h2>
             <p className="mb-4 text-sm text-gray-700">{description}</p>
             <div className="space-y-2 text-sm text-gray-700">
               <p className="flex items-center gap-1.5">
@@ -109,7 +114,7 @@ export default function Footer() {
 
           {/* Browse & Services */}
           <motion.div variants={columnVariants}>
-            <h4 className="heading-4 mb-4">Browse & Services</h4>
+            <h3 className="heading-4 mb-4">Browse & Services</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -156,7 +161,7 @@ export default function Footer() {
 
           {/* Support & Info */}
           <motion.div variants={columnVariants}>
-            <h4 className="heading-4 mb-4">Support & Info</h4>
+            <h3 className="heading-4 mb-4">Support & Info</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -187,7 +192,7 @@ export default function Footer() {
 
           {/* Legal */}
           <motion.div variants={columnVariants}>
-            <h4 className="heading-4 mb-4">Legal</h4>
+            <h3 className="heading-4 mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link

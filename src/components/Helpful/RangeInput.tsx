@@ -34,17 +34,24 @@ const RangeInput: React.FC<RangeInputProps> = ({
     <div>
       <label className="label-sm">{label}</label>
       <div className="flex items-center gap-2">
+        {/* The wrapping <label> sits above both inputs (a range pair),
+            so neither input is programmatically labelled by it.
+            Provide explicit aria-labels so screen readers announce e.g.
+            "Price (£) minimum" / "Price (£) maximum" rather than just
+            the placeholder. PR #40 a11y long-tail. */}
         <motion.input
           type="number"
           placeholder={minPlaceholder}
           value={minValue ?? ""}
           onChange={(e) => handleChange(e.target.value, onMinChange)}
+          aria-label={label ? `${label} minimum` : "Minimum"}
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 460, damping: 28 }}
           className="input"
         />
         <motion.span
           className="range-separator"
+          aria-hidden="true"
           animate={{ color: hasValue ? "#dc2626" : "#9ca3af" }}
           transition={{ duration: 0.2 }}
         >
@@ -55,6 +62,7 @@ const RangeInput: React.FC<RangeInputProps> = ({
           placeholder={maxPlaceholder}
           value={maxValue ?? ""}
           onChange={(e) => handleChange(e.target.value, onMaxChange)}
+          aria-label={label ? `${label} maximum` : "Maximum"}
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 460, damping: 28 }}
           className="input"

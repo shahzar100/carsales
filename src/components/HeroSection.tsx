@@ -118,11 +118,14 @@ const HeroSection = async () => {
                 {/* Car Details */}
                 <div className="space-y-4 p-5 sm:p-6">
                   <div>
-                    <h3 className="text-lg font-bold text-white sm:text-xl">
+                    {/* h2 (not h3) so the page's heading order is
+                        h1 (hero) → h2 (featured car) → h2 (Latest Arrivals)
+                        → h3 (each listing). Axe heading-order, PR #40. */}
+                    <h2 className="text-lg font-bold text-white sm:text-xl">
                       {featuredCar
                         ? `${featuredCar.year} ${featuredCar.make} ${featuredCar.model}`
                         : "2023 BMW X5"}
-                    </h3>
+                    </h2>
                     <p className="mt-1 text-sm text-gray-500">
                       {featuredCar &&
                         `${featuredCar.doors} Door  •  ${featuredCar.fuel}  •  ${featuredCar.colour}`}
