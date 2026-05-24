@@ -151,14 +151,6 @@ export default function Footer() {
                   Car Parts
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/AccidentClaims"
-                  className="text-gray-700 transition-colors hover:text-red-600"
-                >
-                  Accident Claims
-                </Link>
-              </li>
             </ul>
           </motion.div>
 

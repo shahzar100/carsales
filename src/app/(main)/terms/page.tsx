@@ -73,7 +73,7 @@ export default async function TermsOfService() {
       title: "1. Introduction",
       content: [
         {
-          text: `These Terms of Service ("Terms") govern your use of the ${name} website and the services we provide, including vehicle sales, car servicing, detailing, window tinting, repairs, breakdown recovery, and accident claims management.`,
+          text: `These Terms of Service ("Terms") govern your use of the ${name} website and the services we provide, including vehicle sales, car servicing, detailing, window tinting, repairs, and breakdown recovery.`,
         },
         {
           text: `By accessing our website or using our services, you agree to be bound by these Terms. If you do not agree with any part of these Terms, please do not use our website or services.`,
@@ -145,27 +145,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "5. Accident Claims",
-      content: [
-        {
-          text: "Our accident claims management service helps you navigate the insurance claims process. We act on your behalf to arrange vehicle recovery, repairs, and courtesy vehicles where applicable.",
-        },
-        {
-          subtitle: "Non-Fault Claims",
-          text: "For non-fault accidents, our service is provided at no cost to you. All costs are recovered from the at-fault party's insurer. We will require your co-operation in providing accurate information about the incident.",
-        },
-        {
-          subtitle: "Limitations",
-          text: "While we make every effort to achieve the best outcome, we cannot guarantee the outcome of any insurance claim. Claim success depends on the circumstances of each case and the decisions of the insurance companies involved.",
-        },
-        {
-          subtitle: "Accuracy of Information",
-          text: "You agree to provide accurate and truthful information regarding any accident claim. Providing false or misleading information may result in your claim being rejected and could constitute fraud.",
-        },
-      ],
-    },
-    {
-      title: "6. Website Usage",
+      title: "5. Website Usage",
       content: [
         {
           subtitle: "Acceptable Use",
@@ -182,7 +162,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "7. Payments",
+      title: "6. Payments",
       content: [
         {
           text: "We accept the payment methods specified on our website and at our premises. All payments for vehicle purchases should ideally be made via bank transfer for security purposes. Payment terms for services may vary and will be confirmed at the time of booking.",
@@ -193,7 +173,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "8. Limitation of Liability",
+      title: "7. Limitation of Liability",
       content: [
         {
           text: `To the fullest extent permitted by law, ${name} shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from or in connection with your use of our website or services.`,
@@ -204,7 +184,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "9. Privacy",
+      title: "8. Privacy",
       content: [
         {
           text: "Your privacy is important to us. Our collection and use of personal data is governed by our Privacy Policy, which forms part of these Terms. By using our services, you consent to the data practices described in our Privacy Policy.",
@@ -212,7 +192,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "10. Dispute Resolution",
+      title: "9. Dispute Resolution",
       content: [
         {
           text: "If you have a complaint or dispute regarding our services, we encourage you to contact us first so we can attempt to resolve the matter informally. You can reach us at the contact details provided below.",
@@ -223,7 +203,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "11. Changes to These Terms",
+      title: "10. Changes to These Terms",
       content: [
         {
           text: "We reserve the right to update or modify these Terms at any time. Changes will be posted on this page with an updated effective date. Continued use of our website or services after changes are posted constitutes acceptance of the revised Terms.",
@@ -231,7 +211,7 @@ export default async function TermsOfService() {
       ],
     },
     {
-      title: "12. Contact Information",
+      title: "11. Contact Information",
       content: [
         {
           text: `If you have any questions about these Terms of Service, please contact us:`,

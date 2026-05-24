@@ -61,7 +61,6 @@ async function getTransporter(): Promise<nodemailer.Transporter> {
         pass: testAccount.pass,
       },
     });
-    console.log("Using Ethereal test account:", testAccount.user);
   }
 
   return transporter;
@@ -76,8 +75,6 @@ export async function sendEmail({
   try {
     const fromEmail = process.env.EMAIL_FROM || "noreply@yourdomain.com";
     const fromName = process.env.EMAIL_FROM_NAME || "MMC Leeds";
-
-    console.log(`Sending email — subject: ${subject}`);
 
     // Render React component to HTML
     const html = await render(react);
@@ -98,13 +95,14 @@ export async function sendEmail({
       text,
     });
 
-    // Log Ethereal preview URL in development
-    const previewUrl = nodemailer.getTestMessageUrl(result);
-    if (previewUrl) {
-      console.log("Preview URL:", previewUrl);
+    // Log Ethereal preview URL in development only
+    if (process.env.NODE_ENV !== "production") {
+      const previewUrl = nodemailer.getTestMessageUrl(result);
+      if (previewUrl) {
+        console.log("Preview URL:", previewUrl);
+      }
     }
 
-    console.log("Email sent successfully:", result.messageId);
     return { success: true, data: result };
   } catch (error) {
     console.error("Email sending failed:", error);

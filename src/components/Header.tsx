@@ -35,7 +35,6 @@ import {
   Settings as SettingsIcon,
   LogOut,
   ArrowRight,
-  Shield,
   Truck,
   Package,
   Info,
@@ -83,12 +82,6 @@ const MORE: LinkItem[] = [
     href: "/Recoveries",
     icon: Truck,
     desc: "Round-the-clock recovery",
-  },
-  {
-    label: "Accident Claims",
-    href: "/AccidentClaims",
-    icon: Shield,
-    desc: "We handle the paperwork",
   },
   {
     label: "Track Booking",
