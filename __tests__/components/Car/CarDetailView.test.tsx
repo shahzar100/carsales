@@ -1,8 +1,8 @@
 /**
  * Tests for src/components/Car/CarDetailView.tsx
  *
- * The big public car-detail page. Heavy child forms (FinanceCalculator,
- * ReserveCarForm, PartExchangeForm, BookingAuthGate, CarShareModal) are
+ * The big public car-detail page. Heavy child forms (ReserveCarForm,
+ * PartExchangeForm, BookingAuthGate, CarShareModal) are
  * stubbed so we can focus on what this component itself owns: gallery
  * navigation, save/share wiring, breadcrumb, status badge, dealer card,
  * conditional 'similar cars' rail, and the available-only reserve/PX
@@ -61,10 +61,6 @@ jest.mock("@/components/SEO/CarShareCard", () => ({
   CarShareModal: ({ trigger }: { trigger: React.ReactNode }) => (
     <div data-testid="share-modal">{trigger}</div>
   ),
-}));
-jest.mock("@/components/Car/FinanceCalculator", () => ({
-  __esModule: true,
-  default: () => <div data-testid="finance-calc" />,
 }));
 jest.mock("@/components/Car/ReserveCarForm", () => ({
   __esModule: true,

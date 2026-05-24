@@ -123,9 +123,9 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
         Reserve this car
       </h2>
       <p className="mb-5 text-sm text-gray-500">
-        Take this <strong>{carLabel}</strong> off the market while you arrange
-        finance or organise a visit. We&apos;ll call you to confirm — deposits
-        are taken in person at the showroom.
+        Take this <strong>{carLabel}</strong> off the market while you organise
+        a visit. We&apos;ll call you to confirm — deposits are taken in person
+        at the showroom.
       </p>
 
       <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>

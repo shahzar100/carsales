@@ -9,7 +9,6 @@ import {
   MessageSquare,
   Car,
   Wrench,
-  Shield,
   Truck,
   ArrowRight,
 } from "lucide-react";
@@ -26,7 +25,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Contact — ${businessName}`,
   description:
-    "Contact us for vehicle enquiries, service bookings, accident claims support, and more. Phone, email, or visit our showroom.",
+    "Contact us for vehicle enquiries, service bookings, breakdown recovery, and more. Phone, email, or visit our showroom.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: `Contact — ${businessName}`,
@@ -97,7 +96,7 @@ export default async function Contact() {
 
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl">
               Have a question about a vehicle, need a service quote, or want to
-              discuss an accident claim? Reach out — we&apos;re here to help.
+              book a viewing? Reach out — we&apos;re here to help.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -259,12 +258,6 @@ export default async function Contact() {
                   title: "Our Services",
                   description: "Detailing, tinting & repairs",
                   href: "/Services",
-                },
-                {
-                  icon: Shield,
-                  title: "Accident Claims",
-                  description: "Claim management support",
-                  href: "/AccidentClaims",
                 },
                 {
                   icon: Truck,

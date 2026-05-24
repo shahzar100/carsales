@@ -25,18 +25,28 @@ const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
 
   if (!ref) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-md text-center">
           <h1 className="page-title mb-2">Invalid Confirmation Link</h1>
           <p className="mb-6 text-gray-600">
-            This confirmation link is invalid or has expired.
+            This confirmation link is missing a reference. If you have a
+            booking reference, look it up below — otherwise browse our fleet
+            to start a new booking.
           </p>
-          <Link
-            href="/BrowseFleet"
-            className="inline-block rounded-lg bg-red-600 px-6 py-3 text-white transition-colors hover:bg-red-700"
-          >
-            Browse Our Fleet
-          </Link>
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/Booking/lookup"
+              className="inline-flex items-center justify-center rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-700"
+            >
+              Look up a booking
+            </Link>
+            <Link
+              href="/BrowseFleet"
+              className="inline-flex items-center justify-center rounded-lg bg-gray-200 px-6 py-3 font-semibold text-gray-800 transition-colors hover:bg-gray-300"
+            >
+              Browse our fleet
+            </Link>
+          </div>
         </div>
       </div>
     );

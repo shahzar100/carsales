@@ -7,7 +7,6 @@ import {
   Mail,
   Car,
   Wrench,
-  Shield,
   CreditCard,
   Clock,
   Truck,
@@ -25,7 +24,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `FAQ — ${businessName}`,
   description:
-    "Frequently asked questions about buying cars, car services, accident claims, breakdown recovery, and more.",
+    "Frequently asked questions about buying cars, car services, breakdown recovery, and more.",
   alternates: { canonical: "/FAQ" },
   openGraph: {
     title: `FAQ — ${businessName}`,
@@ -65,11 +64,6 @@ export default async function FAQ() {
           question: "Can I test drive before buying?",
           answer:
             "Absolutely! We encourage test drives on all our vehicles. Simply book a viewing and let us know you'd like a test drive when you arrive. You'll need a valid driving licence and insurance.",
-        },
-        {
-          question: "Do you offer finance?",
-          answer:
-            "We can discuss finance options and point you in the right direction for car finance providers. Contact us for more details about the options available for your chosen vehicle.",
         },
         {
           question: "Can I part-exchange my current vehicle?",
@@ -142,31 +136,6 @@ export default async function FAQ() {
           question: "What types of breakdown do you assist with?",
           answer:
             "We handle emergency towing, jump starts, flat tyre repair, lockouts, fuel delivery, and on-the-spot diagnostics. If we can fix it roadside, we will.",
-        },
-      ],
-    },
-    {
-      icon: Shield,
-      title: "Accident Claims",
-      items: [
-        {
-          question: "What should I do after an accident?",
-          answer: `First, ensure everyone is safe. Then document the scene with photos, exchange details with the other driver, and call us on ${phone}. We'll take care of the rest — from vehicle recovery to the entire claims process.`,
-        },
-        {
-          question: "Will it cost me anything?",
-          answer:
-            "For non-fault claims, our service is completely free. We recover all costs from the at-fault party's insurer. For at-fault claims, we work to minimise your costs wherever possible.",
-        },
-        {
-          question: "Will my no-claims bonus be affected?",
-          answer:
-            "For non-fault claims that we manage, your no-claims bonus should be protected as we pursue the at-fault party directly. We'll advise you on your specific situation.",
-        },
-        {
-          question: "Can you provide a courtesy car?",
-          answer:
-            "Yes — for non-fault claims, we can typically arrange a like-for-like courtesy vehicle at no cost to you while your car is being repaired.",
         },
       ],
     },

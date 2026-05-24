@@ -76,7 +76,7 @@ export default async function PrivacyPolicy() {
         },
         {
           subtitle: "Vehicle Information",
-          text: "If you request a service, repair, or accident claim, we may collect details about your vehicle such as make, model, registration number, and relevant photographs.",
+          text: "If you request a service or repair, we may collect details about your vehicle such as make, model, registration number, and relevant photographs.",
         },
         {
           subtitle: "Automatically Collected Information",
@@ -95,7 +95,7 @@ export default async function PrivacyPolicy() {
           text: "We use the personal information we collect for the following purposes:",
         },
         {
-          text: "• To process and manage vehicle viewing bookings and service appointments\n• To communicate with you about your bookings, services, and enquiries\n• To process accident claims and liaise with insurance companies on your behalf\n• To send booking confirmations and service updates via email\n• To improve our website, services, and customer experience\n• To comply with legal obligations and protect our legitimate business interests\n• To respond to your enquiries and provide customer support",
+          text: "• To process and manage vehicle viewing bookings and service appointments\n• To communicate with you about your bookings, services, and enquiries\n• To send booking confirmations and service updates via email\n• To improve our website, services, and customer experience\n• To comply with legal obligations and protect our legitimate business interests\n• To respond to your enquiries and provide customer support",
         },
       ],
     },
@@ -117,7 +117,7 @@ export default async function PrivacyPolicy() {
           text: "We do not sell, trade, or rent your personal information to third parties. We may share your data in the following circumstances:",
         },
         {
-          text: "• Service Providers: With trusted third-party service providers who assist us in operating our website and delivering services (e.g. email delivery services), under strict data processing agreements\n• Insurance Companies: When managing an accident claim on your behalf, we share relevant details with the insurers involved\n• Legal Requirements: Where required by law, regulation, legal process, or governmental request\n• Business Transfers: In connection with a merger, acquisition, or sale of business assets",
+          text: "• Service Providers: With trusted third-party service providers who assist us in operating our website and delivering services (e.g. email delivery services), under strict data processing agreements\n• Legal Requirements: Where required by law, regulation, legal process, or governmental request\n• Business Transfers: In connection with a merger, acquisition, or sale of business assets",
         },
       ],
     },
