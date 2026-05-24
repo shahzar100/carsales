@@ -9,7 +9,7 @@
  *
  * Standards coverage:
  * - 📋 Functional: empty initialBookings → "No service bookings" copy;
- *   cancel rejects reasons <10 chars; cancel POSTs `/api/bookings/cancel`
+ *   cancel rejects reasons <10 chars; cancel POSTs `/api/admin/bookings/cancel`
  *   then refetches `/api/admin/bookings`; confirm PUTs `/api/admin/bookings`
  *   with `type: "service"` + status "confirmed" then refetches; details
  *   modal opens with the selected booking
@@ -17,6 +17,16 @@
  */
 import React from "react";
 import { render, screen, act, waitFor } from "@testing-library/react";
+
+// `@sentry/nextjs` does not load cleanly under jsdom — its
+// pagesRouterRoutingInstrumentation reads from a Next.js internal that is
+// undefined in the test environment. The observability shim is the only
+// path that imports it, so a flat module mock is enough.
+jest.mock("@sentry/nextjs", () => ({
+  captureException: jest.fn(),
+  addBreadcrumb: jest.fn(),
+  init: jest.fn(),
+}));
 
 const mockToastSuccess = jest.fn();
 const mockToastError = jest.fn();
@@ -137,7 +147,7 @@ describe("ServiceBookingsClient", () => {
 
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
-      "/api/bookings/cancel",
+      "/api/admin/bookings/cancel",
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({

@@ -2,11 +2,10 @@
  * Tests for src/components/Car/CarDetailView.tsx
  *
  * The big public car-detail page. Heavy child forms (ReserveCarForm,
- * PartExchangeForm, BookingAuthGate, CarShareModal) are
- * stubbed so we can focus on what this component itself owns: gallery
- * navigation, save/share wiring, breadcrumb, status badge, dealer card,
- * conditional 'similar cars' rail, and the available-only reserve/PX
- * section.
+ * PartExchangeForm, BookingAuthGate, CarShareModal) are stubbed so we
+ * can focus on what this component itself owns: gallery navigation,
+ * save/share wiring, breadcrumb, status badge, dealer card, conditional
+ * 'similar cars' rail, and the available-only reserve/PX section.
  *
  * Standards coverage:
  * - 📋 Functional: gallery image cycling via Prev/Next and ArrowLeft/Right
@@ -127,13 +126,14 @@ describe("CarDetailView", () => {
   it("📋 status badge: 'Sold' when status === sold; reserve section hidden", () => {
     render(<CarDetailView car={{ ...baseCar, status: "sold" }} />);
     expect(screen.getByText(/^sold$/i)).toBeInTheDocument();
-    expect(screen.queryByTestId("finance-calc")).not.toBeInTheDocument();
     expect(screen.queryByTestId("reserve-form")).not.toBeInTheDocument();
   });
 
-  it("📋 reserve / finance / PX section renders only when status === available", () => {
+  // The finance calculator was removed in the "remove finance + accident
+  // claims" cleanup — only the auth gate, reserve form, and PX form
+  // gate on `status === available` now.
+  it("📋 reserve / PX section renders only when status === available", () => {
     render(<CarDetailView car={baseCar} />);
-    expect(screen.getByTestId("finance-calc")).toBeInTheDocument();
     expect(screen.getByTestId("auth-gate")).toBeInTheDocument();
     expect(screen.getByTestId("reserve-form")).toBeInTheDocument();
     expect(screen.getByTestId("px-form")).toBeInTheDocument();

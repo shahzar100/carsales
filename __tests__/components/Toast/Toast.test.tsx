@@ -3,7 +3,7 @@
  * Tests rendering, progress bar, auto-dismiss, manual close, action buttons
  */
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Toast from "@/components/Toast/Toast";
 import { Toast as ToastType } from "@/contexts/types";
 
@@ -127,17 +127,14 @@ describe("Toast", () => {
   });
 
   describe("Close behavior", () => {
-    it("should call onRemove after clicking close and waiting for exit animation", () => {
+    it("should call onRemove after clicking close (AnimatePresence onExitComplete fires synchronously in tests)", () => {
       render(<Toast toast={createToast()} onRemove={onRemove} />);
 
       fireEvent.click(screen.getByLabelText("Close notification"));
-      // Should not be called immediately (300ms exit animation)
-      expect(onRemove).not.toHaveBeenCalled();
 
-      act(() => {
-        jest.advanceTimersByTime(300);
-      });
-
+      // The AnimatePresence mock in jest.setup.component.js fires
+      // `onExitComplete` synchronously once `present` flips to false, which
+      // is how the Toast forwards the close back to its parent.
       expect(onRemove).toHaveBeenCalledWith("test-toast-1");
     });
 
@@ -145,11 +142,7 @@ describe("Toast", () => {
       render(<Toast toast={createToast()} onRemove={onRemove} />);
       const closeButton = screen.getByLabelText("Close notification");
       fireEvent.click(closeButton);
-      fireEvent.click(closeButton); // guarded by isRemoving
-
-      act(() => {
-        jest.advanceTimersByTime(300);
-      });
+      fireEvent.click(closeButton); // second click is a no-op — the button has unmounted
 
       expect(onRemove).toHaveBeenCalledTimes(1);
     });
@@ -222,18 +215,16 @@ describe("Toast", () => {
   });
 
   describe("Visibility animation", () => {
-    it("should animate in after 50ms delay", () => {
+    it("renders the motion container with role='alert' and the type-specific container classes", () => {
+      // The component switched from class-based `translate-x-*` transitions
+      // to a `motion.div` driven by the `motion/react` runtime — there is
+      // no longer a discrete "hidden then visible" toggle we can observe
+      // via className. Assert instead on the stable, semantic attributes.
       render(<Toast toast={createToast()} onRemove={onRemove} />);
       const alertEl = screen.getByRole("alert");
-      // Initially has translate-x-full (not visible)
-      expect(alertEl.className).toContain("translate-x-full");
-
-      act(() => {
-        jest.advanceTimersByTime(50);
-      });
-
-      // After 50ms, has translate-x-0 (visible)
-      expect(alertEl.className).toContain("translate-x-0");
+      // Success-variant container classes from the styles map.
+      expect(alertEl.className).toContain("border-green-500");
+      expect(alertEl.className).toContain("rounded-lg");
     });
   });
 });

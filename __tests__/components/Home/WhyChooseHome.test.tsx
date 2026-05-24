@@ -8,6 +8,16 @@
  */
 import React from "react";
 import { render, screen } from "@testing-library/react";
+
+// CountUp animates the numeric portion of each stat from 0 upward when it
+// scrolls into view. Under jsdom + the IntersectionObserver shim, the
+// `useInView` spring never fires its `change` listener — so the display
+// state stays at the initial "0". Stub it to render the raw value.
+jest.mock("@/components/Home/CountUp", () => ({
+  __esModule: true,
+  default: ({ value }: { value: string }) => <span>{value}</span>,
+}));
+
 import WhyChooseHome from "@/components/Home/WhyChooseHome";
 
 describe("WhyChooseHome", () => {
