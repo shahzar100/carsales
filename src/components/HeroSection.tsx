@@ -21,6 +21,14 @@ const HeroSection = async () => {
     getBusinessInfo(),
   ]);
   const stats = businessInfo.heroStats;
+  // Some legacy seed data still points at /images/cars/*.jpg paths that
+  // were never copied into /public, which produces 404 spam in the server
+  // log and a broken hero image. Treat those as missing and fall back to
+  // the bundled placeholder.
+  const heroImageSrc =
+    featuredCar?.image && !featuredCar.image.startsWith("/images/cars/")
+      ? featuredCar.image
+      : "/tesla.webp";
   return (
     <section className="relative z-50 overflow-hidden bg-black text-white">
       {/* Ambient red glow — top-right */}
@@ -89,9 +97,10 @@ const HeroSection = async () => {
                 <div className="group relative">
                   <div className="relative aspect-16/10 w-full">
                     <Image
-                      src={featuredCar.image || "/tesla.webp"}
+                      src={heroImageSrc}
                       alt={`${featuredCar.make} ${featuredCar.model}`}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       priority
                     />
