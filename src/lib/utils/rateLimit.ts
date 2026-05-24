@@ -10,7 +10,34 @@
  * to prevent unbounded memory growth.
  */
 
+import { createHash } from "node:crypto";
 import { logError } from "@/lib/utils/observability";
+
+/**
+ * Max raw length of a user-supplied limiter identifier before we collapse
+ * it to a deterministic hash. Stops pathological inputs (long emails,
+ * crafted Booking refs) from inflating KV memory or busting any URL
+ * length limit on the Upstash REST request.
+ */
+const MAX_ID_LEN = 200;
+
+/**
+ * Make a string safe to embed in the Upstash REST path.
+ *
+ *  1. Bound length — strings over MAX_ID_LEN collapse to a fixed-size
+ *     SHA-256 prefix so attackers can't blow up KV storage or the URL.
+ *  2. Percent-encode — every byte that could break out of the path
+ *     segment (`/`, `?`, `#`, etc.) is escaped. Without this, RFC-5321
+ *     emails containing `/` in their local-part would split the REST
+ *     path and silently bypass the per-recipient cap (PR #77 finding).
+ */
+function safeKeyPart(value: string): string {
+  const bounded =
+    value.length > MAX_ID_LEN
+      ? `sha256:${createHash("sha256").update(value).digest("hex").slice(0, 32)}`
+      : value;
+  return encodeURIComponent(bounded);
+}
 
 interface RateLimitEntry {
   count: number;
@@ -132,7 +159,12 @@ async function kvRequest(
 
 function kvLimiter(name: string, opts: RateLimiterOptions): RateLimiter {
   const config = kvConfigured()!;
-  const keyFor = (id: string) => `rl:${name}:${id}`;
+  // Encode both the developer-supplied `name` and the user-supplied `id`
+  // for the same reason — defence in depth. The literal `:` separators
+  // in the template stay unencoded so the key remains human-readable in
+  // KV inspection.
+  const encodedName = safeKeyPart(name);
+  const keyFor = (id: string) => `rl:${encodedName}:${safeKeyPart(id)}`;
 
   return {
     async check(identifier: string): Promise<RateLimitResult> {
