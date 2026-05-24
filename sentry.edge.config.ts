@@ -6,6 +6,7 @@
  * SDK never initialises and the call is effectively a no-op.
  */
 import * as Sentry from "@sentry/nextjs";
+import { beforeSendRedact } from "@/lib/utils/sentryRedact";
 
 const dsn = process.env.SENTRY_DSN || "";
 
@@ -15,5 +16,6 @@ if (dsn) {
     tracesSampleRate: 0.1,
     environment: process.env.NODE_ENV,
     debug: false,
+    beforeSend: beforeSendRedact,
   });
 }
