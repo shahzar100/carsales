@@ -1,0 +1,18 @@
+MongoParseError: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"
+
+   at fixtures/db.ts:27
+
+  25 | async function getDb(): Promise<Db> {
+  26 |   if (!client) {
+> 27 |     client = new MongoClient(uri!);
+     |              ^
+  28 |     await client.connect();
+  29 |   }
+  30 |   // Pin to MMC so the fixtures write where the app reads.
+    at ConnectionString (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/node_modules/mongodb-connection-string-url/src/index.ts:133:13)
+    at parseOptions (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/node_modules/mongodb/src/connection_string.ts:255:15)
+    at MongoClient (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/node_modules/mongodb/src/mongo_client.ts:443:32)
+    at getDb (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/fixtures/db.ts:27:14)
+    at seedAdminUser (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/fixtures/db.ts:54:20)
+    at globalSetup (/Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/e2e/global-setup.ts:19:22)
+

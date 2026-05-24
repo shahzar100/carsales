@@ -1,0 +1,120 @@
+
+> carsales@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/shahzarali/Documents/ProgrammingLife/carsales/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/shahzarali/Documents/ProgrammingLife/carsales/.claude/worktrees/agent-ac965343956715b12/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 6.8s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/46) ...
+  Generating static pages using 7 workers (11/46) 
+  Generating static pages using 7 workers (22/46) 
+  Generating static pages using 7 workers (34/46) 
+✓ Generating static pages using 7 workers (46/46) in 200.2ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /AboutUs
+├ ƒ /AccidentClaims
+├ ƒ /account
+├ ƒ /admin/dashboard
+├ ƒ /admin/dashboard/account
+├ ƒ /admin/dashboard/add
+├ ƒ /admin/dashboard/audit
+├ ƒ /admin/dashboard/carparts
+├ ƒ /admin/dashboard/cars
+├ ƒ /admin/dashboard/cars/edit/[_id]
+├ ƒ /admin/dashboard/part-exchange
+├ ƒ /admin/dashboard/quotes
+├ ƒ /admin/dashboard/reservations
+├ ƒ /admin/dashboard/service
+├ ƒ /admin/dashboard/shop
+├ ƒ /admin/dashboard/status
+├ ƒ /admin/dashboard/viewing
+├ ƒ /admin/login
+├ ƒ /admin/reset-password
+├ ƒ /api/about
+├ ƒ /api/account
+├ ƒ /api/account/bookings
+├ ƒ /api/account/password
+├ ƒ /api/account/profile
+├ ƒ /api/account/saved
+├ ƒ /api/admin/2fa/disable
+├ ƒ /api/admin/2fa/enroll
+├ ƒ /api/admin/2fa/verify
+├ ƒ /api/admin/bookings
+├ ƒ /api/admin/bookings/cancel
+├ ƒ /api/admin/carparts
+├ ƒ /api/admin/cars
+├ ƒ /api/admin/health
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/part-exchange
+├ ƒ /api/admin/quotes
+├ ƒ /api/admin/reservations
+├ ƒ /api/admin/session
+├ ƒ /api/admin/shop
+├ ƒ /api/admin/upload
+├ ƒ /api/admin/upload/delete
+├ ƒ /api/admin/users
+├ ƒ /api/admin/users/lookup
+├ ƒ /api/admin/users/password
+├ ƒ /api/admin/users/reset-password
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/forgot-password
+├ ƒ /api/auth/register
+├ ƒ /api/auth/reset-password
+├ ƒ /api/auth/verify-email
+├ ƒ /api/bookings/cancel
+├ ƒ /api/bookings/lookup
+├ ƒ /api/bookings/part-exchange
+├ ƒ /api/bookings/quote
+├ ƒ /api/bookings/reservation
+├ ƒ /api/bookings/service
+├ ƒ /api/bookings/viewing
+├ ƒ /api/businessinfo
+├ ƒ /api/carparts
+├ ƒ /api/cron/review-invites
+├ ƒ /Book
+├ ƒ /Booking/[_id]
+├ ƒ /Booking/confirmation
+├ ƒ /Booking/lookup
+├ ƒ /BrowseFleet
+├ ƒ /BrowseFleet/[_id]
+├ ƒ /CarParts
+├ ƒ /contact
+├ ƒ /FAQ
+├ ƒ /forgot-password
+├ ƒ /login
+├ ƒ /privacy
+├ ƒ /Recoveries
+├ ƒ /register
+├ ƒ /reset-password
+├ ƒ /review
+├ ○ /robots.txt
+├ ƒ /saved
+├ ƒ /Services
+├ ƒ /Services/Detailing
+├ ƒ /Services/Repairs
+├ ƒ /Services/Tints
+├ ○ /sitemap.xml
+└ ƒ /terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
