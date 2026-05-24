@@ -4,7 +4,7 @@ Cycle close date: 2026-05-24.
 
 ## 1. Overview
 
-This cycle (PRs #58–#87) is the handover-prep pass for the MMC Leeds car-sales site. The cycle ran 2026-05-24 and covers thirty pull requests against `main`. The headline outcomes:
+This cycle (PRs #58–#89) is the handover-prep pass for the MMC Leeds car-sales site. The cycle ran 2026-05-24 and covers thirty-two pull requests against `main`. The headline outcomes:
 
 - Removed two features that were out of scope for the live site (Finance calculator, Accident Claims).
 - Fixed the one real keyboard-handler bug in the site and corrected the inflated "170 sites" audit figure in the handover notes.
@@ -52,6 +52,8 @@ Every PR listed below has been merged into `main` as of the cycle close date.
 | #85 | Admin shop save → `revalidatePath`                             | feature       | `PUT /api/admin/shop` now revalidates all 14 public marketing pages that consume `getBusinessInfo()`. |
 | #86 | CSP / security headers tightened                               | security      | `frame-ancestors: 'none'`, `object-src 'none'`, `upgrade-insecure-requests`, `X-Frame-Options: DENY`, stricter Referrer-Policy, 18-feature Permissions-Policy. |
 | #87 | MongoDB index audit + 10 indexes added                         | perf / db     | `INDEX_AUDIT.md` + sparse indexes on `resetToken`/`verifyToken` (were full-scan), compound indexes on `cars`/`bookings` sort paths. |
+| #88 | HANDOVER_SUMMARY refresh for PRs #72-#87                       | docs          | This file's first refresh — caught the summary up after sixteen more PRs landed.                   |
+| #89 | API rate-limit audit + 18 limiters added                       | security      | `RATE_LIMIT_AUDIT.md` covering 46 routes; added limiters incl. `admin-upload` 60/min, CSV exports, cancel route, and previously uncapped public scrape paths. |
 
 ## 3. What's new for you (the client)
 
@@ -101,6 +103,7 @@ Every PR listed below has been merged into `main` as of the cycle close date.
 - **Security headers tightened**: `frame-ancestors: 'none'` (site is never iframed), `object-src 'none'`, `upgrade-insecure-requests`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, 18-feature `Permissions-Policy` block (camera/mic/geolocation/payment/usb/interest-cohort/browsing-topics/etc.). `style-src 'unsafe-inline'` deferred because Motion and `next/font` still rely on it — the report-only CSP mirror continues to collect telemetry (#86).
 - **CSP / security review document** at `CSP_REVIEW.md` records what flipped, what stayed in report-only, and why. Anything irreversible (HSTS preload — already applied earlier) flagged in caps (#86).
 - **MongoDB index audit document** at `INDEX_AUDIT.md` lists every query in the codebase, which fields it filters/sorts on, the required index, and current status (exists / added in #87 / not needed and why) (#87).
+- **API rate-limit audit document** at `RATE_LIMIT_AUDIT.md` covers all 46 routes under `src/app/api/`. Eighteen new limiters were added — most importantly `admin-upload` (60/min/IP) which was previously minting S3 presigned URLs behind only a manager role check, and the two CSV export routes from #78 which were doing full-collection scans uncapped. Also closes scrape paths on the public `/api/cars` and `/api/carparts` GETs (#89).
 - **Pre-handover verification report** at `VERIFICATION_REPORT.md` ran every quality gate (type-check, lint, jest, build, playwright + axe + cookies specs) end-to-end and distinguished honestly between "passed", "failed", "blocked by sandbox limitation". Real findings are surfaced; the prerender / Chrome-binary blockers are explicitly out of scope (#76).
 - **Security review of the prep cycle** at `SECURITY_REVIEW.md`: 11 findings — 2 High (Next.js 16.2.6 upstream advisories awaiting patches), 3 Medium (all three fixed in PRs #79, #80, #81 — the jsdom jest crash, Sentry PII leak, KV path-split bypass), 2 Low, 4 Info (#77).
 
@@ -154,8 +157,9 @@ Deferred from #67. The booking-flow `ServiceCard` / `PackageCard` components sti
 | `DEPLOYMENT.md`       | Operations runbook — env vars, MongoDB/S3/KV/SMTP setup, cron, first-deploy checklist, failure-mode triage. Landed in #69. |
 | `ADMIN_GUIDE.md`      | Non-technical admin staff guide — login + 2FA, adding a car, editing business info, handling bookings. Landed in #69. |
 | `HANDOVER_NOTES.md`   | Narrative history — what was removed during handover, status of older audit findings, known issues for next dev. |
-| `HANDOVER_SUMMARY.md` | This file — what shipped this cycle (PRs #58–#87), grouped by audience and theme.                             |
+| `HANDOVER_SUMMARY.md` | This file — what shipped this cycle (PRs #58–#89), grouped by audience and theme.                             |
 | `INDEX_AUDIT.md`      | MongoDB index audit — every query, the required index, current status. Landed in #87.                         |
+| `RATE_LIMIT_AUDIT.md` | API rate-limit audit — every public POST/PUT/DELETE/PATCH route, current limiter, recommended limiter. Landed in #89. |
 | `CSP_REVIEW.md`       | CSP / security headers review — current vs proposed, applied vs deferred (with reasons). Landed in #86.        |
 | `VERIFICATION_REPORT.md` | Pre-handover verification — every quality gate run end-to-end, sandbox blockers vs real failures. Landed in #76. |
 | `SECURITY_REVIEW.md`  | Security review of the prep cycle — 11 findings with severity, file:line, and recommended fix. Landed in #77.  |
