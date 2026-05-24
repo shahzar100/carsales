@@ -38,8 +38,17 @@ describe("Booking confirmation page", () => {
     });
     render(ui);
     expect(screen.getByText(/invalid confirmation link/i)).toBeInTheDocument();
-    expect(screen.getByText(/this confirmation link is invalid/i)).toBeInTheDocument();
-    const cta = screen.getByText(/browse our fleet/i).closest("a");
+    // The copy was reworded to be more user-friendly when the link is
+    // missing the reference parameter.
+    expect(
+      screen.getByText(/this confirmation link is missing a reference/i)
+    ).toBeInTheDocument();
+    // "browse our fleet" now appears in the body copy AND as the CTA
+    // label — pick the one inside an <a> to assert the href.
+    const cta = screen
+      .getAllByText(/browse our fleet/i)
+      .map((n) => n.closest("a"))
+      .find(Boolean) as HTMLAnchorElement;
     expect(cta).toHaveAttribute("href", "/BrowseFleet");
     // Success-state copy must NOT appear.
     expect(screen.queryByText(/booking confirmed/i)).not.toBeInTheDocument();
