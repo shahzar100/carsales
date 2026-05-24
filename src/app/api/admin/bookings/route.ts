@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
+import React from "react";
 import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
@@ -14,7 +16,11 @@ import {
   notFound,
   serverError,
 } from "@/lib/utils/apiResponse";
-import { logError } from "@/lib/utils/observability";
+import { logError, logEvent } from "@/lib/utils/observability";
+import { sendEmail } from "@/emails/send";
+import { BookingConfirmedEmail } from "@/emails/BookingConfirmedEmail";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
+import type { ServiceAppointment, CarViewingBooking } from "@/lib/interfaces";
 
 export async function GET(request: NextRequest) {
   try {
@@ -136,6 +142,18 @@ export async function PUT(request: NextRequest) {
       findOne: (filter: Document) => Promise<Document | null>;
     };
 
+    // Capture the previous status before mutating so we can decide whether
+    // to fire the "booking confirmed" email. The notification should only
+    // go out on a real pending → confirmed transition; flipping a booking
+    // that's already confirmed back to confirmed must not double-send.
+    const previousDoc = await genericCollection.findOne({ _id: objectId });
+    const previousStatus = previousDoc?.status as
+      | "pending"
+      | "confirmed"
+      | "completed"
+      | "cancelled"
+      | undefined;
+
     // Build the $set payload — add completedAt when marking as completed
     const $set: Record<string, unknown> = {
       status,
@@ -162,6 +180,63 @@ export async function PUT(request: NextRequest) {
     const updatedBooking = await genericCollection.findOne({
       _id: objectId,
     });
+
+    // Notify the customer on a real pending → confirmed transition. The
+    // cancel route already handles cancellations; this closes the gap
+    // flagged in PR #74. Wrap in waitUntil + try/catch so a mail outage
+    // never bubbles up as a 5xx — the DB write is the source of truth.
+    if (
+      previousStatus === "pending" &&
+      status === "confirmed" &&
+      updatedBooking
+    ) {
+      const customerEmail = (updatedBooking as Document)?.customerInfo?.email;
+      const bookingReference = (updatedBooking as Document)?.bookingReference;
+      if (
+        typeof customerEmail === "string" &&
+        customerEmail.length > 0 &&
+        typeof bookingReference === "string"
+      ) {
+        const bookingForEmail = updatedBooking as unknown as
+          | ServiceAppointment
+          | CarViewingBooking;
+        const bookingType = type as "service" | "viewing";
+        waitUntil(
+          (async () => {
+            try {
+              const shopInfo = await getBusinessInfo();
+              const emailShopInfo = {
+                businessName: shopInfo.businessName,
+                phone: shopInfo.phone,
+                email: shopInfo.email,
+                address: `${shopInfo.address}, ${shopInfo.city}, ${shopInfo.state} ${shopInfo.zipCode}`,
+              };
+
+              const emailResult = await sendEmail({
+                to: customerEmail,
+                subject: `Booking Confirmed - ${bookingReference}`,
+                react: React.createElement(BookingConfirmedEmail, {
+                  booking: bookingForEmail,
+                  bookingType,
+                  shopInfo: emailShopInfo,
+                }),
+              });
+
+              if (!emailResult.success) {
+                logEvent("admin.booking.confirm.email_send_failed", {
+                  error: String(emailResult.error),
+                });
+              }
+            } catch (emailError) {
+              logError(emailError, {
+                route: "PUT /api/admin/bookings",
+                op: "send_confirmation_email",
+              });
+            }
+          })()
+        );
+      }
+    }
 
     const session = await getSession();
     await recordAudit({
