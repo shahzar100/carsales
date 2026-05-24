@@ -99,4 +99,16 @@ describe("CarShareModal", () => {
     render(<CarShareModal car={mockCar} />);
     expect(screen.getByLabelText("Share Toyota Camry")).toBeInTheDocument();
   });
+
+  // A11y regression: the trigger wrapper used to be a <span onClick> which
+  // mouse users could click but keyboard users couldn't activate. It is now
+  // a real <button>, so Enter on the trigger opens the modal.
+  it("trigger is a real button (keyboard-activatable)", () => {
+    render(<CarShareModal car={mockCar} trigger={<span>Open share</span>} />);
+    const trigger = screen.getByRole("button", { name: /share toyota camry/i });
+    expect(trigger.tagName).toBe("BUTTON");
+    fireEvent.keyDown(trigger, { key: "Enter" });
+    fireEvent.click(trigger);
+    expect(screen.getByText("2023 Toyota Camry")).toBeInTheDocument();
+  });
 });

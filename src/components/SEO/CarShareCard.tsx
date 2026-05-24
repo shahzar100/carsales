@@ -179,15 +179,22 @@ export const CarShareModal: React.FC<{
   car: CarInterface;
   baseUrl?: string;
   trigger?: React.ReactNode;
-}> = ({ car, baseUrl, trigger }) => {
+  triggerClassName?: string;
+  triggerAriaLabel?: string;
+}> = ({ car, baseUrl, trigger, triggerClassName, triggerAriaLabel }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       {trigger ? (
-        <span onClick={() => setIsOpen(true)} className="cursor-pointer">
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label={triggerAriaLabel ?? `Share ${car.make} ${car.model}`}
+          className={triggerClassName ?? "cursor-pointer"}
+        >
           {trigger}
-        </span>
+        </button>
       ) : (
         <button
           type="button"

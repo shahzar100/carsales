@@ -267,15 +267,9 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                     )}
                     <CarShareModal
                       car={car}
-                      trigger={
-                        <button
-                          type="button"
-                          aria-label="Share this listing"
-                          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/75"
-                        >
-                          <Share2 className="h-[18px] w-[18px]" />
-                        </button>
-                      }
+                      triggerAriaLabel="Share this listing"
+                      triggerClassName="flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/75"
+                      trigger={<Share2 className="h-[18px] w-[18px]" />}
                     />
                   </div>
 
