@@ -115,15 +115,25 @@ Treat the older audit files as historical context, not a current to-do list. Whe
 - **`postcss <8.5.10`** (transitive via `@react-email/preview-server`, dev-only) — XSS via unescaped `</style>` in CSS stringify. Will be fixed by upgrading `@react-email/preview-server` once that releases.
 - **`ws@8.0.0-8.20.0`** — uninitialised memory disclosure. Transitive.
 
-### Component refactors deferred
+### `@sentry/nextjs` is mocked in component tests
 
-Three components are large and would benefit from breaking up, but each is high-risk for regressions right before handover and **was deliberately left alone**:
+PR #70 fixed six broken test suites that started failing once Sentry was wired in PR #63. The cause is that `@sentry/nextjs` reaches for `globalThis.Sentry` and Next.js internals that don't exist in `jsdom`. The mock lives in `jest.setup.js` (or the equivalent setup file referenced in `jest.config.js`); if you add a new test that exercises a code path Sentry instruments, you may need to extend the mock rather than import the real SDK. The production code is untouched.
 
-- `src/components/Booking/Flow/BookingFlow.tsx` (~1158 lines) — state machine across 6+ service types
-- `src/components/Admin/Tabs/BusinessInfoForm.tsx` (~1143 lines) — split by section (shop / detailing / tinting / recovery / hours)
-- `src/components/Header.tsx` (~1009 lines) — extract mobile menu + search sheet
+### In-flight prep PRs (not yet merged to main)
 
-Suggested next-quarter work, with the canonical example of the "server component + client island" pattern in `src/app/(admin)/admin/dashboard/viewing/page.tsx` + `src/components/Admin/ViewingBookingsClient.tsx`. There's also an explicit TODO at the top of `src/app/(admin)/admin/dashboard/shop/page.tsx` requesting that exact refactor.
+- **#69** — `DEPLOYMENT.md` + `ADMIN_GUIDE.md` operational runbooks.
+- **#70** — fix the six test suites that broke after Sentry wiring (see note above).
+- **#71** — perf wins: `priority` on the first BrowseFleet card (LCP), lazy-load admin forms, end-to-end `sizes`-attribute audit, CSS trim.
+
+### Recently refactored
+
+All three of the big components flagged at handover have now been split:
+
+- `src/components/Admin/Tabs/BusinessInfoForm.tsx` — 1143 → 143 lines, sections extracted into `src/components/Admin/Tabs/BusinessInfo/{CoreInfo,Hours,SocialMedia,HeroStats,DetailingPackages,TintOptions,ServiceOverviews,Recovery,Section}.tsx` (PR #61).
+- `src/components/Header.tsx` — 1002 → 230 lines (PR #66).
+- `src/components/Booking/Flow/BookingFlow.tsx` — 1158 → 305 lines (PR #66).
+
+The remaining refactor target is the shop page itself — `src/app/(admin)/admin/dashboard/shop/page.tsx` is still all-client and carries an explicit TODO at the top asking for the server-component + client-island treatment. The canonical example of that pattern lives at `src/app/(admin)/admin/dashboard/viewing/page.tsx` + `src/components/Admin/ViewingBookingsClient.tsx`.
 
 ### Accessibility — better than the audit suggested
 
@@ -135,23 +145,28 @@ Skip-to-content link, focus rings, image alt text, form labels, ARIA roles on th
 - `FAQAccordion`, `CarFeatures`, `ShareButton`, `TwoFactorPanel`, `NavMenu` — all use real `<button>` or `<motion.button>`.
 - Admin tables — onClick lives on `<button>` children of `<div>` containers; no fake-button divs anywhere in admin.
 
-Remaining minor a11y polish:
+Long-tail a11y polish in PR #67 closed the remaining items: landmark elements added to all (main) layouts, heading hierarchy corrected on the marketing pages, and `RangeInput.tsx` min/max inputs now carry explicit `aria-label`s.
 
-- `RangeInput.tsx` min/max inputs could use explicit `aria-label`s.
-- Some custom selection-card components could expose `role="radio"` more explicitly.
+Follow-up still open (deferred by #67):
+
+- Custom selection-card components should expose `role="radio"` / `aria-checked` when used as radio groups. The pattern appears in the booking flow and admin forms; needs a shared `SelectionCard` upgrade rather than per-call-site fixes.
 
 ### Observability
 
-`src/lib/utils/observability.ts` is a Sentry stub — `logError` / `logEvent` just write to `console.error` / `console.log`. To wire up Sentry:
-1. `npm i @sentry/nextjs`
-2. Add `SENTRY_DSN` to env
-3. Replace the stub functions with `Sentry.captureException` and `Sentry.captureMessage`
-4. The setup docs are sketched in `SETUP.md`
+Sentry is wired (PR #63). `@sentry/nextjs` is a dependency, `sentry.{client,server,edge}.config.ts` sit at the repo root, and `next.config.ts` wraps the export in `withSentryConfig` only when a DSN is present. Without a DSN the SDK no-ops and `src/lib/utils/observability.ts` falls back to `console.error` / `console.log` — so the wiring is safe to ship before the Sentry project exists.
+
+To turn it on in production set:
+
+- `SENTRY_DSN` (server) and `NEXT_PUBLIC_SENTRY_DSN` (client) — same value, two vars.
+- Optional for source-map upload at build time: `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`.
+
+`CLAUDE.md` §8 has the full call-site map and the PII-redaction rules the shim applies before forwarding events.
 
 ### Testing
 
 - Component tests pass under `npm test` once `npm ci` has been run.
-- Coverage is **~22.89%** (target 80%). The 3 critical auth flows and the booking race-conditions are covered; the long tail of admin tables and marketing components isn't.
+- The earlier "~22.89%" coverage figure was wrong — it counted the wrong column of the Jest summary. The real baseline before this prep cycle was **74.82% statements**. After PR #68 added 19 new test files, coverage is **78.46% statements** (+3.6 to +5.4pp across the four metrics). See `POST_PR_RESULTS.md` for the full Jest summary table.
+- The 3 critical auth flows and the booking race-conditions are still the highest-priority paths; the long tail of admin tables and marketing components is partial.
 - E2E (`npm run test:e2e`) needs `npx playwright install` first to download the browser binaries.
 
 ### Rate limiting
