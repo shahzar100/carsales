@@ -14,6 +14,9 @@ import {
   getTestCollections,
   createTestServiceAppointment,
   createTestCarViewingBooking,
+  createTestShopInfo,
+  flushWaitUntil,
+  mockSendEmail,
 } from "../../utils/testUtils";
 
 // Mock authentication
@@ -29,11 +32,24 @@ const {
   hasMinimumRole: mockHasMinimumRole,
 } = require("@/lib/utils/auth");
 
+// Mock businessInfo — the PUT handler hydrates shop details into the
+// confirmation email; we don't want the real seed-on-first-read to run
+// against the in-memory Mongo and we don't want to depend on collection
+// fixtures the rest of these tests don't touch.
+jest.mock("@/lib/utils/businessInfo", () => ({
+  getBusinessInfo: jest.fn(),
+}));
+const {
+  getBusinessInfo: mockGetBusinessInfo,
+} = require("@/lib/utils/businessInfo");
+
 describe("/api/admin/bookings", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAuthenticated.mockResolvedValue(true);
     mockHasMinimumRole.mockResolvedValue(true);
+    mockGetBusinessInfo.mockResolvedValue(createTestShopInfo());
+    mockSendEmail.mockResolvedValue({ success: true });
   });
 
   afterEach(async () => {
@@ -303,6 +319,186 @@ describe("/api/admin/bookings", () => {
         expect(response.status).toBe(200);
       }
       await client.close();
+    });
+
+    // ── pending → confirmed email (PR #74 follow-up) ────────────
+
+    describe("confirmation email on pending → confirmed", () => {
+      it("sends a confirmation email when a service booking moves from pending to confirmed", async () => {
+        const { serviceAppointments, client } = await getTestCollections();
+        const inserted = await serviceAppointments.insertOne(
+          createTestServiceAppointment({
+            bookingReference: "BK-CONF01",
+            status: "pending",
+          })
+        );
+        await client.close();
+
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/bookings",
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              bookingId: inserted.insertedId.toHexString(),
+              status: "confirmed",
+              type: "service",
+            }),
+          }
+        );
+
+        const response = await PUT(request);
+        expect(response.status).toBe(200);
+
+        await flushWaitUntil();
+
+        expect(mockSendEmail).toHaveBeenCalledTimes(1);
+        expect(mockSendEmail).toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: "john@example.com",
+            subject: expect.stringContaining("BK-CONF01"),
+          })
+        );
+        expect(mockSendEmail.mock.calls[0][0].subject).toMatch(/Confirmed/i);
+      });
+
+      it("sends a confirmation email when a viewing booking moves from pending to confirmed", async () => {
+        const { carViewingBookings, client } = await getTestCollections();
+        const inserted = await carViewingBookings.insertOne(
+          createTestCarViewingBooking({
+            bookingReference: "BK-VWCNF1",
+            status: "pending",
+          })
+        );
+        await client.close();
+
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/bookings",
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              bookingId: inserted.insertedId.toHexString(),
+              status: "confirmed",
+              type: "viewing",
+            }),
+          }
+        );
+
+        const response = await PUT(request);
+        expect(response.status).toBe(200);
+
+        await flushWaitUntil();
+
+        expect(mockSendEmail).toHaveBeenCalledTimes(1);
+        expect(mockSendEmail).toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: "jane@example.com",
+            subject: expect.stringContaining("BK-VWCNF1"),
+          })
+        );
+      });
+
+      it("does NOT send a confirmation email on confirmed → confirmed (no double-send)", async () => {
+        const { serviceAppointments, client } = await getTestCollections();
+        const inserted = await serviceAppointments.insertOne(
+          createTestServiceAppointment({
+            bookingReference: "BK-IDEMP1",
+            status: "confirmed",
+          })
+        );
+        await client.close();
+
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/bookings",
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              bookingId: inserted.insertedId.toHexString(),
+              status: "confirmed",
+              type: "service",
+            }),
+          }
+        );
+
+        // The route returns 400 "not updated" because modifiedCount is 0
+        // when the value didn't change — that's the same idempotency guard
+        // that protects us against a double-send. The behaviour under test
+        // is simply that no email leaves the system.
+        await PUT(request);
+        await flushWaitUntil();
+
+        expect(mockSendEmail).not.toHaveBeenCalled();
+      });
+
+      it("does NOT send a confirmation email on pending → completed (only confirm triggers it)", async () => {
+        const { serviceAppointments, client } = await getTestCollections();
+        const inserted = await serviceAppointments.insertOne(
+          createTestServiceAppointment({
+            bookingReference: "BK-CMPLT1",
+            status: "pending",
+          })
+        );
+        await client.close();
+
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/bookings",
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              bookingId: inserted.insertedId.toHexString(),
+              status: "completed",
+              type: "service",
+            }),
+          }
+        );
+
+        const response = await PUT(request);
+        expect(response.status).toBe(200);
+        await flushWaitUntil();
+
+        expect(mockSendEmail).not.toHaveBeenCalled();
+      });
+
+      it("still returns 200 and persists the status change when the email send fails", async () => {
+        mockSendEmail.mockRejectedValueOnce(new Error("smtp down"));
+
+        const { serviceAppointments, client } = await getTestCollections();
+        const inserted = await serviceAppointments.insertOne(
+          createTestServiceAppointment({
+            bookingReference: "BK-MAILFL",
+            status: "pending",
+          })
+        );
+        await client.close();
+
+        const request = new NextRequest(
+          "http://localhost:3000/api/admin/bookings",
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              bookingId: inserted.insertedId.toHexString(),
+              status: "confirmed",
+              type: "service",
+            }),
+          }
+        );
+
+        const response = await PUT(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(data.success).toBe(true);
+        await flushWaitUntil();
+
+        // Confirm the status flip survived even though the mail provider
+        // threw — DB write is the source of truth.
+        const { serviceAppointments: again, client: client2 } =
+          await getTestCollections();
+        const persisted = await again.findOne({
+          bookingReference: "BK-MAILFL",
+        });
+        expect(persisted?.status).toBe("confirmed");
+        await client2.close();
+      });
     });
   });
 });
