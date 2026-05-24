@@ -1,0 +1,42 @@
+name: Bundle size
+
+# Fails the PR if any tracked entrypoint exceeds its budget in
+# .size-limit.json. Budgets are set at "current size + 10%" so the check
+# catches real regressions without flapping on noise from a routine change.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: size-limit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  size:
+    name: size-limit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+
+      # `next build` collects page data against MongoDB, which CI does not
+      # have access to — but the JS bundles under .next/static/chunks and the
+      # per-route entries under .next/server/app are fully written before
+      # that step runs. Swallow the failure here; the next step verifies the
+      # outputs we actually care about.
+      - name: Build (bundles only; prerender failure is expected)
+        run: npm run build || true
+
+      - name: Verify build output exists
+        run: |
+          test -d .next/static/chunks
+          test -f ".next/server/app/(main)/page.js"
+          test -f ".next/server/app/(main)/BrowseFleet/page.js"
+          test -f ".next/server/app/(main)/BrowseFleet/[_id]/page.js"
+
+      - run: npm run size

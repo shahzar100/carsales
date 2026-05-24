@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Home page (server entry + client reference manifest)",
+    "path": [
+      ".next/server/app/[(]main[)]/page.js",
+      ".next/server/app/[(]main[)]/page_client-reference-manifest.js"
+    ],
+    "gzip": true,
+    "running": false,
+    "limit": "2.91 kB"
+  },
+  {
+    "name": "BrowseFleet listing (server entry + client reference manifest)",
+    "path": [
+      ".next/server/app/[(]main[)]/BrowseFleet/page.js",
+      ".next/server/app/[(]main[)]/BrowseFleet/page_client-reference-manifest.js"
+    ],
+    "gzip": true,
+    "running": false,
+    "limit": "2.73 kB"
+  },
+  {
+    "name": "Car detail page (server entry + client reference manifest)",
+    "path": [
+      ".next/server/app/[(]main[)]/BrowseFleet/[[]_id[]]/page.js",
+      ".next/server/app/[(]main[)]/BrowseFleet/[[]_id[]]/page_client-reference-manifest.js"
+    ],
+    "gzip": true,
+    "running": false,
+    "limit": "2.75 kB"
+  },
+  {
+    "name": "All client chunks (aggregate JS shipped to browser)",
+    "path": ".next/static/chunks/*.js",
+    "gzip": true,
+    "running": false,
+    "limit": "681 kB"
+  }
+]
