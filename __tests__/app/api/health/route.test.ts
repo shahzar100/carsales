@@ -8,6 +8,8 @@
  *  - status code: 200 when all checks pass, 503 when any check fails
  *  - no auth: callable without any session cookie
  *  - kv = "unconfigured" when KV_REST_API_URL is unset
+ *  - process probes: uptimeSeconds / nodeVersion / memory / region (PR #91)
+ *  - high-memory soft warning surfaces on a 200 (never flips to 503)
  */
 
 // Mongo client mock — the health route calls `clientPromise` then `.db().command({ ping: 1 })`.
@@ -37,16 +39,19 @@ describe("GET /api/health", () => {
     mockPing.mockResolvedValue({ ok: 1 });
     delete process.env.KV_REST_API_URL;
     delete process.env.KV_REST_API_TOKEN;
+    delete process.env.VERCEL_REGION;
   });
 
-  it("returns 200 with shape {status, version, checks:{db,kv}} when db is up and kv is unconfigured", async () => {
+  it("returns 200 with core shape {status, version, checks:{db,kv}} when db is up and kv is unconfigured", async () => {
     const { GET } = await import("@/app/api/health/route");
 
     const res = await GET(mkRequest());
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toEqual({
+    // toMatchObject (not toEqual): the body also carries informational
+    // process probes asserted in the dedicated test below.
+    expect(body).toMatchObject({
       status: "ok",
       version: expect.any(String),
       checks: { db: "ok", kv: "unconfigured" },
@@ -111,5 +116,58 @@ describe("GET /api/health", () => {
     expect(res.status).toBe(503);
     expect(body.checks.db).toBe("ok");
     expect(body.checks.kv).toBe("error");
+  });
+
+  it("includes process probes: uptimeSeconds, nodeVersion, memory, region (PR #91)", async () => {
+    const { GET } = await import("@/app/api/health/route");
+
+    const res = await GET(mkRequest());
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(typeof body.uptimeSeconds).toBe("number");
+    expect(body.uptimeSeconds).toBeGreaterThanOrEqual(0);
+    expect(body.nodeVersion).toBe(process.versions.node);
+    expect(typeof body.memory.rss).toBe("number");
+    expect(typeof body.memory.heapUsed).toBe("number");
+    // VERCEL_REGION unset in test → null
+    expect(body.region).toBeNull();
+    // Healthy heap → no warnings key at all
+    expect(body.warnings).toBeUndefined();
+  });
+
+  it("reports region from VERCEL_REGION when set", async () => {
+    process.env.VERCEL_REGION = "lhr1";
+    const { GET } = await import("@/app/api/health/route");
+
+    const res = await GET(mkRequest());
+    const body = await res.json();
+
+    expect(body.region).toBe("lhr1");
+  });
+
+  it("adds a soft 'high-memory' warning on a 200 when heapUsed exceeds the threshold", async () => {
+    // The threshold is 400MB; report 500MB heapUsed. The contract must
+    // stay 200 — high memory is a trend signal, not a pageable failure.
+    const realMemoryUsage = process.memoryUsage;
+    process.memoryUsage = (() => ({
+      rss: 600 * 1024 * 1024,
+      heapTotal: 600 * 1024 * 1024,
+      heapUsed: 500 * 1024 * 1024,
+      external: 0,
+      arrayBuffers: 0,
+    })) as unknown as typeof process.memoryUsage;
+
+    try {
+      const { GET } = await import("@/app/api/health/route");
+      const res = await GET(mkRequest());
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(body.status).toBe("ok");
+      expect(body.warnings).toContain("high-memory");
+    } finally {
+      process.memoryUsage = realMemoryUsage;
+    }
   });
 });
