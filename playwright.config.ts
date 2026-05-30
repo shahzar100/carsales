@@ -15,7 +15,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   // Seed an admin user before the suite runs so admin-flow specs can
-  // authenticate against an otherwise-empty mongo:7. (CODEBASE_ISSUES J1.)
+  // authenticate against an otherwise-empty mongo:7.
   globalSetup: "./e2e/global-setup.ts",
   // Each test file is independent; let Playwright parallelise across them.
   fullyParallel: true,

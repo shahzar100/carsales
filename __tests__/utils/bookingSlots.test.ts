@@ -2,8 +2,8 @@
  * Tests for the canonical booking-slot constant (src/lib/utils/bookingSlots.ts)
  *
  * The key invariant: every slot the forms offer is a slot the server-side
- * `validateAppointmentTime` accepts. Day 2 of DAY_PLAN_NEW.md introduced
- * the shared constant precisely to keep these two in lockstep.
+ * `validateAppointmentTime` accepts. The shared constant exists
+ * precisely to keep these two in lockstep.
  */
 import {
   BOOKING_SLOTS,

@@ -104,7 +104,7 @@ describe("Modal", () => {
     expect(dialog).toHaveClass("sm:max-w-sm");
   });
 
-  describe("focus trap (CODEBASE_ISSUES G3)", () => {
+  describe("focus trap", () => {
     it("🎯 Tab from the LAST focusable cycles back to the dialog's first (the close button)", async () => {
       await act(async () => {
         render(

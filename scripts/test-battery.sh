@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Post-PR integration test battery — runs the 12-item list from the audit.
 # Assumes: prod server up on http://localhost:3000, Mongo on :27017,
-# Docker daemon up. Writes results into POST_PR_RESULTS_OUTPUT/ which the
-# AUDIT_REPORT consolidation step then folds into POST_PR_RESULTS.md.
+# Docker daemon up. Writes results into POST_PR_RESULTS_OUTPUT/.
 set -uo pipefail
 
 OUT=POST_PR_RESULTS_OUTPUT

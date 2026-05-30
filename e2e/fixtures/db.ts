@@ -8,7 +8,7 @@
  * The DB is whatever `MONGODB_URI` points at — in CI that's the mongo:7
  * service container on 27017, locally it's the user's dev DB. We pin the
  * database to "MMC" because that's what `src/lib/models/index.ts` reads
- * from (CODEBASE_ISSUES C2).
+ * from.
  */
 import { MongoClient, ObjectId, type Db } from "mongodb";
 import bcrypt from "bcryptjs";
@@ -40,7 +40,6 @@ export async function closeDb(): Promise<void> {
 
 /**
  * Seed an admin user so login-based E2E specs can authenticate.
- * (CODEBASE_ISSUES A3 / J1.)
  *
  * Idempotent — `upsert: true` on `username`. Uses bcrypt cost 12 to match
  * the runtime `hashPassword` (src/lib/utils/auth.ts).
@@ -121,7 +120,7 @@ export async function seedCarPart(
     ...partial,
   };
   // Collection name must match `src/lib/models/index.ts` — `carParts`,
-  // camelCase. (CODEBASE_ISSUES J1.)
+  // camelCase.
   const result = await db.collection("carParts").insertOne(doc);
   return result.insertedId.toString();
 }
@@ -135,7 +134,7 @@ export async function seedCarPart(
  *   `customerInfo: { email, name, phone }` (nested, not flat)
  *   `appointmentDate` / `appointmentTime` (not `date` / `time`)
  * Earlier versions of this fixture wrote to `bookings` with flat fields
- * which made the lookup spec impossible to pass. (CODEBASE_ISSUES J1.)
+ * which made the lookup spec impossible to pass.
  */
 export async function seedViewingBooking(opts: {
   carId: string;

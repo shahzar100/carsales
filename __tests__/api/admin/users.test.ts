@@ -387,7 +387,7 @@ describe("/api/admin/users", () => {
 
   describe("📋 Functional Correctness Standards", () => {
     it("should create a new user successfully (setup-email flow)", async () => {
-      // WEBSITE_REVIEW #11 / DAY_PLAN Fix 2.3: passwords are no longer
+      // Passwords are no longer
       // returned in the response — they're sent as a setup link to the
       // user's email. Test the new contract.
       const request = new NextRequest("http://localhost:3000/api/admin/users", {

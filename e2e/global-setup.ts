@@ -3,7 +3,7 @@
  *
  * Seeds an admin user so admin-flow specs can authenticate. Without this,
  * every admin spec would hit "Invalid credentials" against the empty
- * mongo:7 service container that CI brings up. (CODEBASE_ISSUES A3 / J1.)
+ * mongo:7 service container that CI brings up.
  *
  * Idempotent — re-running on a populated DB is a no-op-ish update.
  */
