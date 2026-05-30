@@ -6,7 +6,7 @@ import { z } from "zod";
  * Validates all required env vars at boot time so the app fails fast with
  * clear error messages rather than crashing at runtime with cryptic
  * undefined errors. The matching `.env.example` at the repo root
- * documents every variable for new developers. (CODEBASE_ISSUES H3.)
+ * documents every variable for new developers.
  */
 
 const serverSchema = z.object({
@@ -90,7 +90,7 @@ function validateServerEnv() {
 
   // Production hard-requires SESSION_SECRET. Ditto for the EMAIL_FROM
   // default — `noreply@yourdomain.com` would send real emails from a
-  // nonsense address. (CODEBASE_ISSUES H3.)
+  // nonsense address.
   //
   // Skip during `next build` (NEXT_PHASE === "phase-production-build").
   // Build collects route metadata under NODE_ENV=production but a local

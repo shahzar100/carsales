@@ -1,4 +1,4 @@
-// CODEBASE_ISSUES C18: `_id` was previously declared as `string` even though
+// `_id` was previously declared as `string` even though
 // MongoDB stores it as `ObjectId`. The widened type below removes the need
 // for `as unknown as Parameters<...>` casts at every read/update site.
 // `serializeDocument` (src/lib/models/index.ts) converts ObjectId → string

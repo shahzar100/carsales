@@ -359,7 +359,7 @@ export const CopyableCode: React.FC<{
 //
 // Generates a unique id with `useId()` and wires `htmlFor`/`id` so
 // screen readers correctly associate the visible label with the input.
-// (CODEBASE_ISSUES G4.) Forwards `required` + `aria-required` and
+// Forwards `required` + `aria-required` and
 // supports an `error` prop so the field can describe its own validation
 // failure to assistive tech via `aria-describedby`/`aria-invalid`.
 // ═════════════════════════════════════════════════════════════
@@ -421,7 +421,7 @@ export const FormInput: React.FC<{
 
 // ═════════════════════════════════════════════════════════════
 // Styled Textarea
-// (CODEBASE_ISSUES G4 — same label-association fix as FormInput.)
+// (Same label-association fix as FormInput.)
 // ═════════════════════════════════════════════════════════════
 export const FormTextarea: React.FC<{
   label: string;

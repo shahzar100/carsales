@@ -377,7 +377,7 @@ export default function CarPartsClient({ initialParts }: Props) {
                 {parts.map((part) => (
                   // _id is `string | ObjectId` per the interface; the API
                   // serialises ObjectId → string before returning, so at
-                  // runtime this is always a string. (CODEBASE_ISSUES C18.)
+                  // runtime this is always a string.
                   <tr key={String(part._id)} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       {part.name}

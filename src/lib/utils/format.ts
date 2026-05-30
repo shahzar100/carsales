@@ -64,7 +64,7 @@ const DATE_FORMAT_OPTIONS: Record<DateFormatStyle, Intl.DateTimeFormatOptions> =
 
 /**
  * `YYYY-MM-DD` matcher used to parse calendar-only dates as local dates
- * rather than UTC midnight. (CODEBASE_ISSUES C11.)
+ * rather than UTC midnight.
  *
  * `new Date("2026-03-25")` parses as UTC midnight; in a UK summer
  * timezone (BST, UTC+1) `toLocaleDateString` then renders it as

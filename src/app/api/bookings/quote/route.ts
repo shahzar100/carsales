@@ -25,7 +25,7 @@ import { QuoteConfirmation } from "@/emails/QuoteConfirmation";
 import { logError } from "@/lib/utils/observability";
 import React from "react";
 
-// CODEBASE_ISSUES C12, D1: structural validation up front so the route
+// Structural validation up front so the route
 // stops storing whatever-the-client-sent. Particularly important for
 // `vehicle.year`: previously Number(body.vehicle.year) on non-numeric
 // input produced NaN, which Mongo accepted and the email later rendered

@@ -71,7 +71,7 @@ export function sanitizeName(name: string): string {
 /**
  * Validate that a date string is today or later AND within one year.
  *
- * Parses `YYYY-MM-DD` as a local calendar date (CODEBASE_ISSUES C11) so
+ * Parses `YYYY-MM-DD` as a local calendar date so
  * a booking for "today" stays accepted up to local midnight — UTC-based
  * comparison previously rejected today's date during BST evenings.
  */

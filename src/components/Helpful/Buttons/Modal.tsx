@@ -49,7 +49,7 @@ const Modal = ({
     [onClose]
   );
 
-  // Focus trap (CODEBASE_ISSUES G3): cycle Tab/Shift-Tab inside the dialog.
+  // Focus trap: cycle Tab/Shift-Tab inside the dialog.
   // Without this, Tab walks back into the page underneath, which violates
   // the WAI-ARIA dialog pattern and confuses keyboard / SR users.
   const handleFocusTrap = useCallback((event: KeyboardEvent) => {
@@ -82,7 +82,7 @@ const Modal = ({
   useEffect(() => {
     setMounted(true);
     // Remember who had focus, then move focus into the dialog so the trap
-    // has somewhere to start. (CODEBASE_ISSUES G3.)
+    // has somewhere to start.
     previousActiveElement.current =
       typeof document !== "undefined"
         ? (document.activeElement as HTMLElement | null)

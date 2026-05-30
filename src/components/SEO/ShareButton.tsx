@@ -151,7 +151,6 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   // Resolve the absolute URL on the client only. Reading window.location
   // during render produced different HTML on server vs. client and
   // triggered hydration warnings on every car detail page.
-  // (CODEBASE_ISSUES G2.)
   const [resolvedUrl, setResolvedUrl] = useState<string>(
     typeof url === "string" && url.startsWith("http") ? url : ""
   );

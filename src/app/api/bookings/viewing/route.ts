@@ -30,7 +30,7 @@ import { CarViewingConfirmation } from "@/emails/CarViewingConfirmation";
 import { logError } from "@/lib/utils/observability";
 import React from "react";
 
-// CODEBASE_ISSUES C12, D1: structured validation. Replaces a body:any with
+// Structured validation. Replaces a body:any with
 // loose manual checks. carDetails fields are accepted as either string or
 // number for backward compatibility with the existing client; year is
 // coerced to int and bounded.
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     try {
       await viewingCollection.insertOne(newBooking as CarViewingBooking);
     } catch (err: unknown) {
-      // The new partial-unique index `uniq_active_viewing_slot` (CODEBASE_ISSUES C3)
+      // The new partial-unique index `uniq_active_viewing_slot`
       // throws E11000 if the slot was just taken by a concurrent booking.
       // Translate to a 409 with a friendly message.
       if (

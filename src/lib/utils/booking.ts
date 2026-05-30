@@ -40,7 +40,7 @@ export function generatePartExchangeReference(): string {
  * `YYYY-MM-DD` inputs (the shape `<input type="date">` produces) are parsed
  * as a *local* calendar day. `new Date("2026-03-25")` parses as UTC
  * midnight, which in BST renders as 24 March — wrong day on every
- * confirmation email through the summer. (CODEBASE_ISSUES C11.)
+ * confirmation email through the summer.
  */
 export function formatDate(date: string): string {
   const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);

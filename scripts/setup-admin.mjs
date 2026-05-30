@@ -1,5 +1,5 @@
 /**
- * One-time admin bootstrap script. (CODEBASE_ISSUES A3.)
+ * One-time admin bootstrap script.
  *
  * Reads admin credentials from the environment and upserts an admin row
  * into the `adminUsers` collection so the app has a working login on
@@ -63,7 +63,7 @@ async function main() {
     console.log("✅ Connected to MongoDB");
 
     // Pin to "MMC" — that's the database the app reads from.
-    // (See src/lib/models/index.ts and CODEBASE_ISSUES C2.)
+    // (See src/lib/models/index.ts.)
     const db = client.db("MMC");
     const collection = db.collection("adminUsers");
 

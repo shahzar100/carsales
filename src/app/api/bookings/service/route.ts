@@ -30,7 +30,7 @@ import { ServiceBookingConfirmation } from "@/emails/ServiceBookingConfirmation"
 import { logError } from "@/lib/utils/observability";
 import React from "react";
 
-// CODEBASE_ISSUES C12, D1: structural validation up front.
+// Structural validation up front.
 const serviceSchema = z.object({
   customerInfo: z.object({
     name: z.string().min(1).max(100),
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       await serviceCollection.insertOne(newBooking as ServiceAppointment);
     } catch (err: unknown) {
       // The new partial-unique index `uniq_active_service_slot`
-      // (CODEBASE_ISSUES C3) throws E11000 if the slot was just taken.
+      // throws E11000 if the slot was just taken.
       if (
         err &&
         typeof err === "object" &&

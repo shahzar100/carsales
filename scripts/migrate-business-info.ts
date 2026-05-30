@@ -38,7 +38,7 @@ async function migrate() {
     // The application reads from db("MMC") (see src/lib/models/index.ts).
     // Defaulting to client.db() picks the database from the connection
     // string path, which may not match. Pin to "MMC" explicitly so the
-    // migration writes where the app reads. (CODEBASE_ISSUES C2.)
+    // migration writes where the app reads.
     const db = client.db("MMC");
     const collection = db.collection("businessInfo");
 

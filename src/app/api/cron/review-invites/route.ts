@@ -9,7 +9,7 @@
  * Secured via the CRON_SECRET env var — Vercel automatically
  * sends this in the `Authorization` header for cron invocations.
  *
- * At-most-once semantics (CODEBASE_ISSUES C1):
+ * At-most-once semantics:
  *   We claim each row by atomically setting `reviewInviteSentAt` BEFORE
  *   sending the email. If the send throws, we roll back the claim with
  *   `$unset` so the next run retries it. Without this, send-then-mark
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
 
   // CRON_SECRET must be set in any environment that exposes this route to
   // the network. Previously, missing CRON_SECRET in non-production left
-  // the route open. (CODEBASE_ISSUES C15.) Allow opt-out only in tests.
+  // the route open. Allow opt-out only in tests.
   if (!cronSecret && process.env.NODE_ENV !== "test") {
     logError(new Error("CRON_SECRET is not set"), {
       route: "cron review-invites",
@@ -190,7 +190,6 @@ export async function GET(request: NextRequest) {
     };
 
     // Log only counts and references — never customer name/email.
-    // (CODEBASE_ISSUES F3.)
     logEvent("cron.review_invites.completed", summary.results);
     return NextResponse.json(summary);
   } catch (error) {

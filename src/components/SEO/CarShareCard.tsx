@@ -38,7 +38,6 @@ const CarShareCard: React.FC<CarShareCardProps> = ({
 }) => {
   // Resolve the absolute URL on the client only to avoid the SSR/CSR
   // hydration mismatch from reading window.location during render.
-  // (CODEBASE_ISSUES G2.)
   const [resolvedBase, setResolvedBase] = useState<string>(baseUrl ?? "");
   useEffect(() => {
     if (typeof window === "undefined") return;

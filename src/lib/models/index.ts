@@ -141,7 +141,7 @@ export async function getCarsCollection(): Promise<Collection<CarInterface>> {
       // Browse Fleet sort options: status pre-filter + the sort key. The
       // `sort=mileageAsc` and `sort=yearDesc` query strings on the public
       // listing previously fell back to an in-memory sort over every
-      // "available" car. (INDEX_AUDIT 2026-05-24.)
+      // "available" car.
       { key: { status: 1, mileage: 1 } },
       { key: { status: 1, year: -1 } },
       // Similar-cars lookup on the car detail page is keyed by
@@ -171,14 +171,14 @@ export async function getServiceAppointmentsCollection(): Promise<
       // The /account/bookings endpoint pulls every booking for a
       // signed-in customer and presents them newest-first. Without this
       // compound, the email match used the single-field email index but
-      // then sorted in memory. (INDEX_AUDIT 2026-05-24.)
+      // then sorted in memory.
       { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Compound index for cron review-invite query
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
       },
       // Slot uniqueness for active service bookings.
-      // (CODEBASE_ISSUES C3.) The partial filter scopes the constraint to
+      // The partial filter scopes the constraint to
       // bookings still on the calendar — cancelled and completed bookings
       // don't block the slot from being rebooked.
       {
@@ -211,15 +211,14 @@ export async function getCarViewingBookingsCollection(): Promise<
       { key: { status: 1, createdAt: -1 } },
       { key: { carId: 1, status: 1 } },
       // /account/bookings sorts by createdAt after filtering by email;
-      // mirrors the same compound on serviceAppointments. (INDEX_AUDIT
-      // 2026-05-24.)
+      // mirrors the same compound on serviceAppointments.
       { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Compound index for cron review-invite query
       {
         key: { status: 1, completedAt: 1, reviewInviteSentAt: 1 },
       },
       // Slot uniqueness for active viewing bookings on a specific car.
-      // (CODEBASE_ISSUES C3.) Scoped by status so cancelled/completed
+      // Scoped by status so cancelled/completed
       // bookings don't permanently lock a slot.
       {
         key: { carId: 1, appointmentDate: 1, appointmentTime: 1 },
@@ -306,8 +305,7 @@ export async function getAdminUsersCollection(): Promise<
     await adminUsersCollection.createIndexes([
       { key: { username: 1 }, unique: true },
       // The reset-password consume route looks up rows by the hashed
-      // token. Sparse because only mid-flow rows carry a token. (INDEX_AUDIT
-      // 2026-05-24.)
+      // token. Sparse because only mid-flow rows carry a token.
       { key: { resetToken: 1 }, sparse: true },
     ]);
   }
@@ -345,7 +343,7 @@ export async function getQuotesCollection(): Promise<Collection<Quote>> {
       { key: { status: 1 } },
       // Admin Quotes table: optional status filter + sort by createdAt
       // desc, paginated. Mirrors the same compound on reservations /
-      // partExchanges. (INDEX_AUDIT 2026-05-24.)
+      // partExchanges.
       { key: { status: 1, createdAt: -1 } },
     ]);
   }
@@ -367,7 +365,7 @@ export async function getCarPartsCollection(): Promise<
       { key: { price: 1 } },
       // Admin car-parts page renders newest-first with no other filter;
       // without this index every render does a full collection scan +
-      // in-memory sort. (INDEX_AUDIT 2026-05-24.)
+      // in-memory sort.
       { key: { createdAt: -1 } },
     ]);
   }
@@ -389,7 +387,6 @@ export async function getReservationsCollection(): Promise<
       { key: { "customerInfo.email": 1 } },
       { key: { status: 1, createdAt: -1 } },
       // /account/bookings sorts customer reservations newest-first.
-      // (INDEX_AUDIT 2026-05-24.)
       { key: { "customerInfo.email": 1, createdAt: -1 } },
       // Auto-expire pending reservations via TTL on expiresAt.
       { key: { expiresAt: 1 }, expireAfterSeconds: 0 },
@@ -466,7 +463,7 @@ export async function getUsersCollection(): Promise<
       { key: { email: 1 }, unique: true },
       // Password-reset (forgot-password) and email-verification consume
       // routes both look up the user by the hashed token in the URL.
-      // Sparse — only mid-flow rows carry a token. (INDEX_AUDIT 2026-05-24.)
+      // Sparse — only mid-flow rows carry a token.
       { key: { resetToken: 1 }, sparse: true },
       { key: { verifyToken: 1 }, sparse: true },
     ]);

@@ -21,7 +21,7 @@ const loginLimiter = createRateLimiter("login", {
  * Pre-computed bcrypt (cost 12) of "this-is-not-a-real-password".
  * verifyPassword runs against this when the user doesn't exist, so the
  * response time matches a real failed login. The hash rejects any real
- * input password by construction. (CODEBASE_ISSUES A8.)
+ * input password by construction.
  */
 const DUMMY_PASSWORD_HASH =
   "$2b$12$pDBDseLO5CRDEGLX70WZHutBFb6ujNeagUc/ONCxc/fWbmAUG46i6";
@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
     // ── Parse + type-guard the body ────────────────────────
     // Without this, a JSON body of {"username": {"$gt": ""}} would forge a
     // Mongo operator filter and match the first user in the collection.
-    // (CODEBASE_ISSUES A5.)
     let body: unknown;
     try {
       body = await request.json();
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest) {
     const admin = await adminCollection.findOne({ username });
 
     // Constant-time path: always run verifyPassword exactly once, regardless of
-    // whether the user exists. (CODEBASE_ISSUES A8.)
+    // whether the user exists.
     const passwordHash = admin?.passwordHash ?? DUMMY_PASSWORD_HASH;
     const isValid = await verifyPassword(password, passwordHash);
 
@@ -135,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     // Note: deliberately NOT calling loginLimiter.reset(ip). Resetting on
     // success lets a successful guess from a credential dump grant unlimited
-    // fresh attempts. (CODEBASE_ISSUES A6.)
+    // fresh attempts.
 
     return NextResponse.json({
       success: true,

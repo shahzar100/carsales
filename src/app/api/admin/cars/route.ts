@@ -307,7 +307,7 @@ export async function DELETE(request: NextRequest) {
     const _id = ObjectId.createFromHexString(String(id));
 
     // Read the document first so we can clean up its S3 images after the
-    // Mongo delete succeeds. (CODEBASE_ISSUES C8.)
+    // Mongo delete succeeds.
     const carDoc = await carsCollection.findOne({ _id });
 
     const result = await carsCollection.deleteOne({ _id });

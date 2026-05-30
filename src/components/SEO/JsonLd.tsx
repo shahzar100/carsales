@@ -14,7 +14,7 @@
  * `JSON.parse` reverses all four escapes identically, so the payload
  * search engines actually consume is byte-for-byte unchanged.
  *
- * (Hardens against admin-content XSS — WEBSITE_REVIEW Finding #17.)
+ * (Hardens against admin-content XSS.)
  */
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   const safe = JSON.stringify(data)

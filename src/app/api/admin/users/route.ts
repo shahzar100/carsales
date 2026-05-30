@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     // The new user receives a setup link, not a plaintext password. We seed
     // the row with an unguessable hash that will never match a real
     // bcrypt.compare, so the account is unlogin-able until the reset link
-    // is consumed. (WEBSITE_REVIEW #11 / DAY_PLAN Fix 2.3.)
+    // is consumed.
     const placeholderHash = await hashPassword(
       crypto.randomBytes(32).toString("hex")
     );

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Focused onboarding reference for the `carsales` repository. Aimed at engineers (human or AI) picking the project up for the first time. The authoritative narrative on *how the codebase got here* and *what's known-broken* lives in `HANDOVER_NOTES.md`; this file is the working manual you keep open in the next tab.
+Focused onboarding reference for the `carsales` repository. Aimed at engineers (human or AI) picking the project up for the first time. `README.md` is the broader source of truth — features, env vars, per-service setup, Vercel deployment, the admin guide, and costs; this file is the engineering working manual you keep open in the next tab.
 
 ## 1. Project overview
 
@@ -51,7 +51,7 @@ Exact `npm` script names from `package.json`:
 | `npm run migrate:business-info` | One-off Mongo migration (`scripts/migrate-business-info.ts`) |
 | `npm run email` | React Email preview server against `src/emails/` |
 
-Env vars and the full table of required-vs-optional keys are documented in `HANDOVER_NOTES.md` §1 and `SETUP.md`. Server-side validation lives in `src/lib/env.ts` and is triggered at boot from `src/instrumentation.ts`.
+Env vars and the full table of required-vs-optional keys are documented in `README.md` (§4 environment variables, §5 per-service setup). Server-side validation lives in `src/lib/env.ts` and is triggered at boot from `src/instrumentation.ts`.
 
 ## 4. Repository layout
 
@@ -106,7 +106,7 @@ Notes:
 
 - The **`(main)`** and **`(admin)`** parentheses are App-Router *route groups*: they organise files and let each group own its `layout.tsx` (header, footer, fonts, providers) without affecting URL paths. A page under `(admin)/admin/dashboard/foo/page.tsx` resolves to `/admin/dashboard/foo`.
 - The actual middleware file is `src/proxy.ts` (not `middleware.ts`). It exports `proxy()` and a `config.matcher`. CSP nonces are issued here; route-level auth is enforced in the page/layout itself, not here.
-- `scripts/`, `e2e/`, `__tests__/`, `tools/`, `public/`, `plans/` and `*.md` files live at the repo root, not under `src/`.
+- `scripts/`, `e2e/`, `__tests__/`, `tools/`, `public/` and the root `*.md` files (`README.md`, `CLAUDE.md`) live at the repo root, not under `src/`.
 
 ## 5. Auth — two parallel systems
 
@@ -179,7 +179,7 @@ Rules of thumb when applying the pattern:
 - Auth-guard inside the server page (`isAuthenticated()` → `redirect("/admin/login")`).
 - Fetch from collection helpers in `src/lib/models/`; convert ObjectIds with `serializeDocument` before crossing the server/client boundary.
 - Keep the client island responsible for mutations, optimistic updates, and refetches via the existing `/api/admin/*` routes — do **not** call Mongo from the client.
-- An explicit TODO at the top of `src/app/(admin)/admin/dashboard/shop/page.tsx` requests this exact refactor; that's the next migration target.
+- As of this writing every dashboard page under `src/app/(admin)/admin/dashboard/` follows this pattern — the shop/business-settings page was the last to migrate (`shop/page.tsx` server component + `components/Admin/ShopSettingsClient.tsx` island). New admin pages must follow it from the start.
 
 ## 7. Business info pipeline
 
@@ -189,7 +189,7 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 - **Cache:** wrapped in `React.cache(fetchBusinessInfo)` so multiple calls within the same request (Header, Footer, HeroSection, metadata, WhatsAppButton, …) collapse into one set of Mongo round-trips. The cache scope is one request, not one process.
 - **Source:** five collections — `businessInfo` (core), `detailingPackages`, `tintOptions`, `serviceOverviews`, `recoveryInfo` — all fetched in parallel.
 - **Seeding:** on first ever read, each collection is auto-seeded from the in-file constants (`CORE_SEED`, `DETAILING_SEED`, `TINT_SEED`, `SERVICE_OVERVIEW_SEED`, `RECOVERY_SEED`). Subsequent reads are pure DB reads.
-- **Writes:** `updateBusinessInfo(partial)` in the same file. Used by `PUT /api/admin/businessinfo` and the admin shop settings tab.
+- **Writes:** `updateBusinessInfo(partial)` in the same file. Used by `PUT /api/admin/shop` (the admin shop-settings page). A read-only `GET /api/businessinfo` also exposes the assembled `ShopInfo` to public clients.
 - **Assembly:** the resulting `ShopInfo` shape glues the five collections back together — consumers only ever see one object.
 - **Consumers (verified):** `src/components/HeroSection.tsx`, `src/components/WhatsAppButton.tsx`, `src/app/(main)/AboutUs/page.tsx`, `Recoveries/page.tsx`, `review/page.tsx`, `FAQ/page.tsx`, `contact/page.tsx`, `Services/page.tsx`, `Services/Detailing/page.tsx`, `Services/Tints/page.tsx`, `Services/Repairs/page.tsx`, `Booking/confirmation/page.tsx`, `Book/page.tsx`, `privacy/page.tsx`, `terms/page.tsx`.
 
@@ -197,9 +197,8 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 
 - **Shim:** `src/lib/utils/observability.ts` exports `logError(error, context?)` and `logEvent(name, context?)`.
 - **Today:** they call `console.error` / `console.log` with a structured payload, after passing the context through a PII redactor (`email`, `customerEmail`, `customerName`, `customerPhone`, `phone`, `password`, `passwordHash`, `token`, `sessionToken`, `Authorization`, `cookie` keys are replaced with `"[redacted]"`).
-- **Gated on `SENTRY_DSN`:** the env value is already accepted by `src/lib/env.ts` (`SENTRY_DSN: z.string().optional()`). The shim is the single seam for forwarding to Sentry — every call site stays put.
-- **To wire Sentry:** `npm i @sentry/nextjs`, run the wizard, then replace the body of `logError` / `logEvent` to call `Sentry.captureException` / `Sentry.addBreadcrumb`. Full instructions are in `SETUP.md` → "Sentry (production error tracking)".
-- **Status (as of writing):** the shim is still a stub; the Sentry SDK is not yet a dependency in `package.json`. Treat the call-site coverage as done and the SDK install as the remaining one-file edit. (TODO: confirm the exact PR that flipped this if/when it lands.)
+- **Gated on `SENTRY_DSN`:** the env value is accepted by `src/lib/env.ts` (`SENTRY_DSN: z.string().optional()`). The shim is the single seam for forwarding to Sentry — every call site stays put.
+- **Sentry is installed and wired.** `@sentry/nextjs` is a dependency; `sentry.{client,server,edge}.config.ts` exist and `next.config.ts` wraps the build with `withSentryConfig` when a DSN is present at build time. `logError` / `logEvent` always log redacted structured output to console, and additionally forward to `Sentry.captureException` / `Sentry.addBreadcrumb` when `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` are set. With no DSN the SDK never initialises and the helpers are console-only — safe to deploy without it. See `README.md` §5 for provisioning the DSN.
 
 ## 9. Rate limiting
 
@@ -221,15 +220,15 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 - **Server vs client:** mark client files with `"use client"` at the top. Default to server components; promote to client only when you need state, effects, browser APIs, or event handlers.
 - **Mongo IDs:** always pass DB docs through `serializeDocument` (from `src/lib/models`) before sending to the client — raw `ObjectId` is not serialisable.
 - **Testing:** test-then-implement is **not** enforced. Component coverage sits around ~22.89%; the critical auth and booking-race paths are covered, the long admin/marketing tail is not. Add tests where you touch risky logic; don't gate small changes on coverage.
-- **No `CONTRIBUTING.md`** exists at the repo root; conventions are encoded here and in `HANDOVER_NOTES.md`.
+- **No `CONTRIBUTING.md`** exists at the repo root; conventions are encoded here and in `README.md`.
 
 ## 11. Gotchas
 
-Pulled from `HANDOVER_NOTES.md` and direct source inspection. Read these before your first non-trivial change.
+Pulled from direct source inspection. Read these before your first non-trivial change.
 
-1. **`next.config.ts` does not wrap with Sentry.** Once you `npm i @sentry/nextjs`, the wizard will offer to wrap `next.config.ts` with `withSentryConfig(...)`. Accept it, but re-check the surviving config still has `poweredByHeader: false`, the `images.remotePatterns` for `*.s3.*.amazonaws.com` / `*.cloudfront.net`, and the `Cross-Origin-*` headers in `securityHeaders`. The wizard has historically clobbered custom config.
+1. **`next.config.ts` wraps with Sentry conditionally.** It calls `withSentryConfig(...)` only when a DSN is present at build time (`SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN`); otherwise it exports the bare config so `next build` stays green pre-DSN. If you re-run the Sentry wizard or edit this file, preserve `poweredByHeader: false`, the `images.remotePatterns` for `*.s3.*.amazonaws.com` / `*.cloudfront.net`, and the `Cross-Origin-*` headers in `securityHeaders` — the wizard has historically clobbered custom config.
 2. **Dual auth means you cannot share middleware logic.** `src/proxy.ts` (the edge middleware) deliberately does **not** enforce auth on `/admin/*` or `/account` — admin auth lives in iron-session and customer auth lives in NextAuth v5, and only one cookie format would be readable from the edge runtime cleanly. Auth is enforced inside each protected server page/layout instead. Don't try to centralise it.
-3. **Admin tab refactor pattern is mandatory for new admin pages.** See §6. The TODO at the top of `src/app/(admin)/admin/dashboard/shop/page.tsx` is the next target; new admin pages should not be written as all-client.
+3. **Admin tab refactor pattern is mandatory for new admin pages.** See §6. Every existing dashboard page now follows it (the shop page was the last to migrate); new admin pages should not be written as all-client.
 4. **Do not put `force-dynamic` back on `src/app/(main)/layout.tsx`.** It was removed deliberately (PR #49). The header comment in that file explains why — re-adding it collapsed throughput to single-digit req/s under load. Use per-page `export const revalidate = N` instead.
 5. **`MONGODB_URI` is needed at build time.** `next build` does page-data collection against the DB. Vercel build IPs reach Atlas in prod; local builds need a reachable URI in `.env.local` or you'll see ECONNREFUSED during prerender.
 6. **`SESSION_SECRET` regenerates on dev restart if unset.** `src/lib/utils/auth.ts` falls back to `crypto.randomBytes(32)` per process. Set a stable value in `.env.local` if you want sessions to survive `next dev` restarts.
@@ -238,15 +237,11 @@ Pulled from `HANDOVER_NOTES.md` and direct source inspection. Read these before 
 9. **CSP `style-src` still allows `'unsafe-inline'`** because Motion + `@next/font` inject inline styles. A `Content-Security-Policy-Report-Only` mirror with `'self'`-only is also emitted so we can see what would break before flipping. See the long comment in `src/proxy.ts`.
 10. **Cron uses bearer auth.** `/api/cron/review-invites` requires `Authorization: Bearer ${CRON_SECRET}`. Vercel cron and `CRON_SECRET` must be configured in the same project.
 11. **Three giant components are deliberately not split** (handover risk): `BookingFlow.tsx` (~1158 lines), `BusinessInfoForm.tsx` (~1143 lines), `Header.tsx` (~1009 lines). When you do refactor, follow the server-component + client-island pattern.
-12. **Some `node_modules` advisories are stuck on upstream.** `npm audit fix --force` would downgrade Next.js — do not run it. See `HANDOVER_NOTES.md` §4 for the full list.
+12. **Some `node_modules` advisories are stuck on upstream.** `npm audit fix --force` would downgrade Next.js — do not run it. Run `npm audit` to see the current list before acting.
 
 ## 12. Where to look next
 
-- `HANDOVER_NOTES.md` — current state, what was removed during handover prep, status of older audit findings, open issues.
-- `SETUP.md` — env vars, Sentry wiring, staging, backups, secret rotation.
-- `RUNBOOK.md` — on-call ops.
-- `OPERATIONS.md` — non-technical day-to-day staff guide.
-- `README.md` — design system / UI standards (colours, typography, components).
-- `design.md` — source for the auto-generated UI standards section of README.
+- `README.md` — the broad source of truth: feature inventory, env-var reference, per-service key setup, Vercel deployment, the step-by-step admin guide, running costs, and the design-system summary.
+- The source itself — the inline `// why this looks weird` comments (see `src/proxy.ts`, `src/app/(main)/layout.tsx`, `src/lib/utils/auth.ts`) are the most reliable documentation in the repo.
 
 When in doubt, read the source — the inline `// why this looks weird` comments are the most reliable documentation in the repo.

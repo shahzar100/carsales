@@ -103,7 +103,7 @@ export function getPublicUrl(key: string): string {
  * Returns null for static / non-S3 paths so callers can safely skip them.
  *
  * Used by the cleanup-on-delete code paths in cars/carparts so the routes
- * don't have to re-derive the bucket layout. (CODEBASE_ISSUES C8.)
+ * don't have to re-derive the bucket layout.
  */
 export function s3KeyFromStoredImage(value: string | undefined | null): string | null {
   if (!value || typeof value !== "string") return null;

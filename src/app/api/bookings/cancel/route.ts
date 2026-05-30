@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Compare-and-set so two simultaneous cancels don't both fire the email
-    // and overwrite each other's audit fields. (CODEBASE_ISSUES C6.)
+    // and overwrite each other's audit fields.
     // Only the first request whose updateOne actually transitions the row
     // gets to send the cancellation email.
     const updateResult = await collection.updateOne(

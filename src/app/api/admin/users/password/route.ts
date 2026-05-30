@@ -16,7 +16,6 @@ import { recordAudit } from "@/lib/utils/audit";
 
 // Defensive ceiling against an authenticated-but-malicious account.
 // 10 actions per IP per hour is plenty for legitimate admin use.
-// (CODEBASE_ISSUES A13.)
 const passwordActionLimiter = createRateLimiter("admin-password-action", {
   maxRequests: 10,
   windowMs: 60 * 60 * 1000,
@@ -37,7 +36,7 @@ const passwordActionLimiter = createRateLimiter("admin-password-action", {
  * reminder → user-self-requesting: returns generic success either way to
  *            prevent username enumeration.
  *
- * Authorization (CODEBASE_ISSUES A1):
+ * Authorization:
  *   - Caller must be at least `admin`. Previously only required
  *     `isAuthenticated`, which let a compromised `staff` account reset
  *     the `admin` user's password.
@@ -50,7 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     // Resetting a password is admin-only. Manager/staff cannot escalate via
-    // this route. (CODEBASE_ISSUES A1.)
+    // this route.
     const isAdmin = await hasMinimumRole("admin");
     if (!isAdmin) {
       return NextResponse.json(

@@ -170,7 +170,7 @@ export async function sendReviewInviteEmail(
   }
 
   // Log the booking reference only — never customerName/customerEmail in
-  // production logs. (CODEBASE_ISSUES F3.) PII would otherwise stream
+  // production logs. PII would otherwise stream
   // into Vercel logs on every cron invocation.
   console.log(
     `📧 Sending review invite for ${type} booking ${bookingRef}`
