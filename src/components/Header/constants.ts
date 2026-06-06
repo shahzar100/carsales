@@ -4,7 +4,9 @@ import {
   Heart,
   Info,
   Package,
+  Scale,
   Settings as SettingsIcon,
+  Star,
   Truck,
   type LucideIcon,
 } from "lucide-react";
@@ -53,6 +55,18 @@ export const MORE: LinkItem[] = [
     href: "/Booking/lookup",
     icon: Calendar,
     desc: "Check your viewing or service",
+  },
+  {
+    label: "Compare Cars",
+    href: "/Compare",
+    icon: Scale,
+    desc: "Up to 3 side by side",
+  },
+  {
+    label: "Reviews",
+    href: "/Reviews",
+    icon: Star,
+    desc: "What our customers say",
   },
   { label: "About Us", href: "/AboutUs", icon: Info },
 ];
