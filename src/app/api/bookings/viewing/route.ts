@@ -5,6 +5,7 @@ import {
   badRequest,
   unauthorized,
   tooManyRequests,
+  conflict,
   serverError,
 } from "@/lib/utils/apiResponse";
 import { getCustomerIdentity } from "@/lib/utils/customerAuth";
@@ -179,7 +180,7 @@ export async function POST(request: NextRequest) {
         typeof err === "object" &&
         (err as { code?: number }).code === 11000
       ) {
-        return tooManyRequests(
+        return conflict(
           "That slot was just taken — please pick another time."
         );
       }

@@ -8,6 +8,9 @@
  *   1. `reservations` with `status === "pending"` and
  *      `createdAt < now - 48h` → flip to `expired` and stamp
  *      `expiredAt`. Customer never showed up to pay the deposit.
+ *      The held car is also flipped back to `available` (only when it's
+ *      still `reserved`) so it returns to the storefront — without this
+ *      an expired reservation silently strands the car forever.
  *
  *   2. `serviceAppointments` and `carViewingBookings` with
  *      `status === "pending"` and `appointmentDate < today - 24h`
@@ -29,10 +32,12 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { ObjectId } from "mongodb";
 import {
   getReservationsCollection,
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
+  getCarsCollection,
 } from "@/lib/models";
 import { recordAudit } from "@/lib/utils/audit";
 import { logError, logEvent } from "@/lib/utils/observability";
@@ -87,6 +92,7 @@ export async function GET(request: NextRequest) {
   );
 
   let expiredReservations = 0;
+  let carsReleased = 0;
   let expiredBookings = 0;
 
   // ── 1. Reservations: stale `pending` → `expired` ───────────
@@ -100,7 +106,7 @@ export async function GET(request: NextRequest) {
         status: "pending",
         createdAt: { $lt: reservationCutoff },
       })
-      .project({ _id: 1, reservationReference: 1 })
+      .project({ _id: 1, reservationReference: 1, carId: 1 })
       .toArray();
 
     if (stale.length > 0) {
@@ -116,6 +122,21 @@ export async function GET(request: NextRequest) {
         }
       );
       expiredReservations = result.modifiedCount;
+
+      // Release each held car back to `available` — but only if it's
+      // still `reserved` (a confirmed sale or another reservation may have
+      // moved it on; don't resurrect a sold car). Without this the car
+      // stays `reserved` forever and vanishes from the storefront.
+      const carsColl = await getCarsCollection();
+      for (const doc of stale) {
+        if (doc.carId && ObjectId.isValid(doc.carId)) {
+          const carResult = await carsColl.updateOne(
+            { _id: new ObjectId(doc.carId), status: "reserved" },
+            { $set: { status: "available", updatedAt: now } }
+          );
+          if (carResult.modifiedCount === 1) carsReleased++;
+        }
+      }
 
       // Audit each transition — never blocks the cron on failure
       // (recordAudit swallows + reports errors internally).
@@ -165,7 +186,7 @@ export async function GET(request: NextRequest) {
     logError(error, { route: "cron cleanup", action: "bookings" });
   }
 
-  const summary = { expiredReservations, expiredBookings };
+  const summary = { expiredReservations, carsReleased, expiredBookings };
   logEvent("cron.cleanup.completed", summary);
   return NextResponse.json(summary);
 }
