@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 interface RangeInputProps {
   label: string;
@@ -39,7 +39,7 @@ const RangeInput: React.FC<RangeInputProps> = ({
             Provide explicit aria-labels so screen readers announce e.g.
             "Price (£) minimum" / "Price (£) maximum" rather than just
             the placeholder. PR #40 a11y long-tail. */}
-        <motion.input
+        <m.input
           type="number"
           placeholder={minPlaceholder}
           value={minValue ?? ""}
@@ -49,15 +49,15 @@ const RangeInput: React.FC<RangeInputProps> = ({
           transition={{ type: "spring", stiffness: 460, damping: 28 }}
           className="input"
         />
-        <motion.span
+        <m.span
           className="range-separator"
           aria-hidden="true"
           animate={{ color: hasValue ? "#dc2626" : "#9ca3af" }}
           transition={{ duration: 0.2 }}
         >
           —
-        </motion.span>
-        <motion.input
+        </m.span>
+        <m.input
           type="number"
           placeholder={maxPlaceholder}
           value={maxValue ?? ""}

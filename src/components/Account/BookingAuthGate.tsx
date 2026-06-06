@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { LogIn, Loader2 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Button from "@/components/UI/Button";
 
 /**
@@ -37,7 +37,7 @@ export default function BookingAuthGate({
   return (
     <AnimatePresence mode="wait" initial={false}>
       {status === "loading" ? (
-        <motion.div
+        <m.div
           key="loading"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -50,9 +50,9 @@ export default function BookingAuthGate({
             aria-hidden="true"
           />
           <span className="sr-only">Checking your account…</span>
-        </motion.div>
+        </m.div>
       ) : status === "unauthenticated" ? (
-        <motion.div
+        <m.div
           key="gate"
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -60,31 +60,31 @@ export default function BookingAuthGate({
           transition={{ type: "spring", stiffness: 360, damping: 28 }}
           className="rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-gray-100 sm:p-10"
         >
-          <motion.div
+          <m.div
             initial={{ scale: 0, rotate: -20 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 420, damping: 18, delay: 0.1 }}
             className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50"
           >
             <LogIn className="h-6 w-6 text-red-600" aria-hidden="true" />
-          </motion.div>
-          <motion.h2
+          </m.div>
+          <m.h2
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.18 }}
             className="mt-4 text-xl font-bold text-gray-900"
           >
             {heading}
-          </motion.h2>
-          <motion.p
+          </m.h2>
+          <m.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.24 }}
             className="mx-auto mt-2 max-w-md text-sm text-gray-600"
           >
             {message}
-          </motion.p>
-          <motion.div
+          </m.p>
+          <m.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -97,10 +97,10 @@ export default function BookingAuthGate({
             >
               Create an account
             </Button>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       ) : (
-        <motion.div
+        <m.div
           key="children"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -108,7 +108,7 @@ export default function BookingAuthGate({
           transition={{ duration: 0.2 }}
         >
           {children}
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface ModalProps {
@@ -113,7 +113,7 @@ const Modal = ({
   if (!mounted) return null;
 
   return createPortal(
-    <motion.div
+    <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.18 }}
@@ -122,7 +122,7 @@ const Modal = ({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <motion.div
+      <m.div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
@@ -144,7 +144,7 @@ const Modal = ({
             <h2 id="modal-title" className="text-xl font-bold">
               {title}
             </h2>
-            <motion.button
+            <m.button
               onClick={onClose}
               aria-label="Close"
               whileHover={{ scale: 1.05, rotate: 90 }}
@@ -153,12 +153,12 @@ const Modal = ({
               className="group flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700"
             >
               <X />
-            </motion.button>
+            </m.button>
           </div>
         )}
 
         {variant === "clean" && (
-          <motion.button
+          <m.button
             onClick={onClose}
             aria-label="Close"
             whileHover={{ scale: 1.1, rotate: 90 }}
@@ -167,12 +167,12 @@ const Modal = ({
             className="absolute top-3 right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
           >
             <X className="h-4 w-4" />
-          </motion.button>
+          </m.button>
         )}
 
         {children}
-      </motion.div>
-    </motion.div>,
+      </m.div>
+    </m.div>,
     document.body
   );
 };

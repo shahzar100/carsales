@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Lock, User, AlertCircle, ShieldCheck } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "@/components/Helpful/Buttons/Button";
 import { InfoBanner } from "@/components/Form/FormPrimitives";
@@ -64,7 +64,7 @@ const AdminForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <AnimatePresence mode="wait" initial={false}>
         {!requires2fa ? (
-          <motion.div
+          <m.div
             key="creds"
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -113,9 +113,9 @@ const AdminForm = () => {
                 />
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ) : (
-          <motion.div
+          <m.div
             key="2fa"
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -129,14 +129,14 @@ const AdminForm = () => {
               Authenticator code
             </label>
             <div className="relative">
-              <motion.span
+              <m.span
                 initial={{ scale: 0.6, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 420, damping: 18, delay: 0.1 }}
                 className="absolute top-3 left-3 inline-flex"
               >
                 <ShieldCheck className="h-5 w-5 text-gray-400" />
-              </motion.span>
+              </m.span>
               <input
                 id="totpCode"
                 type="text"
@@ -157,7 +157,7 @@ const AdminForm = () => {
             <p className="mt-2 text-xs text-gray-500">
               Enter the 6-digit code from your authenticator app.
             </p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 

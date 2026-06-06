@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 interface DropdownOption {
   value: string;
@@ -49,7 +49,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <motion.button
+      <m.button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         whileTap={{ scale: 0.985 }}
@@ -64,19 +64,19 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           >
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <motion.span
+          <m.span
             animate={{ rotate: isOpen ? 180 : 0, color: isOpen ? "#ef4444" : "#9ca3af" }}
             transition={{ type: "spring", stiffness: 360, damping: 22 }}
             className="inline-flex"
           >
             <ChevronDown className="h-4 w-4" />
-          </motion.span>
+          </m.span>
         </div>
-      </motion.button>
+      </m.button>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -6, scaleY: 0.95 }}
             animate={{ opacity: 1, y: 0, scaleY: 1 }}
             exit={{ opacity: 0, y: -6, scaleY: 0.95 }}
@@ -85,7 +85,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg"
           >
             {options.map((option, idx) => (
-              <motion.button
+              <m.button
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
@@ -100,9 +100,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 }`}
               >
                 {option.label}
-              </motion.button>
+              </m.button>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

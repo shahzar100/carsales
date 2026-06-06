@@ -2,7 +2,7 @@
 
 import { Calendar, Car, Wrench, ClipboardList } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import StatusBadge from "@/components/UI/StatusBadge";
 import EmptyState from "@/components/UI/EmptyState";
 
@@ -70,7 +70,7 @@ export default function BookingsList({
   }
 
   return (
-    <motion.ul
+    <m.ul
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -79,7 +79,7 @@ export default function BookingsList({
       {items.map((item) => {
         const Icon = KIND_ICON[item.kind];
         return (
-          <motion.li
+          <m.li
             key={`${item.kind}-${item.reference}`}
             variants={itemVariants}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
@@ -106,9 +106,9 @@ export default function BookingsList({
                 Ref: {item.reference}
               </p>
             </div>
-          </motion.li>
+          </m.li>
         );
       })}
-    </motion.ul>
+    </m.ul>
   );
 }

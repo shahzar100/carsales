@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Button from "@/components/Helpful/Buttons/Button";
 
 interface CarFeaturesProps {
@@ -23,7 +23,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
           Features
           <AnimatePresence>
             {selectedFeatures.length > 0 && (
-              <motion.span
+              <m.span
                 key={selectedFeatures.length}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -32,13 +32,13 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
                 className="badge-sm badge-brand ml-1.5 inline-flex"
               >
                 {selectedFeatures.length}
-              </motion.span>
+              </m.span>
             )}
           </AnimatePresence>
         </label>
         <AnimatePresence>
           {selectedFeatures.length > 0 && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: 6 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 6 }}
@@ -52,7 +52,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
               >
                 Clear all
               </Button>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -63,7 +63,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
           {allFeatures.map((feature) => {
             const isSelected = selectedFeatures.includes(feature);
             return (
-              <motion.button
+              <m.button
                 key={feature}
                 onClick={() => onToggle(feature)}
                 whileHover={{ y: -2 }}
@@ -77,7 +77,7 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
               >
                 <AnimatePresence initial={false}>
                   {isSelected && (
-                    <motion.span
+                    <m.span
                       key="check"
                       initial={{ opacity: 0, width: 0, marginRight: 0 }}
                       animate={{ opacity: 1, width: "auto", marginRight: 4 }}
@@ -86,11 +86,11 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
                       className="inline-block overflow-hidden"
                     >
                       ✓
-                    </motion.span>
+                    </m.span>
                   )}
                 </AnimatePresence>
                 {feature}
-              </motion.button>
+              </m.button>
             );
           })}
         </div>

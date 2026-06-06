@@ -4,7 +4,7 @@ import React from "react";
 import { CarInterface } from "@/lib/interfaces";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Cars from "@/components/Car/Cars";
 
 const CarCard = ({
@@ -20,7 +20,7 @@ const CarCard = ({
     <>
       <div className="relative flex w-full items-center gap-4">
         {/* Left Navigation Button */}
-        <motion.button
+        <m.button
           onClick={() => setCarId(carId - 1)}
           disabled={carId === 0}
           aria-label="Previous car"
@@ -30,7 +30,7 @@ const CarCard = ({
           className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
         >
           <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
-        </motion.button>
+        </m.button>
 
         {/* Car Card */}
         <div className="min-w-0 flex-1">
@@ -43,7 +43,7 @@ const CarCard = ({
         </div>
 
         {/* Right Navigation Button */}
-        <motion.button
+        <m.button
           onClick={() => setCarId(carId + 1)}
           disabled={carId === filteredCars.length - 1}
           aria-label="Next car"
@@ -57,12 +57,12 @@ const CarCard = ({
           className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
         >
           <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
-        </motion.button>
+        </m.button>
       </div>
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
         {filteredCars.map((c, idx) => (
-          <motion.button
+          <m.button
             key={c._id ? String(c._id) : idx}
             onClick={() => setCarId(idx)}
             whileHover={{ scale: 1.06, y: -2 }}
@@ -79,13 +79,13 @@ const CarCard = ({
               className="object-cover"
             />
             {idx === carId && (
-              <motion.span
+              <m.span
                 layoutId="carcard-thumb-ring"
                 transition={{ type: "spring", stiffness: 480, damping: 28 }}
                 className="pointer-events-none absolute inset-0 rounded-lg ring-2 ring-red-600"
               />
             )}
-          </motion.button>
+          </m.button>
         ))}
       </div>
     </>

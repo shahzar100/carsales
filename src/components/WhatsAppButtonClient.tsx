@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 interface Props {
   phone: string;
@@ -54,7 +54,7 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
   const href = `https://wa.me/${normalised}?text=${encodeURIComponent(message)}`;
 
   return (
-    <motion.a
+    <m.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
@@ -72,7 +72,7 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
       className="fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-emerald-900/30 hover:shadow-xl sm:right-6 sm:bottom-6"
     >
       {/* Soft ambient pulse ring — draws the eye without being obtrusive. */}
-      <motion.span
+      <m.span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-full bg-[#25D366]"
         animate={{ scale: [1, 1.45], opacity: [0.4, 0] }}
@@ -85,6 +85,6 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
       />
       <MessageCircle className="relative h-7 w-7" fill="currentColor" strokeWidth={0} />
       <span className="sr-only">WhatsApp</span>
-    </motion.a>
+    </m.a>
   );
 }

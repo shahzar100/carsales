@@ -20,7 +20,7 @@
 "use client";
 import React from "react";
 import type { LucideIcon } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 interface EmptyStateProps {
   /** Lucide icon component (not an instance — pass `Car`, not `<Car />`). */
@@ -64,7 +64,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const useDashed = dashed ?? true;
   return (
-    <motion.div
+    <m.div
       role="status"
       aria-live="polite"
       initial={{ opacity: 0, y: 12 }}
@@ -80,7 +80,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       ].join(" ")}
     >
       {Icon && (
-        <motion.span
+        <m.span
           initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 18, delay: 0.05 }}
@@ -89,37 +89,37 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             className={`text-gray-400 ${ICON_SIZE_CLASSES[size]}`}
             aria-hidden="true"
           />
-        </motion.span>
+        </m.span>
       )}
-      <motion.h3
+      <m.h3
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, delay: 0.12 }}
         className="text-base font-semibold text-gray-900"
       >
         {title}
-      </motion.h3>
+      </m.h3>
       {description && (
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: 0.18 }}
           className="max-w-md text-sm text-gray-500"
         >
           {description}
-        </motion.p>
+        </m.p>
       )}
       {action && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: 0.24 }}
           className="mt-2"
         >
           {action}
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   );
 };
 

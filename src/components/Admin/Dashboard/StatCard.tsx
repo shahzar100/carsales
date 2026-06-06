@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 // ═════════════════════════════════════════════════════════════
 // StatCard — single KPI tile with icon, value, label & trend
@@ -33,7 +33,7 @@ const StatCard: React.FC<StatCardProps> = ({
   subtext,
   badge,
 }) => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, y: 16 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-40px" }}
@@ -41,19 +41,19 @@ const StatCard: React.FC<StatCardProps> = ({
     whileHover={{ y: -3 }}
     className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md"
   >
-    <motion.div
+    <m.div
       whileHover={{ rotate: -6, scale: 1.06 }}
       transition={{ type: "spring", stiffness: 420, damping: 18 }}
       className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${colour}`}
     >
       {icon}
-    </motion.div>
+    </m.div>
     <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2">
         <p className="text-sm font-medium text-gray-500">{label}</p>
         {badge}
       </div>
-      <motion.p
+      <m.p
         key={String(value)}
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
@@ -61,12 +61,12 @@ const StatCard: React.FC<StatCardProps> = ({
         className="mt-1 text-2xl font-bold text-gray-900 tabular-nums"
       >
         {value}
-      </motion.p>
+      </m.p>
       {subtext && (
         <p className="mt-0.5 truncate text-xs text-gray-400">{subtext}</p>
       )}
     </div>
-  </motion.div>
+  </m.div>
 );
 
 export default StatCard;

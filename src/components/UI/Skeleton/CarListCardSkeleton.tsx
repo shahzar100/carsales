@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Skeleton for the horizontal list-card layout (CarListCard.tsx) —
@@ -10,7 +10,7 @@ const CarListCardSkeleton: React.FC = () => (
   <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
     <div className="flex flex-col sm:flex-row">
       {/* Image placeholder */}
-      <motion.div
+      <m.div
         className="skeleton-shimmer relative aspect-16/10 w-full shrink-0 sm:aspect-auto sm:h-auto sm:w-64 md:w-72 lg:w-80"
         initial={{ opacity: 0.4 }}
         animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -20,7 +20,7 @@ const CarListCardSkeleton: React.FC = () => (
         <div className="absolute top-3 left-3 flex gap-2">
           <div className="skeleton-shimmer h-5 w-16 rounded-full" />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Content */}
       <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
@@ -42,7 +42,7 @@ const CarListCardSkeleton: React.FC = () => (
         {/* Specs row */}
         <div className="mb-4 flex flex-wrap gap-2">
           {[0, 1, 2, 3].map((i) => (
-            <motion.div
+            <m.div
               key={i}
               className="skeleton-shimmer h-7 w-24 rounded-lg"
               initial={{ opacity: 0.5 }}
@@ -60,7 +60,7 @@ const CarListCardSkeleton: React.FC = () => (
         {/* Features */}
         <div className="mb-4 flex flex-wrap gap-1.5">
           {[0, 1, 2, 3].map((i) => (
-            <motion.div
+            <m.div
               key={i}
               className="skeleton-shimmer h-5 w-16 rounded-full"
               initial={{ opacity: 0.5 }}
@@ -97,14 +97,14 @@ export const CarListCardSkeletonGrid: React.FC<{ count?: number }> = ({
 }) => (
   <div className="flex flex-col gap-4">
     {Array.from({ length: count }).map((_, i) => (
-      <motion.div
+      <m.div
         key={i}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: i * 0.1 }}
       >
         <CarListCardSkeleton />
-      </motion.div>
+      </m.div>
     ))}
   </div>
 );

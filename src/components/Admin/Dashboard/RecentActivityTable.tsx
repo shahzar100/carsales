@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ActivityItem } from "./types";
 import { Wrench, Eye, Clock } from "lucide-react";
 import { formatDate, formatRelativeTime } from "@/lib/utils/format";
@@ -78,14 +78,14 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
               <th className="px-6 py-3 text-right">Created</th>
             </tr>
           </thead>
-          <motion.tbody
+          <m.tbody
             variants={containerVariants}
             initial="hidden"
             animate="show"
             className="divide-y divide-gray-50"
           >
             {data.map((item) => (
-              <motion.tr
+              <m.tr
                 key={item.reference}
                 variants={rowVariants}
                 transition={{ type: "spring", stiffness: 380, damping: 28 }}
@@ -112,9 +112,9 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
                 <td className="px-6 py-3 text-right text-xs whitespace-nowrap text-gray-400">
                   {item.createdAt ? formatRelativeTime(item.createdAt) : "—"}
                 </td>
-              </motion.tr>
+              </m.tr>
             ))}
-          </motion.tbody>
+          </m.tbody>
         </table>
       </div>
     )}

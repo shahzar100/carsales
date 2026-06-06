@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 interface PaginationProps {
   currentPage: number;
@@ -122,7 +122,7 @@ const Pagination: React.FC<PaginationProps> = ({
       {/* Right side — controls */}
       <div className="flex items-center gap-1.5">
         {/* Previous */}
-        <motion.button
+        <m.button
           onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
           whileHover={currentPage === 1 ? undefined : { scale: 1.05, x: -2 }}
@@ -133,7 +133,7 @@ const Pagination: React.FC<PaginationProps> = ({
         >
           <ChevronLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Prev</span>
-        </motion.button>
+        </m.button>
 
         {/* Page Numbers */}
         <div className="flex items-center gap-1 px-1">
@@ -147,7 +147,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 ···
               </span>
             ) : (
-              <motion.button
+              <m.button
                 key={page}
                 onClick={() => handlePageChange(page as number)}
                 whileHover={{ scale: 1.08, y: -1 }}
@@ -160,20 +160,20 @@ const Pagination: React.FC<PaginationProps> = ({
                 }`}
               >
                 {currentPage === page && (
-                  <motion.span
+                  <m.span
                     layoutId="pagination-active"
                     transition={{ type: "spring", stiffness: 460, damping: 32 }}
                     className="absolute inset-0 rounded-lg bg-red-600 shadow-md"
                   />
                 )}
                 <span className="relative">{page}</span>
-              </motion.button>
+              </m.button>
             )
           )}
         </div>
 
         {/* Next */}
-        <motion.button
+        <m.button
           onClick={() =>
             handlePageChange(Math.min(totalPages, currentPage + 1))
           }
@@ -186,7 +186,7 @@ const Pagination: React.FC<PaginationProps> = ({
         >
           <span className="hidden sm:inline">Next</span>
           <ChevronRight className="h-4 w-4" />
-        </motion.button>
+        </m.button>
       </div>
     </div>
   );

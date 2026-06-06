@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Mail, AlertCircle, CheckCircle2 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Button from "@/components/UI/Button";
 import { InfoBanner } from "@/components/Form/FormPrimitives";
 
@@ -51,20 +51,20 @@ export default function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 360, damping: 26 }}
         className="text-center"
       >
-        <motion.div
+        <m.div
           initial={{ scale: 0, rotate: -90 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
           className="mx-auto inline-block"
         >
           <CheckCircle2 className="h-12 w-12 text-emerald-500" />
-        </motion.div>
+        </m.div>
         <h2 className="mt-3 text-lg font-semibold text-gray-900">
           Check your inbox
         </h2>
@@ -72,7 +72,7 @@ export default function ForgotPasswordForm() {
           If <span className="font-medium">{email}</span> has an account with a
           password, we&apos;ve sent a reset link. It expires in 1 hour.
         </p>
-      </motion.div>
+      </m.div>
     );
   }
 

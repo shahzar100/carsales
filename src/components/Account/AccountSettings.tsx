@@ -10,7 +10,7 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Button from "@/components/UI/Button";
 import { useApi } from "@/hooks/useApi";
 
@@ -34,7 +34,7 @@ type Profile = {
 function Banner({ kind, children }: { kind: "ok" | "err"; children: string }) {
   // Re-key by `kind+children` so changing message replays the entry animation.
   return (
-    <motion.div
+    <m.div
       key={`${kind}-${children}`}
       initial={{ opacity: 0, y: -4, height: 0 }}
       animate={
@@ -71,7 +71,7 @@ function Banner({ kind, children }: { kind: "ok" | "err"; children: string }) {
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
       )}
       <span>{children}</span>
-    </motion.div>
+    </m.div>
   );
 }
 

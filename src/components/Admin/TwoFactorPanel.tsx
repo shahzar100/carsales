@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ShieldCheck, ShieldOff, AlertCircle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Button from "@/components/Helpful/Buttons/Button";
 
 interface Props {
@@ -101,7 +101,7 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
     <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
         <AnimatePresence mode="wait" initial={false}>
-          <motion.span
+          <m.span
             key={enabled ? "on" : "off"}
             initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -114,11 +114,11 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
             ) : (
               <ShieldOff className="h-6 w-6 text-gray-400" />
             )}
-          </motion.span>
+          </m.span>
         </AnimatePresence>
         <div>
           <h2 className="text-lg font-semibold">Two-factor authentication</h2>
-          <motion.p
+          <m.p
             key={enabled ? "on-text" : "off-text"}
             initial={{ opacity: 0, y: -3 }}
             animate={{ opacity: 1, y: 0 }}
@@ -128,13 +128,13 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
             {enabled
               ? "Enabled — you'll be asked for a 6-digit code at every login."
               : "Not enabled. Add a second factor to harden the account."}
-          </motion.p>
+          </m.p>
         </div>
       </div>
 
       <AnimatePresence>
         {error && (
-          <motion.div
+          <m.div
             key={error}
             initial={{ opacity: 0, y: -4, height: 0, marginTop: 0 }}
             animate={{
@@ -157,14 +157,14 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
           >
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Enrolment flow */}
       <AnimatePresence mode="wait" initial={false}>
       {!enabled && step === "idle" && (
-        <motion.div
+        <m.div
           key="enable-btn"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -179,11 +179,11 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
           >
             Enable 2FA
           </Button>
-        </motion.div>
+        </m.div>
       )}
 
       {step === "verifying" && (
-        <motion.form
+        <m.form
           key="verify-form"
           onSubmit={verifyCode}
           initial={{ opacity: 0, y: 12 }}
@@ -193,7 +193,7 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
           className="mt-6 space-y-4"
         >
           {qrSrc && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 360, damping: 24, delay: 0.1 }}
@@ -209,7 +209,7 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               <p className="text-xs text-gray-500">
                 Scan with Google Authenticator, 1Password, Authy, …
               </p>
-            </motion.div>
+            </m.div>
           )}
           <details className="text-sm text-gray-600">
             <summary className="cursor-pointer">Can&apos;t scan? Show secret</summary>
@@ -248,11 +248,11 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               Cancel
             </Button>
           </div>
-        </motion.form>
+        </m.form>
       )}
 
       {enabled && step === "idle" && (
-        <motion.div
+        <m.div
           key="disable-btn"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -268,11 +268,11 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
           >
             Disable 2FA
           </Button>
-        </motion.div>
+        </m.div>
       )}
 
       {step === "disabling" && (
-        <motion.form
+        <m.form
           key="disable-form"
           onSubmit={disable}
           initial={{ opacity: 0, y: 12 }}
@@ -309,7 +309,7 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
               Cancel
             </Button>
           </div>
-        </motion.form>
+        </m.form>
       )}
       </AnimatePresence>
     </section>

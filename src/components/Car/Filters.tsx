@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useFilters } from "@/contexts/FilterContext";
 import { CarInterface } from "@/lib/interfaces";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -73,7 +73,7 @@ const Filters: React.FC<FiltersProps> = ({
               {filteredCount} of {totalCount} vehicles
               <AnimatePresence>
                 {activeCount > 0 && (
-                  <motion.span
+                  <m.span
                     key={activeCount}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -82,7 +82,7 @@ const Filters: React.FC<FiltersProps> = ({
                     className="badge-sm badge-brand ml-1.5 inline-flex"
                   >
                     {activeCount} active
-                  </motion.span>
+                  </m.span>
                 )}
               </AnimatePresence>
             </p>
@@ -148,7 +148,7 @@ const Filters: React.FC<FiltersProps> = ({
       {/* Advanced Filters */}
       <AnimatePresence initial={false}>
         {showAdvanced && (
-          <motion.div
+          <m.div
             key="advanced"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -220,7 +220,7 @@ const Filters: React.FC<FiltersProps> = ({
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

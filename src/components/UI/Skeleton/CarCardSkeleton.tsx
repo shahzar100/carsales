@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Skeleton for the admin Cars card view (Cars.tsx) —
@@ -21,7 +21,7 @@ const CarCardSkeleton: React.FC = () => (
     <div className="mt-4 w-full overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
       <div className="flex flex-col md:flex-row">
         {/* Image placeholder */}
-        <motion.div
+        <m.div
           className="skeleton-shimmer relative aspect-4/3 w-full md:aspect-auto lg:w-1/2"
           initial={{ opacity: 0.4 }}
           animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -32,7 +32,7 @@ const CarCardSkeleton: React.FC = () => (
             <div className="skeleton-shimmer h-5 w-16 rounded-full" />
             <div className="skeleton-shimmer h-5 w-16 rounded-full" />
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Content */}
         <div className="flex w-full flex-col p-4 md:p-5">
@@ -48,7 +48,7 @@ const CarCardSkeleton: React.FC = () => (
           {/* Specs grid */}
           <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="skeleton-shimmer h-8 rounded-lg"
                 initial={{ opacity: 0.5 }}
@@ -66,7 +66,7 @@ const CarCardSkeleton: React.FC = () => (
           {/* Features */}
           <div className="mb-3 flex flex-wrap gap-1">
             {[0, 1, 2].map((i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="skeleton-shimmer h-6 w-20 rounded-full"
                 initial={{ opacity: 0.5 }}
@@ -94,7 +94,7 @@ const CarCardSkeleton: React.FC = () => (
     {/* Thumbnail strip */}
     <div className="mt-3 flex gap-2 overflow-hidden pb-1">
       {[0, 1, 2, 3, 4].map((i) => (
-        <motion.div
+        <m.div
           key={i}
           className="skeleton-shimmer h-12 w-16 shrink-0 rounded-lg"
           initial={{ opacity: 0.5 }}

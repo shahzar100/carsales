@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Shared chrome for the customer login / register / forgot-password / reset
@@ -42,13 +42,13 @@ export default function AuthShell({
         isAdmin ? "" : "py-12"
       }`}
     >
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 320, damping: 28 }}
         className="w-full max-w-md"
       >
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
@@ -74,8 +74,8 @@ export default function AuthShell({
               {subtitle}
             </p>
           )}
-        </motion.div>
-        <motion.div
+        </m.div>
+        <m.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 360, damping: 28, delay: 0.14 }}
@@ -86,9 +86,9 @@ export default function AuthShell({
           }
         >
           {children}
-        </motion.div>
+        </m.div>
         {footer && (
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.32 }}
@@ -110,9 +110,9 @@ export default function AuthShell({
                 </Link>
               </>
             )}
-          </motion.p>
+          </m.p>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

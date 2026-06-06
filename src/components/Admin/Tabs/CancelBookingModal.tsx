@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { SelectedBooking } from "@/lib/types";
 import Modal from "@/components/Helpful/Buttons/Modal";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -24,14 +24,14 @@ export default function CancelBookingModal({
     <Modal title="Cancel Booking" onClose={onClose} size="sm">
       {/* Warning icon */}
       <div className="flex items-center gap-2 text-red-600">
-        <motion.span
+        <m.span
           initial={{ scale: 0.6, rotate: -12 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
           className="inline-flex"
         >
           <AlertTriangle className="h-5 w-5" />
-        </motion.span>
+        </m.span>
         <span className="text-sm font-semibold">
           This action cannot be undone
         </span>
@@ -68,7 +68,7 @@ export default function CancelBookingModal({
           />
           <AnimatePresence>
             {reason.length > 0 && reason.length < 10 && (
-              <motion.p
+              <m.p
                 initial={{ opacity: 0, y: -4, height: 0 }}
                 animate={{ opacity: 1, y: 0, height: "auto" }}
                 exit={{ opacity: 0, y: -4, height: 0 }}
@@ -77,7 +77,7 @@ export default function CancelBookingModal({
                 className="mt-1 text-xs text-red-500"
               >
                 Reason must be at least 10 characters ({reason.length}/10)
-              </motion.p>
+              </m.p>
             )}
           </AnimatePresence>
         </div>

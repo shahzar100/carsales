@@ -29,9 +29,9 @@
 import React from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
-const MotionLink = motion.create(Link);
+const MotionLink = m.create(Link);
 
 const TAP = { scale: 0.97 };
 const HOVER = { scale: 1.02 };
@@ -217,7 +217,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
     if (isExternal) {
       return (
-        <motion.a
+        <m.a
           href={props.href}
           target={props.target}
           rel={props.target === "_blank" ? "noopener noreferrer" : undefined}
@@ -229,7 +229,7 @@ const Button: React.FC<ButtonProps> = (props) => {
           transition={SPRING}
         >
           {inner}
-        </motion.a>
+        </m.a>
       );
     }
 
@@ -251,7 +251,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
   const buttonProps = props as ButtonAsButtonProps;
   return (
-    <motion.button
+    <m.button
       type={buttonProps.type ?? "button"}
       disabled={disabled || loading}
       className={cls}
@@ -262,7 +262,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       transition={SPRING}
     >
       {inner}
-    </motion.button>
+    </m.button>
   );
 };
 

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Skeleton for a single PackageCard — dark-themed to match
@@ -25,7 +25,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
       {/* Popular badge placeholder */}
       {popular && (
         <div className="absolute -top-px left-1/2 -translate-x-1/2">
-          <motion.div
+          <m.div
             className="h-7 w-28 rounded-b-lg bg-red-600/30"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -40,7 +40,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
 
       {/* Header — name, subtitle, price */}
       <div className={`space-y-3 text-center ${popular ? "mt-4" : ""}`}>
-        <motion.div
+        <m.div
           className="mx-auto h-5 w-40 rounded bg-white/10"
           initial={{ opacity: 0.4 }}
           animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -50,7 +50,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
             ease: "easeInOut",
           }}
         />
-        <motion.div
+        <m.div
           className="mx-auto h-4 w-24 rounded bg-white/8"
           initial={{ opacity: 0.4 }}
           animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -61,7 +61,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
             delay: 0.1,
           }}
         />
-        <motion.div
+        <m.div
           className="mx-auto h-8 w-28 rounded bg-white/10"
           initial={{ opacity: 0.4 }}
           animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -72,7 +72,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
             delay: 0.15,
           }}
         />
-        <motion.div
+        <m.div
           className="mx-auto h-3 w-20 rounded bg-white/6"
           initial={{ opacity: 0.4 }}
           animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -92,7 +92,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
       <div className="flex-1 space-y-3">
         {[85, 92, 78, 88, 70].map((width, i) => (
           <div key={i} className="flex items-center gap-2.5">
-            <motion.div
+            <m.div
               className="h-4 w-4 shrink-0 rounded-full bg-white/8"
               initial={{ opacity: 0.4 }}
               animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -103,7 +103,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
                 delay: i * 0.08,
               }}
             />
-            <motion.div
+            <m.div
               className="h-3 rounded bg-white/8"
               style={{ width: `${width}%` }}
               initial={{ opacity: 0.4 }}
@@ -120,7 +120,7 @@ const PackageCardSkeleton: React.FC<{ popular?: boolean }> = ({
       </div>
 
       {/* Footer button placeholder */}
-      <motion.div
+      <m.div
         className="mt-5 h-11 w-full rounded-xl bg-white/8"
         initial={{ opacity: 0.4 }}
         animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -149,14 +149,14 @@ export const PackageCardSkeletonGrid: React.FC<{
     }`}
   >
     {Array.from({ length: count }).map((_, i) => (
-      <motion.div
+      <m.div
         key={i}
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: i * 0.1 }}
       >
         <PackageCardSkeleton popular={i === popularIndex} />
-      </motion.div>
+      </m.div>
     ))}
   </div>
 );

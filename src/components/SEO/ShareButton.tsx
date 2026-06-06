@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Share2, Check, Link2, Mail, ExternalLink } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Modal from "@/components/Helpful/Buttons/Modal";
 
 const tileContainer = {
@@ -229,7 +229,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   return (
     <div className={`relative inline-flex ${className}`}>
       {/* Trigger */}
-      <motion.button
+      <m.button
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Share this page"
@@ -244,7 +244,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
       >
         <Share2 className={size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"} />
         {!isIconOnly && <span>Share</span>}
-      </motion.button>
+      </m.button>
 
       {/* ============================================================ */}
       {/*  Modal — centred on screen via the reusable Modal component  */}
@@ -267,14 +267,14 @@ const ShareButton: React.FC<ShareButtonProps> = ({
             <p className="mb-3 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">
               Share on Social
             </p>
-            <motion.div
+            <m.div
               variants={tileContainer}
               initial="hidden"
               animate="show"
               className="grid grid-cols-4 gap-2"
             >
               {PRIMARY_PLATFORMS.map((platform) => (
-                <motion.button
+                <m.button
                   key={platform.name}
                   type="button"
                   onClick={() => handleShare(platform)}
@@ -307,9 +307,9 @@ const ShareButton: React.FC<ShareButtonProps> = ({
                   <span className="text-[11px] font-medium text-gray-600">
                     {platform.name}
                   </span>
-                </motion.button>
+                </m.button>
               ))}
-            </motion.div>
+            </m.div>
           </div>
 
           {/* Divider */}

@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import FilterSection from "./FilterSection";
 import Button from "@/components/Helpful/Buttons/Button";
 import { CarPartInterface } from "@/lib/interfaces";
@@ -99,7 +99,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
 
       {/* Parts Grid */}
       {filteredParts.length > 0 ? (
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -107,7 +107,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
         >
           <AnimatePresence mode="popLayout">
           {filteredParts.map((part) => (
-            <motion.div
+            <m.div
               key={String(part._id)}
               variants={partVariants}
               layout
@@ -196,12 +196,12 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ))}
           </AnimatePresence>
-        </motion.div>
+        </m.div>
       ) : (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -211,7 +211,7 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
           <div className="text-sm text-gray-600">
             Try adjusting your filters to see more results
           </div>
-        </motion.div>
+        </m.div>
       )}
     </>
   );

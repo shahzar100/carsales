@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { Upload, X, Loader2, AlertCircle, ImagePlus } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
@@ -187,7 +187,7 @@ export default function ImageUploader({
     <div className="space-y-3">
       {/* Drop zone */}
       {canUploadMore && (
-        <motion.button
+        <m.button
           type="button"
           onClick={() => inputRef.current?.click()}
           onDragOver={(e) => {
@@ -208,7 +208,7 @@ export default function ImageUploader({
           aria-label="Upload images"
         >
           <AnimatePresence mode="wait" initial={false}>
-            <motion.span
+            <m.span
               key={dragActive ? "drop" : "idle"}
               initial={{ scale: 0.6, opacity: 0, rotate: -10 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -221,7 +221,7 @@ export default function ImageUploader({
               ) : (
                 <Upload className="h-8 w-8 text-gray-400" />
               )}
-            </motion.span>
+            </m.span>
           </AnimatePresence>
           <span className="text-sm font-medium text-gray-700">
             {dragActive ? "Drop to upload" : "Click or drag images here"}
@@ -229,7 +229,7 @@ export default function ImageUploader({
           <span className="mt-1 text-xs text-gray-500">
             JPEG, PNG, WebP, AVIF — max 10 MB
           </span>
-        </motion.button>
+        </m.button>
       )}
 
       <input
@@ -250,7 +250,7 @@ export default function ImageUploader({
       {/* Error */}
       <AnimatePresence>
         {error && (
-          <motion.div
+          <m.div
             key={error}
             initial={{ opacity: 0, y: -4, height: 0 }}
             animate={{
@@ -271,14 +271,14 @@ export default function ImageUploader({
           >
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Uploading progress */}
       <AnimatePresence>
         {uploading.map((file) => (
-          <motion.div
+          <m.div
             key={file.id}
             layout
             initial={{ opacity: 0, y: -6, height: 0 }}
@@ -292,7 +292,7 @@ export default function ImageUploader({
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm text-gray-700">{file.name}</p>
               <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-                <motion.div
+                <m.div
                   className="h-full rounded-full bg-red-600"
                   animate={{ width: `${file.progress}%` }}
                   transition={{ type: "spring", stiffness: 220, damping: 28 }}
@@ -300,7 +300,7 @@ export default function ImageUploader({
               </div>
             </div>
             <span className="text-xs text-gray-500 tabular-nums">{file.progress}%</span>
-          </motion.div>
+          </m.div>
         ))}
       </AnimatePresence>
 
@@ -315,7 +315,7 @@ export default function ImageUploader({
         >
           <AnimatePresence mode="popLayout">
             {existingImages.map((url, i) => (
-              <motion.div
+              <m.div
                 key={url}
                 layout
                 initial={{ opacity: 0, scale: 0.85, y: 8 }}
@@ -333,14 +333,14 @@ export default function ImageUploader({
                   unoptimized
                 />
                 {multiple && i === 0 && existingImages.length > 1 && (
-                  <motion.span
+                  <m.span
                     layout
                     className="absolute bottom-1 left-1 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white"
                   >
                     Main
-                  </motion.span>
+                  </m.span>
                 )}
-                <motion.button
+                <m.button
                   type="button"
                   onClick={() => handleRemove(url)}
                   whileHover={{ scale: 1.15, rotate: 90 }}
@@ -350,8 +350,8 @@ export default function ImageUploader({
                   aria-label={`Remove image ${i + 1}`}
                 >
                   <X className="h-3.5 w-3.5" />
-                </motion.button>
-              </motion.div>
+                </m.button>
+              </m.div>
             ))}
           </AnimatePresence>
         </div>

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useViewing } from "@/contexts/ViewingContext";
 import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import { useSavedCars } from "@/contexts/SavedCarsContext";
@@ -228,7 +228,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                   className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-950 sm:aspect-[16/10] sm:rounded-2xl focus:ring-2 focus:ring-red-500 focus:outline-none"
                 >
                   <AnimatePresence initial={false} mode="wait">
-                    <motion.div
+                    <m.div
                       key={activeImageIndex}
                       initial={{ opacity: 0, scale: 1.03 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -244,7 +244,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         priority
                         sizes="(max-width: 1024px) 100vw, 60vw"
                       />
-                    </motion.div>
+                    </m.div>
                   </AnimatePresence>
 
                   {/* Bottom + top gradient for control legibility */}
@@ -301,7 +301,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                   {/* Prev/Next — desktop only */}
                   {totalImages > 1 && (
                     <>
-                      <motion.button
+                      <m.button
                         type="button"
                         aria-label="Previous image"
                         onClick={() =>
@@ -315,8 +315,8 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         className="absolute top-1/2 left-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronLeft className="h-[22px] w-[22px]" />
-                      </motion.button>
-                      <motion.button
+                      </m.button>
+                      <m.button
                         type="button"
                         aria-label="Next image"
                         onClick={() =>
@@ -328,7 +328,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         className="absolute top-1/2 right-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronRight className="h-[22px] w-[22px]" />
-                      </motion.button>
+                      </m.button>
                     </>
                   )}
 
@@ -361,7 +361,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                     style={{ scrollbarWidth: "none" }}
                   >
                     {allImages.map((img, i) => (
-                      <motion.button
+                      <m.button
                         key={img}
                         type="button"
                         onClick={() => setActiveImageIndex(i)}
@@ -386,13 +386,13 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                           sizes="84px"
                         />
                         {i === activeImageIndex && (
-                          <motion.span
+                          <m.span
                             layoutId="gallery-thumb-ring"
                             transition={{ type: "spring", stiffness: 480, damping: 28 }}
                             className="pointer-events-none absolute inset-0 rounded-lg ring-2 ring-red-600"
                           />
                         )}
-                      </motion.button>
+                      </m.button>
                     ))}
                   </div>
                 )}

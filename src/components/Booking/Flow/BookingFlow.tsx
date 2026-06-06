@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useAccountContact } from "@/hooks/useAccountContact";
 import StepStrip from "./StepStrip";
 import { SERVICES, type ServiceKey } from "./ServiceCard";
@@ -217,7 +217,7 @@ export default function BookingFlow({
 
       <div className="mx-auto w-full max-w-7xl flex-1 overflow-hidden px-4 pb-14 sm:px-6">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
-          <motion.div
+          <m.div
             key={step}
             custom={direction}
             variants={{
@@ -297,7 +297,7 @@ export default function BookingFlow({
                 onReturnHome={() => router.push("/")}
               />
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
     </div>

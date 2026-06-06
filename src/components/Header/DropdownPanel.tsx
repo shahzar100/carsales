@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { FOCUS_RING, type LinkItem } from "./constants";
 
 // ── Reusable desktop dropdown panel ────────────────────────────────────
@@ -17,7 +17,7 @@ export function DropdownPanel({
   children: React.ReactNode;
 }) {
   return (
-    <motion.div
+    <m.div
       ref={panelRef}
       id={id}
       role="menu"
@@ -31,7 +31,7 @@ export function DropdownPanel({
       }
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 

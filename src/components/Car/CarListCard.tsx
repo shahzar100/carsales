@@ -3,7 +3,7 @@ import React from "react";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import {
   Fuel,
   Gauge,
@@ -60,7 +60,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
   ];
 
   const cardContent = (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -220,7 +220,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
                     variant="icon"
                     size="sm"
                   />
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}>
+                  <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}>
                     <Link
                       href={`/BrowseFleet/${car._id}`}
                       className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md"
@@ -228,14 +228,14 @@ const CarListCard: React.FC<CarListCardProps> = ({
                       <Eye className="h-4 w-4" />
                       View Details
                     </Link>
-                  </motion.div>
+                  </m.div>
                 </div>
               </>
             )}
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 
   return cardContent;

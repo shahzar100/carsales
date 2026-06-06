@@ -3,11 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { Calendar } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useViewing } from "@/contexts/ViewingContext";
 import { CarInterface } from "@/lib/interfaces";
 
-const MotionLink = motion.create(Link);
+const MotionLink = m.create(Link);
 
 const FeaturedCarBookingButton: React.FC<{ car: CarInterface }> = ({ car }) => {
   const { updateViewingBooking } = useViewing();

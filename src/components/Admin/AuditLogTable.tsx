@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import type { AuditLog } from "@/lib/interfaces";
 
 const rowVariants = {
@@ -158,7 +158,7 @@ export default function AuditLogTable({
               <th className="px-4 py-3">Metadata</th>
             </tr>
           </thead>
-          <motion.tbody
+          <m.tbody
             variants={containerVariants}
             initial="hidden"
             animate="show"
@@ -172,7 +172,7 @@ export default function AuditLogTable({
               </tr>
             ) : (
               rows.map((row, i) => (
-                <motion.tr
+                <m.tr
                   key={`${row._id ?? i}`}
                   variants={rowVariants}
                   transition={{ type: "spring", stiffness: 380, damping: 28 }}
@@ -204,10 +204,10 @@ export default function AuditLogTable({
                           .join(", ")
                       : "—"}
                   </td>
-                </motion.tr>
+                </m.tr>
               ))
             )}
-          </motion.tbody>
+          </m.tbody>
         </table>
       </div>
 

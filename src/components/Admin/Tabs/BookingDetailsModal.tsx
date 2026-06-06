@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Calendar, Clock, User, Mail, Phone, Wrench, Car } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Booking } from "@/lib/types";
 import Modal from "@/components/Helpful/Buttons/Modal";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -38,23 +38,23 @@ export default function BookingDetailsModal({
       </p>
 
       {/* Body */}
-      <motion.div
+      <m.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
         className="space-y-5"
       >
         {/* Status */}
-        <motion.div
+        <m.div
           variants={sectionVariants}
           className="flex items-center justify-between"
         >
           <span className="text-sm font-medium text-gray-500">Status</span>
           {statusBadge(booking.status)}
-        </motion.div>
+        </m.div>
 
         {/* Customer Info */}
-        <motion.div variants={sectionVariants}>
+        <m.div variants={sectionVariants}>
           <h4 className="mb-2 text-sm font-semibold text-gray-900">
             Customer Information
           </h4>
@@ -76,10 +76,10 @@ export default function BookingDetailsModal({
               </span>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Appointment */}
-        <motion.div variants={sectionVariants}>
+        <m.div variants={sectionVariants}>
           <h4 className="mb-2 text-sm font-semibold text-gray-900">
             Appointment
           </h4>
@@ -97,11 +97,11 @@ export default function BookingDetailsModal({
               </span>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Service Type (if service booking) */}
         {booking.serviceType && (
-          <motion.div variants={sectionVariants}>
+          <m.div variants={sectionVariants}>
             <h4 className="mb-2 text-sm font-semibold text-gray-900">
               Service
             </h4>
@@ -109,12 +109,12 @@ export default function BookingDetailsModal({
               <Wrench className="h-4 w-4 text-gray-400" />
               <span className="text-gray-900">{booking.serviceType}</span>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Car Details (if viewing booking) */}
         {booking.carDetails && (
-          <motion.div variants={sectionVariants}>
+          <m.div variants={sectionVariants}>
             <h4 className="mb-2 text-sm font-semibold text-gray-900">
               Vehicle
             </h4>
@@ -128,9 +128,9 @@ export default function BookingDetailsModal({
                 {formatPrice(booking.carDetails.price)}
               </span>
             </div>
-          </motion.div>
+          </m.div>
         )}
-      </motion.div>
+      </m.div>
 
       {/* Footer */}
       <div className="flex justify-end border-t border-gray-200 pt-4">

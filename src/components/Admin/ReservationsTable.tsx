@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import type { Reservation } from "@/lib/interfaces";
 import { logError } from "@/lib/utils/observability";
 
@@ -143,7 +143,7 @@ export default function ReservationsTable({
 
       <AnimatePresence>
         {error && (
-          <motion.div
+          <m.div
             key={error}
             initial={{ opacity: 0, y: -4, height: 0 }}
             animate={{
@@ -163,7 +163,7 @@ export default function ReservationsTable({
             className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           >
             {error}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -181,7 +181,7 @@ export default function ReservationsTable({
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
-          <motion.tbody
+          <m.tbody
             variants={containerVariants}
             initial="hidden"
             animate="show"
@@ -204,7 +204,7 @@ export default function ReservationsTable({
                 const canCancel =
                   r.status === "pending" || r.status === "confirmed";
                 return (
-                  <motion.tr
+                  <m.tr
                     key={id}
                     variants={rowVariants}
                     transition={{ type: "spring", stiffness: 360, damping: 28 }}
@@ -236,7 +236,7 @@ export default function ReservationsTable({
                     </td>
                     <td className="px-4 py-2">
                       <AnimatePresence mode="wait" initial={false}>
-                        <motion.span
+                        <m.span
                           key={r.status}
                           initial={{ opacity: 0, scale: 0.7 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -247,13 +247,13 @@ export default function ReservationsTable({
                           }`}
                         >
                           {r.status}
-                        </motion.span>
+                        </m.span>
                       </AnimatePresence>
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex flex-wrap gap-2">
                         {canConfirm && (
-                          <motion.button
+                          <m.button
                             type="button"
                             disabled={busy}
                             onClick={() => transition(id, "confirmed")}
@@ -263,10 +263,10 @@ export default function ReservationsTable({
                             className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
                           >
                             Confirm
-                          </motion.button>
+                          </m.button>
                         )}
                         {canCancel && (
-                          <motion.button
+                          <m.button
                             type="button"
                             disabled={busy}
                             onClick={() => transition(id, "cancelled")}
@@ -276,15 +276,15 @@ export default function ReservationsTable({
                             className="rounded-lg border border-red-300 bg-white px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
                           >
                             Cancel
-                          </motion.button>
+                          </m.button>
                         )}
                       </div>
                     </td>
-                  </motion.tr>
+                  </m.tr>
                 );
               })
             )}
-          </motion.tbody>
+          </m.tbody>
         </table>
       </div>
     </div>

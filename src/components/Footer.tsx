@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useBusinessInfo } from "@/contexts/BusinessInfoContext";
 import {
   MapPin,
@@ -52,7 +52,7 @@ export default function Footer() {
     <footer className="w-full border-t border-gray-200 bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-8 text-gray-700 sm:px-6 sm:py-12">
         {/* Main Footer Content */}
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -60,7 +60,7 @@ export default function Footer() {
           className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
         >
           {/* Company Info */}
-          <motion.div variants={columnVariants}>
+          <m.div variants={columnVariants}>
             {/* h2 (not h3) so the footer block opens at the same
                 section level as page sections (h2 → h3 columns below).
                 Login/register only have a page h1, so a footer h3
@@ -110,10 +110,10 @@ export default function Footer() {
                 </p>
               )}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Browse & Services */}
-          <motion.div variants={columnVariants}>
+          <m.div variants={columnVariants}>
             <h3 className="heading-4 mb-4">Browse & Services</h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -157,10 +157,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </motion.div>
+          </m.div>
 
           {/* Support & Info */}
-          <motion.div variants={columnVariants}>
+          <m.div variants={columnVariants}>
             <h3 className="heading-4 mb-4">Support & Info</h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -188,10 +188,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </motion.div>
+          </m.div>
 
           {/* Legal */}
-          <motion.div variants={columnVariants}>
+          <m.div variants={columnVariants}>
             <h3 className="heading-4 mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -211,8 +211,8 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 pt-6">
@@ -222,7 +222,7 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex space-x-4 md:mt-0">
               {social?.facebook && (
-                <motion.a
+                <m.a
                   href={social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -233,10 +233,10 @@ export default function Footer() {
                 >
                   <span className="sr-only">Facebook</span>
                   <Facebook size={20} />
-                </motion.a>
+                </m.a>
               )}
               {social?.twitter && (
-                <motion.a
+                <m.a
                   href={social.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -247,10 +247,10 @@ export default function Footer() {
                 >
                   <span className="sr-only">Twitter</span>
                   <Twitter size={20} />
-                </motion.a>
+                </m.a>
               )}
               {social?.instagram && (
-                <motion.a
+                <m.a
                   href={social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -261,7 +261,7 @@ export default function Footer() {
                 >
                   <span className="sr-only">Instagram</span>
                   <Instagram size={20} />
-                </motion.a>
+                </m.a>
               )}
             </div>
           </div>

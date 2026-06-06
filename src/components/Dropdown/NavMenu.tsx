@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface NavMenuProps {
@@ -73,7 +73,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
     <div ref={containerRef} className="relative">
       {/* Single entry point at every breakpoint — the nav links live
           inside this dropdown rather than spilling across the header bar. */}
-      <motion.button
+      <m.button
         onClick={() => setMenu(!menu)}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.94 }}
@@ -83,12 +83,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
         aria-label="Toggle menu"
         aria-expanded={menu}
       >
-        <motion.span
+        <m.span
           animate={{ rotate: menu ? 90 : 0 }}
           transition={{ type: "spring", stiffness: 360, damping: 20 }}
         >
           <Menu size={20} />
-        </motion.span>
+        </m.span>
         <span className="hidden sm:inline">{title}</span>
         <ChevronDown
           size={14}
@@ -97,13 +97,13 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
             (menu ? "rotate-180" : "")
           }
         />
-      </motion.button>
+      </m.button>
 
       <AnimatePresence>
         {menu &&
           (isDesktop ? (
             /* ── Desktop: anchored click dropdown (md+) ── */
-            <motion.div
+            <m.div
               role="menu"
               initial={{ opacity: 0, y: -8, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -122,17 +122,17 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
               <NavMenuCloseContext.Provider value={closeMenu}>
                 {children}
               </NavMenuCloseContext.Provider>
-            </motion.div>
+            </m.div>
           ) : (
             /* ── Mobile: full-screen slide-out overlay (<md) ── */
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: "100%" }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "spring", stiffness: 360, damping: 36 }}
               className="fixed top-0 right-0 z-50 h-screen w-screen overflow-y-auto bg-black shadow-2xl"
             >
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.25 }}
@@ -141,7 +141,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
                 <h2 className="text-xl font-bold text-white sm:text-2xl">
                   {title}
                 </h2>
-                <motion.button
+                <m.button
                   onClick={() => setMenu(false)}
                   whileHover={{ scale: 1.08, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
@@ -150,10 +150,10 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
                   aria-label="Close menu"
                 >
                   <X size={20} />
-                </motion.button>
-              </motion.div>
+                </m.button>
+              </m.div>
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.18, duration: 0.3 }}
@@ -162,8 +162,8 @@ const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
                 <NavMenuCloseContext.Provider value={closeMenu}>
                   {children}
                 </NavMenuCloseContext.Provider>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           ))}
       </AnimatePresence>
     </div>

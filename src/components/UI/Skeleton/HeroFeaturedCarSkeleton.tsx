@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Skeleton for the hero section's featured car card —
@@ -10,7 +10,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
   <div className="relative">
     <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/2 shadow-2xl ring-1 shadow-black/40 ring-white/5">
       {/* Image placeholder */}
-      <motion.div
+      <m.div
         className="skeleton-shimmer-dark relative aspect-16/10 w-full"
         initial={{ opacity: 0.3 }}
         animate={{ opacity: [0.3, 0.6, 0.3] }}
@@ -20,13 +20,13 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
         <div className="absolute top-4 left-4">
           <div className="h-6 w-20 rounded-full bg-white/10" />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Details placeholder */}
       <div className="space-y-4 p-5 sm:p-6">
         {/* Title block */}
         <div className="space-y-2">
-          <motion.div
+          <m.div
             className="h-6 w-3/4 rounded bg-white/10"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -37,7 +37,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
               delay: 0.1,
             }}
           />
-          <motion.div
+          <m.div
             className="h-4 w-1/2 rounded bg-white/8"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -52,7 +52,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
 
         {/* Price row */}
         <div className="flex items-end justify-between">
-          <motion.div
+          <m.div
             className="h-8 w-28 rounded bg-white/10"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -63,7 +63,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
               delay: 0.15,
             }}
           />
-          <motion.div
+          <m.div
             className="h-4 w-20 rounded bg-white/8"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -79,7 +79,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
         {/* Info pills */}
         <div className="flex flex-wrap gap-2">
           {[0, 1].map((i) => (
-            <motion.div
+            <m.div
               key={i}
               className="h-6 w-32 rounded-full bg-white/5 ring-1 ring-white/10"
               initial={{ opacity: 0.4 }}
@@ -96,7 +96,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
 
         {/* Action buttons */}
         <div className="flex w-full gap-3 pt-1">
-          <motion.div
+          <m.div
             className="h-10 flex-1 rounded-lg bg-white/5 ring-1 ring-white/10"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -107,7 +107,7 @@ const HeroFeaturedCarSkeleton: React.FC = () => (
               delay: 0.1,
             }}
           />
-          <motion.div
+          <m.div
             className="h-10 flex-1 rounded-lg bg-red-600/20"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.7, 0.4] }}

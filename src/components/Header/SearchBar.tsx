@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Search, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { FOCUS_RING } from "./constants";
 
 interface DesktopSearchProps {
@@ -70,7 +70,7 @@ export function MobileSearchSheet({
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
@@ -108,7 +108,7 @@ export function MobileSearchSheet({
               <X size={20} />
             </button>
           </form>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

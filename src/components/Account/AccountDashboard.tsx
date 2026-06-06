@@ -11,7 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import SavedCarsList from "./SavedCarsList";
 import BookingsList, { type ActivityItem } from "./BookingsList";
 import AccountSettings from "./AccountSettings";
@@ -137,7 +137,7 @@ export default function AccountDashboard({
                 ? bookings.history.length
                 : null;
           return (
-            <motion.button
+            <m.button
               key={id}
               role="tab"
               aria-selected={active}
@@ -153,21 +153,21 @@ export default function AccountDashboard({
               <Icon className="h-4 w-4" aria-hidden="true" />
               {label}
               {count !== null && count > 0 && (
-                <motion.span
+                <m.span
                   layout
                   className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
                 >
                   {count}
-                </motion.span>
+                </m.span>
               )}
               {active && (
-                <motion.span
+                <m.span
                   layoutId="account-tab-underline"
                   className="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"
                   transition={{ type: "spring", stiffness: 480, damping: 32 }}
                 />
               )}
-            </motion.button>
+            </m.button>
           );
         })}
       </div>
@@ -182,7 +182,7 @@ export default function AccountDashboard({
         )}
 
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div
+          <m.div
             key={tab}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -210,7 +210,7 @@ export default function AccountDashboard({
             )}
 
             {tab === "settings" && <AccountSettings />}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
     </div>

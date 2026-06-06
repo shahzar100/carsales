@@ -8,7 +8,7 @@ import {
   Copy,
   CheckCheck,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 /**
  * Inline validation message with a subtle fade + shake on first appearance.
@@ -21,7 +21,7 @@ const FieldError: React.FC<{ id?: string; children: React.ReactNode }> = ({
 }) => (
   <AnimatePresence>
     {children && (
-      <motion.p
+      <m.p
         id={id}
         role="alert"
         initial={{ opacity: 0, y: -4, x: 0 }}
@@ -39,7 +39,7 @@ const FieldError: React.FC<{ id?: string; children: React.ReactNode }> = ({
         className="mt-1 text-xs text-red-600"
       >
         {children}
-      </motion.p>
+      </m.p>
     )}
   </AnimatePresence>
 );
@@ -226,7 +226,7 @@ export const InfoBanner: React.FC<{
   // Same motion spec the inline auth error banners were using before
   // they migrated to InfoBanner — single source of truth for the shake.
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: -4, height: 0 }}
       animate={{
         opacity: 1,
@@ -245,7 +245,7 @@ export const InfoBanner: React.FC<{
       className={base}
     >
       {inner}
-    </motion.div>
+    </m.div>
   );
 };
 

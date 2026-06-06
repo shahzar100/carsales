@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { Toast as ToastType } from "@/contexts/types";
 
 interface ToastProps {
@@ -85,7 +85,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
   return (
     <AnimatePresence onExitComplete={() => onRemove(toast.id)}>
       {present && (
-        <motion.div
+        <m.div
           role="alert"
           layout
           initial={{ x: 380, scale: 0.9, opacity: 0 }}
@@ -106,14 +106,14 @@ export default function Toast({ toast, onRemove }: ToastProps) {
 
           <div className="flex items-start">
             {/* Icon */}
-            <motion.div
+            <m.div
               className="shrink-0 pt-0.5"
               initial={{ scale: 0, rotate: -90 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 460, damping: 18, delay: 0.08 }}
             >
               <Icon className={`h-5 w-5 ${styles.icon}`} />
-            </motion.div>
+            </m.div>
 
             {/* Content */}
             <div className="ml-3 min-w-0 flex-1">
@@ -129,21 +129,21 @@ export default function Toast({ toast, onRemove }: ToastProps) {
               {/* Action button */}
               {toast.action && (
                 <div className="mt-3">
-                  <motion.button
+                  <m.button
                     onClick={handleAction}
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
                     className={`text-sm font-medium hover:underline focus:outline-none ${styles.title}`}
                   >
                     {toast.action.label}
-                  </motion.button>
+                  </m.button>
                 </div>
               )}
             </div>
 
             {/* Close button */}
             <div className="ml-4 shrink-0">
-              <motion.button
+              <m.button
                 onClick={handleRemove}
                 aria-label="Close notification"
                 whileHover={{ scale: 1.15, rotate: 90 }}
@@ -152,10 +152,10 @@ export default function Toast({ toast, onRemove }: ToastProps) {
                 className="inline-flex text-gray-400 hover:text-gray-600 focus:text-gray-600 focus:outline-none"
               >
                 <X className="h-4 w-4" />
-              </motion.button>
+              </m.button>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

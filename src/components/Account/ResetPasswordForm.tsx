@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, AlertCircle, CheckCircle2 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Button from "@/components/UI/Button";
 import { InfoBanner } from "@/components/Form/FormPrimitives";
 
@@ -61,27 +61,27 @@ export default function ResetPasswordForm({ token }: { token: string }) {
 
   if (done) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 360, damping: 26 }}
         className="text-center"
       >
-        <motion.div
+        <m.div
           initial={{ scale: 0, rotate: -90 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
           className="mx-auto inline-block"
         >
           <CheckCircle2 className="h-12 w-12 text-emerald-500" />
-        </motion.div>
+        </m.div>
         <h2 className="mt-3 text-lg font-semibold text-gray-900">
           Password updated
         </h2>
         <p className="mt-1 text-sm text-gray-600">
           Taking you to the sign-in page…
         </p>
-      </motion.div>
+      </m.div>
     );
   }
 

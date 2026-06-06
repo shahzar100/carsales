@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 /**
  * Skeleton for the car detail/full-page view (CarDetailView.tsx) —
@@ -26,7 +26,7 @@ const CarDetailSkeleton: React.FC = () => (
           {/* Image gallery */}
           <div className="w-full lg:w-3/5">
             {/* Main image */}
-            <motion.div
+            <m.div
               className="skeleton-shimmer relative aspect-16/10 overflow-hidden rounded-2xl"
               initial={{ opacity: 0.4 }}
               animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -36,7 +36,7 @@ const CarDetailSkeleton: React.FC = () => (
             {/* Thumbnail strip */}
             <div className="mt-3 flex gap-2">
               {[0, 1, 2, 3].map((i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className="skeleton-shimmer h-16 w-20 shrink-0 rounded-lg"
                   initial={{ opacity: 0.5 }}
@@ -64,7 +64,7 @@ const CarDetailSkeleton: React.FC = () => (
             {/* Specs grid */}
             <div className="grid grid-cols-2 gap-3">
               {[0, 1, 2, 3, 4, 5].map((i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className="skeleton-shimmer h-16 rounded-xl"
                   initial={{ opacity: 0.5 }}
@@ -81,7 +81,7 @@ const CarDetailSkeleton: React.FC = () => (
 
             {/* CTA buttons */}
             <div className="space-y-3">
-              <motion.div
+              <m.div
                 className="skeleton-shimmer h-12 w-full rounded-xl"
                 initial={{ opacity: 0.5 }}
                 animate={{ opacity: [0.5, 0.8, 0.5] }}
@@ -91,7 +91,7 @@ const CarDetailSkeleton: React.FC = () => (
                   ease: "easeInOut",
                 }}
               />
-              <motion.div
+              <m.div
                 className="skeleton-shimmer h-12 w-full rounded-xl"
                 initial={{ opacity: 0.5 }}
                 animate={{ opacity: [0.5, 0.8, 0.5] }}
@@ -116,7 +116,7 @@ const CarDetailSkeleton: React.FC = () => (
           <div className="skeleton-shimmer h-7 w-40 rounded-lg" />
           <div className="space-y-2.5">
             {[0, 1, 2, 3].map((i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="skeleton-shimmer h-4 rounded"
                 style={{ width: i === 3 ? "65%" : "100%" }}
@@ -137,7 +137,7 @@ const CarDetailSkeleton: React.FC = () => (
             <div className="skeleton-shimmer mb-4 h-6 w-28 rounded-lg" />
             <div className="flex flex-wrap gap-2">
               {[0, 1, 2, 3, 4, 5].map((i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className="skeleton-shimmer h-8 w-24 rounded-full"
                   initial={{ opacity: 0.5 }}

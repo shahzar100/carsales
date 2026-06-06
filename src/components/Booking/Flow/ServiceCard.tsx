@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import {
   Sparkles,
   Shield,
@@ -86,7 +86,7 @@ export default function ServiceCard({
   const TagIcon = service.capTagIcon;
 
   return (
-    <motion.button
+    <m.button
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
@@ -98,7 +98,7 @@ export default function ServiceCard({
       whileTap={{ scale: 0.97 }}
       className={`svc-card${selected ? " is-selected" : ""}`}
     >
-      <motion.span
+      <m.span
         className="svc-check"
         aria-hidden={!selected}
         animate={{
@@ -108,7 +108,7 @@ export default function ServiceCard({
         transition={{ type: "spring", stiffness: 520, damping: 22 }}
       >
         <Check className="h-4 w-4" strokeWidth={3} />
-      </motion.span>
+      </m.span>
 
       <span className={`svc-cap ${service.key}`}>
         <span className="badge-row">
@@ -159,6 +159,6 @@ export default function ServiceCard({
           </span>
         </span>
       </span>
-    </motion.button>
+    </m.button>
   );
 }

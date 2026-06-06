@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 /**
  * Cookie consent banner with granular GDPR controls.
@@ -157,7 +157,7 @@ export default function CookieBanner() {
   return (
     <AnimatePresence>
     {visible && (
-    <motion.div
+    <m.div
       ref={dialogRef}
       role="dialog"
       aria-modal="false"
@@ -216,7 +216,7 @@ export default function CookieBanner() {
 
       <AnimatePresence initial={false}>
       {showCustomize && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
@@ -232,7 +232,7 @@ export default function CookieBanner() {
               const { label, description, locked } = CATEGORY_COPY[key];
               const checked = locked ? true : prefs[key];
               return (
-                <motion.li
+                <m.li
                   key={key}
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -266,13 +266,13 @@ export default function CookieBanner() {
                       aria-label={`${label} cookies`}
                     />
                     <span className="h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-red-600 peer-focus-visible:ring-2 peer-focus-visible:ring-red-200" />
-                    <motion.span
+                    <m.span
                       className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow"
                       animate={{ x: checked ? 16 : 0 }}
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   </label>
-                </motion.li>
+                </m.li>
               );
             })}
           </ul>
@@ -300,10 +300,10 @@ export default function CookieBanner() {
             </button>
           </div>
         </div>
-        </motion.div>
+        </m.div>
       )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
     )}
     </AnimatePresence>
   );

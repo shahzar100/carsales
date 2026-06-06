@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 export interface DropdownOption {
   value: string;
@@ -160,7 +160,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {/* Dropdown Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             className="absolute z-9999 mt-2 w-full origin-top"
             initial={{ opacity: 0, y: -6, scaleY: 0.95 }}
             animate={{ opacity: 1, y: 0, scaleY: 1 }}
@@ -185,7 +185,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                   const isHighlighted = index === highlightedIndex;
 
                   return (
-                    <motion.li
+                    <m.li
                       key={option.value}
                       id={`option-${index}`}
                       role="option"
@@ -214,20 +214,20 @@ const Dropdown: React.FC<DropdownProps> = ({
                         {option.label}
                       </span>
                       {isSelected && (
-                        <motion.span
+                        <m.span
                           initial={{ scale: 0, rotate: -90 }}
                           animate={{ scale: 1, rotate: 0 }}
                           transition={{ type: "spring", stiffness: 480, damping: 18 }}
                         >
                           <Check className="h-4 w-4 text-red-600" />
-                        </motion.span>
+                        </m.span>
                       )}
-                    </motion.li>
+                    </m.li>
                   );
                 })
               )}
             </ul>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 

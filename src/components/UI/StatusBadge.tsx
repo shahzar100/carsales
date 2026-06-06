@@ -15,7 +15,7 @@
  */
 
 import React from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 
 type KnownStatus =
   // Cars
@@ -79,7 +79,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     // Re-keyed by `status` so changing the value (e.g. pending → confirmed
     // in admin) re-runs the pop-in animation instead of silently swapping.
     <AnimatePresence mode="wait" initial={false}>
-      <motion.span
+      <m.span
         key={status}
         initial={{ opacity: 0, scale: 0.7 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -88,7 +88,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
         className={`inline-flex items-center rounded-full font-semibold capitalize tracking-wide ${SIZE_CLASSES[size]} ${getStatusStyles(status)} ${className}`}
       >
         {status.replace(/-/g, " ")}
-      </motion.span>
+      </m.span>
     </AnimatePresence>
   );
 };

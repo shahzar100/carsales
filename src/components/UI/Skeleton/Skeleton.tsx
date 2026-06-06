@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 // ── Base skeleton primitives ───────────────────────────────
 
@@ -24,7 +24,7 @@ export const SkeletonBlock: React.FC<SkeletonProps> = ({
   height = "1rem",
   rounded = "rounded-lg",
 }) => (
-  <motion.div
+  <m.div
     className={`skeleton-shimmer ${rounded} ${className}`}
     style={{ width, height }}
     initial={{ opacity: 0.5 }}
@@ -38,7 +38,7 @@ export const SkeletonCircle: React.FC<{
   size?: number;
   className?: string;
 }> = ({ size = 40, className = "" }) => (
-  <motion.div
+  <m.div
     className={`skeleton-shimmer rounded-full ${className}`}
     style={{ width: size, height: size }}
     initial={{ opacity: 0.5 }}
@@ -55,7 +55,7 @@ export const SkeletonText: React.FC<{
 }> = ({ lines = 3, className = "", gap = "gap-2.5" }) => (
   <div className={`flex flex-col ${gap} ${className}`}>
     {Array.from({ length: lines }).map((_, i) => (
-      <motion.div
+      <m.div
         key={i}
         className="skeleton-shimmer rounded"
         style={{
@@ -80,7 +80,7 @@ export const SkeletonImage: React.FC<{
   className?: string;
   aspectRatio?: string;
 }> = ({ className = "", aspectRatio = "aspect-16/10" }) => (
-  <motion.div
+  <m.div
     className={`skeleton-shimmer ${aspectRatio} w-full rounded-xl ${className}`}
     initial={{ opacity: 0.4 }}
     animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -105,12 +105,12 @@ export const SkeletonWrapper: React.FC<{
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };

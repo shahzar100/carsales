@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import type { CarInterface } from "@/lib/interfaces";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 
@@ -21,7 +21,7 @@ export default function LatestArrivals({ cars }: { cars: CarInterface[] }) {
   return (
     <section className="border-t border-white/[0.06] bg-[#0a0a0a]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -31,7 +31,7 @@ export default function LatestArrivals({ cars }: { cars: CarInterface[] }) {
           <h2 className="text-[28px] font-bold tracking-tight text-white">
             Latest Arrivals
           </h2>
-          <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }}>
+          <m.div whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }}>
             <Link
               href="/BrowseFleet"
               className="inline-flex items-center gap-1 text-[13px] font-semibold text-red-400 underline-offset-4 transition-colors hover:text-red-300 hover:underline"
@@ -39,10 +39,10 @@ export default function LatestArrivals({ cars }: { cars: CarInterface[] }) {
               View all
               <ArrowRight size={14} />
             </Link>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-60px" }}
@@ -53,7 +53,7 @@ export default function LatestArrivals({ cars }: { cars: CarInterface[] }) {
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {cars.map((car) => (
-            <motion.div
+            <m.div
               key={String(car._id)}
               variants={{
                 hidden: { opacity: 0, y: 24 },
@@ -101,9 +101,9 @@ export default function LatestArrivals({ cars }: { cars: CarInterface[] }) {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

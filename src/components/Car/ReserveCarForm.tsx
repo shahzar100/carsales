@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle, Loader2 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import TurnstileWidget from "@/components/Form/TurnstileWidget";
 import { useAccountContact } from "@/hooks/useAccountContact";
 
@@ -44,21 +44,21 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
 
   if (success) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 12, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 360, damping: 26 }}
         className="rounded-2xl bg-emerald-50 p-6 ring-1 ring-emerald-200 sm:p-8"
       >
         <div className="flex items-start gap-3">
-          <motion.span
+          <m.span
             initial={{ scale: 0, rotate: -90 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
             className="mt-0.5 inline-flex shrink-0"
           >
             <CheckCircle className="h-6 w-6 text-emerald-600" />
-          </motion.span>
+          </m.span>
           <div>
             <h2 className="text-lg font-bold text-emerald-900">
               Reservation confirmed
@@ -81,7 +81,7 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
             </p>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -207,7 +207,7 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
 
         <AnimatePresence>
           {error && (
-            <motion.p
+            <m.p
               key={error}
               initial={{ opacity: 0, y: -4, height: 0 }}
               animate={{
@@ -227,11 +227,11 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
               className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 sm:col-span-2"
             >
               {error}
-            </motion.p>
+            </m.p>
           )}
         </AnimatePresence>
 
-        <motion.button
+        <m.button
           type="submit"
           disabled={submitting}
           whileHover={submitting ? undefined : { scale: 1.02 }}
@@ -250,7 +250,7 @@ export default function ReserveCarForm({ carId, carLabel }: Props) {
               Reserve this car
             </>
           )}
-        </motion.button>
+        </m.button>
       </form>
 
       <p className="mt-3 text-center text-xs text-gray-500">

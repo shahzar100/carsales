@@ -4,7 +4,7 @@ import { useNavigation } from "@/contexts/NavigationContext";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Car } from "lucide-react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 const PageLoader = () => {
   const { isNavigating, setIsNavigating, navigationTarget } = useNavigation();
@@ -30,7 +30,7 @@ const PageLoader = () => {
         <div className="relative mb-6">
           {/* Animated Car */}
           <div className="relative mx-auto h-16 w-64 overflow-hidden">
-            <motion.div
+            <m.div
               className="absolute h-12 w-12"
               animate={{ x: ["-48px", "256px"] }}
               transition={{
@@ -40,7 +40,7 @@ const PageLoader = () => {
               }}
             >
               <Car className="h-full w-full text-red-600" />
-            </motion.div>
+            </m.div>
           </div>
         </div>
 
@@ -53,7 +53,7 @@ const PageLoader = () => {
 
         {/* Progress Bar */}
         <div className="mx-auto mt-6 h-2 w-64 overflow-hidden rounded-full bg-gray-200">
-          <motion.div
+          <m.div
             className="h-full rounded-full bg-linear-to-r from-red-500 to-red-700"
             animate={{ width: ["0%", "100%"] }}
             transition={{

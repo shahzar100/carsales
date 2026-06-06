@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ArrowRight, type LucideIcon } from "lucide-react";
 
 interface ContinueBarProps {
@@ -21,24 +21,24 @@ export default function ContinueBar({
   disabled = false,
 }: ContinueBarProps) {
   return (
-    <motion.div
+    <m.div
       className="bk-continue-row"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 380, damping: 28 }}
     >
       <div className="bk-continue-summary">
-        <motion.div
+        <m.div
           className="bk-continue-icon"
           initial={{ scale: 0.6, rotate: -12 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 480, damping: 20, delay: 0.08 }}
         >
           <Icon className="h-5 w-5" />
-        </motion.div>
+        </m.div>
         <div className="min-w-0">
           <div className="lbl">{label}</div>
-          <motion.div
+          <m.div
             key={value}
             className="val"
             initial={{ opacity: 0, x: -6 }}
@@ -46,10 +46,10 @@ export default function ContinueBar({
             transition={{ duration: 0.2 }}
           >
             {value}
-          </motion.div>
+          </m.div>
         </div>
       </div>
-      <motion.button
+      <m.button
         type="button"
         className="bk-continue-btn"
         onClick={onContinue}
@@ -59,15 +59,15 @@ export default function ContinueBar({
         transition={{ type: "spring", stiffness: 460, damping: 22 }}
       >
         {buttonLabel}
-        <motion.span
+        <m.span
           aria-hidden="true"
           animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
           className="inline-flex"
         >
           <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-        </motion.span>
-      </motion.button>
-    </motion.div>
+        </m.span>
+      </m.button>
+    </m.div>
   );
 }

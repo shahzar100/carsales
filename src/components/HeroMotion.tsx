@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import React from "react";
 
 /**
@@ -20,14 +20,14 @@ export function HeroFadeIn({
   y?: number;
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -39,7 +39,7 @@ export function HeroStatCard({
   delay?: number;
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -48,6 +48,6 @@ export function HeroStatCard({
       className="flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/3 px-6 py-5"
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
