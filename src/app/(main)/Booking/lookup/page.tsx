@@ -235,6 +235,7 @@ function BookingLookupContent() {
                 type="text"
                 value={reference}
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
+                aria-label="Booking reference"
                 placeholder="Enter your booking reference (e.g., BK-ABC123)"
                 className="w-full rounded-lg border border-gray-200 px-4 py-3 pl-10 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               />
@@ -246,6 +247,7 @@ function BookingLookupContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                aria-label="Email address used when booking"
                 placeholder="Enter the email address used when booking"
                 className="w-full rounded-lg border border-gray-200 px-4 py-3 shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
               />

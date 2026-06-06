@@ -20,6 +20,7 @@ export default function HoursSection({ shopInfo, update }: HoursSectionProps) {
             </label>
             <input
               type="text"
+              aria-label={day}
               value={shopInfo.hours[day as keyof typeof shopInfo.hours] ?? ""}
               onChange={(e) =>
                 update({

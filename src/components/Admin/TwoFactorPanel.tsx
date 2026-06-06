@@ -281,10 +281,14 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
           transition={{ duration: 0.25 }}
           className="mt-6 space-y-4"
         >
-          <label className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="disable2faPassword"
+            className="block text-sm font-medium text-gray-700"
+          >
             Confirm with your current password
           </label>
           <input
+            id="disable2faPassword"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

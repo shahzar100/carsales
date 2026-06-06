@@ -52,6 +52,7 @@ export default function ServiceOverviewsSection({
             <button
               type="button"
               onClick={() => removeOverview(index)}
+              aria-label="Remove service"
               className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600"
             >
               <Trash2 size={14} />
@@ -68,6 +69,7 @@ export default function ServiceOverviewsSection({
                   onChange={(e) => updateOv(index, { title: e.target.value })}
                   className={inputClass}
                   placeholder="Car Detailing"
+                  aria-label="Title"
                 />
               </div>
               <div>
@@ -80,6 +82,7 @@ export default function ServiceOverviewsSection({
                   }
                   className={inputClass}
                   placeholder="Premium interior & exterior care"
+                  aria-label="Subtitle"
                 />
               </div>
             </div>
@@ -95,6 +98,7 @@ export default function ServiceOverviewsSection({
                   }
                   className={inputClass}
                   placeholder="£150 – £500"
+                  aria-label="Price Range"
                 />
               </div>
               <div>
@@ -107,6 +111,7 @@ export default function ServiceOverviewsSection({
                   }
                   className={inputClass}
                   placeholder="3-6 hours"
+                  aria-label="Duration"
                 />
               </div>
             </div>
@@ -122,6 +127,7 @@ export default function ServiceOverviewsSection({
                 }
                 rows={4}
                 className={inputClass}
+                aria-label="Features (one per line)"
               />
             </div>
           </div>

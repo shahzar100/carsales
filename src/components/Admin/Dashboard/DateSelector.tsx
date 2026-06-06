@@ -149,6 +149,7 @@ export default function DateSelector() {
           onClick={handleClear}
           className="absolute -top-1.5 -right-1.5 rounded-full bg-gray-900 p-0.5 text-white shadow-sm transition-colors hover:bg-gray-700"
           title="Clear filter"
+          aria-label="Clear filter"
         >
           <X className="h-3 w-3" />
         </button>
@@ -227,10 +228,14 @@ export default function DateSelector() {
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">
+                  <label
+                    htmlFor="date-selector-custom-from"
+                    className="mb-1 block text-xs text-gray-500"
+                  >
                     From
                   </label>
                   <input
+                    id="date-selector-custom-from"
                     type="date"
                     value={customFrom}
                     onChange={(e) => setCustomFrom(e.target.value)}
@@ -238,8 +243,14 @@ export default function DateSelector() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">To</label>
+                  <label
+                    htmlFor="date-selector-custom-to"
+                    className="mb-1 block text-xs text-gray-500"
+                  >
+                    To
+                  </label>
                   <input
+                    id="date-selector-custom-to"
                     type="date"
                     value={customTo}
                     onChange={(e) => setCustomTo(e.target.value)}

@@ -80,6 +80,7 @@ export default function TintOptionsSection({
               <button
                 type="button"
                 onClick={() => removeOption(index)}
+                aria-label="Remove tint option"
                 className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 size={14} />
@@ -97,6 +98,7 @@ export default function TintOptionsSection({
                   onChange={(e) => updateOpt(index, { name: e.target.value })}
                   className={inputClass}
                   placeholder="Ceramic Premium"
+                  aria-label={`Tint Option ${index + 1} Name`}
                 />
               </div>
               <div>
@@ -107,6 +109,7 @@ export default function TintOptionsSection({
                   onChange={(e) => updateOpt(index, { type: e.target.value })}
                   className={inputClass}
                   placeholder="Ceramic"
+                  aria-label={`Tint Option ${index + 1} Type`}
                 />
               </div>
             </div>
@@ -120,6 +123,7 @@ export default function TintOptionsSection({
                   onChange={(e) => updateOpt(index, { price: e.target.value })}
                   className={inputClass}
                   placeholder="£400-£800"
+                  aria-label={`Tint Option ${index + 1} Price`}
                 />
               </div>
               <div>
@@ -130,6 +134,7 @@ export default function TintOptionsSection({
                   onChange={(e) => updateOpt(index, { vlt: e.target.value })}
                   className={inputClass}
                   placeholder="5%, 20%, 35%, 50%"
+                  aria-label={`Tint Option ${index + 1} VLT Options`}
                 />
               </div>
               <div>
@@ -142,6 +147,7 @@ export default function TintOptionsSection({
                   }
                   className={inputClass}
                   placeholder="Lifetime"
+                  aria-label={`Tint Option ${index + 1} Warranty`}
                 />
               </div>
             </div>
@@ -155,6 +161,7 @@ export default function TintOptionsSection({
                   updateOpt(index, { description: e.target.value })
                 }
                 className={inputClass}
+                aria-label={`Tint Option ${index + 1} Description`}
               />
             </div>
 
@@ -169,6 +176,7 @@ export default function TintOptionsSection({
                 }
                 rows={4}
                 className={inputClass}
+                aria-label={`Tint Option ${index + 1} Features (one per line)`}
               />
             </div>
           </div>

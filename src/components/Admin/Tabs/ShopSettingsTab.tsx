@@ -22,10 +22,14 @@ export default function ShopSettingsTab({
         <form onSubmit={onSave} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="shop-settings-business-name"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
                 Business Name
               </label>
               <input
+                id="shop-settings-business-name"
                 type="text"
                 value={shopInfo.businessName ?? ""}
                 onChange={(e) =>
@@ -39,10 +43,14 @@ export default function ShopSettingsTab({
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="shop-settings-phone"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
                 Phone
               </label>
               <input
+                id="shop-settings-phone"
                 type="tel"
                 value={shopInfo.phone ?? ""}
                 onChange={(e) =>
@@ -55,10 +63,14 @@ export default function ShopSettingsTab({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="shop-settings-email"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
+              id="shop-settings-email"
               type="email"
               value={shopInfo.email ?? ""}
               onChange={(e) =>
@@ -70,10 +82,14 @@ export default function ShopSettingsTab({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="shop-settings-address"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
               Address
             </label>
             <input
+              id="shop-settings-address"
               type="text"
               value={shopInfo.address ?? ""}
               onChange={(e) =>
@@ -86,10 +102,14 @@ export default function ShopSettingsTab({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="shop-settings-city"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
                 City
               </label>
               <input
+                id="shop-settings-city"
                 type="text"
                 value={shopInfo.city ?? ""}
                 onChange={(e) =>
@@ -100,10 +120,14 @@ export default function ShopSettingsTab({
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="shop-settings-state"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
                 State
               </label>
               <input
+                id="shop-settings-state"
                 type="text"
                 value={shopInfo.state ?? ""}
                 onChange={(e) =>
@@ -114,10 +138,14 @@ export default function ShopSettingsTab({
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="shop-settings-zip-code"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
                 Zip Code
               </label>
               <input
+                id="shop-settings-zip-code"
                 type="text"
                 value={shopInfo.zipCode ?? ""}
                 onChange={(e) =>
@@ -130,10 +158,14 @@ export default function ShopSettingsTab({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="shop-settings-description"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
               Description
             </label>
             <textarea
+              id="shop-settings-description"
               value={shopInfo.description ?? ""}
               onChange={(e) =>
                 onShopInfoChange({ ...shopInfo, description: e.target.value })
@@ -153,6 +185,7 @@ export default function ShopSettingsTab({
                   </label>
                   <input
                     type="text"
+                    aria-label={day}
                     value={
                       shopInfo.hours[day as keyof typeof shopInfo.hours] ?? ""
                     }
@@ -173,10 +206,14 @@ export default function ShopSettingsTab({
             <h3 className="mb-3 text-lg font-semibold">Social Media</h3>
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="shop-settings-facebook-url"
+                  className="mb-1.5 block text-sm font-medium text-gray-700"
+                >
                   Facebook URL
                 </label>
                 <input
+                  id="shop-settings-facebook-url"
                   type="url"
                   value={shopInfo.socialMedia?.facebook ?? ""}
                   onChange={(e) =>
@@ -193,10 +230,14 @@ export default function ShopSettingsTab({
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="shop-settings-twitter-url"
+                  className="mb-1.5 block text-sm font-medium text-gray-700"
+                >
                   Twitter URL
                 </label>
                 <input
+                  id="shop-settings-twitter-url"
                   type="url"
                   value={shopInfo.socialMedia?.twitter ?? ""}
                   onChange={(e) =>
@@ -213,10 +254,14 @@ export default function ShopSettingsTab({
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="shop-settings-instagram-url"
+                  className="mb-1.5 block text-sm font-medium text-gray-700"
+                >
                   Instagram URL
                 </label>
                 <input
+                  id="shop-settings-instagram-url"
                   type="url"
                   value={shopInfo.socialMedia?.instagram ?? ""}
                   onChange={(e) =>

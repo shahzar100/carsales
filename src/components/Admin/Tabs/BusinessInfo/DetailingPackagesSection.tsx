@@ -68,6 +68,7 @@ export default function DetailingPackagesSection({
               <button
                 type="button"
                 onClick={() => removePackage(index)}
+                aria-label="Remove package"
                 className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 size={14} />
@@ -85,6 +86,7 @@ export default function DetailingPackagesSection({
                   onChange={(e) => updatePkg(index, { name: e.target.value })}
                   className={inputClass}
                   placeholder="Detailing Bronze"
+                  aria-label={`Package ${index + 1} Name`}
                 />
               </div>
               <div>
@@ -97,6 +99,7 @@ export default function DetailingPackagesSection({
                   }
                   className={inputClass}
                   placeholder="Mini Valet"
+                  aria-label={`Package ${index + 1} Subtitle`}
                 />
               </div>
             </div>
@@ -110,6 +113,7 @@ export default function DetailingPackagesSection({
                   onChange={(e) => updatePkg(index, { price: e.target.value })}
                   className={inputClass}
                   placeholder="£150"
+                  aria-label={`Package ${index + 1} Price`}
                 />
               </div>
               <div>
@@ -122,6 +126,7 @@ export default function DetailingPackagesSection({
                   }
                   className={inputClass}
                   placeholder="2-3 hours"
+                  aria-label={`Package ${index + 1} Duration`}
                 />
               </div>
               <div>
@@ -136,6 +141,7 @@ export default function DetailingPackagesSection({
                   }
                   className={inputClass}
                   placeholder="Bronze"
+                  aria-label={`Package ${index + 1} Includes Previous`}
                 />
               </div>
             </div>
@@ -149,6 +155,7 @@ export default function DetailingPackagesSection({
                   updatePkg(index, { description: e.target.value })
                 }
                 className={inputClass}
+                aria-label={`Package ${index + 1} Description`}
               />
             </div>
 
@@ -168,6 +175,7 @@ export default function DetailingPackagesSection({
                   }
                   rows={4}
                   className={inputClass}
+                  aria-label={`Package ${index + 1} Exterior Features (one per line)`}
                 />
               </div>
               <div>
@@ -185,6 +193,7 @@ export default function DetailingPackagesSection({
                   }
                   rows={4}
                   className={inputClass}
+                  aria-label={`Package ${index + 1} Interior Features (one per line)`}
                 />
               </div>
             </div>

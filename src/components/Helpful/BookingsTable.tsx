@@ -62,6 +62,7 @@ export default function BookingsTable({
           <Search className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
           <input
             type="text"
+            aria-label="Search bookings"
             placeholder="Search bookings..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}

@@ -157,10 +157,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
           onSubmit={handleSubmit}
         >
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-name"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Your name
             </label>
             <input
+              id="px-name"
               type="text"
               required
               maxLength={100}
@@ -170,10 +174,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-phone"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Phone
             </label>
             <input
+              id="px-phone"
               type="tel"
               required
               maxLength={20}
@@ -183,10 +191,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-email"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
+              id="px-email"
               type="email"
               required
               readOnly
@@ -206,10 +218,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-registration"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Registration (optional)
             </label>
             <input
+              id="px-registration"
               type="text"
               maxLength={20}
               value={form.registration}
@@ -221,10 +237,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-make"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Make
             </label>
             <input
+              id="px-make"
               type="text"
               required
               maxLength={50}
@@ -234,10 +254,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-model"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Model
             </label>
             <input
+              id="px-model"
               type="text"
               required
               maxLength={50}
@@ -247,10 +271,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-year"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Year
             </label>
             <input
+              id="px-year"
               type="number"
               required
               min={1980}
@@ -261,10 +289,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-mileage"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Mileage
             </label>
             <input
+              id="px-mileage"
               type="number"
               required
               min={0}
@@ -274,10 +306,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-condition"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Condition
             </label>
             <select
+              id="px-condition"
               value={form.condition}
               onChange={(e) =>
                 update(
@@ -294,10 +330,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-service-history"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Service history
             </label>
             <select
+              id="px-service-history"
               value={form.serviceHistory}
               onChange={(e) =>
                 update(
@@ -314,10 +354,14 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="px-notes"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Anything else we should know? (optional)
             </label>
             <textarea
+              id="px-notes"
               rows={3}
               maxLength={1000}
               value={form.notes}

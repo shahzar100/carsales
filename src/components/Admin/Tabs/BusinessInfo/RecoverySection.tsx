@@ -64,8 +64,11 @@ export default function RecoverySection({
     <div className="space-y-6">
       {/* Response Time */}
       <div>
-        <label className={labelClass}>Average Response Time</label>
+        <label htmlFor="recovery-response-time" className={labelClass}>
+          Average Response Time
+        </label>
         <input
+          id="recovery-response-time"
           type="text"
           value={recovery.responseTime}
           onChange={(e) =>
@@ -78,8 +81,11 @@ export default function RecoverySection({
 
       {/* Coverage Areas */}
       <div>
-        <label className={labelClass}>Coverage Areas (one per line)</label>
+        <label htmlFor="recovery-coverage-areas" className={labelClass}>
+          Coverage Areas (one per line)
+        </label>
         <textarea
+          id="recovery-coverage-areas"
           value={recovery.coverageAreas.join("\n")}
           onChange={(e) =>
             onChange({
@@ -111,6 +117,7 @@ export default function RecoverySection({
                   onChange={(e) => updateTier(index, { name: e.target.value })}
                   className={inputClass}
                   placeholder="Local Recovery"
+                  aria-label="Tier name"
                 />
                 <input
                   type="text"
@@ -118,6 +125,7 @@ export default function RecoverySection({
                   onChange={(e) => updateTier(index, { price: e.target.value })}
                   className={inputClass}
                   placeholder="From £60"
+                  aria-label="Tier price"
                 />
                 <input
                   type="text"
@@ -127,11 +135,13 @@ export default function RecoverySection({
                   }
                   className={inputClass}
                   placeholder="Within 10 miles"
+                  aria-label="Tier distance"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => removeTier(index)}
+                aria-label="Remove pricing tier"
                 className="mt-2 rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 size={14} />

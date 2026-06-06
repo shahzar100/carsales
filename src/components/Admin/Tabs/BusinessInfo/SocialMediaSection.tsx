@@ -16,8 +16,11 @@ export default function SocialMediaSection({
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Facebook URL</label>
+        <label className={labelClass} htmlFor="social-media-facebook-url">
+          Facebook URL
+        </label>
         <input
+          id="social-media-facebook-url"
           type="url"
           value={shopInfo.socialMedia?.facebook ?? ""}
           onChange={(e) =>
@@ -33,8 +36,11 @@ export default function SocialMediaSection({
         />
       </div>
       <div>
-        <label className={labelClass}>Twitter URL</label>
+        <label className={labelClass} htmlFor="social-media-twitter-url">
+          Twitter URL
+        </label>
         <input
+          id="social-media-twitter-url"
           type="url"
           value={shopInfo.socialMedia?.twitter ?? ""}
           onChange={(e) =>
@@ -50,8 +56,11 @@ export default function SocialMediaSection({
         />
       </div>
       <div>
-        <label className={labelClass}>Instagram URL</label>
+        <label className={labelClass} htmlFor="social-media-instagram-url">
+          Instagram URL
+        </label>
         <input
+          id="social-media-instagram-url"
           type="url"
           value={shopInfo.socialMedia?.instagram ?? ""}
           onChange={(e) =>

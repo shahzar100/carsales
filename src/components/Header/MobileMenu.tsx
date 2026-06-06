@@ -109,6 +109,7 @@ export default function MobileMenu({
                     type="search"
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
+                    aria-label="Search make or model"
                     placeholder="Search make or model…"
                     className="h-12 w-full rounded-full border border-white/[0.10] bg-white/[0.06] pr-4 pl-11 text-[15px] text-white placeholder:text-gray-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/25 focus:outline-none"
                   />

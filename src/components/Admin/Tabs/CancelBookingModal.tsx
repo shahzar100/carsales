@@ -52,10 +52,14 @@ export default function CancelBookingModal({
         </p>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="cancel-booking-reason"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
             Cancellation reason <span className="text-red-500">*</span>
           </label>
           <textarea
+            id="cancel-booking-reason"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Please provide a reason (min 10 characters)..."

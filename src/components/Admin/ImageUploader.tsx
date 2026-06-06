@@ -237,6 +237,7 @@ export default function ImageUploader({
         type="file"
         accept={ALLOWED_TYPES.join(",")}
         multiple={multiple}
+        aria-label="Upload images"
         className="hidden"
         onChange={(e) => {
           if (e.target.files?.length) {

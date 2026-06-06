@@ -89,6 +89,7 @@ export function MobileSearchSheet({
               <input
                 ref={inputRef}
                 type="search"
+                aria-label="Search make or model"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Search make or model…"

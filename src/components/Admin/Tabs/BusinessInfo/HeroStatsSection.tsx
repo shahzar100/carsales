@@ -40,6 +40,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="500+"
+              aria-label="Vehicles stat value"
             />
             <input
               type="text"
@@ -57,6 +58,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="Quality Vehicles"
+              aria-label="Vehicles stat label"
             />
           </div>
         </div>
@@ -82,6 +84,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="24/7"
+              aria-label="Booking stat value"
             />
             <input
               type="text"
@@ -99,6 +102,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="Online Booking"
+              aria-label="Booking stat label"
             />
           </div>
         </div>
@@ -124,6 +128,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="4.9"
+              aria-label="Rating stat value"
             />
             <input
               type="text"
@@ -141,6 +146,7 @@ export default function HeroStatsSection({
               }
               className={inputClass}
               placeholder="Customer Rating"
+              aria-label="Rating stat label"
             />
           </div>
         </div>

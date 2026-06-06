@@ -165,10 +165,14 @@ export default function CarPartsClient({ initialParts }: Props) {
         >
           <form onSubmit={handleSubmitPart} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="carpart-name"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Name
               </label>
               <input
+                id="carpart-name"
                 type="text"
                 value={formData.name}
                 onChange={(e) =>
@@ -180,10 +184,14 @@ export default function CarPartsClient({ initialParts }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="carpart-brand"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
                   Brand
                 </label>
                 <input
+                  id="carpart-brand"
                   type="text"
                   value={formData.brand}
                   onChange={(e) =>
@@ -194,10 +202,14 @@ export default function CarPartsClient({ initialParts }: Props) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="carpart-category"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
                   Category
                 </label>
                 <input
+                  id="carpart-category"
                   type="text"
                   value={formData.category}
                   onChange={(e) =>
@@ -210,10 +222,14 @@ export default function CarPartsClient({ initialParts }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="carpart-price"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
                   Price
                 </label>
                 <input
+                  id="carpart-price"
                   type="number"
                   step="0.01"
                   value={formData.price}
@@ -225,10 +241,14 @@ export default function CarPartsClient({ initialParts }: Props) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="carpart-condition"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
                   Condition
                 </label>
                 <select
+                  id="carpart-condition"
                   value={formData.condition}
                   onChange={(e) =>
                     setFormData({
@@ -248,10 +268,14 @@ export default function CarPartsClient({ initialParts }: Props) {
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="carpart-compatibility"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Compatibility
               </label>
               <input
+                id="carpart-compatibility"
                 type="text"
                 value={formData.compatibility}
                 onChange={(e) =>
@@ -261,10 +285,14 @@ export default function CarPartsClient({ initialParts }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="carpart-description"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Description
               </label>
               <textarea
+                id="carpart-description"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
