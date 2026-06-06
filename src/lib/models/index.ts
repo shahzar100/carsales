@@ -16,6 +16,8 @@ import {
   PartExchange,
   AuditLog,
   CustomerUser,
+  Review,
+  Enquiry,
 } from "@/lib/interfaces";
 
 // Re-export interfaces for backward compatibility
@@ -31,6 +33,8 @@ export type {
   PartExchange,
   AuditLog,
   CustomerUser,
+  Review,
+  Enquiry,
 };
 
 import {
@@ -54,6 +58,8 @@ let reservationsCollection: Collection<Reservation>;
 let partExchangesCollection: Collection<PartExchange>;
 let auditLogsCollection: Collection<AuditLog>;
 let usersCollection: Collection<CustomerUser>;
+let reviewsCollection: Collection<Review>;
+let enquiriesCollection: Collection<Enquiry>;
 
 // Helper function to convert ObjectId and Date fields to strings
 export function serializeDocument<T>(doc: T): T {
@@ -472,4 +478,46 @@ export async function getUsersCollection(): Promise<
     ]);
   }
   return usersCollection;
+}
+
+// ── Reviews (public /Reviews page) ───────────────────────────
+//
+// The public page and GET /api/reviews both query `{ verified: true }`
+// sorted by `createdAt` desc, optionally narrowed by `serviceType`. The
+// compound `{ verified, createdAt }` index serves the moderation-gated,
+// newest-first read without an in-memory sort.
+export async function getReviewsCollection(): Promise<Collection<Review>> {
+  if (!reviewsCollection) {
+    const db = await getDb();
+    reviewsCollection = db.collection<Review>("reviews");
+
+    await reviewsCollection.createIndexes([
+      { key: { verified: 1, createdAt: -1 } },
+      { key: { serviceType: 1 } },
+      { key: { rating: 1 } },
+    ]);
+  }
+  return reviewsCollection;
+}
+
+// ── Enquiries (general sales leads) ──────────────────────────
+//
+// Written by POST /api/enquiries. The admin lead list reads newest-first,
+// hence the `createdAt` index; `enquiryReference` is unique so a generated
+// collision is a hard DB constraint rather than a silent duplicate.
+export async function getEnquiriesCollection(): Promise<
+  Collection<Enquiry>
+> {
+  if (!enquiriesCollection) {
+    const db = await getDb();
+    enquiriesCollection = db.collection<Enquiry>("enquiries");
+
+    await enquiriesCollection.createIndexes([
+      { key: { enquiryReference: 1 }, unique: true },
+      { key: { "customerInfo.email": 1 } },
+      { key: { status: 1 } },
+      { key: { createdAt: -1 } },
+    ]);
+  }
+  return enquiriesCollection;
 }

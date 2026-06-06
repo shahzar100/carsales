@@ -341,6 +341,46 @@ export interface PartExchange {
 }
 
 
+/**
+ * Customer review — shown on the public /Reviews page. Only `verified`
+ * reviews surface publicly; the rest sit pending moderation. `serviceType`
+ * scopes the review to a part of the business so the Reviews page can filter
+ * (car-purchase / service / viewing / detailing / tinting / recovery).
+ */
+export interface Review {
+  _id?: string | ObjectId;
+  customerName: string;
+  /** 1–5 stars. */
+  rating: number;
+  title: string;
+  content: string;
+  serviceType: string;
+  verified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * General sales enquiry — a lighter-weight lead than a Reservation or
+ * Part-exchange. Optionally tied to the car the customer was viewing.
+ */
+export interface Enquiry {
+  _id?: string | ObjectId;
+  enquiryReference: string;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  carId?: string;
+  carName?: string;
+  message: string;
+  status: "pending" | "responded" | "closed";
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+
 // ───────────────────────────────────────────────────────────────
 // UI / admin-dashboard types (moved from src/lib/types.ts in Day 7).
 // `types.ts` is now a thin re-export shim that also keeps the
