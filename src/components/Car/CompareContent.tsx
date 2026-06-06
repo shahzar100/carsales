@@ -209,7 +209,7 @@ const CompareContent: React.FC = () => {
   const desktopView = (
     <div className="hidden lg:block">
       <div className="card overflow-hidden">
-        <table className="w-full" role="table">
+        <table className="w-full">
           <thead>
             <tr>
               <th className="w-40 bg-gray-50 p-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">

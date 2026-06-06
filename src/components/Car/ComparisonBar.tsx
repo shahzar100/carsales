@@ -12,9 +12,8 @@ const ComparisonBar: React.FC = () => {
   if (comparedCars.length === 0) return null;
 
   return (
-    <div
+    <section
       className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white/95 shadow-2xl backdrop-blur-md"
-      role="region"
       aria-label="Car comparison bar"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
@@ -80,7 +79,7 @@ const ComparisonBar: React.FC = () => {
           </Link>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

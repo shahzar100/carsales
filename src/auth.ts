@@ -38,7 +38,7 @@ import { MagicLinkSignIn } from "@/emails/MagicLinkSignIn";
  */
 
 const credentialsSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(1).max(200),
 });
 
