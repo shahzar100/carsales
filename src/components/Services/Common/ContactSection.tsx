@@ -17,6 +17,40 @@ interface ContactSectionProps {
   textColor?: string;
 }
 
+const getActionClasses = (style: string, isPrimary: boolean = true) => {
+  const baseClasses =
+    "rounded-lg px-8 py-3 font-medium transition-colors duration-200";
+
+  switch (style) {
+    case "primary":
+      return `${baseClasses} ${isPrimary ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-700 text-white hover:bg-gray-600"}`;
+    case "secondary":
+      return `${baseClasses} border border-gray-600 bg-transparent text-white hover:bg-gray-800`;
+    case "danger":
+      return `${baseClasses} bg-red-700 text-white hover:bg-red-800`;
+    default:
+      return `${baseClasses} bg-gray-600 text-white hover:bg-gray-700`;
+  }
+};
+
+const renderAction = (action: ContactAction, isPrimary: boolean = true) => {
+  const classes = getActionClasses(action.style, isPrimary);
+
+  if (action.type === "link") {
+    return (
+      <Link href={action.url} className={classes}>
+        {action.text}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={action.url} className={classes}>
+      {action.text}
+    </a>
+  );
+};
+
 const ContactSection: React.FC<ContactSectionProps> = ({
   title,
   subtitle,
@@ -25,40 +59,6 @@ const ContactSection: React.FC<ContactSectionProps> = ({
   backgroundColor = "bg-white",
   textColor = "text-gray-900",
 }) => {
-  const getActionClasses = (style: string, isPrimary: boolean = true) => {
-    const baseClasses =
-      "rounded-lg px-8 py-3 font-medium transition-colors duration-200";
-
-    switch (style) {
-      case "primary":
-        return `${baseClasses} ${isPrimary ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-700 text-white hover:bg-gray-600"}`;
-      case "secondary":
-        return `${baseClasses} border border-gray-600 bg-transparent text-white hover:bg-gray-800`;
-      case "danger":
-        return `${baseClasses} bg-red-700 text-white hover:bg-red-800`;
-      default:
-        return `${baseClasses} bg-gray-600 text-white hover:bg-gray-700`;
-    }
-  };
-
-  const renderAction = (action: ContactAction, isPrimary: boolean = true) => {
-    const classes = getActionClasses(action.style, isPrimary);
-
-    if (action.type === "link") {
-      return (
-        <Link href={action.url} className={classes}>
-          {action.text}
-        </Link>
-      );
-    }
-
-    return (
-      <a href={action.url} className={classes}>
-        {action.text}
-      </a>
-    );
-  };
-
   return (
     <div className={`rounded-2xl ${backgroundColor} ${textColor} p-8 lg:p-12`}>
       <div className="mb-8 text-center">

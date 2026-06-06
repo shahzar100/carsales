@@ -14,6 +14,27 @@ interface Props {
   initialBookings: Booking[];
 }
 
+const getStatusBadge = (status: string) => {
+  const colors = {
+    pending: "bg-yellow-100 text-yellow-800",
+    confirmed: "bg-green-100 text-green-800",
+    completed: "bg-gray-100 text-gray-800",
+    cancelled: "bg-red-100 text-red-800",
+    available: "bg-green-100 text-green-800",
+    sold: "bg-red-100 text-red-800",
+    reserved: "bg-yellow-100 text-yellow-800",
+  };
+  return (
+    <span
+      className={`rounded-full px-2 py-1 text-xs font-medium ${
+        colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
+      }`}
+    >
+      {status}
+    </span>
+  );
+};
+
 /**
  * Client island for the service-bookings admin page.
  *
@@ -82,27 +103,6 @@ export default function ServiceBookingsClient({ initialBookings }: Props) {
     } catch {
       toast.error("Error", "An error occurred while cancelling the booking");
     }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      confirmed: "bg-green-100 text-green-800",
-      completed: "bg-gray-100 text-gray-800",
-      cancelled: "bg-red-100 text-red-800",
-      available: "bg-green-100 text-green-800",
-      sold: "bg-red-100 text-red-800",
-      reserved: "bg-yellow-100 text-yellow-800",
-    };
-    return (
-      <span
-        className={`rounded-full px-2 py-1 text-xs font-medium ${
-          colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
-        }`}
-      >
-        {status}
-      </span>
-    );
   };
 
   const handleShowCancelModal = (booking: SelectedBooking) => {

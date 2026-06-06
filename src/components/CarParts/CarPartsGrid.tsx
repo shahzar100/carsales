@@ -21,6 +21,25 @@ interface CarPartsGridProps {
   parts: CarPartInterface[];
 }
 
+const getConditionBadgeClass = (condition: string) => {
+  switch (condition) {
+    case "New":
+      return "bg-emerald-100 text-emerald-700";
+    case "Refurbished":
+      return "bg-gray-100 text-gray-700";
+    default:
+      return "bg-amber-100 text-amber-700";
+  }
+};
+
+/** Check if the part name already contains both brand and category text */
+const nameContainsBrandAndCategory = (part: CarPartInterface): boolean => {
+  return (
+    part.name.includes(part.brand) &&
+    part.name.toLowerCase().includes(part.category.toLowerCase())
+  );
+};
+
 const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
   const router = useRouter();
   const [selectedBrand, setSelectedBrand] = useState("");
@@ -54,17 +73,6 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
     });
   }, [parts, selectedBrand, selectedCategory, selectedCondition]);
 
-  const getConditionBadgeClass = (condition: string) => {
-    switch (condition) {
-      case "New":
-        return "bg-emerald-100 text-emerald-700";
-      case "Refurbished":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-amber-100 text-amber-700";
-    }
-  };
-
   const handleReservePart = (part: CarPartInterface) => {
     const params = new URLSearchParams({
       subject: "Part Enquiry",
@@ -72,14 +80,6 @@ const CarPartsGrid: React.FC<CarPartsGridProps> = ({ parts }) => {
       brand: part.brand,
     });
     router.push(`/contact?${params.toString()}`);
-  };
-
-  /** Check if the part name already contains both brand and category text */
-  const nameContainsBrandAndCategory = (part: CarPartInterface): boolean => {
-    return (
-      part.name.includes(part.brand) &&
-      part.name.toLowerCase().includes(part.category.toLowerCase())
-    );
   };
 
   return (

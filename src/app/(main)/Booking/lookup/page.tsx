@@ -81,6 +81,60 @@ interface Booking {
   cancellationReason?: string;
 }
 
+const getStatusBadge = (status: string) => {
+  const statusConfig: {
+    [key: string]: { color: string; icon: React.ReactNode; text: string };
+  } = {
+    pending: {
+      color: "bg-amber-100 text-amber-700",
+      icon: <AlertCircle className="h-4 w-4" />,
+      text: "Pending",
+    },
+    confirmed: {
+      color: "bg-emerald-100 text-emerald-700",
+      icon: <CheckCircle className="h-4 w-4" />,
+      text: "Confirmed",
+    },
+    completed: {
+      color: "bg-gray-100 text-gray-700",
+      icon: <CheckCircle className="h-4 w-4" />,
+      text: "Completed",
+    },
+    cancelled: {
+      color: "bg-red-100 text-red-700",
+      icon: <XCircle className="h-4 w-4" />,
+      text: "Cancelled",
+    },
+    // Quote-request statuses.
+    responded: {
+      color: "bg-blue-100 text-blue-700",
+      icon: <CheckCircle className="h-4 w-4" />,
+      text: "Responded",
+    },
+    accepted: {
+      color: "bg-emerald-100 text-emerald-700",
+      icon: <CheckCircle className="h-4 w-4" />,
+      text: "Accepted",
+    },
+    expired: {
+      color: "bg-gray-100 text-gray-700",
+      icon: <XCircle className="h-4 w-4" />,
+      text: "Expired",
+    },
+  };
+
+  const config = statusConfig[status] || statusConfig.pending;
+
+  return (
+    <div
+      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 ${config.color} font-medium`}
+    >
+      {config.icon}
+      <span>{config.text}</span>
+    </div>
+  );
+};
+
 export default function BookingLookupPage() {
   return (
     <Suspense
@@ -161,60 +215,6 @@ function BookingLookupContent() {
     if (captchaConfigured && !turnstileToken) return;
     handleSearch();
   }, [searchParams, handleSearch, email, turnstileToken, captchaConfigured]);
-
-  const getStatusBadge = (status: string) => {
-    const statusConfig: {
-      [key: string]: { color: string; icon: React.ReactNode; text: string };
-    } = {
-      pending: {
-        color: "bg-amber-100 text-amber-700",
-        icon: <AlertCircle className="h-4 w-4" />,
-        text: "Pending",
-      },
-      confirmed: {
-        color: "bg-emerald-100 text-emerald-700",
-        icon: <CheckCircle className="h-4 w-4" />,
-        text: "Confirmed",
-      },
-      completed: {
-        color: "bg-gray-100 text-gray-700",
-        icon: <CheckCircle className="h-4 w-4" />,
-        text: "Completed",
-      },
-      cancelled: {
-        color: "bg-red-100 text-red-700",
-        icon: <XCircle className="h-4 w-4" />,
-        text: "Cancelled",
-      },
-      // Quote-request statuses.
-      responded: {
-        color: "bg-blue-100 text-blue-700",
-        icon: <CheckCircle className="h-4 w-4" />,
-        text: "Responded",
-      },
-      accepted: {
-        color: "bg-emerald-100 text-emerald-700",
-        icon: <CheckCircle className="h-4 w-4" />,
-        text: "Accepted",
-      },
-      expired: {
-        color: "bg-gray-100 text-gray-700",
-        icon: <XCircle className="h-4 w-4" />,
-        text: "Expired",
-      },
-    };
-
-    const config = statusConfig[status] || statusConfig.pending;
-
-    return (
-      <div
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 ${config.color} font-medium`}
-      >
-        {config.icon}
-        <span>{config.text}</span>
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-12">

@@ -12,6 +12,13 @@ interface RangeInputProps {
   maxPlaceholder?: string;
 }
 
+const handleChange = (
+  value: string,
+  setter: (v: number | null) => void
+) => {
+  setter(value === "" ? null : parseInt(value, 10));
+};
+
 const RangeInput: React.FC<RangeInputProps> = ({
   label,
   minValue,
@@ -21,13 +28,6 @@ const RangeInput: React.FC<RangeInputProps> = ({
   minPlaceholder = "Min",
   maxPlaceholder = "Max",
 }) => {
-  const handleChange = (
-    value: string,
-    setter: (v: number | null) => void
-  ) => {
-    setter(value === "" ? null : parseInt(value, 10));
-  };
-
   const hasValue = minValue != null || maxValue != null;
 
   return (

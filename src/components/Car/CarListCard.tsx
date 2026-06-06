@@ -32,25 +32,25 @@ interface CarListCardProps {
   priority?: boolean;
 }
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "available":
+      return "bg-emerald-100 text-emerald-700 border-emerald-200";
+    case "sold":
+      return "bg-red-100 text-red-700 border-red-200";
+    case "reserved":
+      return "bg-amber-100 text-amber-700 border-amber-200";
+    default:
+      return "bg-gray-100 text-gray-700 border-gray-200";
+  }
+};
+
 const CarListCard: React.FC<CarListCardProps> = ({
   car,
   variant = "customer",
   priority = false,
 }) => {
   const isAdmin = variant === "admin";
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200";
-      case "sold":
-        return "bg-red-100 text-red-700 border-red-200";
-      case "reserved":
-        return "bg-amber-100 text-amber-700 border-amber-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
 
   const specs = [
     { icon: Fuel, label: car.fuel, color: "text-emerald-600" },

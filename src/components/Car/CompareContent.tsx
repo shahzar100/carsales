@@ -18,19 +18,19 @@ import {
 } from "lucide-react";
 import { CarInterface } from "@/lib/interfaces";
 
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+
+const formatMileage = (mileage: number) =>
+  new Intl.NumberFormat("en-GB").format(mileage);
+
 const CompareContent: React.FC = () => {
   const { comparedCars, removeFromCompare, clearComparison } = useComparison();
-
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-
-  const formatMileage = (mileage: number) =>
-    new Intl.NumberFormat("en-GB").format(mileage);
 
   // Check if values differ across compared cars
   const valuesAreDifferent = (

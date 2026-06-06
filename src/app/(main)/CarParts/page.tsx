@@ -23,13 +23,13 @@ export const metadata: Metadata = {
   },
 };
 
-const Page = async () => {
-  const getCarParts = async (): Promise<CarPartInterface[]> => {
-    const carPartsCollection = await getCarPartsCollection();
-    const parts = await carPartsCollection.find({}).toArray();
-    return parts.map((part) => serializeDocument(part));
-  };
+const getCarParts = async (): Promise<CarPartInterface[]> => {
+  const carPartsCollection = await getCarPartsCollection();
+  const parts = await carPartsCollection.find({}).toArray();
+  return parts.map((part) => serializeDocument(part));
+};
 
+const Page = async () => {
   const parts = await getCarParts();
 
   return (

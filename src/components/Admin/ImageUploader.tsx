@@ -7,6 +7,16 @@ import { AnimatePresence, m } from "motion/react";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
+const validateFile = (file: File): string | null => {
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return `"${file.name}" is not a supported image type. Use JPEG, PNG, WebP, or AVIF.`;
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return `"${file.name}" exceeds 10 MB limit.`;
+  }
+  return null;
+};
+
 interface UploadingFile {
   id: string;
   name: string;
@@ -36,16 +46,6 @@ export default function ImageUploader({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const canUploadMore = existingImages.length + uploading.length < maxImages;
-
-  const validateFile = (file: File): string | null => {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return `"${file.name}" is not a supported image type. Use JPEG, PNG, WebP, or AVIF.`;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      return `"${file.name}" exceeds 10 MB limit.`;
-    }
-    return null;
-  };
 
   const uploadFile = useCallback(
     async (file: File) => {
