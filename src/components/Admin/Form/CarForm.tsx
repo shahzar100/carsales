@@ -19,34 +19,13 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
-
-const currentYear = new Date().getFullYear();
-
-const fuelOptions = [
-  { value: "Petrol", label: "Petrol" },
-  { value: "Diesel", label: "Diesel" },
-  { value: "Electric", label: "Electric" },
-  { value: "Hybrid", label: "Hybrid" },
-];
-
-const transmissionOptions = [
-  { value: "Manual", label: "Manual" },
-  { value: "Automatic", label: "Automatic" },
-  { value: "CVT", label: "CVT" },
-];
-
-const doorOptions = [
-  { value: "2", label: "2 Door" },
-  { value: "3", label: "3 Door" },
-  { value: "4", label: "4 Door" },
-  { value: "5", label: "5 Door" },
-];
-
-const statusOptions = [
-  { value: "available", label: "Available" },
-  { value: "sold", label: "Sold" },
-  { value: "reserved", label: "Reserved" },
-];
+import {
+  currentYear,
+  fuelOptions,
+  transmissionOptions,
+  doorOptions,
+  statusOptions,
+} from "./carFormOptions";
 
 // ═════════════════════════════════════════════════════════════
 // CarForm – uses the reusable multi-stage <Form /> component

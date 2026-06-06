@@ -1,7 +1,7 @@
 import React, { cache } from "react";
 import type { Metadata } from "next";
 import { CarInterface } from "@/lib/interfaces";
-import { getCarsCollection, serializeDocument } from "@/lib/models";
+import { getCarById, getCarsCollection, serializeDocument } from "@/lib/models";
 import { ObjectId } from "mongodb";
 import CarDetailView from "@/components/Car/CarDetailView";
 import Link from "next/link";
@@ -79,21 +79,7 @@ function buildCarJsonLd(car: CarInterface, id: string) {
 
 // Wrapped in React.cache so generateMetadata() and the page body — both
 // of which fetch the same car — share a single Mongo round-trip per render.
-const getCar = cache(
-  async (id: string): Promise<CarInterface | null> => {
-    try {
-      const carsCollection = await getCarsCollection();
-      const car = await carsCollection.findOne({
-        _id: new ObjectId(id) as never,
-      });
-      if (!car) return null;
-      return serializeDocument(car) as CarInterface;
-    } catch (error) {
-      logError(error, { context: "BrowseFleet/[_id].getCar" });
-      return null;
-    }
-  }
-);
+const getCar = cache((id: string) => getCarById(id, "BrowseFleet/[_id]"));
 
 // Similar cars: same fuel type, available, excluding the current car.
 // Falls back to "any available car" if there aren't enough matches.

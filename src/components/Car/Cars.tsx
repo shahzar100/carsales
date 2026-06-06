@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { CarInterface } from "@/lib/interfaces";
 import Image from "next/image";
@@ -16,9 +16,8 @@ import {
 import Button from "@/components/Helpful/Buttons/Button";
 import ConfirmDialog from "@/components/UI/ConfirmDialog";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
-import { useToast } from "@/contexts/ToastContext";
 import { getStatusStyles } from "@/components/UI/StatusBadge";
-import { logError } from "@/lib/utils/observability";
+import { useDeleteCar } from "@/hooks/useDeleteCar";
 
 interface CarsProps {
   car: CarInterface;
@@ -30,9 +29,16 @@ interface CarsProps {
 
 const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
   const router = useRouter();
-  const toast = useToast();
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+
+  // Delete uses the shared <ConfirmDialog> primitive (Day 4) so accidental
+  // clicks can't silently destroy a listing. `onDeleted` steps the carousel
+  // back when we just removed the last item, before the hook's refetch.
+  const { confirmingDelete, deleting, requestDelete, cancelDelete, confirmDelete } =
+    useDeleteCar(car, () => {
+      if (carId > 0 && carId === length - 1) {
+        setCarId(carId - 1);
+      }
+    });
 
   // Navigate to the public-facing detail page (in a new tab so the admin
   // doesn't lose their place in the inventory list).
@@ -49,43 +55,6 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
   const handleEdit = () => {
     if (!car._id) return;
     router.push(`/admin/dashboard/cars/edit/${car._id}`);
-  };
-
-  // Delete uses the shared <ConfirmDialog> primitive (Day 4) so accidental
-  // clicks can't silently destroy a listing. The parent owns the inventory
-  // list, so we notify it via `onDeleted` rather than re-fetching here.
-  const handleConfirmDelete = async () => {
-    if (!car._id) return;
-    setDeleting(true);
-    try {
-      const res = await fetch(
-        `/api/admin/cars?id=${encodeURIComponent(String(car._id))}`,
-        { method: "DELETE" }
-      );
-      const body = await res.json();
-      if (!res.ok || body?.success === false) {
-        const message =
-          body?.error || "Could not delete the car. Please try again.";
-        toast.error("Delete failed", message);
-        return;
-      }
-      toast.success("Car deleted", `${car.year} ${car.make} ${car.model}`);
-      setConfirmingDelete(false);
-      // Step the carousel back if we just deleted the last item, then ask
-      // the router to re-fetch the cars list so the deleted entry disappears.
-      if (carId > 0 && carId === length - 1) {
-        setCarId(carId - 1);
-      }
-      router.refresh();
-    } catch (err) {
-      logError(err, { context: "Cars.deleteCar" });
-      toast.error(
-        "Delete failed",
-        "Network error — please check your connection and try again."
-      );
-    } finally {
-      setDeleting(false);
-    }
   };
 
   return (
@@ -194,9 +163,9 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Action Buttons */}
             <div className="flex gap-2 border-t border-gray-100 pt-3">
               <Button
-                variant="secondary"
+                variant="dark"
                 size="sm"
-                className="flex-1 bg-gray-900 text-white hover:bg-gray-800 hover:text-white"
+                className="flex-1"
                 onClick={handleEdit}
                 disabled={!car._id}
               >
@@ -215,7 +184,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
               <Button
                 variant="danger"
                 size="sm"
-                onClick={() => setConfirmingDelete(true)}
+                onClick={requestDelete}
                 disabled={!car._id}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -240,8 +209,8 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
           confirmLabel="Delete car"
           variant="danger"
           loading={deleting}
-          onConfirm={handleConfirmDelete}
-          onCancel={() => setConfirmingDelete(false)}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
         />
       )}
     </>

@@ -1,35 +1,17 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { ObjectId } from "mongodb";
 
-import { CarInterface } from "@/lib/interfaces";
-import { getCarsCollection, serializeDocument } from "@/lib/models";
+import { getCarById } from "@/lib/models";
 import EditCarForm from "@/components/Admin/Form/EditCarForm";
-import { logError } from "@/lib/utils/observability";
 
 interface PageProps {
   params: Promise<{ _id: string }>;
 }
 
-const getCar = async (id: string): Promise<CarInterface | null> => {
-  if (!ObjectId.isValid(id)) return null;
-  try {
-    const carsCollection = await getCarsCollection();
-    const car = await carsCollection.findOne({
-      _id: new ObjectId(id) as never,
-    });
-    if (!car) return null;
-    return serializeDocument(car) as CarInterface;
-  } catch (error) {
-    logError(error, { context: "admin/cars/edit.getCar" });
-    return null;
-  }
-};
-
 const EditCarPage = async ({ params }: PageProps) => {
   const { _id } = await params;
-  const car = await getCar(_id);
+  const car = await getCarById(_id, "admin/cars/edit");
 
   if (!car) {
     return (
@@ -65,8 +47,7 @@ const EditCarPage = async ({ params }: PageProps) => {
       <div className="mb-6">
         <h1 className="page-title">Edit Vehicle</h1>
         <p className="mt-1 text-sm text-gray-500">
-          {car.year} {car.make} {car.model} — quick edit for the most-changed
-          fields.
+          {car.year} {car.make} {car.model} — edit all vehicle details.
         </p>
       </div>
 

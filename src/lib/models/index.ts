@@ -1,5 +1,6 @@
-import { Db, Collection } from "mongodb";
+import { Db, Collection, ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
+import { logError } from "@/lib/utils/observability";
 import {
   CarInterface,
   ServiceAppointment,
@@ -128,6 +129,31 @@ export async function getLatestCars(limit = 6): Promise<CarInterface[]> {
     .limit(limit)
     .toArray();
   return docs.map((doc) => serializeDocument(doc) as CarInterface);
+}
+
+/**
+ * Fetch a single car by its string id, serialized for the client. Returns
+ * null for a malformed id (the `ObjectId.isValid` guard) or a miss.
+ *
+ * Consolidates the find-one-by-id + serialize + catch dance that the three
+ * `[_id]` route pages (admin edit, Booking, BrowseFleet) each carried their
+ * own copy of. `context` labels the `logError` call site so the shared
+ * helper keeps per-page breadcrumbs. Callers that need request-level
+ * memoisation (e.g. BrowseFleet's metadata + body) wrap this in React.cache.
+ */
+export async function getCarById(
+  id: string,
+  context = "getCarById"
+): Promise<CarInterface | null> {
+  if (!ObjectId.isValid(id)) return null;
+  try {
+    const cars = await getCarsCollection();
+    const car = await cars.findOne({ _id: new ObjectId(id) as never });
+    return car ? (serializeDocument(car) as CarInterface) : null;
+  } catch (error) {
+    logError(error, { context });
+    return null;
+  }
 }
 
 export async function getCarsCollection(): Promise<Collection<CarInterface>> {
