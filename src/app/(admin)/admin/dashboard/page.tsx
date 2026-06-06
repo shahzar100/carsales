@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { getDashboardData } from "@/components/Admin/Dashboard/getDashboardData";
@@ -52,7 +53,11 @@ export default async function DashboardPage({
         </div>
 
         <div className="flex items-center gap-3">
-          <DateSelector />
+          {/* DateSelector reads useSearchParams — needs its own Suspense
+              boundary so it doesn't opt the whole page into client render. */}
+          <Suspense fallback={null}>
+            <DateSelector />
+          </Suspense>
           <UpdatedAt />
           <RefreshButton />
         </div>
