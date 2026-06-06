@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, use, useState, ReactNode } from "react";
 
 interface NavigationContextType {
   isNavigating: boolean;
@@ -34,7 +34,7 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({
 };
 
 export const useNavigation = () => {
-  const context = useContext(NavigationContext);
+  const context = use(NavigationContext);
   if (context === undefined) {
     throw new Error("useNavigation must be used within a NavigationProvider");
   }

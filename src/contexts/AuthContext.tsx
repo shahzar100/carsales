@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useCallback,
   createContext,
-  useContext,
+  use,
 } from "react";
 import { useRouter } from "next/navigation";
 import { logError } from "@/lib/utils/observability";
@@ -33,7 +33,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = use(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthWrapper");
   }

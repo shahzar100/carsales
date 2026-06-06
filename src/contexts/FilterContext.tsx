@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import React, { createContext, use, useReducer, ReactNode } from "react";
 
 // Filter state interface
 interface FilterState {
@@ -116,7 +116,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
 
 // Custom hook to use the filter context
 export const useFilters = () => {
-  const context = useContext(FilterContext);
+  const context = use(FilterContext);
   if (context === undefined) {
     throw new Error("useFilters must be used within a FilterProvider");
   }

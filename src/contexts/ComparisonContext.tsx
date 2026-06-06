@@ -2,7 +2,7 @@
 
 import React, {
   createContext,
-  useContext,
+  use,
   useState,
   useCallback,
   useEffect,
@@ -129,7 +129,7 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
 }
 
 export function useComparison() {
-  const context = useContext(ComparisonContext);
+  const context = use(ComparisonContext);
   if (context === undefined) {
     throw new Error("useComparison must be used within a ComparisonProvider");
   }

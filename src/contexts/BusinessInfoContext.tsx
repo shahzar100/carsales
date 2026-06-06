@@ -1,7 +1,7 @@
 "use client";
 import React, {
   createContext,
-  useContext,
+  use,
   useState,
   useEffect,
   ReactNode,
@@ -62,7 +62,7 @@ export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
 };
 
 export const useBusinessInfo = () => {
-  const context = useContext(BusinessInfoContext);
+  const context = use(BusinessInfoContext);
   if (context === undefined) {
     throw new Error(
       "useBusinessInfo must be used within a BusinessInfoProvider"

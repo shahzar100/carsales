@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, use, useState, ReactNode } from "react";
 
 interface ViewingBooking {
   carId?: string;
@@ -73,7 +73,7 @@ export const ViewingProvider: React.FC<{ children: ReactNode }> = ({
 };
 
 export const useViewing = () => {
-  const context = useContext(ViewingContext);
+  const context = use(ViewingContext);
   if (context === undefined) {
     throw new Error("useViewing must be used within a ViewingProvider");
   }

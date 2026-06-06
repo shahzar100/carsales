@@ -3,7 +3,7 @@
 import {
   createContext,
   useCallback,
-  useContext,
+  use,
   useEffect,
   useMemo,
   useRef,
@@ -203,7 +203,7 @@ export function SavedCarsProvider({ children }: { children: ReactNode }) {
 }
 
 export function useSavedCars(): SavedCarsContextValue {
-  const ctx = useContext(SavedCarsContext);
+  const ctx = use(SavedCarsContext);
   if (!ctx) {
     throw new Error("useSavedCars must be used within SavedCarsProvider");
   }

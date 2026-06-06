@@ -3,7 +3,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import React, {
   createContext,
   useCallback,
-  useContext,
+  use,
   useEffect,
   useRef,
   useState,
@@ -20,7 +20,7 @@ interface NavMenuProps {
 // children. Defaults to a no-op so NavLink stays usable outside a NavMenu
 // (e.g. the per-row Actions dropdown in CarActions).
 const NavMenuCloseContext = createContext<() => void>(() => {});
-export const useNavMenuClose = () => useContext(NavMenuCloseContext);
+export const useNavMenuClose = () => use(NavMenuCloseContext);
 
 const NavMenu: React.FC<NavMenuProps> = ({ children, title }) => {
   const [menu, setMenu] = useState(false);
