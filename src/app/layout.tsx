@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthSessionProvider from "@/components/Providers/AuthSessionProvider";
+import MotionProvider from "@/components/Providers/MotionProvider";
 import { ViewingProvider } from "@/contexts/ViewingContext";
 import { BusinessInfoProvider } from "@/contexts/BusinessInfoContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
@@ -76,17 +77,19 @@ export default function RootLayout({
             call useSession() — the nav account link and the saved-cars
             sync both rely on it. */}
         <AuthSessionProvider>
-          <ToastProvider>
-            <NavigationProvider>
-              <ViewingProvider>
-                <BusinessInfoProvider>
-                  <PageLoader />
-                  {children}
-                </BusinessInfoProvider>
-              </ViewingProvider>
-            </NavigationProvider>
-            <ToastContainer />
-          </ToastProvider>
+          <MotionProvider>
+            <ToastProvider>
+              <NavigationProvider>
+                <ViewingProvider>
+                  <BusinessInfoProvider>
+                    <PageLoader />
+                    {children}
+                  </BusinessInfoProvider>
+                </ViewingProvider>
+              </NavigationProvider>
+              <ToastContainer />
+            </ToastProvider>
+          </MotionProvider>
         </AuthSessionProvider>
       </body>
     </html>
