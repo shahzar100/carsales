@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, use, useState, ReactNode } from "react";
+import { createContext, use, useMemo, useState, ReactNode } from "react";
 
 interface NavigationContextType {
   isNavigating: boolean;
@@ -19,15 +19,18 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({
   const [isNavigating, setIsNavigating] = useState(false);
   const [navigationTarget, setNavigationTarget] = useState<string | null>(null);
 
+  const value = useMemo(
+    () => ({
+      isNavigating,
+      setIsNavigating,
+      navigationTarget,
+      setNavigationTarget,
+    }),
+    [isNavigating, navigationTarget]
+  );
+
   return (
-    <NavigationContext.Provider
-      value={{
-        isNavigating,
-        setIsNavigating,
-        navigationTarget,
-        setNavigationTarget,
-      }}
-    >
+    <NavigationContext.Provider value={value}>
       {children}
     </NavigationContext.Provider>
   );

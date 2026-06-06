@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   ReactNode,
 } from "react";
 import { CarInterface } from "@/lib/interfaces";
@@ -113,16 +114,25 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     );
   }, [toast]);
 
+  const value = useMemo(
+    () => ({
+      comparedCars,
+      addToCompare,
+      removeFromCompare,
+      clearComparison,
+      isInComparison,
+    }),
+    [
+      comparedCars,
+      addToCompare,
+      removeFromCompare,
+      clearComparison,
+      isInComparison,
+    ]
+  );
+
   return (
-    <ComparisonContext.Provider
-      value={{
-        comparedCars,
-        addToCompare,
-        removeFromCompare,
-        clearComparison,
-        isInComparison,
-      }}
-    >
+    <ComparisonContext.Provider value={value}>
       {children}
     </ComparisonContext.Provider>
   );

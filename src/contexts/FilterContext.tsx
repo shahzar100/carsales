@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, use, useReducer, ReactNode } from "react";
+import React, {
+  createContext,
+  use,
+  useMemo,
+  useReducer,
+  ReactNode,
+} from "react";
 
 // Filter state interface
 interface FilterState {
@@ -107,10 +113,10 @@ const FilterContext = createContext<FilterContextType | undefined>(undefined);
 export const FilterProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(filterReducer, initialState);
 
+  const value = useMemo(() => ({ state, dispatch }), [state]);
+
   return (
-    <FilterContext.Provider value={{ state, dispatch }}>
-      {children}
-    </FilterContext.Provider>
+    <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
   );
 };
 

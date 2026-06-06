@@ -4,6 +4,8 @@ import React, {
   use,
   useState,
   useEffect,
+  useCallback,
+  useMemo,
   ReactNode,
 } from "react";
 import type { ShopInfo } from "@/lib/interfaces";
@@ -28,7 +30,7 @@ export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
   const [businessInfo, setBusinessInfo] = useState<ShopInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchBusinessInfo = async () => {
+  const fetchBusinessInfo = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/businessinfo");
@@ -42,20 +44,23 @@ export const BusinessInfoProvider: React.FC<{ children: ReactNode }> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchBusinessInfo();
-  }, []);
+  }, [fetchBusinessInfo]);
+
+  const value = useMemo(
+    () => ({
+      businessInfo,
+      loading,
+      refetch: fetchBusinessInfo,
+    }),
+    [businessInfo, loading, fetchBusinessInfo]
+  );
 
   return (
-    <BusinessInfoContext.Provider
-      value={{
-        businessInfo,
-        loading,
-        refetch: fetchBusinessInfo,
-      }}
-    >
+    <BusinessInfoContext.Provider value={value}>
       {children}
     </BusinessInfoContext.Provider>
   );

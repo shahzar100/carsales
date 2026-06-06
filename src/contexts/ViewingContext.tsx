@@ -1,5 +1,12 @@
 "use client";
-import React, { createContext, use, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  use,
+  useCallback,
+  useMemo,
+  useState,
+  ReactNode,
+} from "react";
 
 interface ViewingBooking {
   carId?: string;
@@ -40,35 +47,45 @@ export const ViewingProvider: React.FC<{ children: ReactNode }> = ({
   const [viewingBooking, setViewingBooking] = useState<ViewingBooking>({});
   const [bookings, setBookings] = useState<ViewingBooking[]>([]);
 
-  const updateViewingBooking = (updates: Partial<ViewingBooking>) => {
+  const updateViewingBooking = useCallback((updates: Partial<ViewingBooking>) => {
     setViewingBooking((prev) => ({ ...prev, ...updates }));
-  };
+  }, []);
 
-  const clearViewingBooking = () => {
+  const clearViewingBooking = useCallback(() => {
     setViewingBooking({});
-  };
+  }, []);
 
-  const addBooking = (booking: ViewingBooking) => {
-    setBookings((prev) => [
-      ...prev,
-      { ...booking, carId: Date.now().toString() },
-    ]);
-    clearViewingBooking();
-  };
+  const addBooking = useCallback(
+    (booking: ViewingBooking) => {
+      setBookings((prev) => [
+        ...prev,
+        { ...booking, carId: Date.now().toString() },
+      ]);
+      clearViewingBooking();
+    },
+    [clearViewingBooking],
+  );
+
+  const value = useMemo(
+    () => ({
+      viewingBooking,
+      setViewingBooking,
+      updateViewingBooking,
+      clearViewingBooking,
+      bookings,
+      addBooking,
+    }),
+    [
+      viewingBooking,
+      updateViewingBooking,
+      clearViewingBooking,
+      bookings,
+      addBooking,
+    ],
+  );
 
   return (
-    <ViewingContext.Provider
-      value={{
-        viewingBooking,
-        setViewingBooking,
-        updateViewingBooking,
-        clearViewingBooking,
-        bookings,
-        addBooking,
-      }}
-    >
-      {children}
-    </ViewingContext.Provider>
+    <ViewingContext.Provider value={value}>{children}</ViewingContext.Provider>
   );
 };
 

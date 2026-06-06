@@ -3,6 +3,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   createContext,
   use,
 } from "react";
@@ -86,9 +87,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     router.refresh();
   }, [router]);
 
+  const value = useMemo(
+    () => ({ isLoggedIn, login, logout }),
+    [isLoggedIn, login, logout],
+  );
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
