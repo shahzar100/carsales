@@ -95,6 +95,17 @@ export const notFound = (
   init?: ResponseInit
 ) => fail(message, 404, init);
 
+/**
+ * 409 Conflict — the request collides with the current state of the
+ * resource (e.g. a booking slot taken by a concurrent request). Distinct
+ * from 429: a client should NOT blindly retry the same request, it should
+ * change it (pick another slot).
+ */
+export const conflict = (
+  message: string = "Conflict",
+  init?: ResponseInit
+) => fail(message, 409, init);
+
 /** 429 Too Many Requests — rate limit hit. Pass `Retry-After` in headers. */
 export const tooManyRequests = (
   message: string = "Too many requests",
