@@ -30,6 +30,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
       </div>
       <div className="flex gap-4">
         <button
+          type="button"
           onClick={reset}
           className="rounded-lg bg-red-600 px-6 py-2.5 text-white transition-colors hover:bg-red-700"
         >

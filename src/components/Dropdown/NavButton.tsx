@@ -29,6 +29,7 @@ const NavButton: React.FC<NavButtonProps> = ({
       className={`group relative text-black ${disabled ? "pointer-events-none" : ""}`}
     >
       <button
+        type="button"
         onClick={onClick}
         disabled={disabled}
         className={`flex items-center ${baseClasses} ${disabled ? disabledClasses : ""}`}
