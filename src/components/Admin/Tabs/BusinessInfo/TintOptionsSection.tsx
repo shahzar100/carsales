@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { TintOption } from "@/lib/interfaces";
 import { inputClass, labelClass } from "./styles";
@@ -14,6 +14,18 @@ export default function TintOptionsSection({
   options,
   onChange,
 }: TintOptionsSectionProps) {
+  // TintOption has no persisted id, so we track a stable client-side id per
+  // row. Keying by array index makes React reuse the wrong <input> nodes when
+  // a middle row is deleted; these ids stay glued to their row instead. They
+  // move in lockstep with `options` via the add/remove handlers below, and
+  // resync if the parent ever swaps the whole array (e.g. form reset).
+  const rowIds = useRef<number[]>(options.map((_, i) => i));
+  const nextId = useRef(options.length);
+  if (rowIds.current.length !== options.length) {
+    rowIds.current = options.map((_, i) => i);
+    nextId.current = options.length;
+  }
+
   const updateOpt = (index: number, partial: Partial<TintOption>) => {
     const updated = [...options];
     updated[index] = { ...updated[index], ...partial };
@@ -21,6 +33,7 @@ export default function TintOptionsSection({
   };
 
   const addOption = () => {
+    rowIds.current = [...rowIds.current, nextId.current++];
     onChange([
       ...options,
       {
@@ -37,6 +50,7 @@ export default function TintOptionsSection({
   };
 
   const removeOption = (index: number) => {
+    rowIds.current = rowIds.current.filter((_, i) => i !== index);
     onChange(options.filter((_, i) => i !== index));
   };
 
@@ -44,7 +58,7 @@ export default function TintOptionsSection({
     <div className="space-y-6">
       {options.map((opt, index) => (
         <div
-          key={index}
+          key={rowIds.current[index]}
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
           <div className="mb-3 flex items-center justify-between">

@@ -24,9 +24,9 @@ interface TintOptionsGridProps {
 const TintOptionsGrid: React.FC<TintOptionsGridProps> = ({ tintOptions }) => {
   return (
     <PackageGrid title="Tint Film Options">
-      {tintOptions.map((option, index) => (
+      {tintOptions.map((option) => (
         <PackageCard
-          key={index}
+          key={option.name}
           name={option.name}
           subtitle={`${option.type} Film`}
           price={option.price}

@@ -21,16 +21,14 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
 
   // Pagination calculations
   const totalPages = Math.ceil(cars.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  // Clamp the effective page during render instead of resetting it in a
+  // useEffect. The effect form briefly committed an out-of-range (empty) page
+  // when the list shrank below the current page, then snapped back on the next
+  // render — a visible flash. Deriving `page` here removes that extra render.
+  const page = currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
+  const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedCars = cars.slice(startIndex, endIndex);
-
-  // Reset to first page if current page exceeds total pages
-  React.useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [cars.length, itemsPerPage, currentPage, totalPages]);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-md">
@@ -232,7 +230,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
           {totalPages > 1 && (
             <div className="mt-5 border-t border-gray-200 pt-5">
               <Pagination
-                currentPage={currentPage}
+                currentPage={page}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
                 itemsPerPage={itemsPerPage}

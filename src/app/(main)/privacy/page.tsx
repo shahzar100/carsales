@@ -38,8 +38,8 @@ function SectionBody({
 }) {
   return (
     <>
-      {items.map((item, idx) => (
-        <div key={idx}>
+      {items.map((item) => (
+        <div key={item.text}>
           {item.subtitle && (
             <h3 className="mb-2 text-base font-semibold text-gray-800">
               {item.subtitle}

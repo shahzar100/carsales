@@ -47,8 +47,8 @@ const VLTGuide: React.FC = () => {
       </h2>
       <div className="rounded-2xl bg-gray-50 p-4 sm:p-8">
         <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
-          {vltOptions.map((option, index) => (
-            <div key={index} className="text-center">
+          {vltOptions.map((option) => (
+            <div key={option.vlt} className="text-center">
               <div
                 className={`mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-lg ${option.bgColor}`}
               >

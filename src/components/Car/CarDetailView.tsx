@@ -362,7 +362,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                   >
                     {allImages.map((img, i) => (
                       <motion.button
-                        key={i}
+                        key={img}
                         type="button"
                         onClick={() => setActiveImageIndex(i)}
                         aria-label={`Show image ${i + 1}`}

@@ -67,8 +67,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({
       </div>
 
       <div className="mb-8 grid gap-8 md:grid-cols-2">
-        {primaryActions.map((action, index) => (
-          <div key={index} className="rounded-xl bg-gray-800 p-6">
+        {primaryActions.map((action) => (
+          <div key={action.url} className="rounded-xl bg-gray-800 p-6">
             {renderAction(action, true)}
           </div>
         ))}
@@ -77,8 +77,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({
       {secondaryActions && (
         <div className="text-center">
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            {secondaryActions.map((action, index) => (
-              <div key={index}>{renderAction(action, false)}</div>
+            {secondaryActions.map((action) => (
+              <div key={action.url}>{renderAction(action, false)}</div>
             ))}
           </div>
         </div>

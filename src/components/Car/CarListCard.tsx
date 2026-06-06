@@ -145,9 +145,9 @@ const CarListCard: React.FC<CarListCardProps> = ({
 
           {/* Specs Row */}
           <div className="mb-4 flex flex-wrap gap-2">
-            {specs.map((spec, idx) => (
+            {specs.map((spec) => (
               <div
-                key={idx}
+                key={spec.label}
                 className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 ring-1 ring-gray-100"
               >
                 <spec.icon className={`h-3.5 w-3.5 shrink-0 ${spec.color}`} />
@@ -161,9 +161,9 @@ const CarListCard: React.FC<CarListCardProps> = ({
           {/* Features */}
           {car.features && car.features.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-1.5">
-              {car.features.slice(0, 5).map((feature, idx) => (
+              {car.features.slice(0, 5).map((feature) => (
                 <span
-                  key={idx}
+                  key={feature}
                   className="rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-medium text-red-700 ring-1 ring-red-100"
                 >
                   {feature}

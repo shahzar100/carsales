@@ -49,10 +49,10 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
         Why Choose Our Repair Shop?
       </h2>
       <div className="grid gap-8 md:grid-cols-3">
-        {displayItems.map((item, index) => {
+        {displayItems.map((item) => {
           const IconComponent = item.icon;
           return (
-            <div key={index} className="p-6 text-center">
+            <div key={item.title} className="p-6 text-center">
               <div
                 className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${item.bgColor} ${item.textColor}`}
               >

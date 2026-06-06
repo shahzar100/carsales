@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { RecoveryPricingTier } from "@/lib/interfaces";
 import { inputClass, labelClass } from "./styles";
@@ -20,6 +20,18 @@ export default function RecoverySection({
   recovery,
   onChange,
 }: RecoverySectionProps) {
+  // RecoveryPricingTier has no persisted id, so we track a stable client-side
+  // id per row. Keying by array index makes React reuse the wrong <input>
+  // nodes when a middle tier is deleted; these ids stay glued to their row.
+  // They move in lockstep with the tiers via the handlers below, and resync if
+  // the parent ever swaps the whole array (e.g. form reset).
+  const tierIds = useRef<number[]>(recovery.pricingTiers.map((_, i) => i));
+  const nextId = useRef(recovery.pricingTiers.length);
+  if (tierIds.current.length !== recovery.pricingTiers.length) {
+    tierIds.current = recovery.pricingTiers.map((_, i) => i);
+    nextId.current = recovery.pricingTiers.length;
+  }
+
   const updateTier = (
     index: number,
     partial: Partial<RecoveryPricingTier>
@@ -30,6 +42,7 @@ export default function RecoverySection({
   };
 
   const addTier = () => {
+    tierIds.current = [...tierIds.current, nextId.current++];
     onChange({
       ...recovery,
       pricingTiers: [
@@ -40,6 +53,7 @@ export default function RecoverySection({
   };
 
   const removeTier = (index: number) => {
+    tierIds.current = tierIds.current.filter((_, i) => i !== index);
     onChange({
       ...recovery,
       pricingTiers: recovery.pricingTiers.filter((_, i) => i !== index),
@@ -87,7 +101,7 @@ export default function RecoverySection({
         <div className="space-y-3">
           {recovery.pricingTiers.map((tier, index) => (
             <div
-              key={index}
+              key={tierIds.current[index]}
               className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3"
             >
               <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-3">

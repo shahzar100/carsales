@@ -354,9 +354,9 @@ export default async function AboutUs() {
                       {service.priceRange} · {service.duration}
                     </p>
                     <ul className="mb-4 space-y-1.5">
-                      {service.features.slice(0, 3).map((f, i) => (
+                      {service.features.slice(0, 3).map((f) => (
                         <li
-                          key={i}
+                          key={f}
                           className="flex items-center gap-2 text-sm text-gray-600"
                         >
                           <CheckCircle
@@ -405,9 +405,9 @@ export default async function AboutUs() {
                     {recovery.responseTime}
                   </p>
                   <ul className="mb-4 space-y-1.5">
-                    {recovery.coverageAreas?.slice(0, 3).map((area, i) => (
+                    {recovery.coverageAreas?.slice(0, 3).map((area) => (
                       <li
-                        key={i}
+                        key={area}
                         className="flex items-center gap-2 text-sm text-gray-600"
                       >
                         <MapPin size={14} className="shrink-0 text-red-500" />

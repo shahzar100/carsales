@@ -149,9 +149,9 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
             {/* Features (compact) */}
             {car.features && car.features.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-1">
-                {car.features.map((feature, idx) => (
+                {car.features.map((feature) => (
                   <span
-                    key={idx}
+                    key={feature}
                     className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600"
                   >
                     {feature}

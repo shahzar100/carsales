@@ -196,11 +196,11 @@ const BreakdownRecovery = async () => {
           Our Recovery Services
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {recoveryServices.map((service, index) => {
+          {recoveryServices.map((service) => {
             const Icon = service.icon;
             return (
               <div
-                key={index}
+                key={service.title}
                 className="group rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 flex items-start justify-between">
@@ -241,9 +241,9 @@ const BreakdownRecovery = async () => {
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {recovery &&
-            recovery.coverageAreas.map((area, index) => (
+            recovery.coverageAreas.map((area) => (
               <div
-                key={index}
+                key={area}
                 className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700"
               >
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-red-500" />
@@ -268,7 +268,7 @@ const BreakdownRecovery = async () => {
             {recovery &&
               recovery.pricingTiers.map((tier, index) => (
                 <div
-                  key={index}
+                  key={tier.name}
                   className={`rounded-xl p-6 ${
                     index === 1
                       ? "border border-red-500/30 bg-white/8 shadow-lg shadow-red-500/10"
@@ -331,9 +331,9 @@ const BreakdownRecovery = async () => {
                 q: "Is my vehicle insured during recovery?",
                 a: "Yes, all vehicles are fully covered by our goods-in-transit insurance from the moment we take control of your vehicle.",
               },
-            ].map((faq, index) => (
+            ].map((faq) => (
               <div
-                key={index}
+                key={faq.q}
                 className="rounded-xl border border-gray-200 bg-white p-5"
               >
                 <h3 className="mb-2 font-semibold text-gray-900">{faq.q}</h3>

@@ -53,8 +53,8 @@ const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
             </p>
           </div>
           <div className="mb-8 grid gap-6 md:grid-cols-3">
-            {emergencyServices.map((service, index) => (
-              <div key={index} className="text-center">
+            {emergencyServices.map((service) => (
+              <div key={service} className="text-center">
                 <div className="bg-opacity-20 rounded-lg bg-white p-4">
                   <span className="font-medium">{service}</span>
                 </div>

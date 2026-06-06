@@ -133,9 +133,9 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
             What&apos;s included
           </h4>
           <div className="flex flex-wrap gap-2">
-            {vehicle.features.map((feature, idx) => (
+            {vehicle.features.map((feature) => (
               <span
-                key={idx}
+                key={feature}
                 className="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700 ring-1 ring-red-100"
               >
                 {feature}

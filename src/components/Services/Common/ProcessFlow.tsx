@@ -29,8 +29,8 @@ const ProcessFlow: React.FC<ProcessFlowProps> = ({
         {title}
       </h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
-        {steps.map((process, index) => (
-          <div key={index} className="text-center">
+        {steps.map((process) => (
+          <div key={process.step} className="text-center">
             <div
               className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold ${
                 dark

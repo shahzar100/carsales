@@ -14,7 +14,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ rows }) => {
     <div className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-4">
       {rows.map((row, idx) => (
         <div
-          key={idx}
+          key={row.label}
           className={`flex items-center justify-between ${
             idx > 0 ? "mt-2.5 border-t border-white/[0.06] pt-2.5" : ""
           }`}

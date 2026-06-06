@@ -39,11 +39,11 @@ const FeatureList: React.FC<FeatureListProps> = ({
         </h4>
       )}
       <div className="space-y-2.5">
-        {features.map((feature, idx) => {
+        {features.map((feature) => {
           const isHighlighted =
             highlightPrefix && feature.startsWith(highlightPrefix);
           return (
-            <div key={idx} className="flex items-start gap-2.5">
+            <div key={feature} className="flex items-start gap-2.5">
               <span
                 className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
                   isHighlighted

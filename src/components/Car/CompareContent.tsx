@@ -119,7 +119,12 @@ const CompareContent: React.FC = () => {
   ];
 
   /* ==================== MOBILE: STACKED CARDS ==================== */
-  const MobileView = () => (
+  // Plain JSX values, not nested components: defining `() => (...)` components
+  // inside CompareContent and rendering them as <MobileView/> minted a new
+  // component identity every render, remounting the whole subtree (images
+  // reloaded/flickered on every comparison change). Inlining the JSX keeps it
+  // part of this component's own render — no remount.
+  const mobileView = (
     <div className="flex flex-col gap-6 lg:hidden">
       {comparedCars.map((car) => (
         <div key={String(car._id)} className="card overflow-hidden">
@@ -199,7 +204,7 @@ const CompareContent: React.FC = () => {
   );
 
   /* ================= DESKTOP: SIDE-BY-SIDE TABLE ================= */
-  const DesktopView = () => (
+  const desktopView = (
     <div className="hidden lg:block">
       <div className="card overflow-hidden">
         <table className="w-full" role="table">
@@ -334,8 +339,8 @@ const CompareContent: React.FC = () => {
         </div>
       </div>
 
-      <MobileView />
-      <DesktopView />
+      {mobileView}
+      {desktopView}
     </div>
   );
 };

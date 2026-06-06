@@ -38,11 +38,11 @@ const BenefitsGrid: React.FC<BenefitsGridProps> = ({
         {title}
       </h2>
       <div className={gridClass}>
-        {benefits.map((benefit, index) => {
+        {benefits.map((benefit) => {
           const IconComponent = benefit.icon;
           return (
             <div
-              key={index}
+              key={benefit.title}
               className={`rounded-xl border p-4 text-center transition-all duration-300 sm:p-6 ${
                 dark
                   ? "border-white/10 bg-white/[0.05] hover:-translate-y-1 hover:bg-white/[0.08]"
