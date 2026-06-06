@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { TintOption } from "@/lib/interfaces";
 import { inputClass, labelClass } from "./styles";
@@ -21,6 +21,7 @@ export default function TintOptionsSection({
   // resync if the parent ever swaps the whole array (e.g. form reset).
   const rowIds = useRef<number[]>(options.map((_, i) => i));
   const nextId = useRef(options.length);
+  const fieldId = useId();
   if (rowIds.current.length !== options.length) {
     rowIds.current = options.map((_, i) => i);
     nextId.current = options.length;
@@ -91,8 +92,14 @@ export default function TintOptionsSection({
           <div className="space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className={labelClass}>Name</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-name`}
+                >
+                  Name
+                </label>
                 <input
+                  id={`${fieldId}-${index}-name`}
                   type="text"
                   value={opt.name}
                   onChange={(e) => updateOpt(index, { name: e.target.value })}
@@ -102,8 +109,14 @@ export default function TintOptionsSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Type</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-type`}
+                >
+                  Type
+                </label>
                 <input
+                  id={`${fieldId}-${index}-type`}
                   type="text"
                   value={opt.type}
                   onChange={(e) => updateOpt(index, { type: e.target.value })}
@@ -116,8 +129,14 @@ export default function TintOptionsSection({
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <div>
-                <label className={labelClass}>Price</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-price`}
+                >
+                  Price
+                </label>
                 <input
+                  id={`${fieldId}-${index}-price`}
                   type="text"
                   value={opt.price}
                   onChange={(e) => updateOpt(index, { price: e.target.value })}
@@ -127,8 +146,14 @@ export default function TintOptionsSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>VLT Options</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-vlt-options`}
+                >
+                  VLT Options
+                </label>
                 <input
+                  id={`${fieldId}-${index}-vlt-options`}
                   type="text"
                   value={opt.vlt}
                   onChange={(e) => updateOpt(index, { vlt: e.target.value })}
@@ -138,8 +163,14 @@ export default function TintOptionsSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Warranty</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-warranty`}
+                >
+                  Warranty
+                </label>
                 <input
+                  id={`${fieldId}-${index}-warranty`}
                   type="text"
                   value={opt.warranty}
                   onChange={(e) =>
@@ -153,8 +184,14 @@ export default function TintOptionsSection({
             </div>
 
             <div>
-              <label className={labelClass}>Description</label>
+              <label
+                className={labelClass}
+                htmlFor={`${fieldId}-${index}-description`}
+              >
+                Description
+              </label>
               <input
+                id={`${fieldId}-${index}-description`}
                 type="text"
                 value={opt.description}
                 onChange={(e) =>
@@ -166,8 +203,14 @@ export default function TintOptionsSection({
             </div>
 
             <div>
-              <label className={labelClass}>Features (one per line)</label>
+              <label
+                className={labelClass}
+                htmlFor={`${fieldId}-${index}-features-one-per-line`}
+              >
+                Features (one per line)
+              </label>
               <textarea
+                id={`${fieldId}-${index}-features-one-per-line`}
                 value={opt.features.join("\n")}
                 onChange={(e) =>
                   updateOpt(index, {

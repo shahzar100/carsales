@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { ServiceOverview } from "@/lib/interfaces";
 import { inputClass, labelClass } from "./styles";
@@ -14,6 +14,8 @@ export default function ServiceOverviewsSection({
   overviews,
   onChange,
 }: ServiceOverviewsSectionProps) {
+  const fieldId = useId();
+
   const updateOv = (index: number, partial: Partial<ServiceOverview>) => {
     const updated = [...overviews];
     updated[index] = { ...updated[index], ...partial };
@@ -62,8 +64,14 @@ export default function ServiceOverviewsSection({
           <div className="space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className={labelClass}>Title</label>
+                <label
+                  htmlFor={`${fieldId}-${index}-title`}
+                  className={labelClass}
+                >
+                  Title
+                </label>
                 <input
+                  id={`${fieldId}-${index}-title`}
                   type="text"
                   value={ov.title}
                   onChange={(e) => updateOv(index, { title: e.target.value })}
@@ -73,8 +81,14 @@ export default function ServiceOverviewsSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Subtitle</label>
+                <label
+                  htmlFor={`${fieldId}-${index}-subtitle`}
+                  className={labelClass}
+                >
+                  Subtitle
+                </label>
                 <input
+                  id={`${fieldId}-${index}-subtitle`}
                   type="text"
                   value={ov.subtitle}
                   onChange={(e) =>
@@ -89,8 +103,14 @@ export default function ServiceOverviewsSection({
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className={labelClass}>Price Range</label>
+                <label
+                  htmlFor={`${fieldId}-${index}-price-range`}
+                  className={labelClass}
+                >
+                  Price Range
+                </label>
                 <input
+                  id={`${fieldId}-${index}-price-range`}
                   type="text"
                   value={ov.priceRange}
                   onChange={(e) =>
@@ -102,8 +122,14 @@ export default function ServiceOverviewsSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Duration</label>
+                <label
+                  htmlFor={`${fieldId}-${index}-duration`}
+                  className={labelClass}
+                >
+                  Duration
+                </label>
                 <input
+                  id={`${fieldId}-${index}-duration`}
                   type="text"
                   value={ov.duration}
                   onChange={(e) =>
@@ -117,8 +143,14 @@ export default function ServiceOverviewsSection({
             </div>
 
             <div>
-              <label className={labelClass}>Features (one per line)</label>
+              <label
+                htmlFor={`${fieldId}-${index}-features-one-per-line`}
+                className={labelClass}
+              >
+                Features (one per line)
+              </label>
               <textarea
+                id={`${fieldId}-${index}-features-one-per-line`}
                 value={ov.features.join("\n")}
                 onChange={(e) =>
                   updateOv(index, {

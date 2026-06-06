@@ -302,9 +302,11 @@ export default function CarPartsClient({ initialParts }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              {/* Caption for a custom widget, not a form label: ImageUploader
+                  renders its own controls, so a <label> would tie to nothing. */}
+              <span className="mb-1 block text-sm font-medium text-gray-700">
                 Image
-              </label>
+              </span>
               <ImageUploader
                 folder="parts"
                 onUpload={(url) => setFormData({ ...formData, image: url })}

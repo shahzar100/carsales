@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { DetailingPackage } from "@/lib/interfaces";
 import { inputClass, labelClass } from "./styles";
@@ -14,6 +14,8 @@ export default function DetailingPackagesSection({
   packages,
   onChange,
 }: DetailingPackagesSectionProps) {
+  const fieldId = useId();
+
   const updatePkg = (index: number, partial: Partial<DetailingPackage>) => {
     const updated = [...packages];
     updated[index] = { ...updated[index], ...partial };
@@ -79,9 +81,15 @@ export default function DetailingPackagesSection({
           <div className="space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className={labelClass}>Name</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-name`}
+                >
+                  Name
+                </label>
                 <input
                   type="text"
+                  id={`${fieldId}-${index}-name`}
                   value={pkg.name}
                   onChange={(e) => updatePkg(index, { name: e.target.value })}
                   className={inputClass}
@@ -90,9 +98,15 @@ export default function DetailingPackagesSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Subtitle</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-subtitle`}
+                >
+                  Subtitle
+                </label>
                 <input
                   type="text"
+                  id={`${fieldId}-${index}-subtitle`}
                   value={pkg.subtitle}
                   onChange={(e) =>
                     updatePkg(index, { subtitle: e.target.value })
@@ -106,9 +120,15 @@ export default function DetailingPackagesSection({
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <div>
-                <label className={labelClass}>Price</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-price`}
+                >
+                  Price
+                </label>
                 <input
                   type="text"
+                  id={`${fieldId}-${index}-price`}
                   value={pkg.price}
                   onChange={(e) => updatePkg(index, { price: e.target.value })}
                   className={inputClass}
@@ -117,9 +137,15 @@ export default function DetailingPackagesSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Duration</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-duration`}
+                >
+                  Duration
+                </label>
                 <input
                   type="text"
+                  id={`${fieldId}-${index}-duration`}
                   value={pkg.duration}
                   onChange={(e) =>
                     updatePkg(index, { duration: e.target.value })
@@ -130,9 +156,15 @@ export default function DetailingPackagesSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>Includes Previous</label>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-includes-previous`}
+                >
+                  Includes Previous
+                </label>
                 <input
                   type="text"
+                  id={`${fieldId}-${index}-includes-previous`}
                   value={pkg.includesPrevious ?? ""}
                   onChange={(e) =>
                     updatePkg(index, {
@@ -147,9 +179,15 @@ export default function DetailingPackagesSection({
             </div>
 
             <div>
-              <label className={labelClass}>Description</label>
+              <label
+                className={labelClass}
+                htmlFor={`${fieldId}-${index}-description`}
+              >
+                Description
+              </label>
               <input
                 type="text"
+                id={`${fieldId}-${index}-description`}
                 value={pkg.description}
                 onChange={(e) =>
                   updatePkg(index, { description: e.target.value })
@@ -161,10 +199,14 @@ export default function DetailingPackagesSection({
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
-                <label className={labelClass}>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-exterior-features-one-per-line`}
+                >
                   Exterior Features (one per line)
                 </label>
                 <textarea
+                  id={`${fieldId}-${index}-exterior-features-one-per-line`}
                   value={pkg.exteriorFeatures.join("\n")}
                   onChange={(e) =>
                     updatePkg(index, {
@@ -179,10 +221,14 @@ export default function DetailingPackagesSection({
                 />
               </div>
               <div>
-                <label className={labelClass}>
+                <label
+                  className={labelClass}
+                  htmlFor={`${fieldId}-${index}-interior-features-one-per-line`}
+                >
                   Interior Features (one per line)
                 </label>
                 <textarea
+                  id={`${fieldId}-${index}-interior-features-one-per-line`}
                   value={pkg.interiorFeatures.join("\n")}
                   onChange={(e) =>
                     updatePkg(index, {
