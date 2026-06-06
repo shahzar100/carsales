@@ -20,8 +20,10 @@ interface PageProps {
 }
 
 const BookingConfirmationPage = async ({ searchParams }: PageProps) => {
-  const { ref, email } = await searchParams;
-  const businessInfo = await getBusinessInfo();
+  const [{ ref, email }, businessInfo] = await Promise.all([
+    searchParams,
+    getBusinessInfo(),
+  ]);
 
   if (!ref) {
     return (

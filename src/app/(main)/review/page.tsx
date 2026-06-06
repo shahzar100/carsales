@@ -22,8 +22,10 @@ interface PageProps {
 }
 
 const ReviewPage = async ({ searchParams }: PageProps) => {
-  const { ref } = await searchParams;
-  const businessInfo = await getBusinessInfo();
+  const [{ ref }, businessInfo] = await Promise.all([
+    searchParams,
+    getBusinessInfo(),
+  ]);
 
   // Prefer an explicit Google review link. Fall back to the maps URL,
   // which Google still treats as a review-ready destination.

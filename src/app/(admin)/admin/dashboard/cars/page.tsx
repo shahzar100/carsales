@@ -20,8 +20,7 @@ const getBookings = async (): Promise<CarViewingBooking[]> => {
 };
 
 export default async function CarsPage() {
-  const cars = await getCars();
-  const bookings = await getBookings();
+  const [cars, bookings] = await Promise.all([getCars(), getBookings()]);
   return (
     <>
       <div className="mb-4 flex justify-end">

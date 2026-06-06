@@ -11,8 +11,10 @@ export default async function AccountPage() {
   const authed = await isAuthenticated();
   if (!authed) redirect("/admin/login");
 
-  const session = await getSession();
-  const users = await getAdminUsersCollection();
+  const [session, users] = await Promise.all([
+    getSession(),
+    getAdminUsersCollection(),
+  ]);
   const user = session.username
     ? await users.findOne({ username: session.username })
     : null;
