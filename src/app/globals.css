@@ -209,3 +209,19 @@
     opacity: 1;
   }
 }
+
+/* ---- Reduced motion ----
+   Honours the OS-level "Reduce motion" setting for everything driven by
+   CSS (the shimmer/mm-pop/mm-fade keyframes above, plus any transition).
+   `motion/react` animations are handled separately by <MotionProvider>'s
+   MotionConfig reducedMotion="user". Together these cover the whole app. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
