@@ -49,6 +49,15 @@ const FieldError: React.FC<{ id?: string; children: React.ReactNode }> = ({
 // ═════════════════════════════════════════════════════════════
 type ButtonVariant = "primary" | "secondary" | "ghost" | "success" | "danger";
 
+const variants: Record<ButtonVariant, string> = {
+  primary: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
+  secondary: "text-gray-700 hover:text-red-500 hover:bg-red-100",
+  ghost: "cursor-not-allowed text-gray-300",
+  success:
+    "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow-md",
+  danger: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
+};
+
 export const FormButton: React.FC<{
   children: React.ReactNode;
   onClick?: () => void;
@@ -74,15 +83,6 @@ export const FormButton: React.FC<{
 }) => {
   const base =
     "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-300";
-
-  const variants: Record<ButtonVariant, string> = {
-    primary: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
-    secondary: "text-gray-700 hover:text-red-500 hover:bg-red-100",
-    ghost: "cursor-not-allowed text-gray-300",
-    success:
-      "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow-md",
-    danger: "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md",
-  };
 
   return (
     <button

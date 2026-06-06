@@ -29,77 +29,77 @@ export const metadata: Metadata = {
   },
 };
 
+const benefits = [
+  {
+    icon: Sun,
+    title: "Heat Reduction",
+    description: "Blocks up to 80% of solar heat, keeping your car cooler",
+  },
+  {
+    icon: Shield,
+    title: "UV Protection",
+    description: "99% UV ray blocking protects you and your interior",
+  },
+  {
+    icon: Eye,
+    title: "Enhanced Privacy",
+    description: "Increased privacy while maintaining clear visibility",
+  },
+  {
+    icon: CheckCircle,
+    title: "Interior Protection",
+    description: "Prevents fading and cracking of dashboard and upholstery",
+  },
+];
+
+const installationProcess = [
+  {
+    step: 1,
+    title: "Consultation",
+    description: "Discuss your needs and legal requirements",
+  },
+  {
+    step: 2,
+    title: "Preparation",
+    description: "Clean windows and prepare workspace",
+  },
+  {
+    step: 3,
+    title: "Cutting",
+    description: "Precision cut film to exact measurements",
+  },
+  {
+    step: 4,
+    title: "Installation",
+    description: "Professional application with no bubbles",
+  },
+  {
+    step: 5,
+    title: "Quality Check",
+    description: "Final inspection and care instructions",
+  },
+];
+
+const heroProps = {
+  icon: Shield,
+  iconBgColor: "bg-red-100 text-red-700",
+  title: "Professional Window Tinting",
+  description:
+    "Protect your vehicle and enhance your driving experience with our premium window tinting services. Choose from multiple film types and tint levels to match your style and needs.",
+  badges: [
+    {
+      icon: CheckCircle,
+      text: "Professional Installation",
+      color: "text-red-500",
+    },
+    { icon: Clock, text: "2-4 Hour Service", color: "text-gray-900" },
+    { icon: Shield, text: "Warranty Included", color: "text-red-700" },
+  ],
+};
+
 const Tints = async () => {
   const businessInfo = await getBusinessInfo();
   const tintOptions = businessInfo.tintOptions!;
-
-  const benefits = [
-    {
-      icon: Sun,
-      title: "Heat Reduction",
-      description: "Blocks up to 80% of solar heat, keeping your car cooler",
-    },
-    {
-      icon: Shield,
-      title: "UV Protection",
-      description: "99% UV ray blocking protects you and your interior",
-    },
-    {
-      icon: Eye,
-      title: "Enhanced Privacy",
-      description: "Increased privacy while maintaining clear visibility",
-    },
-    {
-      icon: CheckCircle,
-      title: "Interior Protection",
-      description: "Prevents fading and cracking of dashboard and upholstery",
-    },
-  ];
-
-  const installationProcess = [
-    {
-      step: 1,
-      title: "Consultation",
-      description: "Discuss your needs and legal requirements",
-    },
-    {
-      step: 2,
-      title: "Preparation",
-      description: "Clean windows and prepare workspace",
-    },
-    {
-      step: 3,
-      title: "Cutting",
-      description: "Precision cut film to exact measurements",
-    },
-    {
-      step: 4,
-      title: "Installation",
-      description: "Professional application with no bubbles",
-    },
-    {
-      step: 5,
-      title: "Quality Check",
-      description: "Final inspection and care instructions",
-    },
-  ];
-
-  const heroProps = {
-    icon: Shield,
-    iconBgColor: "bg-red-100 text-red-700",
-    title: "Professional Window Tinting",
-    description:
-      "Protect your vehicle and enhance your driving experience with our premium window tinting services. Choose from multiple film types and tint levels to match your style and needs.",
-    badges: [
-      {
-        icon: CheckCircle,
-        text: "Professional Installation",
-        color: "text-red-500",
-      },
-      { icon: Clock, text: "2-4 Hour Service", color: "text-gray-900" },
-      { icon: Shield, text: "Warranty Included", color: "text-red-700" },
-    ],
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

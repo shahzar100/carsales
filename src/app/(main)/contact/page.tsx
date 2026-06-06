@@ -19,6 +19,16 @@ import { safeExternalHref } from "@/lib/utils/url";
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
 
+const dayOrder = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+] as const;
+
 // Cached per-page (no longer force-dynamic via layout). Audit #1.
 export const revalidate = 3600;
 
@@ -62,16 +72,6 @@ export default async function Contact() {
     ? `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`
     : undefined;
   const mapsHref = safeAdminMapsUrl ?? fallbackMapsHref;
-
-  const dayOrder = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ] as const;
 
   return (
     <div className="min-h-screen">

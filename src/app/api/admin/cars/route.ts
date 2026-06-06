@@ -72,6 +72,8 @@ const carSchema = z.object({
   featured: z.boolean().optional().default(false),
 });
 
+const VALID_STATUSES = ["available", "sold", "reserved"] as const;
+
 export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
@@ -85,7 +87,6 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     const status = searchParams.get("status") || "all";
 
-    const VALID_STATUSES = ["available", "sold", "reserved"] as const;
     if (status !== "all" && !VALID_STATUSES.includes(status as typeof VALID_STATUSES[number])) {
       return badRequest("Invalid status value");
     }

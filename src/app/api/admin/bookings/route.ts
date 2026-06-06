@@ -32,6 +32,10 @@ const adminBookingWriteLimiter = createRateLimiter("admin-booking-write", {
   windowMs: 60 * 1000,
 });
 
+const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
+
+const validTypes = ["service", "viewing"];
+
 export async function GET(request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
@@ -120,7 +124,6 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validate status
-    const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         {
@@ -131,7 +134,6 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validate type
-    const validTypes = ["service", "viewing"];
     if (!validTypes.includes(type)) {
       return badRequest("Invalid type. Must be 'service' or 'viewing'");
     }

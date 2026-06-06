@@ -23,30 +23,30 @@ export const metadata: Metadata = {
   },
 };
 
+const heroProps = {
+  icon: Sparkles,
+  iconBgColor: "bg-red-50 text-red-600",
+  title: "Professional Car Detailing",
+  description:
+    "Transform your vehicle with our premium detailing services. Choose your package below and book today.",
+  badges: [
+    {
+      icon: CheckCircle,
+      text: "Eco-Friendly Products",
+      color: "text-red-500",
+    },
+    { icon: Clock, text: "Same Day Service", color: "text-gray-900" },
+    {
+      icon: Shield,
+      text: "Satisfaction Guaranteed",
+      color: "text-red-700",
+    },
+  ],
+};
+
 const Detailing = async () => {
   const businessInfo = await getBusinessInfo();
   const detailingPackages = businessInfo.detailingPackages!;
-
-  const heroProps = {
-    icon: Sparkles,
-    iconBgColor: "bg-red-50 text-red-600",
-    title: "Professional Car Detailing",
-    description:
-      "Transform your vehicle with our premium detailing services. Choose your package below and book today.",
-    badges: [
-      {
-        icon: CheckCircle,
-        text: "Eco-Friendly Products",
-        color: "text-red-500",
-      },
-      { icon: Clock, text: "Same Day Service", color: "text-gray-900" },
-      {
-        icon: Shield,
-        text: "Satisfaction Guaranteed",
-        color: "text-red-700",
-      },
-    ],
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

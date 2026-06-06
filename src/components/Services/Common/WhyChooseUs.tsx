@@ -13,34 +13,34 @@ interface WhyChooseUsProps {
   items?: WhyChooseItem[];
 }
 
-const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
-  const defaultItems: WhyChooseItem[] = [
-    {
-      icon: CheckCircle,
-      title: "Certified Expertise",
-      description:
-        "ASE certified technicians with years of experience on all vehicle makes and models.",
-      bgColor: "bg-red-50",
-      textColor: "text-red-600",
-    },
-    {
-      icon: Shield,
-      title: "Quality Guarantee",
-      description:
-        "All repairs backed by comprehensive warranty and satisfaction guarantee.",
-      bgColor: "bg-gray-100",
-      textColor: "text-gray-900",
-    },
-    {
-      icon: Clock,
-      title: "Fast Turnaround",
-      description:
-        "Efficient service with most repairs completed within 1-2 business days.",
-      bgColor: "bg-red-100",
-      textColor: "text-red-700",
-    },
-  ];
+const defaultItems: WhyChooseItem[] = [
+  {
+    icon: CheckCircle,
+    title: "Certified Expertise",
+    description:
+      "ASE certified technicians with years of experience on all vehicle makes and models.",
+    bgColor: "bg-red-50",
+    textColor: "text-red-600",
+  },
+  {
+    icon: Shield,
+    title: "Quality Guarantee",
+    description:
+      "All repairs backed by comprehensive warranty and satisfaction guarantee.",
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-900",
+  },
+  {
+    icon: Clock,
+    title: "Fast Turnaround",
+    description:
+      "Efficient service with most repairs completed within 1-2 business days.",
+    bgColor: "bg-red-100",
+    textColor: "text-red-700",
+  },
+];
 
+const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ items }) => {
   const displayItems = items || defaultItems;
 
   return (

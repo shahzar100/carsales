@@ -26,40 +26,40 @@ export const metadata: Metadata = {
   },
 };
 
+const autoDealer = {
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  name: businessName,
+  url: siteUrl,
+  description:
+    "Quality car sales, vehicle viewings, and professional auto services including detailing, window tinting, repairs, and breakdown recovery.",
+  currenciesAccepted: "GBP",
+  makesOffer: [
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Car Sales" },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Car Detailing" },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Window Tinting" },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Auto Repairs" },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Breakdown Recovery" },
+    },
+  ],
+};
+
 export default async function Home() {
   const latestCars = await getLatestCars(6);
-
-  const autoDealer = {
-    "@context": "https://schema.org",
-    "@type": "AutoDealer",
-    name: businessName,
-    url: siteUrl,
-    description:
-      "Quality car sales, vehicle viewings, and professional auto services including detailing, window tinting, repairs, and breakdown recovery.",
-    currenciesAccepted: "GBP",
-    makesOffer: [
-      {
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: "Car Sales" },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: "Car Detailing" },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: "Window Tinting" },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: "Auto Repairs" },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: "Breakdown Recovery" },
-      },
-    ],
-  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">

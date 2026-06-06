@@ -29,6 +29,44 @@ const businessName =
 // Cached per-page (no longer force-dynamic via layout). Audit #1.
 export const revalidate = 3600;
 
+const dayOrder = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+] as const;
+
+const processSteps = [
+  {
+    step: 1,
+    title: "Browse Online",
+    description: "Explore our curated collection of quality vehicles online",
+  },
+  {
+    step: 2,
+    title: "Book a Viewing",
+    description: "Schedule a convenient time to see the car in person",
+  },
+  {
+    step: 3,
+    title: "Expert Guidance",
+    description: "Our knowledgeable team helps you find your ideal match",
+  },
+  {
+    step: 4,
+    title: "Test Drive",
+    description: "Take the car for a spin and feel the difference",
+  },
+  {
+    step: 5,
+    title: "Drive Home Happy",
+    description: "Simple paperwork, fair pricing, and you're on the road",
+  },
+];
+
 export const metadata: Metadata = {
   title: `About Us — ${businessName}`,
   description:
@@ -69,44 +107,6 @@ export default async function AboutUs() {
 
   const fullAddress =
     `${address}, ${city}${businessInfo.state ? `, ${businessInfo.state}` : ""} ${businessInfo.zipCode}`.trim();
-
-  const dayOrder = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ] as const;
-
-  const processSteps = [
-    {
-      step: 1,
-      title: "Browse Online",
-      description: "Explore our curated collection of quality vehicles online",
-    },
-    {
-      step: 2,
-      title: "Book a Viewing",
-      description: "Schedule a convenient time to see the car in person",
-    },
-    {
-      step: 3,
-      title: "Expert Guidance",
-      description: "Our knowledgeable team helps you find your ideal match",
-    },
-    {
-      step: 4,
-      title: "Test Drive",
-      description: "Take the car for a spin and feel the difference",
-    },
-    {
-      step: 5,
-      title: "Drive Home Happy",
-      description: "Simple paperwork, fair pricing, and you're on the road",
-    },
-  ];
 
   return (
     <div className="min-h-screen">

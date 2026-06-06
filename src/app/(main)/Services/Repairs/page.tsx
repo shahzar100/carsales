@@ -38,113 +38,113 @@ export const metadata: Metadata = {
   },
 };
 
+const repairServices = [
+  {
+    category: "Engine & Performance",
+    icon: Settings,
+    color: "bg-red-500",
+    services: [
+      "Engine Diagnostics",
+      "Oil Changes & Fluid Services",
+      "Timing Belt Replacement",
+      "Fuel System Cleaning",
+      "Engine Tune-ups",
+      "Performance Upgrades",
+    ],
+  },
+  {
+    category: "Brakes & Safety",
+    icon: Shield,
+    color: "bg-orange-500",
+    services: [
+      "Brake Pad Replacement",
+      "Brake Fluid Service",
+      "Rotor Resurfacing",
+      "ABS System Repair",
+      "Brake Line Repair",
+      "Emergency Brake Adjustment",
+    ],
+  },
+  {
+    category: "Electrical Systems",
+    icon: Zap,
+    color: "bg-yellow-500",
+    services: [
+      "Battery Testing & Replacement",
+      "Alternator Repair",
+      "Starter Motor Service",
+      "Wiring Diagnostics",
+      "Lighting System Repair",
+      "Electronic Module Programming",
+    ],
+  },
+  {
+    category: "Transmission & Drivetrain",
+    icon: Wrench,
+    color: "bg-red-600",
+    services: [
+      "Transmission Service",
+      "Clutch Replacement",
+      "CV Joint Repair",
+      "Differential Service",
+      "Driveshaft Repair",
+      "Transfer Case Service",
+    ],
+  },
+];
+
+const repairProcess = [
+  {
+    step: 1,
+    title: "Initial Consultation",
+    description:
+      "Email us your vehicle issues and symptoms for preliminary assessment",
+  },
+  {
+    step: 2,
+    title: "Diagnostic Evaluation",
+    description: "Comprehensive computer diagnostics and visual inspection",
+  },
+  {
+    step: 3,
+    title: "Detailed Quote",
+    description: "Transparent pricing with breakdown of parts and labor costs",
+  },
+  {
+    step: 4,
+    title: "Repair Execution",
+    description: "Expert repair using quality parts and proven techniques",
+  },
+  {
+    step: 5,
+    title: "Quality Assurance",
+    description: "Post-repair testing and multi-point inspection",
+  },
+];
+
+const heroProps = {
+  icon: Wrench,
+  iconBgColor: "bg-gray-100 text-gray-900",
+  title: "Expert Auto Repair Services",
+  description:
+    "Professional automotive repair services for all makes and models. Our certified technicians use state-of-the-art diagnostic equipment to get you back on the road safely and efficiently.",
+  badges: [
+    {
+      icon: CheckCircle,
+      text: "ASE Certified Technicians",
+      color: "text-red-500",
+    },
+    {
+      icon: Clock,
+      text: "Same Day Service Available",
+      color: "text-gray-900",
+    },
+    { icon: Shield, text: "Warranty on All Work", color: "text-red-700" },
+  ],
+};
+
 const Repairs = async () => {
   const businessInfo = await getBusinessInfo();
-  const repairServices = [
-    {
-      category: "Engine & Performance",
-      icon: Settings,
-      color: "bg-red-500",
-      services: [
-        "Engine Diagnostics",
-        "Oil Changes & Fluid Services",
-        "Timing Belt Replacement",
-        "Fuel System Cleaning",
-        "Engine Tune-ups",
-        "Performance Upgrades",
-      ],
-    },
-    {
-      category: "Brakes & Safety",
-      icon: Shield,
-      color: "bg-orange-500",
-      services: [
-        "Brake Pad Replacement",
-        "Brake Fluid Service",
-        "Rotor Resurfacing",
-        "ABS System Repair",
-        "Brake Line Repair",
-        "Emergency Brake Adjustment",
-      ],
-    },
-    {
-      category: "Electrical Systems",
-      icon: Zap,
-      color: "bg-yellow-500",
-      services: [
-        "Battery Testing & Replacement",
-        "Alternator Repair",
-        "Starter Motor Service",
-        "Wiring Diagnostics",
-        "Lighting System Repair",
-        "Electronic Module Programming",
-      ],
-    },
-    {
-      category: "Transmission & Drivetrain",
-      icon: Wrench,
-      color: "bg-red-600",
-      services: [
-        "Transmission Service",
-        "Clutch Replacement",
-        "CV Joint Repair",
-        "Differential Service",
-        "Driveshaft Repair",
-        "Transfer Case Service",
-      ],
-    },
-  ];
-
-  const repairProcess = [
-    {
-      step: 1,
-      title: "Initial Consultation",
-      description:
-        "Email us your vehicle issues and symptoms for preliminary assessment",
-    },
-    {
-      step: 2,
-      title: "Diagnostic Evaluation",
-      description: "Comprehensive computer diagnostics and visual inspection",
-    },
-    {
-      step: 3,
-      title: "Detailed Quote",
-      description:
-        "Transparent pricing with breakdown of parts and labor costs",
-    },
-    {
-      step: 4,
-      title: "Repair Execution",
-      description: "Expert repair using quality parts and proven techniques",
-    },
-    {
-      step: 5,
-      title: "Quality Assurance",
-      description: "Post-repair testing and multi-point inspection",
-    },
-  ];
-
-  const heroProps = {
-    icon: Wrench,
-    iconBgColor: "bg-gray-100 text-gray-900",
-    title: "Expert Auto Repair Services",
-    description:
-      "Professional automotive repair services for all makes and models. Our certified technicians use state-of-the-art diagnostic equipment to get you back on the road safely and efficiently.",
-    badges: [
-      {
-        icon: CheckCircle,
-        text: "ASE Certified Technicians",
-        color: "text-red-500",
-      },
-      {
-        icon: Clock,
-        text: "Same Day Service Available",
-        color: "text-gray-900",
-      },
-      { icon: Shield, text: "Warranty on All Work", color: "text-red-700" },
-    ],
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

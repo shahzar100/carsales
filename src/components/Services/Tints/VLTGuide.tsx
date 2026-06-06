@@ -8,38 +8,38 @@ interface VLTOption {
   textColor: string;
 }
 
-const VLTGuide: React.FC = () => {
-  const vltOptions: VLTOption[] = [
-    {
-      vlt: "5%",
-      name: "5% VLT",
-      description: 'Very dark, maximum privacy. Often called "limo tint"',
-      bgColor: "bg-gray-900",
-      textColor: "text-white",
-    },
-    {
-      vlt: "20%",
-      name: "20% VLT",
-      description: "Dark tint, good privacy while maintaining visibility",
-      bgColor: "bg-gray-700",
-      textColor: "text-white",
-    },
-    {
-      vlt: "35%",
-      name: "35% VLT",
-      description: "Medium tint, popular choice for all windows",
-      bgColor: "bg-gray-500",
-      textColor: "text-white",
-    },
-    {
-      vlt: "50%",
-      name: "50% VLT",
-      description: "Light tint, subtle appearance with UV protection",
-      bgColor: "bg-gray-300",
-      textColor: "text-gray-800",
-    },
-  ];
+const vltOptions: VLTOption[] = [
+  {
+    vlt: "5%",
+    name: "5% VLT",
+    description: 'Very dark, maximum privacy. Often called "limo tint"',
+    bgColor: "bg-gray-900",
+    textColor: "text-white",
+  },
+  {
+    vlt: "20%",
+    name: "20% VLT",
+    description: "Dark tint, good privacy while maintaining visibility",
+    bgColor: "bg-gray-700",
+    textColor: "text-white",
+  },
+  {
+    vlt: "35%",
+    name: "35% VLT",
+    description: "Medium tint, popular choice for all windows",
+    bgColor: "bg-gray-500",
+    textColor: "text-white",
+  },
+  {
+    vlt: "50%",
+    name: "50% VLT",
+    description: "Light tint, subtle appearance with UV protection",
+    bgColor: "bg-gray-300",
+    textColor: "text-gray-800",
+  },
+];
 
+const VLTGuide: React.FC = () => {
   return (
     <div className="mb-8 md:mb-16">
       <h2 className="section-title mb-8 text-center">

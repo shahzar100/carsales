@@ -23,15 +23,15 @@ export interface CarFormData {
   images: string[];
 }
 
+const options = [
+  { value: "User", label: "User" },
+  { value: "Car", label: "Car" },
+  { value: "Appointment", label: "Appointment" },
+  { value: "Password", label: "Password" },
+];
+
 const MainForm = () => {
   const [type, setType] = useState("");
-
-  const options = [
-    { value: "User", label: "User" },
-    { value: "Car", label: "Car" },
-    { value: "Appointment", label: "Appointment" },
-    { value: "Password", label: "Password" },
-  ];
 
   return (
     <div>

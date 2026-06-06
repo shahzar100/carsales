@@ -38,112 +38,112 @@ export const metadata: Metadata = {
   },
 };
 
+const recoveryServices = [
+  {
+    icon: Truck,
+    title: "Emergency Towing",
+    description:
+      "Fast, safe vehicle towing to our workshop or your preferred destination. Flatbed and wheel-lift options available for all vehicle types.",
+    available: "24/7",
+  },
+  {
+    icon: Battery,
+    title: "Jump Start Service",
+    description:
+      "Dead battery? We'll get your engine running again with our professional jump start service, plus battery testing on the spot.",
+    available: "24/7",
+  },
+  {
+    icon: CircleDot,
+    title: "Flat Tyre Repair",
+    description:
+      "Roadside puncture repair or spare tyre fitting to get you moving. We carry a range of common tyre sizes for emergency replacements.",
+    available: "24/7",
+  },
+  {
+    icon: KeyRound,
+    title: "Lockout Service",
+    description:
+      "Locked your keys in the car? Our trained technicians can safely gain entry without causing damage to your vehicle.",
+    available: "24/7",
+  },
+  {
+    icon: Fuel,
+    title: "Fuel Delivery",
+    description:
+      "Run out of fuel? We'll deliver enough petrol or diesel to get you to the nearest filling station safely.",
+    available: "24/7",
+  },
+  {
+    icon: Wrench,
+    title: "Roadside Diagnostics",
+    description:
+      "On-the-spot diagnostic scanning and minor repairs to identify issues and get you back on the road when possible.",
+    available: "Daytime",
+  },
+];
+
+const recoveryProcess = [
+  {
+    step: 1,
+    title: "Call Us",
+    description: "Phone our 24/7 emergency line with your location and issue",
+  },
+  {
+    step: 2,
+    title: "Stay Safe",
+    description:
+      "Move to a safe position and turn on hazard lights while you wait",
+  },
+  {
+    step: 3,
+    title: "We Arrive",
+    description:
+      "Our recovery vehicle reaches you — average response time 30-45 mins",
+  },
+  {
+    step: 4,
+    title: "Diagnose & Fix",
+    description:
+      "We assess the issue and fix it roadside or arrange safe towing",
+  },
+  {
+    step: 5,
+    title: "Back on the Road",
+    description:
+      "You're either driving again or your vehicle is safely at our workshop",
+  },
+];
+
+const heroProps = {
+  icon: Truck,
+  iconBgColor: "bg-red-100 text-red-700",
+  title: "Breakdown Recovery",
+  description:
+    "Stranded on the road? Our 24/7 breakdown recovery service gets you back on the move fast. Professional roadside assistance and vehicle recovery across Leeds and the surrounding areas.",
+  badges: [
+    {
+      icon: Clock,
+      text: "24/7 Emergency Response",
+      color: "text-red-500",
+    },
+    {
+      icon: MapPin,
+      text: "Leeds & Surrounding Areas",
+      color: "text-gray-900",
+    },
+    {
+      icon: Shield,
+      text: "Fully Insured",
+      color: "text-red-700",
+    },
+  ],
+};
+
 const BreakdownRecovery = async () => {
   const businessInfo = await getBusinessInfo();
   const phone = businessInfo.phone;
   const recovery = businessInfo.recovery!;
-
-  const recoveryServices = [
-    {
-      icon: Truck,
-      title: "Emergency Towing",
-      description:
-        "Fast, safe vehicle towing to our workshop or your preferred destination. Flatbed and wheel-lift options available for all vehicle types.",
-      available: "24/7",
-    },
-    {
-      icon: Battery,
-      title: "Jump Start Service",
-      description:
-        "Dead battery? We'll get your engine running again with our professional jump start service, plus battery testing on the spot.",
-      available: "24/7",
-    },
-    {
-      icon: CircleDot,
-      title: "Flat Tyre Repair",
-      description:
-        "Roadside puncture repair or spare tyre fitting to get you moving. We carry a range of common tyre sizes for emergency replacements.",
-      available: "24/7",
-    },
-    {
-      icon: KeyRound,
-      title: "Lockout Service",
-      description:
-        "Locked your keys in the car? Our trained technicians can safely gain entry without causing damage to your vehicle.",
-      available: "24/7",
-    },
-    {
-      icon: Fuel,
-      title: "Fuel Delivery",
-      description:
-        "Run out of fuel? We'll deliver enough petrol or diesel to get you to the nearest filling station safely.",
-      available: "24/7",
-    },
-    {
-      icon: Wrench,
-      title: "Roadside Diagnostics",
-      description:
-        "On-the-spot diagnostic scanning and minor repairs to identify issues and get you back on the road when possible.",
-      available: "Daytime",
-    },
-  ];
-
-  const recoveryProcess = [
-    {
-      step: 1,
-      title: "Call Us",
-      description: "Phone our 24/7 emergency line with your location and issue",
-    },
-    {
-      step: 2,
-      title: "Stay Safe",
-      description:
-        "Move to a safe position and turn on hazard lights while you wait",
-    },
-    {
-      step: 3,
-      title: "We Arrive",
-      description:
-        "Our recovery vehicle reaches you — average response time 30-45 mins",
-    },
-    {
-      step: 4,
-      title: "Diagnose & Fix",
-      description:
-        "We assess the issue and fix it roadside or arrange safe towing",
-    },
-    {
-      step: 5,
-      title: "Back on the Road",
-      description:
-        "You're either driving again or your vehicle is safely at our workshop",
-    },
-  ];
-
-  const heroProps = {
-    icon: Truck,
-    iconBgColor: "bg-red-100 text-red-700",
-    title: "Breakdown Recovery",
-    description:
-      "Stranded on the road? Our 24/7 breakdown recovery service gets you back on the move fast. Professional roadside assistance and vehicle recovery across Leeds and the surrounding areas.",
-    badges: [
-      {
-        icon: Clock,
-        text: "24/7 Emergency Response",
-        color: "text-red-500",
-      },
-      {
-        icon: MapPin,
-        text: "Leeds & Surrounding Areas",
-        color: "text-gray-900",
-      },
-      {
-        icon: Shield,
-        text: "Fully Insured",
-        color: "text-red-700",
-      },
-    ],
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
