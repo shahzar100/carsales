@@ -11,7 +11,8 @@ interface ButtonProps {
     | "ghost"
     | "outline"
     | "danger"
-    | "success";
+    | "success"
+    | "dark";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -41,6 +42,7 @@ const Button: React.FC<ButtonProps> = ({
       "border border-gray-300 hover:border-gray-400 text-gray-700 bg-white",
     danger: "bg-red-600 text-white hover:bg-red-700",
     success: "bg-green-600 text-white hover:bg-green-700",
+    dark: "bg-gray-900 text-white hover:bg-gray-800",
   };
 
   const sizeClasses = {

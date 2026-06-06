@@ -66,13 +66,13 @@ const CarListCard: React.FC<CarListCardProps> = ({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ type: "spring", stiffness: 320, damping: 28 }}
       whileHover={!isAdmin ? { y: -4 } : undefined}
-      className={`group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition-shadow duration-300 ${
+      className={`group rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition-shadow duration-300 ${
         !isAdmin ? "hover:shadow-lg hover:ring-gray-300" : ""
       }`}
     >
       <div className="flex flex-col sm:flex-row">
         {/* Image Section */}
-        <div className="relative aspect-16/10 w-full shrink-0 sm:aspect-auto sm:h-auto sm:w-64 md:w-72 lg:w-80">
+        <div className="relative aspect-16/10 w-full shrink-0 overflow-hidden rounded-tl-2xl rounded-tr-2xl sm:aspect-auto sm:h-auto sm:w-64 sm:rounded-tr-none sm:rounded-bl-2xl md:w-72 lg:w-80">
           <Image
             src={car.image || "/tesla.webp"}
             alt={`${car.make} ${car.model}`}

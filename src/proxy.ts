@@ -60,7 +60,10 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
-    "upgrade-insecure-requests",
+    // Prod is HTTPS-only behind Vercel; in dev the server speaks plain HTTP,
+    // so emitting this would upgrade http://localhost asset requests to https
+    // and break every fetch (CSS + JS) with a TLS error. Gate to production.
+    ...(isProduction ? ["upgrade-insecure-requests"] : []),
     "report-uri /api/csp-report",
   ];
   return directives.join("; ");

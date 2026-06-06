@@ -102,7 +102,7 @@ export default function ShopSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-6xl">
       <BusinessInfoForm
         shopInfo={shopInfo}
         onShopInfoChange={setShopInfo}

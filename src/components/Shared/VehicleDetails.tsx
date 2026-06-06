@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Car, Fuel, Palette, Hash, Gauge } from "lucide-react";
+import { Car, Fuel, Palette, Hash, Gauge, Cog } from "lucide-react";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 
 interface VehicleDetailsProps {
@@ -14,6 +14,9 @@ interface VehicleDetailsProps {
     doors?: number;
     colour?: string;
     mileage?: number;
+    transmission?: string;
+    description?: string;
+    features?: string[];
   };
   showTitle?: boolean;
   className?: string;
@@ -80,6 +83,16 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
               </div>
             )}
 
+            {vehicle.transmission && (
+              <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
+                <Cog className="text-blue-600" size={16} />
+                <div>
+                  <p className="text-xs text-gray-600">Transmission</p>
+                  <p className="text-sm font-medium">{vehicle.transmission}</p>
+                </div>
+              </div>
+            )}
+
             {vehicle.doors && (
               <div className="flex items-center gap-4 rounded bg-gray-50 p-2">
                 <Hash className="text-gray-500" size={16} />
@@ -102,6 +115,35 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({
           </div>
         </div>
       </div>
+
+      {vehicle.description && (
+        <div className="mt-6 border-t border-gray-100 pt-6">
+          <h4 className="mb-2 text-sm font-semibold text-gray-900">
+            About this car
+          </h4>
+          <p className="text-sm leading-relaxed whitespace-pre-line text-gray-600">
+            {vehicle.description}
+          </p>
+        </div>
+      )}
+
+      {vehicle.features && vehicle.features.length > 0 && (
+        <div className="mt-6 border-t border-gray-100 pt-6">
+          <h4 className="mb-3 text-sm font-semibold text-gray-900">
+            What&apos;s included
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {vehicle.features.map((feature, idx) => (
+              <span
+                key={idx}
+                className="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700 ring-1 ring-red-100"
+              >
+                {feature}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import React from "react";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { usePathname } from "next/navigation";
 import { ChevronDown, LucideIcon } from "lucide-react";
+import { useNavMenuClose } from "@/components/Dropdown/NavMenu";
 
 interface NavLinkProps {
   href: string;
@@ -22,6 +23,7 @@ const NavLink: React.FC<NavLinkProps> = ({
   children,
 }) => {
   const { setIsNavigating, setNavigationTarget } = useNavigation();
+  const closeMenu = useNavMenuClose();
   const pathname = usePathname();
 
   const baseClasses = dropdown
@@ -29,6 +31,10 @@ const NavLink: React.FC<NavLinkProps> = ({
     : "hover:underline underline-offset-4 decoration-red-500 text-sm font-medium transition-all duration-200 hover:text-red-400 py-2 px-6 rounded-md hover:bg-white/10 block w-full text-left text-gray-200 hover:text-red-400";
 
   const handleClick = () => {
+    // Collapse the slide-out menu as soon as a link is tapped (no-op when this
+    // NavLink isn't rendered inside a NavMenu).
+    closeMenu();
+
     // Don't show loader if navigating to the same page
     if (href === pathname) {
       return;

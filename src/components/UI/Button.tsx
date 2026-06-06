@@ -18,6 +18,7 @@
  *   - danger    → red-600 (visually identical to primary; use for delete-style
  *                 actions so call sites read declaratively)
  *   - success   → emerald-600 (confirmations, completed states)
+ *   - dark      → gray-900, white text (high-contrast neutral actions, e.g. Edit)
  *
  * Sizes: `sm`, `md` (default), `lg`.
  *
@@ -42,7 +43,8 @@ type ButtonVariant =
   | "outline"
   | "ghost"
   | "danger"
-  | "success";
+  | "success"
+  | "dark";
 
 type ButtonSize = "sm" | "md" | "lg";
 
@@ -104,6 +106,8 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
   success:
     "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500",
+  dark:
+    "bg-gray-900 text-white hover:bg-gray-800 focus-visible:ring-gray-700",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
