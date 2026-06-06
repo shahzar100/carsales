@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {
   Car,
   Calendar,
@@ -53,12 +54,12 @@ export default function AdminNavigationTabs() {
 
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between gap-4 bg-black px-4 py-3 shadow-md">
-      <a
+      <Link
         href="/admin/dashboard"
         className="text-xl font-bold text-white sm:text-2xl"
       >
         Admin <span className="text-red-600">Dashboard</span>
-      </a>
+      </Link>
       {isLoggedIn && (
         <NavMenu title="Admin Menu">
           {links.map((link) => (

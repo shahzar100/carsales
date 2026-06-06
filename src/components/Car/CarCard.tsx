@@ -76,6 +76,7 @@ const CarCard = ({
               src={c.image || "/tesla.webp"}
               alt={`${c.make} ${c.model}`}
               fill
+              sizes="64px"
               className="object-cover"
             />
             {idx === carId && (

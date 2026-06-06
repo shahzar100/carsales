@@ -44,12 +44,15 @@ function fmtDate(value: Date | string | undefined): string {
   });
 }
 
+// Constructing Intl.NumberFormat is expensive; build it once at module scope.
+const GBP_FORMAT = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+  maximumFractionDigits: 0,
+});
+
 function fmtPrice(value: number): string {
-  return new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    maximumFractionDigits: 0,
-  }).format(value);
+  return GBP_FORMAT.format(value);
 }
 
 /**

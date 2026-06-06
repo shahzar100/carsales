@@ -93,6 +93,7 @@ const CarTable: React.FC<CarTableProps> = ({ cars }) => {
                             src={car.image}
                             alt={`${car.make} ${car.model}`}
                             fill
+                            sizes="96px"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (

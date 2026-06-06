@@ -79,6 +79,7 @@ const Cars = ({ car, carId, setCarId, length }: CarsProps) => {
               src={car.image || "/tesla.webp"}
               alt={`${car.make} ${car.model}`}
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               priority
             />
