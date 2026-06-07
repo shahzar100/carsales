@@ -33,7 +33,8 @@ beforeEach(() => {
 // PartExchangeForm renders <label> and <input> as siblings without
 // `htmlFor`/`id` association, so RTL's getByLabelText can't find them.
 // This helper walks from the label text to the form control in the same
-// parent <div>. Tracking issue: see CODEBASE_ISSUES.md G4 (a11y debt).
+// parent <div>. This is known a11y debt: the label/control association
+// (htmlFor/id) should be added to the form itself.
 const fieldByLabel = (label: string): HTMLElement => {
   const labelEl = screen.getByText(label);
   const field = labelEl.parentElement?.querySelector(

@@ -36,6 +36,19 @@ jest.mock("mongodb", () => ({
   }),
 }));
 jest.mock("@/lib/models", () => ({
+  // The detail pages delegate single-car fetches to the shared getCarById
+  // helper (find-one-by-id + serialize + swallow-via-logError). Mirror that
+  // contract here so the existing mockFindOne/mockLogError setup still drives
+  // behaviour after the models consolidation.
+  getCarById: jest.fn(async (id: string, context = "getCarById") => {
+    try {
+      const car = await mockFindOne({ _id: id });
+      return car ? { ...(car as object) } : null;
+    } catch (error) {
+      mockLogError(error, { context });
+      return null;
+    }
+  }),
   getCarsCollection: jest.fn(async () => ({
     findOne: (q: unknown) => mockFindOne(q),
     find: (q: unknown) => mockFind(q),
@@ -154,7 +167,7 @@ describe("(main)/BrowseFleet/[_id] page", () => {
     expect(screen.getByText(/vehicle not found/i)).toBeInTheDocument();
     expect(mockLogError).toHaveBeenCalledWith(
       expect.any(Error),
-      expect.objectContaining({ context: "BrowseFleet/[_id].getCar" })
+      expect.objectContaining({ context: "BrowseFleet/[_id]" })
     );
   });
 

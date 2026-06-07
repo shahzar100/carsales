@@ -114,6 +114,22 @@ function validateServerEnv() {
         "EMAIL_FROM must be set to a real address in production"
       );
     }
+    // Without SMTP, getTransporter() throws — but only lazily, inside the
+    // first email send (registration verification, magic-link sign-in,
+    // password reset). Those sends run in the background (waitUntil), so the
+    // throw is swallowed and logged: the app looks healthy while silently
+    // delivering nothing. Fail at boot so the misconfiguration is loud.
+    if (
+      !parsed.data.SMTP_HOST ||
+      !parsed.data.SMTP_USER ||
+      !parsed.data.SMTP_PASS
+    ) {
+      throw new Error(
+        "SMTP_HOST, SMTP_USER, and SMTP_PASS must be set in production — " +
+          "without them no verification, magic-link, or password-reset " +
+          "emails can be sent"
+      );
+    }
     if (!parsed.data.CRON_SECRET) {
       // The /api/cron/review-invites route is exposed at the network edge.
       // Without CRON_SECRET, the route returns 500 on every Vercel cron

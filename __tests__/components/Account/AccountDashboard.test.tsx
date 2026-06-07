@@ -203,6 +203,25 @@ describe("AccountDashboard", () => {
     expect(screen.getByTestId("saved-cars-list")).toBeInTheDocument();
   });
 
+  it("📋 follows a ?tab= change that happens after mount (header deep links while already on /account)", async () => {
+    // Start on the default Saved tab.
+    const { rerender } = render(
+      <AccountDashboard user={{ name: "Jane", email: "j@example.com" }} />
+    );
+    expect(screen.getByTestId("saved-cars-list")).toBeInTheDocument();
+
+    // Simulate clicking "Account settings" in the header dropdown while
+    // already on /account: the URL gains ?tab=settings but the page never
+    // remounts. Regression guard — when the tab was held in useState it
+    // stayed stuck on Saved here, so every garage link looked identical.
+    searchParamsValue = new URLSearchParams("tab=settings");
+    rerender(
+      <AccountDashboard user={{ name: "Jane", email: "j@example.com" }} />
+    );
+    expect(await screen.findByTestId("account-settings")).toBeInTheDocument();
+    expect(screen.queryByTestId("saved-cars-list")).not.toBeInTheDocument();
+  });
+
   it("🔒 Sign out calls signOut({ callbackUrl: '/' })", () => {
     render(
       <AccountDashboard user={{ name: "Jane", email: "j@example.com" }} />

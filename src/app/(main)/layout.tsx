@@ -12,8 +12,8 @@ import ComparisonBar from "@/components/Car/ComparisonBar";
  *
  * The previous `export const dynamic = "force-dynamic"` line here flipped
  * every customer-facing page to per-request SSR, collapsing throughput to
- * ~4-9 req/s with 4-6 s tail latency under modest load (audit #1 +
- * autocannon evidence in POST_PR_RESULTS.md). Each marketing page now
+ * ~4-9 req/s with 4-6 s tail latency under modest load (measured with
+ * autocannon during the performance audit). Each marketing page now
  * declares its own `revalidate` according to how often its data changes;
  * per-user pages (account, saved, Booking/lookup, etc.) declare
  * `dynamic = "force-dynamic"` themselves.

@@ -54,9 +54,18 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     styleSrc,
     "img-src 'self' https://res.cloudinary.com https://*.cloudfront.net data: blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.s3.*.amazonaws.com https://challenges.cloudflare.com",
+    // connect-src governs the admin image uploader's direct browser→S3 PUT
+    // (ImageUploader.tsx). CSP host grammar allows a wildcard ONLY as the
+    // left-most label, so the old `*.s3.*.amazonaws.com` (two wildcards) was
+    // invalid and silently dropped by the browser — which blocked the upload
+    // PUT. Region is fixed (AWS_REGION=eu-west-2); pin it and cover both
+    // virtual-hosted (`<bucket>.s3.<region>`) and path-style (`s3.<region>`)
+    // URLs, mirroring the two patterns in next.config.ts:remotePatterns.
+    "connect-src 'self' https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com https://challenges.cloudflare.com",
     "frame-src https://challenges.cloudflare.com",
-    "frame-ancestors 'none'",
+    // frame-ancestors is meaningless in a report-only policy (browsers ignore
+    // it and log a warning), so only emit it in the enforced CSP.
+    ...(opts.reportOnly ? [] : ["frame-ancestors 'none'"]),
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
@@ -85,8 +94,14 @@ export function proxy(request: NextRequest) {
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");
     const isCronRoute = request.nextUrl.pathname.startsWith("/api/cron/");
+    // Browsers POST CSP violation reports without an Origin header, so the
+    // same-origin check below would 403 them — which is exactly what was
+    // happening, silently dropping all report-only telemetry. The endpoint is
+    // designed as unauthenticated browser telemetry (see api/csp-report), so
+    // exempt it from CSRF like the cron routes.
+    const isCspReportRoute = request.nextUrl.pathname === "/api/csp-report";
 
-    if (!isCronRoute) {
+    if (!isCronRoute && !isCspReportRoute) {
       if (!origin) {
         return NextResponse.json(
           { error: "Missing Origin header" },

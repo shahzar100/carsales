@@ -59,12 +59,12 @@ export default function MobileMenu({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: "100%" }}
           transition={{ type: "spring", stiffness: 360, damping: 36 }}
-          className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0a] text-white md:hidden"
+          className="fixed inset-0 z-80 flex flex-col bg-[#0a0a0a] text-white md:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
         >
-          <div className="border-b border-white/[0.06]">
+          <div className="border-b border-white/6">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
               <Link
                 href="/"
@@ -88,7 +88,7 @@ export default function MobileMenu({
                 onClick={onClose}
                 aria-label="Close menu"
                 className={
-                  "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 hover:bg-white/[0.08] hover:text-white " +
+                  "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 hover:bg-white/8 hover:text-white " +
                   FOCUS_RING
                 }
               >
@@ -111,7 +111,7 @@ export default function MobileMenu({
                     onChange={(e) => onSearchChange(e.target.value)}
                     aria-label="Search make or model"
                     placeholder="Search make or model…"
-                    className="h-12 w-full rounded-full border border-white/[0.10] bg-white/[0.06] pr-4 pl-11 text-[15px] text-white placeholder:text-gray-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/25 focus:outline-none"
+                    className="h-12 w-full rounded-full border border-white/10 bg-white/6 pr-4 pl-11 text-[15px] text-white placeholder:text-gray-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/25 focus:outline-none"
                   />
                 </div>
               </form>
@@ -174,11 +174,11 @@ export default function MobileMenu({
               </MobileGroup>
 
               {/* Account block */}
-              <div className="border-t border-white/[0.06] pt-2">
+              <div className="border-t border-white/6 pt-2">
                 {user ? (
                   <>
                     <div className="flex items-center gap-3 px-1 py-3">
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-700 text-[13px] font-bold text-white ring-1 ring-white/10">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-red-500 to-red-700 text-[13px] font-bold text-white ring-1 ring-white/10">
                         {initialsOf(displayName) || <User size={18} />}
                       </span>
                       <span className="min-w-0">
@@ -212,7 +212,7 @@ export default function MobileMenu({
                       type="button"
                       onClick={onLogout}
                       className={
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-gray-200 transition-colors hover:bg-white/[0.06] " +
+                        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-gray-200 transition-colors hover:bg-white/6 " +
                         FOCUS_RING
                       }
                     >
@@ -235,7 +235,7 @@ export default function MobileMenu({
                       href="/register"
                       onClick={() => onNav("/register", "Create account")}
                       className={
-                        "inline-flex h-12 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.05] text-[14px] font-semibold text-white transition-colors hover:bg-white/[0.10] " +
+                        "inline-flex h-12 items-center justify-center rounded-lg border border-white/8 bg-white/5 text-[14px] font-semibold text-white transition-colors hover:bg-white/10 " +
                         FOCUS_RING
                       }
                     >
@@ -248,7 +248,7 @@ export default function MobileMenu({
           </div>
 
           {/* Sticky bottom CTA */}
-          <div className="border-t border-white/[0.06] bg-[#0a0a0a]">
+          <div className="border-t border-white/6 bg-[#0a0a0a]">
             <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
               <Link
                 href="/BrowseFleet"
@@ -307,7 +307,7 @@ function MobileLink({
       href={href}
       onClick={() => onNav(href, label)}
       className={
-        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] transition-colors hover:bg-white/[0.06] active:bg-white/[0.08] " +
+        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] transition-colors hover:bg-white/6 active:bg-white/8 " +
         (primary ? "font-semibold text-white " : "text-gray-200 ") +
         FOCUS_RING
       }

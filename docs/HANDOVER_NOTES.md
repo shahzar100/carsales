@@ -2,7 +2,7 @@
 
 This document captures everything the next developer needs to pick this site up cleanly: how to build and run it, what was removed during handover prep, what's known-broken or unfinished, and the deep architecture decisions that aren't obvious from the file tree.
 
-Audit docs in the repo (`WEBSITE_REVIEW.md`, `CODEBASE_ISSUES.md`, `DAY_PLAN.md`, `AUDIT_REPORT.md`, `TEST_AUDIT_SUMMARY.md`) describe the journey to this point. Many findings in those documents are already resolved in the current source — see "Status of older audit findings" below for the mapping.
+Several point-in-time audit documents (`WEBSITE_REVIEW.md`, `CODEBASE_ISSUES.md`, `DAY_PLAN.md`, `AUDIT_REPORT.md`, `TEST_AUDIT_SUMMARY.md`) chronicled the journey to this point. They have been removed from the repo as superseded — recover them from git history if you need the detail. Their findings are largely resolved in the current source; the "Status of older audit findings" mapping below is kept as the durable record.
 
 ---
 
@@ -79,7 +79,7 @@ Removed:
 
 ## 3. Status of older audit findings
 
-The repo carries several audit documents (`WEBSITE_REVIEW.md`, `CODEBASE_ISSUES.md`, `DAY_PLAN.md`). Many of their findings have already been fixed in the current source. Spot-check before re-spending time on them:
+Several point-in-time audit documents (`WEBSITE_REVIEW.md`, `CODEBASE_ISSUES.md`, `DAY_PLAN.md`) — since removed but recoverable from git history — flagged the issues below. Many have already been fixed in the current source. Spot-check before re-spending time on them:
 
 | Audit claim | Actual current status |
 |---|---|
@@ -165,7 +165,7 @@ To turn it on in production set:
 ### Testing
 
 - Component tests pass under `npm test` once `npm ci` has been run.
-- The earlier "~22.89%" coverage figure was wrong — it counted the wrong column of the Jest summary. The real baseline before this prep cycle was **74.82% statements**. After PR #68 added 19 new test files, coverage is **78.46% statements** (+3.6 to +5.4pp across the four metrics). See `POST_PR_RESULTS.md` for the full Jest summary table.
+- The earlier "~22.89%" coverage figure was wrong — it counted the wrong column of the Jest summary. The real baseline before this prep cycle was **74.82% statements**. After PR #68 added 19 new test files, coverage is **78.46% statements** (+3.6 to +5.4pp across the four metrics). Run `npm run test:coverage` for the current Jest summary.
 - The 3 critical auth flows and the booking race-conditions are still the highest-priority paths; the long tail of admin tables and marketing components is partial.
 - E2E (`npm run test:e2e`) needs `npx playwright install` first to download the browser binaries.
 

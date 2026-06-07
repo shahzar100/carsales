@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -62,10 +62,20 @@ export default function AccountDashboard({
 }) {
   const router = useRouter();
   const params = useSearchParams();
-  const initialTab = params.get("tab");
+  const tabParam = params.get("tab");
   const [tab, setTab] = useState<TabId>(
-    isTabId(initialTab) ? initialTab : "saved"
+    isTabId(tabParam) ? tabParam : "saved"
   );
+
+  // Follow the ?tab= param after mount. The header's garage links
+  // (/account?tab=upcoming, …) change the URL without remounting the
+  // dashboard, so seeding the tab once in useState left every link stuck on
+  // Saved cars. Re-sync whenever the param changes; in-page tab clicks still
+  // update state instantly below, so this only catches URL-driven changes
+  // (and is a no-op when the value already matches).
+  useEffect(() => {
+    setTab(isTabId(tabParam) ? tabParam : "saved");
+  }, [tabParam]);
 
   // (#cleanup) Replaces the hand-rolled useEffect+cancelled-flag fetch
   // with the shared useApi hook. The init object is memoised so the
@@ -84,8 +94,7 @@ export default function AccountDashboard({
 
   const selectTab = useCallback(
     (id: TabId) => {
-      setTab(id);
-      // Keep the URL in sync without a full navigation.
+      setTab(id); // instant feedback; the effect above keeps URL → tab in sync
       router.replace(`/account?tab=${id}`, { scroll: false });
     },
     [router]

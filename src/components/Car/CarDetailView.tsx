@@ -38,19 +38,11 @@ import {
 } from "lucide-react";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 import { getOpenStatus } from "@/lib/utils/businessHours";
-import BookingAuthGate from "@/components/Account/BookingAuthGate";
 
-// Reserve / part-exchange forms sit below the gallery and the customer
-// has to scroll + sign in before they're useful — code-split them so the
-// initial JS for the detail view only ships the hero/gallery/CTA stack.
-const ReserveCarForm = dynamic(
-  () => import("@/components/Car/ReserveCarForm"),
-  { ssr: false }
-);
-const PartExchangeForm = dynamic(
-  () => import("@/components/Car/PartExchangeForm"),
-  { ssr: false }
-);
+// Reserve + part-exchange flows are temporarily disabled (UI hidden and
+// their API routes return 404). The detail page now drives customers to
+// the Book-a-viewing flow instead. The components and APIs still exist in
+// git history if/when these are re-enabled.
 // The share modal only renders on click — keep it out of the initial
 // bundle and only fetch the chunk when the user opens the dialog.
 const CarShareModal = dynamic(
@@ -840,19 +832,25 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
       {car.status === "available" && car._id && (
         <section className="border-t border-gray-100 bg-gray-50">
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
-            <BookingAuthGate
-              heading="Sign in to reserve or part-exchange"
-              message="You need an account to reserve this car or send a part-exchange enquiry — it keeps everything tracked in your dashboard."
-            >
-              <ReserveCarForm
-                carId={String(car._id)}
-                carLabel={carTitle}
-              />
-              <PartExchangeForm
-                carId={String(car._id)}
-                carLabel={carTitle}
-              />
-            </BookingAuthGate>
+            <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 sm:p-8">
+              <h2 className="mb-2 flex items-center gap-2 text-xl font-bold text-gray-900">
+                <CalendarCheck className="h-5 w-5 text-red-600" />
+                Interested in this car?
+              </h2>
+              <p className="mb-5 max-w-2xl text-sm text-gray-500">
+                Come and see this <strong>{carTitle}</strong> in person. Book a
+                viewing at a time that suits you — it&apos;s free, there&apos;s
+                no deposit, and you can ask us anything when you visit.
+              </p>
+              <Link
+                href={`/Booking/${car._id}`}
+                onClick={handleBookingClick}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-red-700"
+              >
+                <CalendarCheck className="h-4 w-4" />
+                Book a viewing
+              </Link>
+            </div>
           </div>
         </section>
       )}

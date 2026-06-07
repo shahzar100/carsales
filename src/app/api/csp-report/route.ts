@@ -17,8 +17,10 @@ export const runtime = "edge";
  * a hostile caller can do is fill the log. Mitigated by:
  *   1. 64KB hard cap on the body
  *   2. Stripping `script-sample` which can echo arbitrary page content
- *   3. Same-origin CSRF gate in proxy.ts already blocks XHRs from
- *      foreign origins for POST routes outside /api/cron.
+ *
+ * NOTE: this route is deliberately exempt from the same-origin CSRF gate in
+ * proxy.ts. Browsers send CSP reports without an Origin header, so the gate
+ * was 403-ing every report and dropping all telemetry.
  */
 export async function POST(request: Request) {
   try {

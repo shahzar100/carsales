@@ -52,11 +52,24 @@ const CarListCard: React.FC<CarListCardProps> = ({
 }) => {
   const isAdmin = variant === "admin";
 
+  // Key specs by their fixed slot, not by `label`: incomplete/legacy car
+  // docs can have an empty fuel/transmission/colour, and `key={undefined}`
+  // is treated by React as a missing key.
   const specs = [
-    { icon: Fuel, label: car.fuel, color: "text-emerald-600" },
-    { icon: Cog, label: car.transmission, color: "text-blue-600" },
-    { icon: Car, label: `${car.doors} doors`, color: "text-gray-600" },
-    { icon: Palette, label: car.colour, color: "text-rose-600" },
+    { key: "fuel", icon: Fuel, label: car.fuel, color: "text-emerald-600" },
+    {
+      key: "transmission",
+      icon: Cog,
+      label: car.transmission,
+      color: "text-blue-600",
+    },
+    {
+      key: "doors",
+      icon: Car,
+      label: `${car.doors} doors`,
+      color: "text-gray-600",
+    },
+    { key: "colour", icon: Palette, label: car.colour, color: "text-rose-600" },
   ];
 
   const cardContent = (
@@ -147,7 +160,7 @@ const CarListCard: React.FC<CarListCardProps> = ({
           <div className="mb-4 flex flex-wrap gap-2">
             {specs.map((spec) => (
               <div
-                key={spec.label}
+                key={spec.key}
                 className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 ring-1 ring-gray-100"
               >
                 <spec.icon className={`h-3.5 w-3.5 shrink-0 ${spec.color}`} />
@@ -161,9 +174,9 @@ const CarListCard: React.FC<CarListCardProps> = ({
           {/* Features */}
           {car.features && car.features.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-1.5">
-              {car.features.slice(0, 5).map((feature) => (
+              {car.features.slice(0, 5).map((feature, index) => (
                 <span
-                  key={feature}
+                  key={`${feature}-${index}`}
                   className="rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-medium text-red-700 ring-1 ring-red-100"
                 >
                   {feature}

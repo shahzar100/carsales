@@ -16,8 +16,17 @@ import {
   createTestCarViewingBooking,
   createTestShopInfo,
   flushWaitUntil,
-  mockSendEmail,
 } from "../../utils/testUtils";
+
+// Mock email sending locally. testUtils also mocks `@/emails/send`, but it's
+// imported *after* the route above, so its mock registers too late and the
+// route would bind the real (ESM-dynamic-import) sendEmail. A local jest.mock
+// is hoisted above the route import and intercepts correctly — matching the
+// pattern in the other api/bookings email tests.
+jest.mock("@/emails/send", () => ({
+  sendEmail: jest.fn().mockResolvedValue({ success: true }),
+}));
+const { sendEmail: mockSendEmail } = require("@/emails/send");
 
 // Mock authentication
 jest.mock("@/lib/utils/auth", () => ({

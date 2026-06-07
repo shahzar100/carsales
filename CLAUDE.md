@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Focused onboarding reference for the `carsales` repository. Aimed at engineers (human or AI) picking the project up for the first time. The authoritative narrative on *how the codebase got here* and *what's known-broken* lives in `HANDOVER_NOTES.md`; this file is the working manual you keep open in the next tab.
+Focused onboarding reference for the `carsales` repository. Aimed at engineers (human or AI) picking the project up for the first time. The authoritative narrative on *how the codebase got here* and *what's known-broken* lives in `docs/HANDOVER_NOTES.md`; this file is the working manual you keep open in the next tab.
 
 ## 1. Project overview
 
@@ -51,7 +51,7 @@ Exact `npm` script names from `package.json`:
 | `npm run migrate:business-info` | One-off Mongo migration (`scripts/migrate-business-info.ts`) |
 | `npm run email` | React Email preview server against `src/emails/` |
 
-Env vars and the full table of required-vs-optional keys are documented in `HANDOVER_NOTES.md` §1 and `SETUP.md`. Server-side validation lives in `src/lib/env.ts` and is triggered at boot from `src/instrumentation.ts`.
+Env vars and the full table of required-vs-optional keys are documented in `docs/HANDOVER_NOTES.md` §1 and `docs/SETUP.md`. Server-side validation lives in `src/lib/env.ts` and is triggered at boot from `src/instrumentation.ts`.
 
 ## 4. Repository layout
 
@@ -106,7 +106,7 @@ Notes:
 
 - The **`(main)`** and **`(admin)`** parentheses are App-Router *route groups*: they organise files and let each group own its `layout.tsx` (header, footer, fonts, providers) without affecting URL paths. A page under `(admin)/admin/dashboard/foo/page.tsx` resolves to `/admin/dashboard/foo`.
 - The actual middleware file is `src/proxy.ts` (not `middleware.ts`). It exports `proxy()` and a `config.matcher`. CSP nonces are issued here; route-level auth is enforced in the page/layout itself, not here.
-- `scripts/`, `e2e/`, `__tests__/`, `tools/`, `public/`, `plans/` and `*.md` files live at the repo root, not under `src/`.
+- `scripts/`, `e2e/`, `__tests__/`, `tools/`, `public/`, and the `docs/` folder live at the repo root, not under `src/`. Only `README.md`, `CLAUDE.md`, `design.md`, and `DESIGN_SYSTEM.md` remain as root `*.md`; all other developer/ops docs live under `docs/`.
 
 ## 5. Auth — two parallel systems
 
@@ -198,7 +198,7 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 - **Shim:** `src/lib/utils/observability.ts` exports `logError(error, context?)` and `logEvent(name, context?)`.
 - **Today:** they call `console.error` / `console.log` with a structured payload, after passing the context through a PII redactor (`email`, `customerEmail`, `customerName`, `customerPhone`, `phone`, `password`, `passwordHash`, `token`, `sessionToken`, `Authorization`, `cookie` keys are replaced with `"[redacted]"`).
 - **Gated on `SENTRY_DSN`:** the env value is already accepted by `src/lib/env.ts` (`SENTRY_DSN: z.string().optional()`). The shim is the single seam for forwarding to Sentry — every call site stays put.
-- **To wire Sentry:** `npm i @sentry/nextjs`, run the wizard, then replace the body of `logError` / `logEvent` to call `Sentry.captureException` / `Sentry.addBreadcrumb`. Full instructions are in `SETUP.md` → "Sentry (production error tracking)".
+- **To wire Sentry:** `npm i @sentry/nextjs`, run the wizard, then replace the body of `logError` / `logEvent` to call `Sentry.captureException` / `Sentry.addBreadcrumb`. Full instructions are in `docs/SETUP.md` → "Sentry (production error tracking)".
 - **Status (as of writing):** the shim is still a stub; the Sentry SDK is not yet a dependency in `package.json`. Treat the call-site coverage as done and the SDK install as the remaining one-file edit. (TODO: confirm the exact PR that flipped this if/when it lands.)
 
 ## 9. Rate limiting
@@ -213,7 +213,7 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 ## 10. Conventions
 
 - **TypeScript strict** is on. `paths`: `@/*` → `src/*`. Avoid `any`; prefer narrow types and `unknown` at boundaries.
-- **Tailwind 4** with design tokens / semantic utility classes in `src/app/globals.css` (see `.page-title`, `.section-title`, `.badge-*`, `.card-*`, `.input`, `.tag`, …). Prefer the semantic class over a long Tailwind string when one exists — README.md has the full table.
+- **Tailwind 4** with design tokens / semantic utility classes in `src/app/globals.css` (see `.page-title`, `.section-title`, `.badge-*`, `.card-*`, `.input`, `.tag`, …). Prefer the semantic class over a long Tailwind string when one exists — DESIGN_SYSTEM.md has the full table.
 - **Exports:** React components remain `export default`. New utility / pure-function files should use named exports — no default exports unless they are React components. (Existing legacy default-exported utilities are fine; don't churn the codebase to convert them.)
 - **Comments:** keep them minimal. Document the *why*, not the *what*. The existing source has many high-value "why this looks weird" blocks (see `src/proxy.ts`, `src/app/(main)/layout.tsx`, `src/lib/utils/auth.ts`); add to that style rather than narrating obvious logic.
 - **Imports:** absolute via `@/...`. Avoid `../../..` chains.
@@ -221,11 +221,11 @@ Business settings (address, hours, hero stats, detailing packages, tint options,
 - **Server vs client:** mark client files with `"use client"` at the top. Default to server components; promote to client only when you need state, effects, browser APIs, or event handlers.
 - **Mongo IDs:** always pass DB docs through `serializeDocument` (from `src/lib/models`) before sending to the client — raw `ObjectId` is not serialisable.
 - **Testing:** test-then-implement is **not** enforced. Component coverage sits around ~22.89%; the critical auth and booking-race paths are covered, the long admin/marketing tail is not. Add tests where you touch risky logic; don't gate small changes on coverage.
-- **No `CONTRIBUTING.md`** exists at the repo root; conventions are encoded here and in `HANDOVER_NOTES.md`.
+- **`docs/CONTRIBUTING.md`** covers the pre-commit hooks (husky + lint-staged) and quality gates; the broader conventions are encoded here and in `docs/HANDOVER_NOTES.md`.
 
 ## 11. Gotchas
 
-Pulled from `HANDOVER_NOTES.md` and direct source inspection. Read these before your first non-trivial change.
+Pulled from `docs/HANDOVER_NOTES.md` and direct source inspection. Read these before your first non-trivial change.
 
 1. **`next.config.ts` does not wrap with Sentry.** Once you `npm i @sentry/nextjs`, the wizard will offer to wrap `next.config.ts` with `withSentryConfig(...)`. Accept it, but re-check the surviving config still has `poweredByHeader: false`, the `images.remotePatterns` for `*.s3.*.amazonaws.com` / `*.cloudfront.net`, and the `Cross-Origin-*` headers in `securityHeaders`. The wizard has historically clobbered custom config.
 2. **Dual auth means you cannot share middleware logic.** `src/proxy.ts` (the edge middleware) deliberately does **not** enforce auth on `/admin/*` or `/account` — admin auth lives in iron-session and customer auth lives in NextAuth v5, and only one cookie format would be readable from the edge runtime cleanly. Auth is enforced inside each protected server page/layout instead. Don't try to centralise it.
@@ -238,15 +238,18 @@ Pulled from `HANDOVER_NOTES.md` and direct source inspection. Read these before 
 9. **CSP `style-src` still allows `'unsafe-inline'`** because Motion + `@next/font` inject inline styles. A `Content-Security-Policy-Report-Only` mirror with `'self'`-only is also emitted so we can see what would break before flipping. See the long comment in `src/proxy.ts`.
 10. **Cron uses bearer auth.** `/api/cron/review-invites` requires `Authorization: Bearer ${CRON_SECRET}`. Vercel cron and `CRON_SECRET` must be configured in the same project.
 11. **Three giant components are deliberately not split** (handover risk): `BookingFlow.tsx` (~1158 lines), `BusinessInfoForm.tsx` (~1143 lines), `Header.tsx` (~1009 lines). When you do refactor, follow the server-component + client-island pattern.
-12. **Some `node_modules` advisories are stuck on upstream.** `npm audit fix --force` would downgrade Next.js — do not run it. See `HANDOVER_NOTES.md` §4 for the full list.
+12. **Some `node_modules` advisories are stuck on upstream.** `npm audit fix --force` would downgrade Next.js — do not run it. See `docs/HANDOVER_NOTES.md` §4 for the full list.
 
 ## 12. Where to look next
 
-- `HANDOVER_NOTES.md` — current state, what was removed during handover prep, status of older audit findings, open issues.
-- `SETUP.md` — env vars, Sentry wiring, staging, backups, secret rotation.
-- `RUNBOOK.md` — on-call ops.
-- `OPERATIONS.md` — non-technical day-to-day staff guide.
-- `README.md` — design system / UI standards (colours, typography, components).
-- `design.md` — source for the auto-generated UI standards section of README.
+- `docs/HANDOVER_NOTES.md` — current state, what was removed during handover prep, status of older audit findings, open issues.
+- `docs/SETUP.md` — env vars, Sentry wiring, staging, backups, secret rotation.
+- `docs/RUNBOOK.md` — on-call ops.
+- `docs/OPERATIONS.md` — non-technical day-to-day staff guide.
+- `README.md` — project front door: overview, quick start, scripts, doc map.
+- `DESIGN_SYSTEM.md` — design system / UI standards (colours, typography, components).
+- `design.md` — source spec for the auto-generated `DESIGN_SYSTEM.md`.
+- `docs/DEPLOYMENT.md` — Vercel deploy, cron, build requirements.
+- `docs/ADMIN_GUIDE.md` — admin dashboard how-to for staff. `docs/CONTRIBUTING.md` — pre-commit hooks / quality gates. `docs/TEST_README.md` — test setup and conventions.
 
 When in doubt, read the source — the inline `// why this looks weird` comments are the most reliable documentation in the repo.

@@ -1,11 +1,14 @@
 /**
  * Tests for src/components/Car/CarDetailView.tsx
  *
- * The big public car-detail page. Heavy child forms (ReserveCarForm,
- * PartExchangeForm, BookingAuthGate, CarShareModal) are stubbed so we
- * can focus on what this component itself owns: gallery navigation,
+ * The big public car-detail page. CarShareModal is stubbed so we can
+ * focus on what this component itself owns: gallery navigation,
  * save/share wiring, breadcrumb, status badge, dealer card, conditional
- * 'similar cars' rail, and the available-only reserve/PX section.
+ * 'similar cars' rail, and the available-only Book-a-viewing CTA.
+ *
+ * (Reserve + part-exchange flows are temporarily disabled — the forms are
+ * no longer rendered here; the bottom section is now a single
+ * "Book a viewing" CTA shown only for available cars.)
  *
  * Standards coverage:
  * - 📋 Functional: gallery image cycling via Prev/Next and ArrowLeft/Right
@@ -14,7 +17,7 @@
  *   and calls updateViewingBooking on click; reserved/sold status badge
  * - 🎯 Usability: Maps URL vs mailto fallback (when no mapsUrl); features
  *   show first 8 + "See all N" overflow link; stock ref formatted from id;
- *   reserve/part-exchange section only renders when car is available;
+ *   Book-a-viewing CTA section only renders when car is available;
  *   mobile sticky bar reveals once window.scrollY > 480; similar-cars rail
  *   only renders when at least one similar car is passed
  */
@@ -59,20 +62,6 @@ jest.mock("@/contexts/SavedCarsContext", () => ({
 jest.mock("@/components/SEO/CarShareCard", () => ({
   CarShareModal: ({ trigger }: { trigger: React.ReactNode }) => (
     <div data-testid="share-modal">{trigger}</div>
-  ),
-}));
-jest.mock("@/components/Car/ReserveCarForm", () => ({
-  __esModule: true,
-  default: () => <div data-testid="reserve-form" />,
-}));
-jest.mock("@/components/Car/PartExchangeForm", () => ({
-  __esModule: true,
-  default: () => <div data-testid="px-form" />,
-}));
-jest.mock("@/components/Account/BookingAuthGate", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="auth-gate">{children}</div>
   ),
 }));
 
@@ -123,20 +112,25 @@ describe("CarDetailView", () => {
     expect(screen.getByText(/^reserved$/i)).toBeInTheDocument();
   });
 
-  it("📋 status badge: 'Sold' when status === sold; reserve section hidden", () => {
+  it("📋 status badge: 'Sold' when status === sold; viewing CTA hidden", () => {
     render(<CarDetailView car={{ ...baseCar, status: "sold" }} />);
     expect(screen.getByText(/^sold$/i)).toBeInTheDocument();
-    expect(screen.queryByTestId("reserve-form")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/interested in this car/i)
+    ).not.toBeInTheDocument();
   });
 
-  // The finance calculator was removed in the "remove finance + accident
-  // claims" cleanup — only the auth gate, reserve form, and PX form
-  // gate on `status === available` now.
-  it("📋 reserve / PX section renders only when status === available", () => {
+  // Reserve + part-exchange forms are temporarily disabled; the bottom
+  // section is now a single Book-a-viewing CTA, shown only for available
+  // cars.
+  it("📋 Book-a-viewing CTA section renders only when status === available", () => {
     render(<CarDetailView car={baseCar} />);
-    expect(screen.getByTestId("auth-gate")).toBeInTheDocument();
-    expect(screen.getByTestId("reserve-form")).toBeInTheDocument();
-    expect(screen.getByTestId("px-form")).toBeInTheDocument();
+    expect(screen.getByText(/interested in this car/i)).toBeInTheDocument();
+    // Two "Book a viewing" CTAs for available cars: the sidebar card and
+    // the bottom section (mobile sticky bar uses "Book viewing").
+    expect(
+      screen.getAllByRole("link", { name: /book a viewing/i }).length
+    ).toBeGreaterThanOrEqual(2);
   });
 
   it("📋 gallery Next/Prev cycles through images with wrap-around", () => {

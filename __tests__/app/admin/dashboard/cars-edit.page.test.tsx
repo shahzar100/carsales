@@ -23,6 +23,19 @@ jest.mock("mongodb", () => ({
   ),
 }));
 jest.mock("@/lib/models", () => ({
+  // The edit page delegates to the shared getCarById helper. Mirror its
+  // contract: bail on an invalid ObjectId (without touching the DB), else
+  // find-one + serialize, swallowing errors via logError.
+  getCarById: jest.fn(async (id: string, context = "getCarById") => {
+    if (!mockIsValid(id)) return null;
+    try {
+      const car = await mockFindOne({ _id: id });
+      return car ? { ...(car as object) } : null;
+    } catch (error) {
+      mockLogError(error, { context });
+      return null;
+    }
+  }),
   getCarsCollection: jest.fn(async () => ({
     findOne: (q: unknown) => mockFindOne(q),
   })),
@@ -85,7 +98,7 @@ describe("admin/dashboard/cars/edit/[_id] page", () => {
     expect(screen.getByText(/vehicle not found/i)).toBeInTheDocument();
     expect(mockLogError).toHaveBeenCalledWith(
       expect.any(Error),
-      expect.objectContaining({ context: "admin/cars/edit.getCar" })
+      expect.objectContaining({ context: "admin/cars/edit" })
     );
   });
 

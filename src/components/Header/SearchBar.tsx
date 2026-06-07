@@ -38,9 +38,9 @@ export function DesktopSearch({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search make or model…"
-          className="h-11 w-full rounded-full border border-white/[0.08] bg-white/[0.05] pr-4 pl-11 text-[14px] text-white transition-colors placeholder:text-gray-500 hover:border-white/[0.12] hover:bg-white/[0.07] focus:border-red-500/50 focus:bg-white/[0.07] focus:ring-2 focus:ring-red-500/20 focus:outline-none"
+          className="h-11 w-full rounded-full border border-white/8 bg-white/5 pr-4 pl-11 text-[14px] text-white transition-colors placeholder:text-gray-500 hover:border-white/12 hover:bg-white/[0.07] focus:border-red-500/50 focus:bg-white/[0.07] focus:ring-2 focus:ring-red-500/20 focus:outline-none"
         />
-        <kbd className="pointer-events-none absolute right-3 hidden items-center rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-gray-500 lg:inline-flex">
+        <kbd className="pointer-events-none absolute right-3 hidden items-center rounded border border-white/10 bg-white/4 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 lg:inline-flex">
           /
         </kbd>
       </div>
@@ -75,7 +75,7 @@ export function MobileSearchSheet({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ type: "spring", stiffness: 460, damping: 32 }}
-          className="absolute inset-x-0 top-0 z-[70] border-b border-white/[0.06] bg-[#0a0a0a] md:hidden"
+          className="absolute inset-x-0 top-0 z-70 border-b border-white/6 bg-[#0a0a0a] md:hidden"
         >
           <form
             role="search"
@@ -93,7 +93,7 @@ export function MobileSearchSheet({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Search make or model…"
-                className="h-11 w-full rounded-full border border-white/[0.10] bg-white/[0.06] pr-4 pl-11 text-[14px] text-white placeholder:text-gray-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/25 focus:outline-none"
+                className="h-11 w-full rounded-full border border-white/10 bg-white/6 pr-4 pl-11 text-[14px] text-white placeholder:text-gray-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/25 focus:outline-none"
               />
             </div>
             <button
@@ -101,7 +101,7 @@ export function MobileSearchSheet({
               onClick={onClose}
               aria-label="Close search"
               className={
-                "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 hover:bg-white/[0.08] hover:text-white " +
+                "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 hover:bg-white/8 hover:text-white " +
                 FOCUS_RING
               }
             >

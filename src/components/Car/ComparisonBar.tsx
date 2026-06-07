@@ -42,7 +42,7 @@ const ComparisonBar: React.FC = () => {
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <p className="max-w-[120px] truncate text-xs font-semibold text-gray-900">
+                  <p className="max-w-30 truncate text-xs font-semibold text-gray-900">
                     {car.make} {car.model}
                   </p>
                   <p className="text-[10px] text-gray-500">{car.year}</p>

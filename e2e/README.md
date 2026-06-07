@@ -5,7 +5,8 @@ Critical-path Playwright tests for Morley Motor Company.
 ## Scope
 
 10 tests covering the revenue-critical and security-critical journeys.
-Not aiming for exhaustive coverage — see DAY_PLAN.md for rationale.
+Not aiming for exhaustive coverage — E2E is reserved for the highest-value
+end-to-end paths; unit/integration coverage lives in `__tests__/`.
 
 | Suite | Test | Why |
 | --- | --- | --- |

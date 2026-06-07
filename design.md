@@ -441,7 +441,7 @@ Multi-step form pattern (Form component with step tracking). Form inputs stacked
 - **No external UI library** — all components are custom-built with Tailwind CSS utility classes.
 - **Semantic CSS classes** are defined in `src/app/globals.css` (e.g., `.page-title`, `.card`, `.badge-green`, `.input`) and should be used over raw Tailwind when they exist.
 - **CSS custom properties** for brand colors are defined in `:root` in `globals.css` (`--color-brand`, `--color-brand-dark`, etc.) but components predominantly use Tailwind classes directly.
-- **No Storybook** or external design documentation exists — this file and the generated README.md are the canonical design references.
+- **No Storybook** or external design documentation exists — this file and the generated `DESIGN_SYSTEM.md` are the canonical design references.
 - **Recharts** is used for all dashboard charts, styled with Tailwind-compatible colors.
 - **Body class**: `min-h-screen overflow-x-hidden antialiased` on the root `<body>`.
 - **Z-index scale**: Header uses `z-60`, modal overlay uses `z-100`, hero uses `z-50`.
