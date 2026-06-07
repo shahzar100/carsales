@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { m } from "motion/react";
@@ -21,6 +22,16 @@ interface Props {
 export default function WhatsAppButtonClient({ phone, businessName }: Props) {
   const pathname = usePathname();
 
+  // (Day 9 / Fix 9.2) Strip query strings + hash from the URL we paste into
+  // WhatsApp (no `?utm_...`/filter state; small PII/search-history leak).
+  // Computed in an effect — NOT via `typeof window` — so SSR and the first
+  // client render agree (both ""), avoiding a hydration mismatch on the
+  // `<a href>`. The URL fills in right after mount, before any click.
+  const [cleanUrl, setCleanUrl] = useState("");
+  useEffect(() => {
+    setCleanUrl(`${window.location.origin}${window.location.pathname}`);
+  }, [pathname]);
+
   // Don't render on admin or booking-confirmation routes — admins don't
   // need to message themselves, and the confirmation page is post-funnel.
   if (
@@ -37,14 +48,6 @@ export default function WhatsAppButtonClient({ phone, businessName }: Props) {
   const normalised = cleaned.startsWith("0")
     ? `44${cleaned.slice(1)}`
     : cleaned;
-
-  // (Day 9 / Fix 9.2) Strip query strings + hash from the URL we paste
-  // into WhatsApp. Customer doesn't need our `?utm_...` / filter state,
-  // and it removes a small PII / search-history leak.
-  const cleanUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}${window.location.pathname}`
-      : "";
 
   const message =
     pathname && pathname.startsWith("/BrowseFleet/") && pathname.length > 12

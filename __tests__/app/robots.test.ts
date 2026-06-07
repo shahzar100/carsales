@@ -22,7 +22,9 @@ describe("robots", () => {
     expect(out.rules).toEqual([
       expect.objectContaining({
         userAgent: "*",
-        allow: "/",
+        // /Booking/lookup (public tracker) is explicitly re-allowed; the more
+        // specific match overrides the /Booking/ disallow.
+        allow: expect.arrayContaining(["/", "/Booking/lookup"]),
         disallow: expect.arrayContaining(["/admin/", "/api/", "/Booking/"]),
       }),
     ]);

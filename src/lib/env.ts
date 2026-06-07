@@ -32,6 +32,12 @@ const serverSchema = z.object({
   // without them the Google button just won't work; email/password
   // and magic-link sign-in still do.
   AUTH_SECRET: z.string().optional(),
+  // With `trustHost: true` Auth.js derives its URL from the request host, so
+  // AUTH_URL is optional — but setting it to the canonical production origin
+  // keeps the client `/api/auth/session` fetch same-origin and prevents the
+  // intermittent `ClientFetchError: Failed to fetch` on apex/www/preview
+  // aliases (which surfaces as a stuck booking gate / account page).
+  AUTH_URL: z.string().optional(),
   AUTH_GOOGLE_ID: z.string().optional(),
   AUTH_GOOGLE_SECRET: z.string().optional(),
 
@@ -40,7 +46,16 @@ const serverSchema = z.object({
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
-  EMAIL_FROM: z.string().optional().default("noreply@yourdomain.com"),
+  // Validate the format when present so a typo'd address (e.g. a missing TLD)
+  // is caught at boot, not at first send. Empty string is allowed for the
+  // dev/Ethereal path; the production guard below rejects the placeholder.
+  EMAIL_FROM: z
+    .string()
+    .optional()
+    .default("noreply@yourdomain.com")
+    .refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), {
+      message: "EMAIL_FROM must be a valid email address",
+    }),
   EMAIL_FROM_NAME: z.string().optional().default("MMC Leeds"),
 
   // ── AWS / S3 — used by src/lib/utils/s3.ts ────────────────
@@ -49,6 +64,14 @@ const serverSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   S3_BUCKET_NAME: z.string().optional(),
   CLOUDFRONT_DOMAIN: z.string().optional(),
+
+  // ── Rate limiting (Vercel KV / Upstash REST) ──────────────
+  // When unset, createRateLimiter() falls back to per-instance memory.
+  KV_REST_API_URL: z.string().optional(),
+  KV_REST_API_TOKEN: z.string().optional(),
+
+  // ── Bot protection (Cloudflare Turnstile) ─────────────────
+  TURNSTILE_SECRET_KEY: z.string().optional(),
 
   // ── Cron — Vercel sets this to authenticate cron invocations ─
   CRON_SECRET: z.string().optional(),
@@ -74,6 +97,7 @@ const clientSchema = z.object({
   NEXT_PUBLIC_BUSINESS_NAME: z.string().optional().default("MMC Leeds"),
   NEXT_PUBLIC_APP_URL: z.string().optional().default("http://localhost:3000"),
   NEXT_PUBLIC_BASE_URL: z.string().optional(), // used by reviewInvite
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().optional(),
 });
 
 function validateServerEnv() {
@@ -138,6 +162,22 @@ function validateServerEnv() {
       throw new Error(
         "CRON_SECRET must be set in production — generate with " +
           "`node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"`"
+      );
+    }
+
+    // Non-fatal warnings — these degrade gracefully but matter in prod.
+    if (!parsed.data.AUTH_URL) {
+      console.warn(
+        "⚠️  AUTH_URL is not set. With trustHost:true Auth.js derives its URL " +
+          "from the request host; set AUTH_URL to your canonical origin to " +
+          "avoid intermittent useSession() ClientFetchError on alias hosts."
+      );
+    }
+    if (!parsed.data.KV_REST_API_URL || !parsed.data.KV_REST_API_TOKEN) {
+      console.warn(
+        "⚠️  KV_REST_API_URL/KV_REST_API_TOKEN not set. Rate limiting falls " +
+          "back to per-instance memory — effectively no limit under " +
+          "autoscaling. Configure Vercel KV for distributed enforcement."
       );
     }
   }

@@ -78,6 +78,19 @@ const nextConfig: NextConfig = {
     // Optimised images are content-addressed; cache them hard (31 days).
     minimumCacheTTL: 2678400,
     remotePatterns: [
+      // Custom CloudFront alias (e.g. cdn.example.com). `**.cloudfront.net`
+      // below covers the default distribution host; a custom domain wouldn't
+      // match it, so add it explicitly when configured. CSP is kept in sync
+      // in src/middleware.ts via the same CLOUDFRONT_DOMAIN env var.
+      ...(process.env.CLOUDFRONT_DOMAIN &&
+      !process.env.CLOUDFRONT_DOMAIN.endsWith(".cloudfront.net")
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: process.env.CLOUDFRONT_DOMAIN,
+            },
+          ]
+        : []),
       {
         protocol: "https",
         hostname: "res.cloudinary.com",

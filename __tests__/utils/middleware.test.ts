@@ -4,10 +4,10 @@
  * Uses NextRequest which depends on the global `Request` constructor —
  * available in Jest's node environment, NOT in jsdom.
  */
-import { proxy } from "@/proxy";
+import { middleware } from "@/middleware";
 import { NextRequest } from "next/server";
 
-describe("proxy", () => {
+describe("middleware", () => {
   const createRequest = (
     method: string,
     path: string,
@@ -22,7 +22,7 @@ describe("proxy", () => {
 
   it("allows GET requests without Origin", () => {
     const req = createRequest("GET", "/api/cars");
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(200);
   });
 
@@ -30,7 +30,7 @@ describe("proxy", () => {
     const req = createRequest("POST", "/api/cars", {
       host: "localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(403);
     // Check body
   });
@@ -40,7 +40,7 @@ describe("proxy", () => {
       host: "localhost:3000",
       origin: "http://evil.com",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(403);
   });
 
@@ -49,7 +49,7 @@ describe("proxy", () => {
       host: "localhost:3000",
       origin: "http://localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(200);
   });
 
@@ -58,7 +58,7 @@ describe("proxy", () => {
       host: "localhost:3000",
       origin: "http://localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(200);
   });
 
@@ -67,7 +67,7 @@ describe("proxy", () => {
       host: "localhost:3000",
       origin: "http://localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(200);
   });
 
@@ -75,7 +75,7 @@ describe("proxy", () => {
     const req = createRequest("POST", "/api/cron/review-invites", {
       host: "localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(200);
   });
 
@@ -84,7 +84,7 @@ describe("proxy", () => {
       host: "localhost:3000",
       origin: "not-a-valid-url",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(403);
   });
 
@@ -92,14 +92,14 @@ describe("proxy", () => {
     const req = createRequest("PATCH", "/api/cars/1", {
       host: "localhost:3000",
     });
-    const res = proxy(req);
+    const res = middleware(req);
     expect(res.status).toBe(403);
   });
 
   describe("CSP nonce (page routes)", () => {
     it("sets a Content-Security-Policy header with a nonce on page requests", () => {
       const req = createRequest("GET", "/");
-      const res = proxy(req);
+      const res = middleware(req);
       const csp = res.headers.get("Content-Security-Policy");
       expect(csp).toBeTruthy();
       expect(csp).toMatch(/script-src [^;]*'nonce-[A-Za-z0-9+/=]+'/);
@@ -113,13 +113,13 @@ describe("proxy", () => {
 
     it("does not set CSP on /api routes (they don't render HTML)", () => {
       const req = createRequest("GET", "/api/cars");
-      const res = proxy(req);
+      const res = middleware(req);
       expect(res.headers.get("Content-Security-Policy")).toBeNull();
     });
 
     it("generates a fresh nonce per request", () => {
-      const a = proxy(createRequest("GET", "/"));
-      const b = proxy(createRequest("GET", "/"));
+      const a = middleware(createRequest("GET", "/"));
+      const b = middleware(createRequest("GET", "/"));
       const noncePattern = /'nonce-([A-Za-z0-9+/=]+)'/;
       const nonceA = a.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
       const nonceB = b.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
@@ -130,7 +130,7 @@ describe("proxy", () => {
 
     it("permits Cloudflare Turnstile in script-src and frame-src", () => {
       const req = createRequest("GET", "/contact");
-      const res = proxy(req);
+      const res = middleware(req);
       const csp = res.headers.get("Content-Security-Policy")!;
       expect(csp).toContain("https://challenges.cloudflare.com");
       expect(csp).toMatch(/frame-src[^;]*challenges\.cloudflare\.com/);
@@ -138,28 +138,39 @@ describe("proxy", () => {
 
     it("denies all framing via frame-ancestors 'none'", () => {
       const req = createRequest("GET", "/");
-      const res = proxy(req);
+      const res = middleware(req);
       const csp = res.headers.get("Content-Security-Policy")!;
       expect(csp).toContain("frame-ancestors 'none'");
     });
 
     it("blocks legacy plugin embedding via object-src 'none'", () => {
       const req = createRequest("GET", "/");
-      const res = proxy(req);
+      const res = middleware(req);
       const csp = res.headers.get("Content-Security-Policy")!;
       expect(csp).toContain("object-src 'none'");
     });
 
-    it("emits upgrade-insecure-requests", () => {
+    it("emits upgrade-insecure-requests in production only", () => {
+      // Gated to production (dev speaks plain HTTP, so upgrading would break
+      // localhost asset fetches). Flip NODE_ENV around the call to assert both.
+      const prev = process.env.NODE_ENV;
       const req = createRequest("GET", "/");
-      const res = proxy(req);
-      const csp = res.headers.get("Content-Security-Policy")!;
-      expect(csp).toContain("upgrade-insecure-requests");
+
+      Object.assign(process.env, { NODE_ENV: "production" });
+      try {
+        const prodCsp = middleware(req).headers.get("Content-Security-Policy")!;
+        expect(prodCsp).toContain("upgrade-insecure-requests");
+      } finally {
+        Object.assign(process.env, { NODE_ENV: prev });
+      }
+
+      const devCsp = middleware(req).headers.get("Content-Security-Policy")!;
+      expect(devCsp).not.toContain("upgrade-insecure-requests");
     });
 
     it("still emits a report-only mirror for tighter style-src observation", () => {
       const req = createRequest("GET", "/");
-      const res = proxy(req);
+      const res = middleware(req);
       const reportOnly = res.headers.get("Content-Security-Policy-Report-Only");
       expect(reportOnly).toBeTruthy();
       expect(reportOnly).toContain("style-src 'self'");

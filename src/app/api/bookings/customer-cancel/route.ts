@@ -101,8 +101,14 @@ export async function POST(request: NextRequest) {
       return badRequest("Completed bookings cannot be cancelled");
     }
 
+    // Compare-and-set on status so two concurrent cancels can't both write
+    // (the app-level checks above are TOCTOU on their own). Idempotent: if the
+    // row was already terminal we simply matched nothing.
     await collection.updateOne(
-      { bookingReference: body.bookingReference },
+      {
+        bookingReference: body.bookingReference,
+        status: { $nin: ["cancelled", "completed"] },
+      },
       {
         $set: {
           status: "cancelled",

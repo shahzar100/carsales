@@ -97,6 +97,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Prevent privilege escalation: a caller may not create an account with a
+    // role higher than their own. This route is manager+, so without this a
+    // manager could mint an `admin` pointed at an address they control and
+    // consume the setup link to obtain full admin. (Audit: role ceiling.)
+    const ROLE_LEVEL = { staff: 1, manager: 2, admin: 3 } as const;
+    const session = await getSession();
+    const callerLevel =
+      ROLE_LEVEL[(session.role ?? "staff") as keyof typeof ROLE_LEVEL] ?? 0;
+    const requestedLevel = ROLE_LEVEL[role as keyof typeof ROLE_LEVEL];
+    if (requestedLevel > callerLevel) {
+      return NextResponse.json(
+        { error: "You cannot create a user with a role higher than your own" },
+        { status: 403 }
+      );
+    }
+
     const adminCollection = await getAdminUsersCollection();
 
     const existing = await adminCollection.findOne({
@@ -165,7 +181,6 @@ export async function POST(request: NextRequest) {
     );
 
     logEvent("admin.user.created", { target: username });
-    const session = await getSession();
     await recordAudit({
       actor: session.username ?? "unknown",
       action: "user.create",

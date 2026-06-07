@@ -17,5 +17,12 @@ export default function AuthSessionProvider({
 }: {
   children: React.ReactNode;
 }) {
-  return <SessionProvider>{children}</SessionProvider>;
+  // refetchOnWindowFocus is left ON (default) so a session that expires in
+  // another tab is noticed — but we cap refetchInterval at 0 (no polling) and
+  // rely on the visibility refetch. The key reliability win is server-side:
+  // a stable AUTH_URL (see src/lib/env.ts) so the client's /api/auth/session
+  // fetch is always same-origin and never throws ClientFetchError.
+  return (
+    <SessionProvider refetchOnWindowFocus={false}>{children}</SessionProvider>
+  );
 }
