@@ -17,6 +17,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:operational": "node e2e/operational/run.mjs",
+    "test:smoke": "playwright test --config e2e/smoke/playwright.smoke.config.ts",
     "setup-admin": "node scripts/setup-admin.mjs",
     "migrate:business-info": "tsx scripts/migrate-business-info.ts",
     "email": "email dev --dir src/emails",
