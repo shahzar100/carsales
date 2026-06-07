@@ -45,11 +45,29 @@ const autoDealer = {
     },
     {
       "@type": "Offer",
-      itemOffered: { "@type": "Service", name: "Window Tinting" },
+      itemOffered: { "@type": "Service", name: "Window Tinting & Car Wrapping" },
     },
     {
       "@type": "Offer",
-      itemOffered: { "@type": "Service", name: "Auto Repairs" },
+      itemOffered: {
+        "@type": "Service",
+        name: "Vehicle Repairs & Diagnostics",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Vehicle Modifications" },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Brand New Tyres Supplied & Fitted",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: "Accident Claims Management" },
     },
     {
       "@type": "Offer",

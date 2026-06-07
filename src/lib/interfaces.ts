@@ -154,6 +154,10 @@ export interface ShopInfo {
   state: string;
   zipCode: string;
   phone: string;
+  /** WhatsApp contact number. Distinct from `phone` (often a mobile vs a
+   * landline). The floating WhatsApp button prefers this; falls back to
+   * `phone` when unset. */
+  whatsapp?: string;
   email: string;
   bookingsEmail?: string;
   googleMapsUrl?: string;
@@ -163,6 +167,7 @@ export interface ShopInfo {
     facebook?: string;
     twitter?: string;
     instagram?: string;
+    tiktok?: string;
   };
 
   // Hero section stats

@@ -1,7 +1,18 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Shield, CheckCircle, Clock, Sun, Eye, ArrowRight } from "lucide-react";
+import {
+  Shield,
+  CheckCircle,
+  Clock,
+  Sun,
+  Eye,
+  ArrowRight,
+  Palette,
+  SprayCan,
+  Layers,
+  Sparkles,
+} from "lucide-react";
 import {
   ServiceHero,
   BackNavigation,
@@ -17,14 +28,14 @@ import { getBusinessInfo } from "@/lib/utils/businessInfo";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: "Window Tinting Services",
+  title: "Window Tints & Car Wrapping",
   description:
-    "Professional window tinting with ceramic, carbon, and dyed film options from £200. 99% UV protection, heat reduction, and enhanced privacy. Warranty included.",
+    "Professional window tinting and car wrapping in Leeds. Ceramic, carbon, and dyed films from £200, plus full and partial vinyl wraps for a complete colour change. Warranty included.",
   alternates: { canonical: "/Services/Tints" },
   openGraph: {
-    title: "Window Tinting Services",
+    title: "Window Tints & Car Wrapping",
     description:
-      "Professional window tinting with ceramic, carbon, and dyed film options from £200. Warranty included.",
+      "Professional window tinting and full or partial car wrapping. Premium films and vinyl, expertly installed with warranty included.",
     url: "/Services/Tints",
   },
 };
@@ -80,12 +91,39 @@ const installationProcess = [
   },
 ];
 
+const wrappingBenefits = [
+  {
+    icon: Palette,
+    title: "Full Colour Change",
+    description:
+      "Transform your car's look with gloss, matte, satin, or chrome finishes",
+  },
+  {
+    icon: Layers,
+    title: "Full & Partial Wraps",
+    description:
+      "Wrap the whole vehicle or just roofs, mirrors, bonnets and accents",
+  },
+  {
+    icon: Shield,
+    title: "Paintwork Protection",
+    description:
+      "Vinyl shields your original paint from stone chips and UV fading",
+  },
+  {
+    icon: SprayCan,
+    title: "Reversible & Resale",
+    description:
+      "Removable without damaging the factory paint underneath",
+  },
+];
+
 const heroProps = {
   icon: Shield,
   iconBgColor: "bg-red-100 text-red-700",
-  title: "Professional Window Tinting",
+  title: "Window Tints & Car Wrapping",
   description:
-    "Protect your vehicle and enhance your driving experience with our premium window tinting services. Choose from multiple film types and tint levels to match your style and needs.",
+    "Protect your vehicle and transform its look. From premium window tinting to full and partial vinyl wraps, choose the film types, tint levels, and finishes that match your style — all expertly installed.",
   badges: [
     {
       icon: CheckCircle,
@@ -107,9 +145,9 @@ const Tints = async () => {
         data={{
           "@context": "https://schema.org",
           "@type": "Service",
-          name: "Window Tinting Services",
+          name: "Window Tints & Car Wrapping",
           description:
-            "Professional window tinting with ceramic, carbon, and dyed film options from £200. 99% UV protection, heat reduction, and enhanced privacy. Warranty included.",
+            "Professional window tinting and car wrapping. Ceramic, carbon, and dyed films from £200, plus full and partial vinyl wraps for a complete colour change. Warranty included.",
           provider: {
             "@type": "AutoDealer",
             name: businessInfo.businessName,
@@ -134,6 +172,27 @@ const Tints = async () => {
       <TintOptionsGrid tintOptions={tintOptions} />
 
       <VLTGuide />
+
+      {/* Car Wrapping */}
+      <div className="mb-8 md:mb-16">
+        <div className="mb-6 text-center md:mb-10">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-100 text-red-700">
+            <Sparkles size={26} />
+          </div>
+          <h2 className="section-title mb-2">Car Wrapping</h2>
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Want a whole new look? Our vinyl wrapping service gives your car a
+            complete colour change — gloss, matte, satin, or chrome — while
+            protecting the paintwork underneath. Choose a full wrap or accent
+            individual panels.
+          </p>
+        </div>
+        <BenefitsGrid
+          benefits={wrappingBenefits}
+          title="Why Wrap Your Car?"
+          columns={4}
+        />
+      </div>
 
       <BlackRedSection>
         <ProcessFlow

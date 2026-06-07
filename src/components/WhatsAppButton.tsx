@@ -9,7 +9,9 @@ import WhatsAppButtonClient from "./WhatsAppButtonClient";
  */
 export default async function WhatsAppButton() {
   const info = await getBusinessInfo();
-  const phone = info.phone;
+  // Prefer a dedicated WhatsApp number (often a mobile) over the main
+  // phone (which may be a landline that can't receive WhatsApp).
+  const phone = info.whatsapp || info.phone;
   if (!phone) return null;
   return <WhatsAppButtonClient phone={phone} businessName={info.businessName} />;
 }

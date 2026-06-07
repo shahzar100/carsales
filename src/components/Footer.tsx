@@ -134,10 +134,50 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/Services/Detailing"
+                  className="text-gray-700 transition-colors hover:text-red-600"
+                >
+                  Detailing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/Services/Tints"
+                  className="text-gray-700 transition-colors hover:text-red-600"
+                >
+                  Tints &amp; Wrapping
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/Services/Repairs"
                   className="text-gray-700 transition-colors hover:text-red-600"
                 >
-                  Repairs
+                  Repairs &amp; Diagnostics
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/Services/Modifications"
+                  className="text-gray-700 transition-colors hover:text-red-600"
+                >
+                  Modifications
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/Services/Tyres"
+                  className="text-gray-700 transition-colors hover:text-red-600"
+                >
+                  Tyres
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/AccidentClaims"
+                  className="text-gray-700 transition-colors hover:text-red-600"
+                >
+                  Accident Claims
                 </Link>
               </li>
               <li>
@@ -145,7 +185,7 @@ export default function Footer() {
                   href="/Recoveries"
                   className="text-gray-700 transition-colors hover:text-red-600"
                 >
-                  Recoveries
+                  Breakdown Recovery
                 </Link>
               </li>
               <li>
@@ -261,6 +301,29 @@ export default function Footer() {
                 >
                   <span className="sr-only">Instagram</span>
                   <Instagram size={20} />
+                </m.a>
+              )}
+              {social?.tiktok && (
+                <m.a
+                  href={social.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={socialHover}
+                  whileTap={socialTap}
+                  transition={socialSpring}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-red-600"
+                >
+                  <span className="sr-only">TikTok</span>
+                  {/* lucide-react has no TikTok glyph — inline brand SVG. */}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M16.5 3a5.6 5.6 0 0 0 4.5 4.9v3a8.6 8.6 0 0 1-4.5-1.3v6.2a6.3 6.3 0 1 1-6.3-6.3c.3 0 .6 0 .9.1v3.1a3.3 3.3 0 1 0 2.3 3.1V3h3.1Z" />
+                  </svg>
                 </m.a>
               )}
             </div>

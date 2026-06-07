@@ -41,6 +41,8 @@ const serviceRoutes: Record<string, { href: string; accent: AccentColor }> = {
   detailing: { href: "/Services/Detailing", accent: "red" },
   tints: { href: "/Services/Tints", accent: "crimson" },
   repairs: { href: "/Services/Repairs", accent: "dark" },
+  modifications: { href: "/Services/Modifications", accent: "red" },
+  tyres: { href: "/Services/Tyres", accent: "crimson" },
 };
 
 const Services = async () => {
