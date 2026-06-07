@@ -22,7 +22,7 @@ if (!uri) {
 
 let client: MongoClient | null = null;
 
-async function getDb(): Promise<Db> {
+export async function getDb(): Promise<Db> {
   if (!client) {
     client = new MongoClient(uri!);
     await client.connect();
@@ -61,6 +61,36 @@ export async function seedAdminUser(opts: {
         email: opts.email ?? `${opts.username}@e2e.example.com`,
         passwordHash,
         role: opts.role ?? "admin",
+        updatedAt: new Date(),
+      },
+      $setOnInsert: { createdAt: new Date() },
+    },
+    { upsert: true }
+  );
+}
+
+/**
+ * Seed a customer (NextAuth `users` collection) with a password so the
+ * credentials provider can sign them in. Booking-creation routes now require
+ * an authenticated customer (getCustomerIdentity), so any spec that submits a
+ * booking must seed + log in a customer first.
+ *
+ * Email MUST start with `e2e-` so cleanupE2EData removes it.
+ */
+export async function seedCustomer(opts: {
+  email: string;
+  password: string;
+  name?: string;
+}): Promise<void> {
+  const db = await getDb();
+  await db.collection("users").updateOne(
+    { email: opts.email },
+    {
+      $set: {
+        email: opts.email,
+        name: opts.name ?? "E2E Customer",
+        password: await bcrypt.hash(opts.password, 12),
+        emailVerified: new Date(),
         updatedAt: new Date(),
       },
       $setOnInsert: { createdAt: new Date() },
@@ -199,5 +229,10 @@ export async function cleanupE2EData(): Promise<void> {
     db.collection("quotes").deleteMany({
       "customerInfo.email": { $regex: /^e2e-/ },
     }),
+    // Seeded customers (users) and throwaway admins (e2e- usernames). The
+    // globalSetup admin uses the non-prefixed `adminCredentials.username`, so
+    // it is never matched here.
+    db.collection("users").deleteMany({ email: { $regex: /^e2e-/ } }),
+    db.collection("adminUsers").deleteMany({ username: { $regex: /^e2e-/ } }),
   ]);
 }
