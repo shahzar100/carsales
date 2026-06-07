@@ -1,16 +1,33 @@
 name: CI
 
-# Runs lint, type-check and the test suites on every push to main and
-# every pull request. Before this workflow the only gate between a broken
-# change and production was `next build` on Vercel — a type error like the
-# 2026-05-17 build break shipped straight to a failed deploy. `type-check`
-# below catches exactly that, in the PR, before merge.
+# Runs lint, type-check and the test suites on every push to main and every
+# pull request. Before this workflow the only gate between a broken change and
+# production was `next build` on Vercel — a type error like the 2026-05-17 build
+# break shipped straight to a failed deploy. `type-check` below catches exactly
+# that, in the PR, before merge.
+#
+# One job, not three. The previous layout ran lint / type-check / test as three
+# parallel jobs, each paying its own `npm ci` — and setup-node's npm cache only
+# restores ~/.npm, not node_modules, so every job ran the full install. Folding
+# them into a single job installs once and trades ~1-2 min of parallel feedback
+# for ~3 fewer billable minutes per run, which is what keeps us under the
+# monthly Actions budget. Steps run fail-fast (a lint break skips the rest).
 
 on:
   push:
     branches: [main]
+    # Docs / test-fixture-only changes can't break lint, types or the build, so
+    # skip the suite for them. Keep this list in sync with the PR trigger below.
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "e2e/**"
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "e2e/**"
 
 # Cancel superseded runs on the same ref so a fast follow-up push doesn't
 # queue behind a stale run.
@@ -19,9 +36,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  ci:
+    name: Lint, type-check, tests
     runs-on: ubuntu-latest
+    # Guardrail: the default job timeout is 6 hours. A single hung job at that
+    # cap would burn ~360 billable minutes — a sixth of the monthly budget in
+    # one run. Real runs finish in a few minutes; 12 is generous headroom.
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,30 +50,17 @@ jobs:
           node-version: 22.x
           cache: npm
       - run: npm ci
+
+      # Cache the mongod binary that mongodb-memory-server downloads (~100 MB)
+      # so the API suite doesn't re-fetch it on every run.
+      - name: Cache mongodb-memory-server binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - run: npm run lint
-
-  type-check:
-    name: Type check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: npm
-      - run: npm ci
       - run: npm run type-check
-
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: npm
-      - run: npm ci
       # jsdom component suite (jest.config.js).
       - run: npm test
       # API / route suite — node env, in-memory MongoDB (jest.config.api.js).

@@ -3,10 +3,19 @@ name: Bundle size
 # Fails the PR if any tracked entrypoint exceeds its budget in
 # .size-limit.json. Budgets are set at "current size + 10%" so the check
 # catches real regressions without flapping on noise from a routine change.
+#
+# The full `next build` here is the expensive part, so it only runs when a PR
+# touches something that can actually change a bundle: app source, the lockfile,
+# the Next config, or the budgets themselves. Docs / test-only PRs skip it.
 
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "src/**"
+      - "package-lock.json"
+      - "next.config.ts"
+      - ".size-limit.json"
 
 concurrency:
   group: size-limit-${{ github.ref }}
@@ -16,6 +25,9 @@ jobs:
   size:
     name: size-limit
     runs-on: ubuntu-latest
+    # See ci.yml: bound the job well under the 6h default so a hung build can't
+    # eat the monthly budget.
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,6 +35,19 @@ jobs:
           node-version: 22.x
           cache: npm
       - run: npm ci
+
+      # Reuse the Next.js build cache across runs so the build is incremental
+      # (~1 min warm) rather than cold (~3 min). The lockfile in the key busts
+      # the cache on a dependency change; restore-keys let an unrelated PR still
+      # warm-start from the last main build.
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+            nextjs-${{ runner.os }}-
 
       # `next build` collects page data against MongoDB, which CI does not
       # have access to — but the JS bundles under .next/static/chunks and the
