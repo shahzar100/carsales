@@ -14,6 +14,10 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
+  // The operational suite (e2e/operational) needs its own launcher — local
+  // S3/KV/SMTP fakes + a mongod — and runs via `npm run test:e2e:operational`,
+  // not this hermetic default CI suite.
+  testIgnore: ["**/operational/**"],
   // Seed an admin user before the suite runs so admin-flow specs can
   // authenticate against an otherwise-empty mongo:7. (CODEBASE_ISSUES J1.)
   globalSetup: "./e2e/global-setup.ts",
