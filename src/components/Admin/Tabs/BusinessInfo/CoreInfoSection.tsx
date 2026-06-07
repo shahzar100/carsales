@@ -46,6 +46,22 @@ export default function CoreInfoSection({
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
+          <label htmlFor="core-info-whatsapp" className={labelClass}>
+            WhatsApp Number
+          </label>
+          <input
+            id="core-info-whatsapp"
+            type="tel"
+            value={shopInfo.whatsapp ?? ""}
+            onChange={(e) => update({ whatsapp: e.target.value })}
+            className={inputClass}
+            placeholder="0796 628 1510 (falls back to Phone if empty)"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
           <label htmlFor="core-info-email" className={labelClass}>
             Email
           </label>

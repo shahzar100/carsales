@@ -6,6 +6,7 @@ import {
   Package,
   Scale,
   Settings as SettingsIcon,
+  Shield,
   Star,
   Truck,
   type LucideIcon,
@@ -33,8 +34,10 @@ export const BRANDS: LinkItem[] = [
 
 export const SERVICES: LinkItem[] = [
   { label: "Detailing", href: "/Services/Detailing" },
-  { label: "Tints", href: "/Services/Tints" },
-  { label: "Repairs", href: "/Services/Repairs" },
+  { label: "Tints & Wrapping", href: "/Services/Tints" },
+  { label: "Repairs & Diagnostics", href: "/Services/Repairs" },
+  { label: "Modifications", href: "/Services/Modifications" },
+  { label: "Tyres", href: "/Services/Tyres" },
 ];
 
 export const MORE: LinkItem[] = [
@@ -49,6 +52,12 @@ export const MORE: LinkItem[] = [
     href: "/Recoveries",
     icon: Truck,
     desc: "Round-the-clock recovery",
+  },
+  {
+    label: "Accident Claims",
+    href: "/AccidentClaims",
+    icon: Shield,
+    desc: "Claims handled end to end",
   },
   {
     label: "Track Booking",

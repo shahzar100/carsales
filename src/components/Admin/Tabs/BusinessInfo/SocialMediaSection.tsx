@@ -75,6 +75,26 @@ export default function SocialMediaSection({
           className={inputClass}
         />
       </div>
+      <div>
+        <label className={labelClass} htmlFor="social-media-tiktok-url">
+          TikTok URL
+        </label>
+        <input
+          id="social-media-tiktok-url"
+          type="url"
+          value={shopInfo.socialMedia?.tiktok ?? ""}
+          onChange={(e) =>
+            update({
+              socialMedia: {
+                ...shopInfo.socialMedia,
+                tiktok: e.target.value,
+              },
+            })
+          }
+          placeholder="https://tiktok.com/@yourbusiness"
+          className={inputClass}
+        />
+      </div>
     </div>
   );
 }

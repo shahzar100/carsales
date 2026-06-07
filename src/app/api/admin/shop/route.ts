@@ -219,6 +219,7 @@ export async function PUT(request: NextRequest) {
       state: (body.state as string) || "",
       zipCode: (body.zipCode as string) || "",
       phone: body.phone as string,
+      whatsapp: (body.whatsapp as string) || "",
       email: body.email as string,
       bookingsEmail: (body.bookingsEmail as string) || "",
       googleMapsUrl: (body.googleMapsUrl as string) || "",
