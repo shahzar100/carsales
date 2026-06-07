@@ -1,0 +1,103 @@
+name: Smoke
+
+# Verifies a DEPLOYED build against real endpoints/credentials.
+#  - on each successful deploy: full smoke for non-prod (staging/preview) URLs,
+#    read-only @prod-safe smoke for production URLs;
+#  - daily: read-only @prod-safe smoke against SMOKE_PROD_URL;
+#  - manual: choose URL + mode.
+#
+# Minutes: ubuntu only (1x), npm + browser caching, chromium only, a 10-min cap,
+# and cancel-in-progress so deploy bursts don't stack. See docs/SMOKE.md.
+on:
+  deployment_status:
+  schedule:
+    - cron: "17 6 * * *" # daily ~06:17 UTC (read-only prod smoke)
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Target base URL (e.g. https://staging.example.com)"
+        required: true
+      mode:
+        description: "full or prod-safe"
+        required: true
+        default: "prod-safe"
+        type: choice
+        options: [prod-safe, full]
+
+concurrency:
+  group: smoke-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    # Run only for successful deploys (or schedule / manual).
+    if: ${{ github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Resolve target + mode
+        id: cfg
+        run: |
+          EVENT="${{ github.event_name }}"
+          if [ "$EVENT" = "deployment_status" ]; then
+            echo "url=${{ github.event.deployment_status.target_url }}" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event.deployment_status.environment }}" = "Production" ]; then
+              echo "grep=@prod-safe" >> "$GITHUB_OUTPUT"
+            else
+              echo "grep=" >> "$GITHUB_OUTPUT"   # staging/preview → full smoke
+            fi
+          elif [ "$EVENT" = "schedule" ]; then
+            echo "url=${{ secrets.SMOKE_PROD_URL }}" >> "$GITHUB_OUTPUT"
+            echo "grep=@prod-safe" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=${{ github.event.inputs.base_url }}" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event.inputs.mode }}" = "full" ]; then
+              echo "grep=" >> "$GITHUB_OUTPUT"
+            else
+              echo "grep=@prod-safe" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Run smoke
+        env:
+          SMOKE_BASE_URL: ${{ steps.cfg.outputs.url }}
+          SMOKE_CUSTOMER_EMAIL: ${{ secrets.SMOKE_CUSTOMER_EMAIL }}
+          SMOKE_CUSTOMER_PASSWORD: ${{ secrets.SMOKE_CUSTOMER_PASSWORD }}
+          SMOKE_ADMIN_USERNAME: ${{ secrets.SMOKE_ADMIN_USERNAME }}
+          SMOKE_ADMIN_PASSWORD: ${{ secrets.SMOKE_ADMIN_PASSWORD }}
+          SMOKE_CRON_SECRET: ${{ secrets.SMOKE_CRON_SECRET }}
+        run: |
+          if [ -z "$SMOKE_BASE_URL" ]; then
+            echo "No target URL resolved — skipping."
+            exit 0
+          fi
+          GREP="${{ steps.cfg.outputs.grep }}"
+          if [ -n "$GREP" ]; then
+            npm run test:smoke -- --grep "$GREP"
+          else
+            npm run test:smoke
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: smoke-report
+          path: e2e/smoke/playwright-report
+          retention-days: 7
