@@ -310,12 +310,23 @@ async function seedIfEmpty<T extends Document>(
   data: T | T[]
 ): Promise<void> {
   const count = await collection.countDocuments({}, { limit: 1 });
-  if (count === 0) {
+  if (count !== 0) return;
+
+  // The seed docs carry fixed `_id`s, and this is a check-then-insert. During
+  // `next build`, many pages prerender concurrently and all hit an empty
+  // collection at once — without this guard the losers of the race throw
+  // E11000 (duplicate _id) and crash the build. Swallow the duplicate-key
+  // error: it just means another worker seeded first, which is the goal.
+  try {
     if (Array.isArray(data)) {
-      await collection.insertMany(data as OptionalUnlessRequiredId<T>[]);
+      await collection.insertMany(data as OptionalUnlessRequiredId<T>[], {
+        ordered: false,
+      });
     } else {
       await collection.insertOne(data as OptionalUnlessRequiredId<T>);
     }
+  } catch (err) {
+    if ((err as { code?: number })?.code !== 11000) throw err;
   }
 }
 

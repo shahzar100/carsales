@@ -15,9 +15,16 @@ import type { NextRequest } from "next/server";
  * has to move because the nonce changes per request.
  */
 
-const isProduction = process.env.NODE_ENV === "production";
-
 function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: false }): string {
+  // Read at call time (not module load) so the CSP follows the current
+  // NODE_ENV and stays unit-testable across dev/prod.
+  const isProduction = process.env.NODE_ENV === "production";
+  // Optional custom CDN host (e.g. a CloudFront alias `cdn.example.com` that
+  // isn't a `*.cloudfront.net` hostname). Mirrors next.config remotePatterns
+  // so a custom-domain CDN isn't blocked by CSP.
+  const cdnHost = process.env.CLOUDFRONT_DOMAIN
+    ? ` https://${process.env.CLOUDFRONT_DOMAIN}`
+    : "";
   // `'strict-dynamic'` lets scripts loaded by nonced scripts run without
   // their own nonce — required for Next.js's RSC payload script that injects
   // further script tags during hydration. The Cloudflare host is needed for
@@ -52,7 +59,9 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${isProduction ? "" : " 'unsafe-eval'"}`,
     styleSrc,
-    "img-src 'self' https://res.cloudinary.com https://*.cloudfront.net data: blob:",
+    // img-src mirrors connect-src + next.config remotePatterns so stored S3 /
+    // CloudFront image URLs render even when not proxied through next/image.
+    `img-src 'self' https://res.cloudinary.com https://*.cloudfront.net https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com${cdnHost} data: blob:`,
     "font-src 'self' data:",
     // connect-src governs the admin image uploader's direct browser→S3 PUT
     // (ImageUploader.tsx). CSP host grammar allows a wildcard ONLY as the
@@ -61,7 +70,7 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     // PUT. Region is fixed (AWS_REGION=eu-west-2); pin it and cover both
     // virtual-hosted (`<bucket>.s3.<region>`) and path-style (`s3.<region>`)
     // URLs, mirroring the two patterns in next.config.ts:remotePatterns.
-    "connect-src 'self' https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com https://challenges.cloudflare.com",
+    `connect-src 'self' https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com https://challenges.cloudflare.com${cdnHost}`,
     "frame-src https://challenges.cloudflare.com",
     // frame-ancestors is meaningless in a report-only policy (browsers ignore
     // it and log a warning), so only emit it in the enforced CSP.
@@ -85,7 +94,7 @@ function generateNonce(): string {
   return btoa(String.fromCharCode(...bytes));
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   // ── CSRF protection (state-changing API calls only) ──
   if (
     ["POST", "PUT", "DELETE", "PATCH"].includes(request.method) &&

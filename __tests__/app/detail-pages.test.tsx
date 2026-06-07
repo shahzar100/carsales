@@ -59,6 +59,15 @@ jest.mock("@/lib/utils/observability", () => ({
   logError: (...args: unknown[]) => mockLogError(...args),
 }));
 
+// notFound() halts rendering by throwing; mirror that so the page's
+// `if (!car) notFound()` branch is observable as a thrown call.
+const mockNotFound = jest.fn(() => {
+  throw new Error("NEXT_NOT_FOUND");
+});
+jest.mock("next/navigation", () => ({
+  notFound: () => mockNotFound(),
+}));
+
 let carDetailProps: any = null;
 jest.mock("@/components/Car/CarDetailView", () => ({
   __esModule: true,
@@ -139,32 +148,24 @@ const carDoc = {
 };
 
 describe("(main)/BrowseFleet/[_id] page", () => {
-  it("🔒 findOne returns null → 'Vehicle Not Found' branch with back-link", async () => {
+  it("🔒 findOne returns null → notFound() (real 404, not a soft 200)", async () => {
     mockFindOne.mockResolvedValue(null);
     const Page = (await import("@/app/(main)/BrowseFleet/[_id]/page"))
       .default;
-    const ui = await Page({
-      params: Promise.resolve({ _id: "missing-id" }),
-    });
-    render(ui);
-    expect(screen.getByText(/vehicle not found/i)).toBeInTheDocument();
-    expect(screen.getByText(/browse all vehicles/i).closest("a")).toHaveAttribute(
-      "href",
-      "/BrowseFleet"
-    );
-    expect(screen.queryByTestId("car-detail-view")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("json-ld")).not.toBeInTheDocument();
+    await expect(
+      Page({ params: Promise.resolve({ _id: "missing-id" }) })
+    ).rejects.toThrow();
+    expect(mockNotFound).toHaveBeenCalled();
   });
 
-  it("🔒 getCar swallows DB errors via logError → 'Vehicle Not Found' rendered", async () => {
+  it("🔒 getCar swallows DB errors via logError → notFound()", async () => {
     mockFindOne.mockRejectedValueOnce(new Error("db down"));
     const Page = (await import("@/app/(main)/BrowseFleet/[_id]/page"))
       .default;
-    const ui = await Page({
-      params: Promise.resolve({ _id: carDoc._id }),
-    });
-    render(ui);
-    expect(screen.getByText(/vehicle not found/i)).toBeInTheDocument();
+    await expect(
+      Page({ params: Promise.resolve({ _id: carDoc._id }) })
+    ).rejects.toThrow();
+    expect(mockNotFound).toHaveBeenCalled();
     expect(mockLogError).toHaveBeenCalledWith(
       expect.any(Error),
       expect.objectContaining({ context: "BrowseFleet/[_id]" })

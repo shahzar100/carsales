@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { ipAddress } from "@vercel/functions";
 import { z } from "zod";
 import {
@@ -52,6 +53,23 @@ const carPartUpdateSchema = z
   .partial()
   .strict();
 
+// Create schema: same fields, but required ones are required and the rest
+// default. `.strict()` blocks mass-assignment / operator keys exactly like the
+// PUT path, so a create can't write malformed inventory or bypass the enum.
+const carPartCreateSchema = z
+  .object({
+    name: z.string().min(1).max(200),
+    brand: z.string().min(1).max(100),
+    category: z.string().min(1).max(100),
+    price: z.coerce.number().nonnegative().max(10_000_000),
+    image: z.string().max(2000).optional().default(""),
+    condition: z.enum(["New", "Used", "Refurbished"]).optional().default("New"),
+    compatibility: z.string().max(500).optional().default(""),
+    description: z.string().max(5000).optional().default(""),
+    inStock: z.boolean().optional().default(true),
+  })
+  .strict();
+
 export async function GET(_request: NextRequest) {
   try {
     const authenticated = await isAuthenticated();
@@ -92,29 +110,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const body = await request.json();
+    const rawBody = await request.json();
 
-    // Validate required fields
-    if (!body.name || !body.brand || !body.category || body.price == null) {
-      return badRequest("Name, brand, category, and price are required");
+    // Reject Mongo-operator / prototype-pollution keys, then strict-parse
+    // (mirrors the PUT path) so only known car-part fields are written.
+    if (
+      rawBody &&
+      typeof rawBody === "object" &&
+      Object.keys(rawBody).some(
+        (k) => k.startsWith("$") || k.includes(".") || k === "__proto__"
+      )
+    ) {
+      return badRequest("Request contains invalid field names");
     }
 
-    if (body.category && /[${}]/.test(String(body.category))) {
-      return badRequest("Invalid category value");
+    const parsed = carPartCreateSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return badRequest(
+        parsed.error.issues[0]?.message ?? "Invalid car part data"
+      );
     }
 
     const carPartsCollection = await getCarPartsCollection();
 
     const newPart: Omit<CarPartInterface, "_id"> = {
-      name: body.name,
-      brand: body.brand,
-      category: body.category,
-      price: body.price,
-      image: body.image || "",
-      condition: body.condition || "New",
-      compatibility: body.compatibility || "",
-      description: body.description || "",
-      inStock: body.inStock ?? true,
+      ...parsed.data,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -131,6 +151,8 @@ export async function POST(request: NextRequest) {
       targetId: result.insertedId.toString(),
       metadata: { name: newPart.name, brand: newPart.brand },
     });
+
+    revalidatePath("/CarParts");
 
     return ok(
       serializeDocument({
@@ -212,6 +234,8 @@ export async function PUT(request: NextRequest) {
       metadata: { fields: Object.keys(parsed.data) },
     });
 
+    revalidatePath("/CarParts");
+
     return ok(serializeDocument({ _id, ...updatedPart }));
   } catch (error) {
     logError(error, { route: "PUT /api/admin/carparts" });
@@ -283,6 +307,8 @@ export async function DELETE(request: NextRequest) {
         ? { name: (partDoc as { name?: string }).name }
         : undefined,
     });
+
+    revalidatePath("/CarParts");
 
     return NextResponse.json({
       success: true,

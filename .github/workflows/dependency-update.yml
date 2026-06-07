@@ -1,9 +1,11 @@
-name: Monthly Dependency Update
+name: Dependency Update
 
 on:
   schedule:
-    # Runs at 09:00 UTC on the 1st of every month
-    - cron: "0 9 1 * *"
+    # Runs at 09:00 UTC on the 1st of every second month (Jan, Mar, May, …).
+    # Monthly churn wasn't worth the Actions minutes; every two months keeps
+    # deps fresh enough without the recurring cost.
+    - cron: "0 9 1 */2 *"
   workflow_dispatch: # Allow manual trigger for testing
 
 permissions:
@@ -68,10 +70,10 @@ jobs:
           MONTH_YEAR=$(date +'%B %Y')
 
           gh issue create \
-            --title "chore(deps): monthly dependency update — ${MONTH_YEAR}" \
-            --body "## 📦 Monthly Dependency Update — ${MONTH_YEAR}
+            --title "chore(deps): dependency update — ${MONTH_YEAR}" \
+            --body "## 📦 Dependency Update — ${MONTH_YEAR}
 
-          This task was created automatically by the **Monthly Dependency Update** workflow on \`$(date -u +'%Y-%m-%d %H:%M UTC')\`.
+          This task was created automatically by the **Dependency Update** workflow on \`$(date -u +'%Y-%m-%d %H:%M UTC')\`.
 
           ### Outdated Packages
 

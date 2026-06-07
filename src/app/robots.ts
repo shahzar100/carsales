@@ -7,7 +7,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        // /Booking/lookup is a public booking tracker — allow it explicitly
+        // (longer, more-specific match wins over the /Booking/ disallow), while
+        // still hiding the per-user dynamic /Booking/[id] and /confirmation.
+        allow: ["/", "/Booking/lookup"],
         disallow: ["/admin/", "/api/", "/Booking/"],
       },
     ],

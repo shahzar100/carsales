@@ -86,9 +86,14 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const allImages = [car.image || FALLBACK_IMAGE, ...(car.images || [])].filter(
-    Boolean
-  );
+  // Dedupe: imported/seeded cars often repeat `image` as `images[0]`, which
+  // would produce duplicate React keys (the gallery keys by URL) — causing a
+  // mis-rendered thumbnail and a wrong active-ring. Set preserves first order.
+  const allImages = [
+    ...new Set(
+      [car.image || FALLBACK_IMAGE, ...(car.images || [])].filter(Boolean)
+    ),
+  ];
   const totalImages = allImages.length;
 
   const handleBookingClick = () => {

@@ -65,6 +65,12 @@ Removed:
 ### Accident Claims landing page
 **Why:** Out of scope. Insurance claims management was a marketing-only page with no transactional flow.
 
+> **UPDATE (reinstated):** Accident Claims has since been brought back. The
+> page (`src/app/(main)/AccidentClaims/page.tsx`) is live, linked in the header
+> (`src/components/Header/constants.ts`) and footer, referenced in the home-page
+> JSON-LD, and now included in `src/app/sitemap.ts`. The "Removed" list below is
+> historical only — treat Accident Claims as a current, supported page.
+
 Removed:
 - `src/app/(main)/AccidentClaims/` (entire folder, 17KB page deleted)
 - "Accident Claims" nav entry in `src/components/Header.tsx`

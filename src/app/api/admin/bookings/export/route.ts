@@ -62,7 +62,12 @@ const COLUMNS = [
  */
 function csvCell(value: unknown): string {
   if (value === null || value === undefined) return '""';
-  const raw = String(value).replace(/\r?\n/g, " ").replace(/"/g, '""');
+  let raw = String(value).replace(/\r?\n/g, " ").replace(/"/g, '""');
+  // Neutralise spreadsheet formula injection: a leading = + - @ (or control
+  // char) makes Excel/Sheets execute the cell. Customer-controlled fields
+  // (name, serviceType, serviceDetails) flow into these exports, so prefix
+  // with ' to force text. The cell is RFC-4180 quoted below.
+  if (/^[=+\-@\t\r]/.test(raw)) raw = `'${raw}`;
   return `"${raw}"`;
 }
 
