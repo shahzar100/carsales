@@ -21,6 +21,16 @@ jest.mock("@/lib/utils/auth", () => ({
   // or POST/PUT/DELETE throw `(0 , _auth.getSession) is not a function`.
   getSession: jest.fn(async () => ({ username: "test-admin" })),
 }));
+
+// next/cache's revalidatePath() requires a static-generation store that
+// only exists during a real Next request — in jest it throws
+// "Invariant: static generation store missing", which the mutating routes
+// then surface as a 500. The DB writes / audit log still happen normally,
+// so neutralising the cache hint is safe. (Mirrors cars.test.ts.)
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
+}));
 const {
   isAuthenticated: mockIsAuthenticated,
   hasMinimumRole: mockHasMinimumRole,

@@ -195,6 +195,14 @@ describe("Authentication Utilities", () => {
         process.env.AUTH_SECRET =
           process.env.AUTH_SECRET ||
           "a_test_auth_secret_that_is_at_least_32_chars_long!!";
+        // env.ts validateServerEnv() runs at module load and, in production,
+        // hard-requires SMTP_* and CRON_SECRET (added after this test was
+        // first written). Without them the require() below throws before
+        // sessionOptions is exported, so satisfy every prod guard here.
+        process.env.SMTP_HOST = "smtp.example.com";
+        process.env.SMTP_USER = "smtp-user";
+        process.env.SMTP_PASS = "smtp-pass";
+        process.env.CRON_SECRET = "c".repeat(32);
         (process.env as Record<string, string | undefined>).NODE_ENV =
           "production";
 
@@ -406,11 +414,18 @@ describe("Authentication Utilities", () => {
       const originalSession = process.env.SESSION_SECRET;
       const originalAuth = process.env.AUTH_SECRET;
       const originalEmailFrom = process.env.EMAIL_FROM;
+      const originalSmtpHost = process.env.SMTP_HOST;
+      const originalSmtpUser = process.env.SMTP_USER;
+      const originalSmtpPass = process.env.SMTP_PASS;
 
-      // Satisfy the earlier production guards so we reach the CRON one.
+      // Satisfy the earlier production guards (incl. the SMTP_* trio added
+      // after this test was written) so validation reaches the CRON one.
       process.env.SESSION_SECRET = "a".repeat(32);
       process.env.AUTH_SECRET = "b".repeat(32);
       process.env.EMAIL_FROM = "real@example.com";
+      process.env.SMTP_HOST = "smtp.example.com";
+      process.env.SMTP_USER = "smtp-user";
+      process.env.SMTP_PASS = "smtp-pass";
       delete process.env.CRON_SECRET;
       Object.defineProperty(process.env, "NODE_ENV", {
         value: "production",
@@ -436,6 +451,12 @@ describe("Authentication Utilities", () => {
       else delete process.env.AUTH_SECRET;
       if (originalEmailFrom !== undefined) process.env.EMAIL_FROM = originalEmailFrom;
       else delete process.env.EMAIL_FROM;
+      if (originalSmtpHost !== undefined) process.env.SMTP_HOST = originalSmtpHost;
+      else delete process.env.SMTP_HOST;
+      if (originalSmtpUser !== undefined) process.env.SMTP_USER = originalSmtpUser;
+      else delete process.env.SMTP_USER;
+      if (originalSmtpPass !== undefined) process.env.SMTP_PASS = originalSmtpPass;
+      else delete process.env.SMTP_PASS;
     });
 
     it("should throw when SESSION_SECRET is missing in production", () => {

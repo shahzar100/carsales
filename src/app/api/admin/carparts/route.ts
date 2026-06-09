@@ -38,11 +38,22 @@ const carPartsWriteLimiter = createRateLimiter("admin-carparts-write", {
 // ANY key not listed here — including `$`-prefixed operator keys
 // (`$set`, `$where`, …) and dotted paths. Every field is optional so a
 // PUT can patch any subset.
+// Category is stored as a plain string and echoed into the public CarParts
+// filter facet. A `$`, `{` or `}` in the VALUE is harmless to MongoDB
+// (operators are only honoured in key position), but it signals an injection
+// probe and pollutes the category list, so reject it. Restores a check that
+// was dropped when the manual validation here was replaced with Zod (1230c79).
+const categoryField = z
+  .string()
+  .min(1)
+  .max(100)
+  .refine((v) => !/[${}]/.test(v), { message: "Invalid category value" });
+
 const carPartUpdateSchema = z
   .object({
     name: z.string().min(1).max(200),
     brand: z.string().min(1).max(100),
-    category: z.string().min(1).max(100),
+    category: categoryField,
     price: z.coerce.number().nonnegative().max(10_000_000),
     image: z.string().max(2000),
     condition: z.enum(["New", "Used", "Refurbished"]),
@@ -60,7 +71,7 @@ const carPartCreateSchema = z
   .object({
     name: z.string().min(1).max(200),
     brand: z.string().min(1).max(100),
-    category: z.string().min(1).max(100),
+    category: categoryField,
     price: z.coerce.number().nonnegative().max(10_000_000),
     image: z.string().max(2000).optional().default(""),
     condition: z.enum(["New", "Used", "Refurbished"]).optional().default("New"),
