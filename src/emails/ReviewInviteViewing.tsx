@@ -261,7 +261,7 @@ export default ReviewInviteViewing;
   },
   shopInfo: {
     businessName: "MMC Leeds",
-    phone: "0113 468 9292",
+    phone: "0113 548 4182",
     email: "info@mmcleeds.co.uk",
     address: "Roseville Road, Leeds, LS8 5DT",
   },

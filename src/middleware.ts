@@ -51,6 +51,12 @@ function buildCsp(opts: CspOptions): string {
   const cdnHost = process.env.CLOUDFRONT_DOMAIN
     ? ` https://${process.env.CLOUDFRONT_DOMAIN}`
     : "";
+  // S3 image/upload hosts are region-specific. Read AWS_REGION at call time
+  // (like the rest of this builder) so a region change flows through both
+  // tiers of the CSP and stays in sync with next.config.ts:remotePatterns,
+  // which reads the same env. Falls back to eu-west-2 so behaviour is
+  // unchanged when AWS_REGION is unset.
+  const awsRegion = process.env.AWS_REGION || "eu-west-2";
   // 'unsafe-eval' is only tolerated in dev (React refresh / source maps).
   const devEval = isProduction ? "" : " 'unsafe-eval'";
   // script-src is the only directive that differs by tier.
@@ -100,16 +106,16 @@ function buildCsp(opts: CspOptions): string {
     styleSrc,
     // img-src mirrors connect-src + next.config remotePatterns so stored S3 /
     // CloudFront image URLs render even when not proxied through next/image.
-    `img-src 'self' https://res.cloudinary.com https://*.cloudfront.net https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com${cdnHost} data: blob:`,
+    `img-src 'self' https://res.cloudinary.com https://*.cloudfront.net https://*.s3.${awsRegion}.amazonaws.com https://s3.${awsRegion}.amazonaws.com${cdnHost} data: blob:`,
     "font-src 'self' data:",
     // connect-src governs the admin image uploader's direct browser→S3 PUT
     // (ImageUploader.tsx). CSP host grammar allows a wildcard ONLY as the
     // left-most label, so the old `*.s3.*.amazonaws.com` (two wildcards) was
     // invalid and silently dropped by the browser — which blocked the upload
-    // PUT. Region is fixed (AWS_REGION=eu-west-2); pin it and cover both
+    // PUT. Pin the region from AWS_REGION (default eu-west-2) and cover both
     // virtual-hosted (`<bucket>.s3.<region>`) and path-style (`s3.<region>`)
     // URLs, mirroring the two patterns in next.config.ts:remotePatterns.
-    `connect-src 'self' https://*.s3.eu-west-2.amazonaws.com https://s3.eu-west-2.amazonaws.com https://challenges.cloudflare.com${cdnHost}`,
+    `connect-src 'self' https://*.s3.${awsRegion}.amazonaws.com https://s3.${awsRegion}.amazonaws.com https://challenges.cloudflare.com${cdnHost}`,
     "frame-src https://challenges.cloudflare.com",
     // frame-ancestors is meaningless in a report-only policy (browsers ignore
     // it and log a warning), so only emit it in the enforced CSP.

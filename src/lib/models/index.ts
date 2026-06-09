@@ -483,6 +483,10 @@ export async function getAuditLogsCollection(): Promise<
       { key: { createdAt: -1 } },
       { key: { actor: 1, createdAt: -1 } },
       { key: { targetType: 1, targetId: 1 } },
+      // The audit page filters by `action`; without this the filter scans
+      // the whole log. Compound with createdAt so the filtered view stays
+      // tail-ordered like the unfiltered one.
+      { key: { action: 1, createdAt: -1 } },
     ]);
   }
   return auditLogsCollection;

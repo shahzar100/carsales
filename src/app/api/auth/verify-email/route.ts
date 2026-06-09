@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ipAddress } from "@vercel/functions";
 
 import { auth } from "@/auth";
 import { getUsersCollection } from "@/lib/models";
@@ -64,14 +63,20 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const session = await auth();
     const email = session?.user?.email;
     if (!email) return unauthorized("You must be signed in");
 
-    const ip = ipAddress(request) || "unknown";
-    const { allowed, resetIn } = await resendLimiter.check(ip);
+    // Key by the authenticated account, not the IP — the resend is a
+    // per-account action, and an IP key would let a NAT/CGNAT cohort
+    // throttle each other while a single attacker rotating accounts
+    // behind one IP stays under the cap. Mirrors the magic-link limiter
+    // in src/auth.ts, which is keyed by recipient.
+    const { allowed, resetIn } = await resendLimiter.check(
+      email.toLowerCase()
+    );
     if (!allowed) {
       return tooManyRequests("Too many requests. Please try again later.", {
         headers: { "Retry-After": String(Math.ceil(resetIn / 1000)) },

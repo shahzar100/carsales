@@ -20,15 +20,17 @@ import React from "react";
 //
 // The reference regex anchors to the BK- shape the booking generator
 // produces (`src/lib/utils/booking.ts#generateBookingReference`). The
-// `type` enum mirrors the canonical customer-facing booking taxonomy
-// used by `src/app/api/account/bookings/route.ts` plus the two enquiry
-// kinds that have their own collections. Only `service` + `viewing`
-// have cancel semantics today; the other types fall through to a 400
-// from the type switch below, but listing them here keeps the schema
-// honest if/when those routes grow a cancel path.
+// `type` enum is scoped to the only two kinds this endpoint can cancel:
+// service + viewing bookings carry a BK- reference and live in the two
+// appointment collections. Reservations (RS-), quotes (QT-) and
+// part-exchange (PX-) enquiries have no cancel-by-reference path — they
+// aren't customer-cancellable today, matching the lookup route's
+// BK-/QT-only `validateBookingReference`. Accepting them in the enum
+// only produced a misleading "Invalid booking type" after a request
+// that could never have a matching BK- reference anyway.
 const cancelSchema = z.object({
   bookingReference: z.string().regex(/^BK-[A-Z0-9]{6}$/i),
-  type: z.enum(["service", "viewing", "reservation", "quote", "part-exchange"]),
+  type: z.enum(["service", "viewing"]),
   reason: z.string().min(1).max(500),
 });
 
@@ -81,10 +83,9 @@ export async function POST(request: NextRequest) {
       collection = await getCarViewingBookingsCollection();
       booking = await collection.findOne({ bookingReference });
     } else {
-      // reservation / quote / part-exchange aren't wired through this
-      // route yet — the zod enum still accepts them so the validation
-      // error tells the client "wrong type for this endpoint" instead
-      // of swallowing the request as a generic 400.
+      // Unreachable — the zod enum only admits service/viewing. Kept so
+      // TypeScript can prove `collection` is assigned and as a defensive
+      // 400 if the enum ever widens without a matching branch.
       return NextResponse.json(
         { error: "Invalid booking type" },
         { status: 400 }

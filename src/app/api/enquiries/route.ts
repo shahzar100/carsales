@@ -97,6 +97,15 @@ export async function POST(request: NextRequest) {
 
     await enquiriesCollection.insertOne(newEnquiry as Enquiry);
 
+    // NOTE: unlike /api/bookings/quote and the booking routes, this route
+    // intentionally sends NO customer confirmation email yet. There is no
+    // `EnquiryConfirmation` React Email template, and this endpoint has no
+    // frontend caller today (the `/Enquiry` page redirects to /contact in
+    // next.config.ts). Adding a confirmation here is pending (a) a wired-up
+    // enquiry form and (b) a dedicated email template — mirror the
+    // `waitUntil(sendEmail(...))` block in bookings/quote/route.ts when both
+    // exist. Left as-is to avoid shipping a half-baked template.
+
     return ok({
       enquiryReference,
       message:

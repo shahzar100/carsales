@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
+// S3 image hosts are region-specific. Pin the region from AWS_REGION so a
+// region change flows through both the Next image allowlist below and the
+// CSP img-src/connect-src in src/middleware.ts (which reads the same env)
+// instead of silently breaking <Image> and the browser→S3 upload PUT.
+const AWS_REGION = process.env.AWS_REGION || "eu-west-2";
+
 const securityHeaders = [
   {
     key: "X-DNS-Prefetch-Control",
@@ -99,18 +105,19 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.cloudfront.net",
       },
-      // Explicit S3 fallback for environments without CloudFront.
-      // The CSP `connect-src` already permits these hosts; this
-      // aligns the two policies.
+      // Explicit S3 fallback for environments without CloudFront. Region
+      // is pinned to AWS_REGION (mirroring the CSP in src/middleware.ts)
+      // so the allowlist matches the bucket actually in use rather than
+      // every region. Virtual-hosted style: `<bucket>.s3.<region>...`.
       {
         protocol: "https",
-        hostname: "*.s3.*.amazonaws.com",
+        hostname: `*.s3.${AWS_REGION}.amazonaws.com`,
         pathname: "/**",
       },
-      // Path-style S3 URLs (eu-west-2, etc.).
+      // Path-style S3 URLs: `s3.<region>.amazonaws.com/<bucket>/...`.
       {
         protocol: "https",
-        hostname: "s3.*.amazonaws.com",
+        hostname: `s3.${AWS_REGION}.amazonaws.com`,
         pathname: "/**",
       },
     ],

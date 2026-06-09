@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { ipAddress } from "@vercel/functions";
 import { serializeDocument } from "@/lib/models";
@@ -59,6 +60,23 @@ const shopWriteLimiter = createRateLimiter("admin-shop-write", {
   maxRequests: 20,
   windowMs: 60 * 1000,
 });
+
+// `hours` was previously cast straight to `ShopInfo["hours"]` with only a
+// `typeof === "object"` guard, so a client could persist arbitrary keys or
+// non-string values into the businessInfo doc (and onto every public page
+// that renders opening times). Pin it to the seven known day keys with
+// bounded string values. `.strict()` rejects stray keys outright.
+const hoursSchema = z
+  .object({
+    monday: z.string().max(100),
+    tuesday: z.string().max(100),
+    wednesday: z.string().max(100),
+    thursday: z.string().max(100),
+    friday: z.string().max(100),
+    saturday: z.string().max(100),
+    sunday: z.string().max(100),
+  })
+  .strict();
 
 export async function GET() {
   try {
@@ -198,8 +216,15 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    if (!body.hours || typeof body.hours !== "object") {
-      validationErrors.push("Business hours are required");
+    const hoursResult = hoursSchema.safeParse(body.hours);
+    if (!hoursResult.success) {
+      const issue = hoursResult.error.issues[0];
+      const path = issue?.path?.join(".");
+      validationErrors.push(
+        path
+          ? `Business hours: invalid "${path}" — ${issue?.message ?? "must be a string"}`
+          : "Business hours must include all seven days as text values"
+      );
     }
 
     if (validationErrors.length > 0) {
@@ -223,7 +248,11 @@ export async function PUT(request: NextRequest) {
       email: body.email as string,
       bookingsEmail: (body.bookingsEmail as string) || "",
       googleMapsUrl: (body.googleMapsUrl as string) || "",
-      hours: body.hours as ShopInfo["hours"],
+      // Validated above by hoursSchema; `hoursResult.success` is implied
+      // because any failure pushed onto validationErrors and returned 400.
+      hours: hoursResult.success
+        ? hoursResult.data
+        : (body.hours as ShopInfo["hours"]),
       description: (body.description as string) || "",
       socialMedia: (body.socialMedia as ShopInfo["socialMedia"]) || {},
       heroStats: body.heroStats as ShopInfo["heroStats"],
