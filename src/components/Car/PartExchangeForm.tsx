@@ -33,7 +33,7 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
 
-  const [form, setForm] = useState({
+  const emptyForm = {
     name: "",
     email: "",
     phone: "",
@@ -45,7 +45,9 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
     condition: "Good" as "Excellent" | "Good" | "Fair" | "Poor",
     serviceHistory: "" as "" | "Full" | "Partial" | "None",
     notes: "",
-  });
+  };
+
+  const [form, setForm] = useState(emptyForm);
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -62,6 +64,22 @@ export default function PartExchangeForm({ carId, carLabel }: Props) {
       ...(account.email ? { email: account.email } : {}),
     }));
   }, [account.name, account.email]);
+
+  // Reset the form (and any stale error) each time it's re-expanded, so a
+  // previously abandoned draft doesn't reappear. Account contact details are
+  // re-applied since they're prefilled, not user-entered.
+  useEffect(() => {
+    if (!expanded) return;
+    setError(null);
+    setForm({
+      ...emptyForm,
+      ...(account.name ? { name: account.name } : {}),
+      ...(account.email ? { email: account.email } : {}),
+    });
+    // emptyForm is a fresh literal each render; intentionally excluded so the
+    // reset fires on expand and on account-detail changes only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded, account.name, account.email]);
 
   if (success) {
     return (

@@ -68,6 +68,7 @@ export default function Step5Confirm({
               value={data.name}
               onChange={(v) => update("name", v)}
               placeholder="e.g. John Smith"
+              autoComplete="name"
               required
             />
             <div>

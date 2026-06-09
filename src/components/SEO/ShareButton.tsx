@@ -169,6 +169,16 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Auto-clear the "copied" feedback after a short delay. Driven from a
+  // single effect (rather than a setTimeout at each copy call site) so the
+  // timer is always cleaned up on unmount / re-copy — no setState-after-
+  // unmount when the modal closes before the delay elapses.
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2500);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
   // Resolve the absolute URL on the client only. Reading window.location
   // during render produced different HTML on server vs. client and
   // triggered hydration warnings on every car detail page.
@@ -192,7 +202,6 @@ const ShareButton: React.FC<ShareButtonProps> = ({
         .writeText(`${text}\n${resolvedUrl}`)
         .then(() => {
           setCopied(true);
-          setTimeout(() => setCopied(false), 2500);
         })
         .catch(() => {});
       window.open(
@@ -211,7 +220,6 @@ const ShareButton: React.FC<ShareButtonProps> = ({
     try {
       await navigator.clipboard.writeText(resolvedUrl);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
       const textarea = document.createElement("textarea");
       textarea.value = resolvedUrl;
@@ -220,7 +228,6 @@ const ShareButton: React.FC<ShareButtonProps> = ({
       document.execCommand("copy");
       document.body.removeChild(textarea);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     }
   };
 

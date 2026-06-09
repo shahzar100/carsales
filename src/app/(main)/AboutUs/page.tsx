@@ -22,6 +22,7 @@ import {
 import { BlackRedSection, ProcessFlow } from "@/components/Services/Common";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { getCarsCollection } from "@/lib/models";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -108,8 +109,42 @@ export default async function AboutUs() {
   const fullAddress =
     `${address}, ${city}${businessInfo.state ? `, ${businessInfo.state}` : ""} ${businessInfo.zipCode}`.trim();
 
+  // Organization / LocalBusiness structured data, built from the same
+  // business info the page already renders.
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AutomotiveBusiness",
+    name,
+    description:
+      description ||
+      "Your trusted partner for quality vehicles and professional automotive services.",
+    telephone: phone,
+    email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: address,
+      addressLocality: city,
+      addressRegion: businessInfo.state,
+      postalCode: businessInfo.zipCode,
+      addressCountry: "GB",
+    },
+    ...(googleMapsUrl ? { hasMap: googleMapsUrl } : {}),
+    ...(social
+      ? {
+          sameAs: [
+            social.facebook,
+            social.twitter,
+            social.instagram,
+            social.tiktok,
+          ].filter(Boolean),
+        }
+      : {}),
+  };
+
   return (
     <div className="min-h-screen">
+      <JsonLd data={orgJsonLd} />
+
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden bg-black text-white">
         <div className="pointer-events-none absolute -top-32 right-0 h-125 w-125 rounded-full bg-red-600/5 blur-3xl" />

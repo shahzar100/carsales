@@ -243,6 +243,7 @@ export default function LoginForm() {
 
       <button
         type="button"
+        aria-pressed={mode === "magic"}
         onClick={() => {
           setMode(mode === "password" ? "magic" : "password");
           setError("");

@@ -94,9 +94,16 @@ const Modal = ({
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
       document.removeEventListener("keydown", handleFocusTrap);
-      // Restore focus on close. Guard with optional chaining: the previous
-      // element may have been removed from the DOM by the time we close.
-      previousActiveElement.current?.focus?.();
+      // Restore focus on close. The previously-focused element may have been
+      // removed from the DOM while the modal was open (e.g. the trigger lived
+      // in a list that re-rendered). Calling `.focus()` on a detached node is
+      // a silent no-op that strands focus, so fall back to document.body.
+      const previous = previousActiveElement.current;
+      if (previous && previous.isConnected) {
+        previous.focus?.();
+      } else {
+        document.body.focus?.();
+      }
     };
   }, [handleEscapeKey, handleFocusTrap]);
 
