@@ -96,19 +96,35 @@ describe("middleware", () => {
     expect(res.status).toBe(403);
   });
 
-  describe("CSP nonce (page routes)", () => {
-    it("sets a Content-Security-Policy header with a nonce on page requests", () => {
-      const req = createRequest("GET", "/");
+  describe("CSP — two-tier (admin nonce vs public static)", () => {
+    it("uses a nonce + strict-dynamic on /admin/* (dynamically rendered)", () => {
+      const req = createRequest("GET", "/admin/dashboard");
       const res = middleware(req);
       const csp = res.headers.get("Content-Security-Policy");
       expect(csp).toBeTruthy();
       expect(csp).toMatch(/script-src [^;]*'nonce-[A-Za-z0-9+/=]+'/);
       expect(csp).toContain("'strict-dynamic'");
-      // We dropped 'unsafe-inline' from script-src
+      // A nonce disables 'unsafe-inline', so it must be absent on the admin tier.
       const scriptDirective = csp!
         .split(";")
         .find((d: string) => d.trim().startsWith("script-src"));
       expect(scriptDirective).not.toContain("'unsafe-inline'");
+    });
+
+    it("uses 'self' 'unsafe-inline' (no nonce) on public pages so static HTML works", () => {
+      const req = createRequest("GET", "/");
+      const res = middleware(req);
+      const csp = res.headers.get("Content-Security-Policy");
+      expect(csp).toBeTruthy();
+      const scriptDirective = csp!
+        .split(";")
+        .find((d: string) => d.trim().startsWith("script-src"))!;
+      expect(scriptDirective).toContain("'self'");
+      expect(scriptDirective).toContain("'unsafe-inline'");
+      // No per-request nonce on static pages — it could never match the
+      // build-time HTML, and its presence would void 'unsafe-inline'.
+      expect(scriptDirective).not.toContain("nonce-");
+      expect(scriptDirective).not.toContain("'strict-dynamic'");
     });
 
     it("does not set CSP on /api routes (they don't render HTML)", () => {
@@ -117,9 +133,9 @@ describe("middleware", () => {
       expect(res.headers.get("Content-Security-Policy")).toBeNull();
     });
 
-    it("generates a fresh nonce per request", () => {
-      const a = middleware(createRequest("GET", "/"));
-      const b = middleware(createRequest("GET", "/"));
+    it("generates a fresh nonce per request on the admin tier", () => {
+      const a = middleware(createRequest("GET", "/admin/dashboard"));
+      const b = middleware(createRequest("GET", "/admin/dashboard"));
       const noncePattern = /'nonce-([A-Za-z0-9+/=]+)'/;
       const nonceA = a.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
       const nonceB = b.headers.get("Content-Security-Policy")!.match(noncePattern)?.[1];
