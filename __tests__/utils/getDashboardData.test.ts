@@ -31,13 +31,20 @@ function makeCar(overrides: Record<string, unknown> = {}) {
 let refCounter = 0;
 function nextSlot() {
   refCounter += 1;
-  // Spread bookings across the same weekday (Thursday 2026-05-14) but
-  // different times so the (date, time) unique index is satisfied.
+  // Globally-unique time per booking so the (date, time) unique index is
+  // satisfied even when several fixtures share an appointmentDate.
   const hh = String(7 + refCounter).padStart(2, "0");
   return {
     bookingReference: `BK-${refCounter}`,
     appointmentTime: `${hh}:00`,
   };
+}
+
+/** A "YYYY-MM-DD" date `offsetDays` away from today (negative = past). */
+function relDate(offsetDays: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().split("T")[0];
 }
 
 function makeService(overrides: Record<string, unknown> = {}) {
@@ -100,18 +107,40 @@ describe("getDashboardData (Mongo aggregation)", () => {
       makeCar({ status: "sold", price: 60000, fuel: "Petrol" }),
     ] as never);
 
+    // Dates are split relative to "today": future + actionable (pending/
+    // confirmed) → upcoming; past → recent. Status mix is unchanged so the
+    // KPI/chart assertions below still hold regardless of date. Smallest
+    // future offset is +3 so a UTC-vs-Europe/London day-boundary slip can't
+    // pull a fixture into the "1d" look-ahead window.
     await service.insertMany([
-      makeService({ status: "pending", serviceType: "Detailing — Full" }),
-      makeService({ status: "confirmed", serviceType: "Detailing — Mini" }),
-      makeService({ status: "completed", serviceType: "Tints" }),
-      makeService({ status: "cancelled", serviceType: "Tints" }),
+      makeService({
+        status: "pending",
+        serviceType: "Detailing — Full",
+        appointmentDate: relDate(3),
+      }),
+      makeService({
+        status: "confirmed",
+        serviceType: "Detailing — Mini",
+        appointmentDate: relDate(5),
+      }),
+      makeService({
+        status: "completed",
+        serviceType: "Tints",
+        appointmentDate: relDate(-10),
+      }),
+      makeService({
+        status: "cancelled",
+        serviceType: "Tints",
+        appointmentDate: relDate(-12),
+      }),
     ] as never);
 
     await viewing.insertMany([
-      makeViewing({ status: "pending" }),
-      makeViewing({ status: "confirmed" }),
+      makeViewing({ status: "pending", appointmentDate: relDate(-8) }),
+      makeViewing({ status: "confirmed", appointmentDate: relDate(4) }),
       makeViewing({
         status: "confirmed",
+        appointmentDate: relDate(-15),
         carDetails: {
           year: 2019,
           make: "BMW",
@@ -212,22 +241,47 @@ describe("getDashboardData (Mongo aggregation)", () => {
 
   it("returns recent activity and upcoming appointments", async () => {
     const data = await getDashboardData();
+    const todayStr = new Date().toISOString().split("T")[0];
 
+    // Recent activity = PAST appointments only (4 fixtures dated before today).
     expect(data.recentActivity.length).toBeGreaterThan(0);
     expect(data.recentActivity.length).toBeLessThanOrEqual(10);
-
-    // Every entry is well-formed
     for (const item of data.recentActivity) {
       expect(item.type).toMatch(/^(service|viewing)$/);
       expect(typeof item.reference).toBe("string");
       expect(typeof item.customer).toBe("string");
+      expect(item.date < todayStr).toBe(true);
     }
 
-    // Upcoming only includes appointmentDate >= today
-    const todayStr = new Date().toISOString().split("T")[0];
+    // Upcoming = future appointments that still need actioning (3 fixtures:
+    // pending/confirmed dated today-or-later). Completed/cancelled are excluded.
+    expect(data.upcomingAppointments.length).toBeGreaterThan(0);
     for (const item of data.upcomingAppointments) {
       expect(item.date >= todayStr).toBe(true);
-      expect(item.status).not.toBe("cancelled");
+      expect(["pending", "confirmed"]).toContain(item.status);
     }
+
+    // Needs attention = PAST-dated AND still pending. Only the viewing dated
+    // relDate(-8) qualifies (the past service fixtures are completed/cancelled).
+    expect(data.needsAttention.total).toBe(1);
+    expect(data.needsAttention.items).toHaveLength(1);
+    for (const item of data.needsAttention.items) {
+      expect(item.date < todayStr).toBe(true);
+      expect(item.status).toBe("pending");
+    }
+  });
+
+  it("upcoming window respects the `upcoming` look-ahead param", async () => {
+    // The +3/+5 service and +4 viewing fixtures all fall inside 7 days …
+    const sevenDays = await getDashboardData({ upcoming: "7d" });
+    expect(sevenDays.upcomingAppointments.length).toBe(3);
+
+    // … but a 1-day window catches none of them (nearest is +3 days),
+    // and an explicit far-future date catches them all.
+    const oneDay = await getDashboardData({ upcoming: "1d" });
+    expect(oneDay.upcomingAppointments.length).toBe(0);
+
+    const farOut = await getDashboardData({ upcoming: relDate(30) });
+    expect(farOut.upcomingAppointments.length).toBe(3);
   });
 });

@@ -350,9 +350,17 @@ async function reconcileAdminEmailIndex(
   collection: Collection<AdminUser>
 ): Promise<void> {
   type IndexInfo = { name: string; key: Record<string, number>; unique?: boolean; sparse?: boolean };
-  const existing = (await collection
-    .listIndexes()
-    .toArray()) as unknown as IndexInfo[];
+  let existing: IndexInfo[];
+  try {
+    existing = (await collection
+      .listIndexes()
+      .toArray()) as unknown as IndexInfo[];
+  } catch {
+    // A brand-new database has no `adminUsers` namespace yet, so listIndexes
+    // throws "ns does not exist" instead of returning []. Nothing to
+    // reconcile — createIndex below will materialise the collection.
+    existing = [];
+  }
   const emailIdx = existing.find(
     (i) => i.key && Object.keys(i.key).length === 1 && i.key.email === 1
   );

@@ -8,5 +8,6 @@ export { default as PopularCarsChart } from "./PopularCarsChart";
 export { default as ServiceTypeChart } from "./ServiceTypeChart";
 export { default as RecentActivityTable } from "./RecentActivityTable";
 export { default as UpcomingAppointments } from "./UpcomingAppointments";
+export { default as NeedsAttention } from "./NeedsAttention";
 export { default as DashboardSkeleton } from "./DashboardSkeleton";
 export type * from "./types";

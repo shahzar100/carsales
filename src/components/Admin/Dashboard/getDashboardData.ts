@@ -7,6 +7,7 @@ import {
   serializeDocument,
 } from "@/lib/models";
 import type {
+  ActivityItem,
   DashboardData,
   DayBookingData,
   MonthlyBookingData,
@@ -73,6 +74,51 @@ export function parseDateRange(
   return { from: null, to: null };
 }
 
+/**
+ * Resolve the "Upcoming Appointments" look-ahead window from the `upcoming`
+ * search param. This is deliberately INDEPENDENT of `parseDateRange` (which
+ * drives the past-facing KPI/chart filter at the top of the page): the
+ * upcoming card has its own future-facing selector.
+ *
+ *   "Nd"          → today … today+N days
+ *   "all"         → today … unbounded
+ *   "YYYY-MM-DD"  → today … that date (clamped to ≥ today)
+ *   <unset>       → today … today+30 days (default)
+ *
+ * Returns "YYYY-MM-DD" strings so they compare directly against the string
+ * `appointmentDate` field. `toStr` is null when there is no upper bound.
+ */
+export function parseUpcomingWindow(
+  upcoming: string | null | undefined,
+  todayStr: string
+): { fromStr: string; toStr: string | null } {
+  const addDays = (n: number): string => {
+    const d = new Date(`${todayStr}T00:00:00.000Z`);
+    d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().split("T")[0];
+  };
+
+  if (upcoming === "all") return { fromStr: todayStr, toStr: null };
+
+  const dayMatch = upcoming?.match(/^(\d+)d$/);
+  if (dayMatch) {
+    const days = parseInt(dayMatch[1]);
+    if (!isNaN(days) && days > 0) {
+      return { fromStr: todayStr, toStr: addDays(days) };
+    }
+  }
+
+  if (upcoming && /^\d{4}-\d{2}-\d{2}$/.test(upcoming)) {
+    // Explicit future date — never look backwards from today.
+    return {
+      fromStr: todayStr,
+      toStr: upcoming < todayStr ? todayStr : upcoming,
+    };
+  }
+
+  return { fromStr: todayStr, toStr: addDays(30) };
+}
+
 // ═════════════════════════════════════════════════════════════
 // getDashboardData — Mongo-side aggregation for the admin dashboard.
 //
@@ -85,6 +131,8 @@ interface DateFilter {
   range?: string | null;
   from?: string | null;
   to?: string | null;
+  /** Future look-ahead window for the Upcoming Appointments card. */
+  upcoming?: string | null;
 }
 
 const PRICE_BUCKET_RANGES: PriceRangeData[] = [
@@ -210,6 +258,43 @@ function buildPopularCars(rows: CountRow<string>[]): PopularCarData[] {
     .map((r) => ({ label: r._id, count: r.count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
+}
+
+// Loosely-typed view of a serialized booking doc tagged with its source.
+// Both ServiceAppointment and CarViewingBooking are structurally assignable.
+interface ActivitySource {
+  _type: "service" | "viewing";
+  bookingReference: string;
+  customerInfo?: { name?: string };
+  appointmentDate: string;
+  appointmentTime: string;
+  status: string;
+  serviceType?: string;
+  carDetails?: { year?: number | string; make?: string; model?: string };
+  createdAt?: string | Date;
+}
+
+// Single source of truth for the row shape shared by the recent / upcoming /
+// needs-attention lists, so the three call sites stay identical.
+function toActivityItem(b: ActivitySource): ActivityItem {
+  return {
+    type: b._type,
+    reference: b.bookingReference,
+    customer: b.customerInfo?.name || "Unknown",
+    date: b.appointmentDate,
+    time: b.appointmentTime,
+    status: b.status,
+    detail:
+      b._type === "viewing" && b.carDetails
+        ? `${b.carDetails.year ?? ""} ${b.carDetails.make ?? ""} ${b.carDetails.model ?? ""}`.trim()
+        : b.serviceType || "",
+    createdAt:
+      b.createdAt instanceof Date
+        ? b.createdAt.toISOString()
+        : b.createdAt
+          ? String(b.createdAt)
+          : undefined,
+  };
 }
 
 export async function getDashboardData(
@@ -399,27 +484,45 @@ export async function getDashboardData(
     },
   ];
 
-  // ── Recent activity: top-10 newest from each collection (in range) ──
+  const now = new Date();
+  // "Today" must be the dealership's local calendar date, not UTC — booking
+  // `appointmentDate` strings are local-calendar dates (see format.ts), and a
+  // raw toISOString() boundary is a day off in the late evening during BST.
+  const todayStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/London",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+
+  // ── Recent activity: PAST appointments only (already happened). ──
+  // Independent of the top-of-page createdAt range — this card answers
+  // "what recently took place", not "what was recently booked".
+  const recentPastFilter = {
+    appointmentDate: { $gte: "1900-01-01", $lt: todayStr },
+  };
   const recentService = serviceCol
-    .find(bookingDateMatch ? { createdAt: { $gte: rangeFrom!, $lte: rangeTo! } } : {})
-    .sort({ createdAt: -1 })
+    .find(recentPastFilter)
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
     .limit(10)
     .toArray();
   const recentViewing = viewingCol
-    .find(bookingDateMatch ? { createdAt: { $gte: rangeFrom!, $lte: rangeTo! } } : {})
-    .sort({ createdAt: -1 })
+    .find(recentPastFilter)
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
     .limit(10)
     .toArray();
 
-  // ── Upcoming appointments: ALWAYS unfiltered by createdAt; next 7 days ──
-  const now = new Date();
-  const todayStr = now.toISOString().split("T")[0];
-  const nextWeek = new Date(now);
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  const nextWeekStr = nextWeek.toISOString().split("T")[0];
+  // ── Upcoming appointments: future window that STILL NEEDS ACTIONING. ──
+  // Window end is driven by the card's own future-date selector (the
+  // `upcoming` param), kept separate from the top-of-page date filter.
+  // Only pending/confirmed are surfaced — completed/cancelled need no action.
+  const { fromStr: upcomingFromStr, toStr: upcomingToStr } =
+    parseUpcomingWindow(dateFilter?.upcoming, todayStr);
   const upcomingMongoFilter = {
-    appointmentDate: { $gte: todayStr, $lte: nextWeekStr },
-    status: { $ne: "cancelled" as const },
+    appointmentDate: upcomingToStr
+      ? { $gte: upcomingFromStr, $lte: upcomingToStr }
+      : { $gte: upcomingFromStr },
+    status: { $in: ["pending", "confirmed"] as const },
   };
   const upcomingService = serviceCol
     .find(upcomingMongoFilter)
@@ -432,6 +535,29 @@ export async function getDashboardData(
     .limit(8)
     .toArray();
 
+  // ── Needs attention: PAST-dated appointments still stuck on `pending`. ──
+  // A customer booked, the date came and went, and no admin ever confirmed
+  // or closed it out. Surfaced in its own escalation strip; `total` is an
+  // accurate count even when the displayed slice is capped.
+  const needsAttentionFilter = {
+    appointmentDate: { $gte: "1900-01-01", $lt: todayStr },
+    status: "pending" as const,
+  };
+  const needsAttentionService = serviceCol
+    .find(needsAttentionFilter)
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
+    .limit(12)
+    .toArray();
+  const needsAttentionViewing = viewingCol
+    .find(needsAttentionFilter)
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
+    .limit(12)
+    .toArray();
+  const needsAttentionServiceCount =
+    serviceCol.countDocuments(needsAttentionFilter);
+  const needsAttentionViewingCount =
+    viewingCol.countDocuments(needsAttentionFilter);
+
   const [
     carsAgg,
     serviceAgg,
@@ -440,6 +566,10 @@ export async function getDashboardData(
     recentViewingDocs,
     upcomingServiceDocs,
     upcomingViewingDocs,
+    needsAttentionServiceDocs,
+    needsAttentionViewingDocs,
+    needsAttentionServiceTotal,
+    needsAttentionViewingTotal,
     totalUsers,
   ] = await Promise.all([
     carsCol.aggregate<CarsFacet>(carsPipeline).next(),
@@ -449,6 +579,10 @@ export async function getDashboardData(
     recentViewing,
     upcomingService,
     upcomingViewing,
+    needsAttentionService,
+    needsAttentionViewing,
+    needsAttentionServiceCount,
+    needsAttentionViewingCount,
     usersCol.estimatedDocumentCount(),
   ]);
 
@@ -497,8 +631,8 @@ export async function getDashboardData(
     })();
   const chartEnd = rangeTo ?? now;
 
-  // ── Recent activity merge ──
-  const allRecent = [
+  // ── Recent activity merge (PAST appointments, most recent first) ──
+  const allRecent: ActivitySource[] = [
     ...recentServiceDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "service" as const,
@@ -508,30 +642,20 @@ export async function getDashboardData(
       _type: "viewing" as const,
     })),
   ];
-  allRecent.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  const recentActivity = allRecent.slice(0, 10).map((b) => ({
-    type: b._type,
-    reference: b.bookingReference,
-    customer: b.customerInfo?.name || "Unknown",
-    date: b.appointmentDate,
-    time: b.appointmentTime,
-    status: b.status,
-    detail:
-      b._type === "viewing" && "carDetails" in b && b.carDetails
-        ? `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`
-        : b._type === "service" && "serviceType" in b
-          ? b.serviceType || ""
-          : "",
-    createdAt:
-      b.createdAt instanceof Date
-        ? b.createdAt.toISOString()
-        : String(b.createdAt),
-  }));
+  // Most recent past appointment first; tie-break on when it was created.
+  allRecent.sort((a, b) => {
+    if (a.appointmentDate !== b.appointmentDate) {
+      return a.appointmentDate < b.appointmentDate ? 1 : -1;
+    }
+    return (
+      new Date(b.createdAt ?? 0).getTime() -
+      new Date(a.createdAt ?? 0).getTime()
+    );
+  });
+  const recentActivity = allRecent.slice(0, 10).map(toActivityItem);
 
   // ── Upcoming merge (Mongo already filtered + sorted, just slice 8) ──
-  const allUpcoming = [
+  const allUpcoming: ActivitySource[] = [
     ...upcomingServiceDocs.map((b) => ({
       ...serializeDocument(b),
       _type: "service" as const,
@@ -541,21 +665,34 @@ export async function getDashboardData(
       _type: "viewing" as const,
     })),
   ];
-  allUpcoming.sort((a, b) => a.appointmentDate.localeCompare(b.appointmentDate));
-  const upcomingAppointments = allUpcoming.slice(0, 8).map((b) => ({
-    type: b._type,
-    reference: b.bookingReference,
-    customer: b.customerInfo?.name || "Unknown",
-    date: b.appointmentDate,
-    time: b.appointmentTime,
-    status: b.status,
-    detail:
-      b._type === "viewing" && "carDetails" in b && b.carDetails
-        ? `${b.carDetails.year} ${b.carDetails.make} ${b.carDetails.model}`
-        : b._type === "service" && "serviceType" in b
-          ? b.serviceType || ""
-          : "",
-  }));
+  // Soonest first; tie-break on time so same-day slots read in order.
+  allUpcoming.sort((a, b) =>
+    a.appointmentDate !== b.appointmentDate
+      ? a.appointmentDate.localeCompare(b.appointmentDate)
+      : (a.appointmentTime || "").localeCompare(b.appointmentTime || "")
+  );
+  const upcomingAppointments = allUpcoming.slice(0, 8).map(toActivityItem);
+
+  // ── Needs-attention merge (overdue + unactioned; most recent lapse first) ──
+  const allNeedsAttention: ActivitySource[] = [
+    ...needsAttentionServiceDocs.map((b) => ({
+      ...serializeDocument(b),
+      _type: "service" as const,
+    })),
+    ...needsAttentionViewingDocs.map((b) => ({
+      ...serializeDocument(b),
+      _type: "viewing" as const,
+    })),
+  ];
+  allNeedsAttention.sort((a, b) =>
+    a.appointmentDate !== b.appointmentDate
+      ? b.appointmentDate.localeCompare(a.appointmentDate)
+      : (b.appointmentTime || "").localeCompare(a.appointmentTime || "")
+  );
+  const needsAttention = {
+    items: allNeedsAttention.slice(0, 8).map(toActivityItem),
+    total: needsAttentionServiceTotal + needsAttentionViewingTotal,
+  };
 
   return {
     kpis: {
@@ -564,15 +701,39 @@ export async function getDashboardData(
       soldCars,
       reservedCars,
       totalServiceBookings,
-      pendingServiceBookings: statusCount(serviceResult.statusCounts, "pending"),
-      confirmedServiceBookings: statusCount(serviceResult.statusCounts, "confirmed"),
-      completedServiceBookings: statusCount(serviceResult.statusCounts, "completed"),
-      cancelledServiceBookings: statusCount(serviceResult.statusCounts, "cancelled"),
+      pendingServiceBookings: statusCount(
+        serviceResult.statusCounts,
+        "pending"
+      ),
+      confirmedServiceBookings: statusCount(
+        serviceResult.statusCounts,
+        "confirmed"
+      ),
+      completedServiceBookings: statusCount(
+        serviceResult.statusCounts,
+        "completed"
+      ),
+      cancelledServiceBookings: statusCount(
+        serviceResult.statusCounts,
+        "cancelled"
+      ),
       totalViewingBookings,
-      pendingViewingBookings: statusCount(viewingResult.statusCounts, "pending"),
-      confirmedViewingBookings: statusCount(viewingResult.statusCounts, "confirmed"),
-      completedViewingBookings: statusCount(viewingResult.statusCounts, "completed"),
-      cancelledViewingBookings: statusCount(viewingResult.statusCounts, "cancelled"),
+      pendingViewingBookings: statusCount(
+        viewingResult.statusCounts,
+        "pending"
+      ),
+      confirmedViewingBookings: statusCount(
+        viewingResult.statusCounts,
+        "confirmed"
+      ),
+      completedViewingBookings: statusCount(
+        viewingResult.statusCounts,
+        "completed"
+      ),
+      cancelledViewingBookings: statusCount(
+        viewingResult.statusCounts,
+        "cancelled"
+      ),
       totalInventoryValue: totalFromRow(carsResult.inventoryValue),
       totalSoldValue: totalFromRow(carsResult.soldValue),
       totalUsers,
@@ -594,11 +755,14 @@ export async function getDashboardData(
         { name: "Sold", value: soldCars, colour: "#dc2626" },
         { name: "Reserved", value: reservedCars, colour: "#f59e0b" },
       ],
-      serviceTypeBreakdown: buildServiceTypeSlices(serviceResult.serviceTypeCounts),
+      serviceTypeBreakdown: buildServiceTypeSlices(
+        serviceResult.serviceTypeCounts
+      ),
       priceDistribution: buildPriceDistribution(carsResult.priceBuckets),
       popularCars: buildPopularCars(viewingResult.popularCars),
     },
     recentActivity,
     upcomingAppointments,
+    needsAttention,
   };
 }
