@@ -188,12 +188,14 @@ export interface ShopInfo {
   updatedAt: Date;
 }
 
+export type AdminRole = "staff" | "manager" | "admin";
+
 export interface AdminUser {
   _id?: string | ObjectId;
   username: string;
   email: string;
   passwordHash: string;
-  role: "staff" | "manager" | "admin";
+  role: AdminRole;
   createdAt: Date;
   lastLogin?: Date;
   resetToken?: string;
@@ -202,6 +204,27 @@ export interface AdminUser {
   // 2FA (Day 12.2). Opt-in per user; absent means 2FA is off.
   totpSecret?: string;
   totpEnabled?: boolean;
+}
+
+/**
+ * Safe, client-facing projection of an {@link AdminUser}. The access-
+ * management page sends this across the server/client boundary, so it
+ * deliberately omits every secret — no `passwordHash`, `totpSecret`, or
+ * `resetToken`. Dates are pre-serialised to ISO strings.
+ *
+ * `pendingSetup` is true while the account still carries an unconsumed
+ * setup/reset token: it was created but the user has never set a password,
+ * so it can't be logged into yet.
+ */
+export interface AdminUserSummary {
+  _id: string;
+  username: string;
+  email: string;
+  role: AdminRole;
+  createdAt?: string;
+  lastLogin?: string;
+  twoFactorEnabled: boolean;
+  pendingSetup: boolean;
 }
 
 /**

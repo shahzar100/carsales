@@ -27,6 +27,10 @@ import { logError } from "@/lib/utils/observability";
  */
 interface AuthContextType {
   isLoggedIn: boolean;
+  /** Admin role of the signed-in user, used only to show role-appropriate
+   *  nav tabs. `null` until the session check resolves. Never trusted for
+   *  access control — that lives in the server pages/routes. */
+  role: string | null;
   login: () => void;
   logout: () => Promise<void>;
 }
@@ -51,18 +55,26 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   // logged in. The login page initialises this to false instead, but
   // gets corrected when it actually checks the session below.
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [role, setRole] = useState<string | null>(null);
 
   // One-shot session check on mount so the navigation knows whether to
-  // show "Logout" or hide. We don't block rendering on it.
+  // show "Logout" or hide, and which role-gated tabs to render. We don't
+  // block rendering on it.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const response = await fetch("/api/admin/session");
         const result = await response.json();
-        if (!cancelled) setIsLoggedIn(Boolean(result.isLoggedIn));
+        if (!cancelled) {
+          setIsLoggedIn(Boolean(result.isLoggedIn));
+          setRole(typeof result.role === "string" ? result.role : null);
+        }
       } catch {
-        if (!cancelled) setIsLoggedIn(false);
+        if (!cancelled) {
+          setIsLoggedIn(false);
+          setRole(null);
+        }
       }
     })();
     return () => {
@@ -74,6 +86,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     try {
       await fetch("/api/admin/logout", { method: "POST" });
       setIsLoggedIn(false);
+      setRole(null);
       router.push("/admin/login");
       router.refresh();
     } catch (error) {
@@ -88,8 +101,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }, [router]);
 
   const value = useMemo(
-    () => ({ isLoggedIn, login, logout }),
-    [isLoggedIn, login, logout],
+    () => ({ isLoggedIn, role, login, logout }),
+    [isLoggedIn, role, login, logout],
   );
 
   return (
