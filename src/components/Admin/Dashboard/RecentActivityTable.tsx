@@ -57,7 +57,7 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data }) => (
         <Clock className="h-5 w-5 text-gray-400" />
         <h3 className="heading-3">Recent Activity</h3>
       </div>
-      <p className="mt-1 text-sm text-gray-500">Latest bookings & viewings</p>
+      <p className="mt-1 text-sm text-gray-500">Past appointments & viewings</p>
     </div>
 
     {data.length === 0 ? (

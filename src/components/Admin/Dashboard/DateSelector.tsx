@@ -96,12 +96,16 @@ export default function DateSelector() {
       Object.entries(params).forEach(([k, v]) => {
         if (v) sp.set(k, v);
       });
+      // The Upcoming card owns its own `upcoming` window param — preserve it
+      // so changing the top-of-page range doesn't reset it (and vice versa).
+      const upcoming = searchParams.get("upcoming");
+      if (upcoming) sp.set("upcoming", upcoming);
       const qs = sp.toString();
       router.push(`${pathname}${qs ? `?${qs}` : ""}`);
       setOpen(false);
       setShowCustom(false);
     },
-    [router, pathname]
+    [router, pathname, searchParams]
   );
 
   const handlePreset = (value: string) => {

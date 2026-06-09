@@ -8,6 +8,8 @@ import { Calendar, Wrench, Eye } from "lucide-react";
 
 interface UpcomingAppointmentsProps {
   data: ActivityItem[];
+  /** Optional header control (the future look-ahead selector). */
+  action?: React.ReactNode;
 }
 
 const formatDate = (d: string) => {
@@ -39,8 +41,8 @@ const formatTime = (t: string) => {
 const statusDot = (status: string) => {
   const colours: Record<string, string> = {
     pending: "bg-amber-400",
-    confirmed: "bg-gray-400",
-    completed: "bg-emerald-400",
+    confirmed: "bg-emerald-400",
+    completed: "bg-gray-400",
   };
   return (
     <span
@@ -51,14 +53,18 @@ const statusDot = (status: string) => {
 
 const UpcomingAppointments: React.FC<UpcomingAppointmentsProps> = ({
   data,
+  action,
 }) => (
   <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-    <div className="border-b border-gray-100 px-6 py-4">
-      <div className="flex items-center gap-2">
-        <Calendar className="h-5 w-5 text-gray-400" />
-        <h3 className="heading-3">Upcoming Appointments</h3>
+    <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-6 py-4">
+      <div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-gray-400" />
+          <h3 className="heading-3">Upcoming Appointments</h3>
+        </div>
+        <p className="mt-1 text-sm text-gray-500">Still needs actioning</p>
       </div>
-      <p className="mt-1 text-sm text-gray-500">Next 7 days</p>
+      {action ? <div className="shrink-0">{action}</div> : null}
     </div>
 
     {data.length === 0 ? (
@@ -67,50 +73,59 @@ const UpcomingAppointments: React.FC<UpcomingAppointmentsProps> = ({
       </div>
     ) : (
       <div className="divide-y divide-gray-50">
-        {data.map((item) => (
-          <div
-            key={item.reference}
-            className="flex items-center gap-4 px-6 py-3.5 transition-colors hover:bg-gray-50/50"
-          >
-            {/* Date column */}
-            <div className="w-20 shrink-0 text-center">
-              <p className="text-xs font-semibold text-gray-900">
-                {formatDate(item.date)}
-              </p>
-              <p className="text-[11px] text-gray-400">
-                {formatTime(item.time)}
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div className="h-10 w-px bg-gray-200" />
-
-            {/* Details */}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                {item.type === "service" ? (
-                  <Wrench className="h-3.5 w-3.5 shrink-0 text-red-500" />
-                ) : (
-                  <Eye className="h-3.5 w-3.5 shrink-0 text-gray-500" />
-                )}
-                <p className="truncate text-sm font-medium text-gray-900">
-                  {item.customer}
+        {data.map((item) => {
+          const isPending = item.status === "pending";
+          return (
+            <div
+              key={item.reference}
+              className={`flex items-center gap-4 px-6 py-3.5 transition-colors hover:bg-gray-50/50 ${
+                isPending ? "border-l-2 border-amber-400 bg-amber-50/40" : ""
+              }`}
+            >
+              {/* Date column */}
+              <div className="w-20 shrink-0 text-center">
+                <p className="text-xs font-semibold text-gray-900">
+                  {formatDate(item.date)}
+                </p>
+                <p className="text-[11px] text-gray-400">
+                  {formatTime(item.time)}
                 </p>
               </div>
-              <p className="mt-0.5 truncate text-xs text-gray-500">
-                {item.detail || item.reference}
-              </p>
-            </div>
 
-            {/* Status */}
-            <div className="flex items-center gap-1.5">
-              {statusDot(item.status)}
-              <span className="text-xs text-gray-500 capitalize">
-                {item.status}
-              </span>
+              {/* Divider */}
+              <div className="h-10 w-px bg-gray-200" />
+
+              {/* Details */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  {item.type === "service" ? (
+                    <Wrench className="h-3.5 w-3.5 shrink-0 text-red-500" />
+                  ) : (
+                    <Eye className="h-3.5 w-3.5 shrink-0 text-gray-500" />
+                  )}
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {item.customer}
+                  </p>
+                </div>
+                <p className="mt-0.5 truncate text-xs text-gray-500">
+                  {item.detail || item.reference}
+                </p>
+              </div>
+
+              {/* Status — pending is highlighted as it still needs action */}
+              <div className="flex items-center gap-1.5">
+                {statusDot(item.status)}
+                <span
+                  className={`text-xs capitalize ${
+                    isPending ? "font-semibold text-amber-700" : "text-gray-500"
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     )}
   </div>
