@@ -60,6 +60,10 @@ export default function ShopSettingsPage() {
           "Settings Updated",
           "Business information has been updated successfully"
         );
+        // Re-read from the server so the form reflects what was actually
+        // persisted (server-side normalisation/seeding can differ from the
+        // submitted body) instead of showing the now-stale local state.
+        await fetchShopInfo();
       } else {
         const title =
           response.status === 400

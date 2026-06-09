@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, AlertCircle, CheckCircle } from "lucide-react";
 import Button from "@/components/Helpful/Buttons/Button";
@@ -18,6 +18,15 @@ export default function ResetPasswordForm({ token }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear the post-success redirect timer if the form unmounts first,
+  // so we don't navigate (or touch state) on a dead component.
+  useEffect(() => {
+    return () => {
+      if (redirectTimer.current) clearTimeout(redirectTimer.current);
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +56,10 @@ export default function ResetPasswordForm({ token }: Props) {
 
       if (response.ok && result.success) {
         setSuccess(true);
-        setTimeout(() => router.push("/admin/login"), 2000);
+        redirectTimer.current = setTimeout(
+          () => router.push("/admin/login"),
+          2000
+        );
       } else {
         setError(result.error || "Could not reset password.");
       }

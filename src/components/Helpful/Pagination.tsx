@@ -150,10 +150,11 @@ const Pagination: React.FC<PaginationProps> = ({
               <m.button
                 key={page}
                 onClick={() => handlePageChange(page as number)}
+                aria-current={currentPage === page ? "page" : undefined}
                 whileHover={{ scale: 1.08, y: -1 }}
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: "spring", stiffness: 460, damping: 22 }}
-                className={`relative min-w-10 rounded-lg px-3 py-2 text-sm font-semibold ${
+                className={`relative min-w-8 rounded-lg px-2 py-2 text-sm font-semibold sm:min-w-10 sm:px-3 ${
                   currentPage === page
                     ? "text-white"
                     : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50 hover:ring-gray-300"

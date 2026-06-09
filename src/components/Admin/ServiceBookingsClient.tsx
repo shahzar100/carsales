@@ -61,11 +61,20 @@ export default function ServiceBookingsClient({ initialBookings }: Props) {
     try {
       const response = await fetch("/api/admin/bookings");
       const data = await response.json();
-      if (data.success) {
+      if (response.ok && data.success && data.data?.serviceBookings) {
         setServiceBookings(data.data.serviceBookings);
+      } else {
+        toast.error(
+          "Refresh Failed",
+          data.error || "Could not refresh the bookings list"
+        );
       }
     } catch (error) {
       logError(error, { context: "service-dashboard.refetchBookings" });
+      toast.error(
+        "Connection Error",
+        "Could not connect to the server to refresh bookings"
+      );
     }
   };
 

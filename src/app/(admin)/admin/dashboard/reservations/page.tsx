@@ -11,7 +11,7 @@ const PAGE_SIZE = 50;
 const VALID_STATUSES = ["pending", "confirmed", "cancelled", "expired"];
 
 interface PageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; page?: string }>;
 }
 
 /**
@@ -31,11 +31,16 @@ export default async function ReservationsAdminPage({
     filter.status = params.status;
   }
 
+  const parsedPage = Number(params.page);
+  const page =
+    Number.isFinite(parsedPage) && parsedPage >= 1 ? Math.floor(parsedPage) : 1;
+
   const collection = await getReservationsCollection();
   const [rows, total] = await Promise.all([
     collection
       .find(filter)
       .sort({ createdAt: -1 })
+      .skip((page - 1) * PAGE_SIZE)
       .limit(PAGE_SIZE)
       .toArray(),
     collection.countDocuments(filter),
@@ -49,7 +54,7 @@ export default async function ReservationsAdminPage({
     <ReservationsTable
       rows={reservations}
       filter={{ status: params.status }}
-      pagination={{ page: 1, limit: PAGE_SIZE, total }}
+      pagination={{ page, limit: PAGE_SIZE, total }}
     />
   );
 }
