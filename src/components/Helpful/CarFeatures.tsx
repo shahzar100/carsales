@@ -69,7 +69,8 @@ const CarFeatures: React.FC<CarFeaturesProps> = ({
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: "spring", stiffness: 480, damping: 22 }}
-                className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200 ${
+                aria-pressed={isSelected}
+                className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1 ${
                   isSelected
                     ? "border-red-500 bg-red-50 text-red-600 shadow-sm"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import { Toast as ToastType } from "@/contexts/types";
@@ -50,6 +50,9 @@ const toastStyles = {
 export default function Toast({ toast, onRemove }: ToastProps) {
   const [progress, setProgress] = useState(100);
   const [present, setPresent] = useState(true);
+  // Hovering pauses the auto-dismiss countdown so errors aren't hidden
+  // before they've been read; leaving resumes it.
+  const pausedRef = useRef(false);
 
   const Icon = toastIcons[toast.type];
   const styles = toastStyles[toast.type];
@@ -62,6 +65,7 @@ export default function Toast({ toast, onRemove }: ToastProps) {
       const decrement = (updateInterval / toast.duration) * 100;
 
       progressTimer = setInterval(() => {
+        if (pausedRef.current) return;
         setProgress((prev) => {
           const newProgress = prev - decrement;
           return newProgress <= 0 ? 0 : newProgress;
@@ -88,6 +92,12 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         <m.div
           role="alert"
           layout
+          onMouseEnter={() => {
+            pausedRef.current = true;
+          }}
+          onMouseLeave={() => {
+            pausedRef.current = false;
+          }}
           initial={{ x: 380, scale: 0.9, opacity: 0 }}
           animate={{ x: 0, scale: 1, opacity: 1 }}
           exit={{ x: 380, scale: 0.9, opacity: 0, transition: { duration: 0.2 } }}

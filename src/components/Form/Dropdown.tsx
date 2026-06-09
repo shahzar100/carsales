@@ -137,6 +137,8 @@ const Dropdown: React.FC<DropdownProps> = ({
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        aria-required={required || undefined}
+        aria-invalid={error ? true : undefined}
         className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left text-sm shadow-sm transition-all duration-200 ${
           disabled
             ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"

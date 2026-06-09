@@ -8,6 +8,7 @@ import { useSavedCars } from "@/contexts/SavedCarsContext";
 import type { CarInterface } from "@/lib/interfaces";
 import CarListCard from "@/components/Car/CarListCard";
 import EmptyState from "@/components/UI/EmptyState";
+import { CarListCardSkeleton } from "@/components/UI/Skeleton";
 import { useApi } from "@/hooks/useApi";
 
 type AvailableCarsResponse = { cars: CarInterface[] };
@@ -52,7 +53,20 @@ export default function SavedCarsList() {
     savedIds.length > 0 && fetchLoading && !data && !error;
 
   if (loading) {
-    return <p className="text-sm text-gray-500">Loading your saved cars…</p>;
+    // Match the loaded layout: a grid of list-card skeletons, sized to the
+    // number of saved ids (capped) so the page doesn't jump on resolve.
+    const placeholderCount = Math.min(Math.max(savedIds.length, 1), 6);
+    return (
+      <div
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        aria-label="Loading your saved cars"
+        aria-busy="true"
+      >
+        {Array.from({ length: placeholderCount }).map((_, i) => (
+          <CarListCardSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   if (cars.length === 0) {

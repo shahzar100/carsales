@@ -42,7 +42,10 @@ const NavButton: React.FC<NavButtonProps> = ({
 
       {dropdown && !disabled && (
         <div className="absolute top-full right-0 z-9999 mt-2 hidden w-64 group-hover:block">
-          <div className="flex w-full flex-col items-start rounded-lg border border-gray-200 bg-white p-2 shadow-xl ring-1 ring-black/5">
+          <div
+            role="menu"
+            className="flex w-full flex-col items-start rounded-lg border border-gray-200 bg-white p-2 shadow-xl ring-1 ring-black/5"
+          >
             {children}
           </div>
         </div>

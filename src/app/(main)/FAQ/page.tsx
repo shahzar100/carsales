@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import FAQAccordion from "@/components/Helpful/FAQAccordion";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -180,8 +181,26 @@ export default async function FAQ() {
     },
   ];
 
+  // FAQPage structured data, built from the same Q&A the page renders.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqCategories.flatMap((category) =>
+      category.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      }))
+    ),
+  };
+
   return (
     <div className="min-h-screen">
+      <JsonLd data={faqJsonLd} />
+
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden bg-black text-white">
         <div className="pointer-events-none absolute -top-32 right-0 h-125 w-125 rounded-full bg-red-600/5 blur-3xl" />
@@ -231,6 +250,24 @@ export default async function FAQ() {
                 );
               })}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Track Booking link ─── */}
+      <section className="bg-white pb-16 sm:pb-24">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="mx-auto max-w-4xl">
+            <p className="rounded-xl border border-gray-100 bg-gray-50 px-6 py-4 text-sm text-gray-600">
+              Want to cancel, reschedule, or check your booking? Head to our{" "}
+              <Link
+                href="/Booking/lookup"
+                className="font-semibold text-red-600 underline-offset-2 transition-colors hover:text-red-500 hover:underline"
+              >
+                Track Booking page
+              </Link>{" "}
+              and enter your booking reference.
+            </p>
           </div>
         </div>
       </section>

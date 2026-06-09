@@ -1,5 +1,5 @@
 "use client";
-import React, { useId, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -313,10 +313,17 @@ export const CopyableCode: React.FC<{
 }> = ({ value, title = "Success", description }) => {
   const [copied, setCopied] = useState(false);
 
+  // Reset the "Copied" state after 2s, but clean the timer up on unmount /
+  // re-copy so we never setState after the card has gone away.
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(value);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -373,6 +380,8 @@ export const FormInput: React.FC<{
   min?: string;
   max?: string;
   disabled?: boolean;
+  /** Autofill hint forwarded to the native input (e.g. "name", "tel"). */
+  autoComplete?: string;
   /** Optional inline error — also wires `aria-invalid` + `aria-describedby`. */
   error?: string;
 }> = ({
@@ -385,6 +394,7 @@ export const FormInput: React.FC<{
   min,
   max,
   disabled,
+  autoComplete,
   error,
 }) => {
   const generatedId = useId();
@@ -409,6 +419,7 @@ export const FormInput: React.FC<{
         max={max}
         disabled={disabled}
         required={required}
+        autoComplete={autoComplete}
         aria-required={required || undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={errorId}
@@ -481,7 +492,7 @@ export const FormToggle: React.FC<{
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 ${
         checked ? "bg-red-600" : "bg-gray-200"
       }`}
     >

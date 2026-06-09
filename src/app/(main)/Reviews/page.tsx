@@ -5,7 +5,10 @@ import { ServiceHero } from "@/components/Services/Common";
 import { getReviewsCollection, serializeDocument } from "@/lib/models";
 import { Review } from "@/lib/interfaces";
 import { logError } from "@/lib/utils/observability";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import ReviewsPageContent from "./ReviewsPageContent";
+
+const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "MMC Leeds";
 
 // Reviews change rarely; revalidate every 5 minutes (per-page strategy,
 // see (main)/layout.tsx).
@@ -68,8 +71,27 @@ const ReviewsPage = async () => {
     ],
   };
 
+  // AggregateRating structured data, built from the same verified reviews
+  // the page already summarises. Only emitted when there are real reviews.
+  const aggregateRatingJsonLd =
+    totalReviews > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "AutomotiveBusiness",
+          name: businessName,
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: averageRating.toFixed(1),
+            reviewCount: totalReviews,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : null;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      {aggregateRatingJsonLd && <JsonLd data={aggregateRatingJsonLd} />}
       <ServiceHero {...heroProps} />
       <ReviewsPageContent reviews={reviews} />
     </div>

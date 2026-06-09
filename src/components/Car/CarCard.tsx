@@ -27,7 +27,7 @@ const CarCard = ({
           whileHover={carId === 0 ? undefined : { scale: 1.08, x: -2 }}
           whileTap={carId === 0 ? undefined : { scale: 0.9 }}
           transition={{ type: "spring", stiffness: 460, damping: 22 }}
-          className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+          className="absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-20 disabled:shadow-none md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl md:disabled:ring-gray-100"
         >
           <ChevronLeft className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
         </m.button>
@@ -54,7 +54,7 @@ const CarCard = ({
             carId === filteredCars.length - 1 ? undefined : { scale: 0.9 }
           }
           transition={{ type: "spring", stiffness: 460, damping: 22 }}
-          className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl"
+          className="absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white disabled:cursor-not-allowed disabled:opacity-20 disabled:shadow-none md:static md:h-12 md:w-12 md:translate-y-0 md:bg-white md:ring-1 md:ring-gray-200 md:hover:shadow-xl md:disabled:ring-gray-100"
         >
           <ChevronRight className="h-5 w-5 text-gray-700 md:h-6 md:w-6" />
         </m.button>

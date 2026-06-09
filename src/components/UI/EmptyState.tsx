@@ -34,8 +34,9 @@ interface EmptyStateProps {
   /** Compact variant for sidebars or sub-tabs. */
   size?: "sm" | "md" | "lg";
   /** Use a dashed border for "drop zone" / "add the first item" feel.
-   *  Defaults to true when no action is provided (i.e. unactionable empty
-   *  states feel calmer). */
+   *  Defaults to dashed only when an `action` is present; unactionable
+   *  empty states get a calmer solid border so they don't read as a
+   *  prompt to drop/add something. */
   dashed?: boolean;
   className?: string;
 }
@@ -62,7 +63,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   dashed,
   className = "",
 }) => {
-  const useDashed = dashed ?? true;
+  // A dashed "drop zone" border only makes sense when there's something to
+  // do (an action). When unactionable, default to a calmer solid border.
+  const useDashed = dashed ?? Boolean(action);
   return (
     <m.div
       role="status"
@@ -74,7 +77,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         "flex flex-col items-center justify-center text-center",
         useDashed
           ? "rounded-xl border-2 border-dashed border-gray-200 bg-gray-50"
-          : "rounded-xl bg-gray-50",
+          : "rounded-xl border border-gray-200 bg-gray-50",
         SIZE_CLASSES[size],
         className,
       ].join(" ")}

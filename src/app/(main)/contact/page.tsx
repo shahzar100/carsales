@@ -15,6 +15,7 @@ import {
 import { BlackRedSection } from "@/components/Services/Common";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { safeExternalHref } from "@/lib/utils/url";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 const businessName =
   process.env.NEXT_PUBLIC_BUSINESS_NAME || "Car Sales & Viewing";
@@ -28,6 +29,46 @@ const dayOrder = [
   "saturday",
   "sunday",
 ] as const;
+
+const schemaDay: Record<(typeof dayOrder)[number], string> = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
+};
+
+// Convert a single "9:00 AM - 6:00 PM" cell into a schema.org
+// openingHoursSpecification (24h "HH:MM"). Returns null for closed /
+// unparseable cells so they're simply omitted from the structured data.
+function to24h(time: string): string | null {
+  const match = time
+    .trim()
+    .match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+  if (!match) return null;
+  let hour = Number(match[1]);
+  const minute = match[2] ?? "00";
+  const period = match[3].toUpperCase();
+  if (period === "PM" && hour !== 12) hour += 12;
+  if (period === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${minute}`;
+}
+
+function parseOpeningHours(value: string, day: string) {
+  const parts = value.split(/\s*[-–]\s*/);
+  if (parts.length !== 2) return null;
+  const opens = to24h(parts[0]);
+  const closes = to24h(parts[1]);
+  if (!opens || !closes) return null;
+  return {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: day,
+    opens,
+    closes,
+  };
+}
 
 // Cached per-page (no longer force-dynamic via layout). Audit #1.
 export const revalidate = 3600;
@@ -73,8 +114,36 @@ export default async function Contact() {
     : undefined;
   const mapsHref = safeAdminMapsUrl ?? fallbackMapsHref;
 
+  // LocalBusiness structured data, built from the same business info the
+  // page already renders.
+  const openingHoursSpecification = dayOrder
+    .map((day) => parseOpeningHours(hours[day] ?? "", schemaDay[day]))
+    .filter(Boolean);
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AutomotiveBusiness",
+    name: businessInfo.businessName,
+    telephone: phone,
+    email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: address,
+      addressLocality: city,
+      addressRegion: state,
+      postalCode: zip,
+      addressCountry: "GB",
+    },
+    ...(mapsHref ? { hasMap: mapsHref } : {}),
+    ...(openingHoursSpecification.length > 0
+      ? { openingHoursSpecification }
+      : {}),
+  };
+
   return (
     <div className="min-h-screen">
+      <JsonLd data={localBusinessJsonLd} />
+
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden bg-black text-white">
         <div className="pointer-events-none absolute -top-32 right-0 h-125 w-125 rounded-full bg-red-600/5 blur-3xl" />
