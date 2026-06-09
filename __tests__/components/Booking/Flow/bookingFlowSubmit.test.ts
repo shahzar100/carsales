@@ -21,6 +21,7 @@ import {
 } from "@/components/Booking/Flow/bookingFlowSubmit";
 import { INITIAL, today } from "@/components/Booking/Flow/bookingFlowTypes";
 import type { BookingState } from "@/components/Booking/Flow/bookingFlowTypes";
+import type { LucideIcon } from "lucide-react";
 
 // Small helper: a fully-valid base state we can override per test.
 const CURRENT_YEAR = 2026;
@@ -209,6 +210,9 @@ describe("bookingFlowSubmit", () => {
       description: "Entry detailing package",
       duration: "1 hour",
       price: "£50",
+      // `icon` is required on PackageCardData; submitBooking never reads it,
+      // so a typed placeholder keeps the fixture valid without a runtime icon.
+      icon: (() => null) as unknown as LucideIcon,
     };
 
     afterEach(() => {

@@ -36,16 +36,12 @@ export function ToastProvider({ children }: ToastProviderProps) {
 
       setToasts((prevToasts) => [...prevToasts, toast]);
 
-      // Auto remove toast after duration (unless persistent)
-      if (!toast.persistent && toast.duration && toast.duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, toast.duration);
-      }
-
+      // Auto-dismissal is owned by the Toast component's pausable countdown
+      // (so hovering can pause it before the toast disappears); we only
+      // register the toast here.
       return id;
     },
-    [generateId, removeToast]
+    [generateId]
   );
 
   const clearAllToasts = useCallback(() => {

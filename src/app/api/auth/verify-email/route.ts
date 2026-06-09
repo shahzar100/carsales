@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST() {
+export async function POST(_request: NextRequest) {
   try {
     const session = await auth();
     const email = session?.user?.email;

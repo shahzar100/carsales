@@ -58,24 +58,28 @@ export default function Toast({ toast, onRemove }: ToastProps) {
   const styles = toastStyles[toast.type];
 
   useEffect(() => {
-    // Progress bar animation (only if not persistent and has duration)
-    let progressTimer: NodeJS.Timeout | undefined;
-    if (!toast.persistent && toast.duration && toast.duration > 0) {
-      const updateInterval = 50; // Update every 50ms
-      const decrement = (updateInterval / toast.duration) * 100;
-
-      progressTimer = setInterval(() => {
-        if (pausedRef.current) return;
-        setProgress((prev) => {
-          const newProgress = prev - decrement;
-          return newProgress <= 0 ? 0 : newProgress;
-        });
-      }, updateInterval);
+    // Drive both the progress bar AND the auto-dismiss from one pausable
+    // countdown (only if not persistent and has a duration). Hovering sets
+    // pausedRef, which freezes the elapsed clock so the toast isn't removed
+    // while the user is reading it.
+    if (toast.persistent || !toast.duration || toast.duration <= 0) {
+      return;
     }
+    const duration = toast.duration;
+    const updateInterval = 50; // ms
+    let elapsed = 0;
 
-    return () => {
-      if (progressTimer) clearInterval(progressTimer);
-    };
+    const progressTimer = setInterval(() => {
+      if (pausedRef.current) return; // paused on hover → no time passes
+      elapsed += updateInterval;
+      setProgress(Math.max(0, 100 - (elapsed / duration) * 100));
+      if (elapsed >= duration) {
+        clearInterval(progressTimer);
+        setPresent(false); // exit animation → onExitComplete → onRemove
+      }
+    }, updateInterval);
+
+    return () => clearInterval(progressTimer);
   }, [toast.persistent, toast.duration]);
 
   const handleRemove = () => setPresent(false);
