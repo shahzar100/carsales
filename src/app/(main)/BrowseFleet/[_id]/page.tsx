@@ -9,10 +9,9 @@ import { JsonLd } from "@/components/SEO/JsonLd";
 import { Breadcrumb } from "@/components/SEO/Breadcrumb";
 import { formatPrice, formatMileage } from "@/lib/utils/format";
 import { logError } from "@/lib/utils/observability";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const businessName =
-  process.env.NEXT_PUBLIC_BUSINESS_NAME || "Morley Motor Company";
 
 // (#27) Revalidate car detail pages every 5 minutes; admin mutations
 // call revalidatePath for instant invalidation when something changes.
@@ -33,7 +32,7 @@ interface PageProps {
  *
  * Reference: https://schema.org/Vehicle
  */
-function buildCarJsonLd(car: CarInterface, id: string) {
+function buildCarJsonLd(car: CarInterface, id: string, businessName: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Vehicle",
@@ -117,7 +116,10 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { _id } = await params;
-  const car = await getCar(_id);
+  const [car, { businessName }] = await Promise.all([
+    getCar(_id),
+    getBusinessInfo(),
+  ]);
 
   if (!car) {
     return {
@@ -152,7 +154,10 @@ export async function generateMetadata({
 
 const CarDetailsPage = async ({ params }: PageProps) => {
   const { _id } = await params;
-  const car = await getCar(_id);
+  const [car, { businessName }] = await Promise.all([
+    getCar(_id),
+    getBusinessInfo(),
+  ]);
   const similar = car ? await getSimilarCars(car, _id) : [];
 
   // Real 404 (not a soft-404 with HTTP 200) so dead listing URLs aren't
@@ -164,7 +169,7 @@ const CarDetailsPage = async ({ params }: PageProps) => {
 
   return (
     <>
-      <JsonLd data={buildCarJsonLd(car, _id)} />
+      <JsonLd data={buildCarJsonLd(car, _id, businessName)} />
       {/* (#22) BreadcrumbList rich result — appears as the SERP slug. */}
       <Breadcrumb
         items={[

@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import LatestArrivals from "@/components/Home/LatestArrivals";
 import WhyChooseHome from "@/components/Home/WhyChooseHome";
 import { getLatestCars } from "@/lib/models";
+import { getBusinessInfo } from "@/lib/utils/businessInfo";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
 // Home shows the 6 latest cars + featured vehicles. Cache for 60 s so a
@@ -10,23 +11,26 @@ import { JsonLd } from "@/components/SEO/JsonLd";
 // force-dynamic.)
 export const revalidate = 60;
 
-const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "MMC Leeds";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-export const metadata: Metadata = {
-  title: `${businessName} — Car Sales & Services`,
-  description:
-    "Browse quality vehicles, book car viewings, and access professional auto services including detailing, tinting, repairs, and breakdown recovery.",
-  alternates: { canonical: "/" },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { businessName } = await getBusinessInfo();
+
+  return {
     title: `${businessName} — Car Sales & Services`,
     description:
-      "Browse quality vehicles, book car viewings, and access professional auto services.",
-    url: "/",
-  },
-};
+      "Browse quality vehicles, book car viewings, and access professional auto services including detailing, tinting, repairs, and breakdown recovery.",
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: `${businessName} — Car Sales & Services`,
+      description:
+        "Browse quality vehicles, book car viewings, and access professional auto services.",
+      url: "/",
+    },
+  };
+}
 
-const autoDealer = {
+const buildAutoDealer = (businessName: string) => ({
   "@context": "https://schema.org",
   "@type": "AutoDealer",
   name: businessName,
@@ -74,14 +78,17 @@ const autoDealer = {
       itemOffered: { "@type": "Service", name: "Breakdown Recovery" },
     },
   ],
-};
+});
 
 export default async function Home() {
-  const latestCars = await getLatestCars(6);
+  const [latestCars, { businessName }] = await Promise.all([
+    getLatestCars(6),
+    getBusinessInfo(),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <JsonLd data={autoDealer} />
+      <JsonLd data={buildAutoDealer(businessName)} />
       <HeroSection />
       <LatestArrivals cars={latestCars} />
       <WhyChooseHome />
