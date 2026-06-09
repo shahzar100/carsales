@@ -6,6 +6,7 @@ import {
   KPIGrid,
   RecentActivityTable,
   UpcomingAppointments,
+  NeedsAttention,
 } from "@/components/Admin/Dashboard";
 import {
   LazyBookingsChart,
@@ -18,12 +19,14 @@ import {
 import RefreshButton from "@/components/Admin/Dashboard/RefreshButton";
 import UpdatedAt from "@/components/Admin/Dashboard/UpdatedAt";
 import DateSelector from "@/components/Admin/Dashboard/DateSelector";
+import UpcomingDateSelector from "@/components/Admin/Dashboard/UpcomingDateSelector";
 
 interface DashboardPageProps {
   searchParams: Promise<{
     range?: string;
     from?: string;
     to?: string;
+    upcoming?: string;
   }>;
 }
 
@@ -39,6 +42,7 @@ export default async function DashboardPage({
     range: params.range,
     from: params.from,
     to: params.to,
+    upcoming: params.upcoming,
   });
 
   return (
@@ -93,9 +97,21 @@ export default async function DashboardPage({
         <LazyPopularCarsChart data={data.charts.popularCars} />
       </div>
 
+      {/* ── Overdue / unactioned escalation (renders only when needed) ── */}
+      <NeedsAttention data={data.needsAttention} />
+
       {/* ── Activity tables ─────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <UpcomingAppointments data={data.upcomingAppointments} />
+        <UpcomingAppointments
+          data={data.upcomingAppointments}
+          action={
+            // Reads useSearchParams — own Suspense boundary so it doesn't
+            // opt the whole page into client render (mirrors DateSelector).
+            <Suspense fallback={null}>
+              <UpcomingDateSelector />
+            </Suspense>
+          }
+        />
         <RecentActivityTable data={data.recentActivity} />
       </div>
     </div>

@@ -60,6 +60,16 @@ export interface ActivityItem {
   createdAt?: string;
 }
 
+/**
+ * Overdue / unactioned escalation: appointments whose date has passed but
+ * are still `pending` (a customer booked and nobody ever confirmed it).
+ * `items` is the capped display slice; `total` is the true count for the badge.
+ */
+export interface NeedsAttention {
+  items: ActivityItem[];
+  total: number;
+}
+
 export interface DashboardCharts {
   bookingsByMonth: MonthlyBookingData[];
   bookingsByDay: DayBookingData[];
@@ -75,4 +85,5 @@ export interface DashboardData {
   charts: DashboardCharts;
   recentActivity: ActivityItem[];
   upcomingAppointments: ActivityItem[];
+  needsAttention: NeedsAttention;
 }

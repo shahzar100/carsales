@@ -78,9 +78,7 @@ describe("DateSelector", () => {
     render(<DateSelector />);
     fireEvent.click(screen.getByText("All time"));
     fireEvent.click(screen.getByText("Last 30 days"));
-    expect(mockPush).toHaveBeenCalledWith(
-      "/admin/dashboard?range=30d"
-    );
+    expect(mockPush).toHaveBeenCalledWith("/admin/dashboard?range=30d");
   });
 
   it("📋 the 'All time' preset strips the range param from the URL", () => {
@@ -139,9 +137,9 @@ describe("DateSelector", () => {
       "Nov",
       "Dec",
     ];
-    const futureBtn = screen.getByText(months[currentMonthIdx + 1]).closest(
-      "button"
-    );
+    const futureBtn = screen
+      .getByText(months[currentMonthIdx + 1])
+      .closest("button");
     expect(futureBtn).toBeDisabled();
   });
 
@@ -193,5 +191,16 @@ describe("DateSelector", () => {
     fireEvent.click(screen.getByRole("button", { name: /^back$/i }));
     expect(screen.queryByText("Custom Range")).not.toBeInTheDocument();
     expect(screen.getByText(/Quick ranges/i)).toBeInTheDocument();
+  });
+
+  it("🎯 preserves the independent `upcoming` window param when changing range", () => {
+    // The Upcoming card owns `upcoming`; the top selector must not drop it.
+    searchParamsValue.set("upcoming", "7d");
+    render(<DateSelector />);
+    fireEvent.click(screen.getByText("All time"));
+    fireEvent.click(screen.getByText("Last 30 days"));
+    const url = mockPush.mock.calls.at(-1)?.[0] as string;
+    expect(url).toContain("range=30d");
+    expect(url).toContain("upcoming=7d");
   });
 });
