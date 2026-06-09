@@ -79,11 +79,12 @@ export async function sendEmail({
     // Render React component to HTML
     const html = await render(react);
 
-    // Plain-text fallback for deliverability
-    const text = html
-      .replace(/<[^>]*>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+    // Plain-text fallback for deliverability. React Email renders a real
+    // text version (it decodes HTML entities and lays out block elements
+    // as newlines) — far better than naively stripping tags from the HTML,
+    // which leaked raw entities like `&amp;` / `&pound;` / `&apos;` into the
+    // text part. Render the component a second time in plainText mode.
+    const text = await render(react, { plainText: true });
 
     const transport = await getTransporter();
 

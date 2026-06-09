@@ -21,12 +21,14 @@ const adminCancelLimiter = createRateLimiter("admin-booking-cancel", {
   windowMs: 5 * 60 * 1000,
 });
 
-// Mirror of the public `/api/bookings/cancel` schema. Kept verbatim so
-// the two routes stay structurally identical — if a field tightens on
-// the customer side, this side should follow.
+// Mirror of the public `/api/bookings/cancel` schema. Kept in sync so
+// the two routes stay structurally identical — the `type` enum is scoped
+// to the only two kinds this endpoint can cancel (service + viewing, both
+// BK-referenced). Reservations/quotes/part-exchange have no cancel path
+// here, matching the customer route and the BK-/QT-only lookup.
 const cancelSchema = z.object({
   bookingReference: z.string().regex(/^BK-[A-Z0-9]{6}$/i),
-  type: z.enum(["service", "viewing", "reservation", "quote", "part-exchange"]),
+  type: z.enum(["service", "viewing"]),
   reason: z.string().min(1).max(500),
 });
 
@@ -97,6 +99,9 @@ export async function POST(request: NextRequest) {
       collection = await getCarViewingBookingsCollection();
       booking = await collection.findOne({ bookingReference });
     } else {
+      // Unreachable — the zod enum only admits service/viewing. Kept so
+      // TypeScript can prove `collection` is assigned and as a defensive
+      // 400 if the enum ever widens without a matching branch.
       return NextResponse.json(
         { error: "Invalid booking type" },
         { status: 400 }
