@@ -204,6 +204,11 @@ export interface AdminUser {
   // 2FA (Day 12.2). Opt-in per user; absent means 2FA is off.
   totpSecret?: string;
   totpEnabled?: boolean;
+  // Monotonic session epoch. Stamped into the iron-session cookie at login
+  // and re-checked on every authorization. Bumping it (e.g. on password
+  // reset) instantly invalidates every existing session for this user.
+  // Absent is treated as 0. See src/lib/utils/auth.ts → getCurrentAdmin.
+  sessionVersion?: number;
 }
 
 /**

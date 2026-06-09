@@ -4,11 +4,17 @@ import { getIronSession, IronSession, SessionOptions } from "iron-session";
 import { cookies } from "next/headers";
 
 import { serverEnv } from "@/lib/env";
+import { getAdminUsersCollection } from "@/lib/models";
+import type { AdminUser } from "@/lib/interfaces";
 
 export interface SessionData {
   isLoggedIn: boolean;
   username?: string;
   role?: string;
+  // Snapshot of the user's `sessionVersion` at login. If the DB value moves
+  // past this (e.g. after a password reset), the session is stale and every
+  // authorization check below fails. See getCurrentAdmin.
+  sessionVersion?: number;
 }
 
 const ROLE_HIERARCHY: Record<string, number> = {
@@ -64,19 +70,54 @@ export async function verifyPassword(
   return bcrypt.compare(password, hash);
 }
 
-export async function isAuthenticated(): Promise<boolean> {
+/**
+ * Resolve the *live* admin user behind the current session, or `null` if the
+ * session is no longer valid for any of these reasons:
+ *
+ *   - not logged in (no cookie / `isLoggedIn !== true`)
+ *   - the user row no longer exists  → account was deleted; access is
+ *     revoked immediately rather than lingering for the cookie's 24h life
+ *   - the stored `sessionVersion` is behind the DB value → the user was
+ *     forcibly logged out (e.g. a password reset bumped the epoch)
+ *
+ * This is the single source of truth for admin authorization. iron-session
+ * is a stateless, self-contained encrypted cookie with no server-side store,
+ * so trusting `session.role` alone meant a demoted or deleted admin kept
+ * their powers until the cookie expired. Reading the row live closes that
+ * window: role changes and removals take effect on the very next request.
+ *
+ * (No request-level memoisation here on purpose — `React.cache` only dedupes
+ * inside a render/route scope and silently no-ops elsewhere, so it can't be
+ * relied on. The lookup is a single indexed `{ username }` read.)
+ */
+export async function getCurrentAdmin(): Promise<AdminUser | null> {
   const session = await getSession();
-  return session.isLoggedIn === true;
+  if (session.isLoggedIn !== true || !session.username) return null;
+
+  const collection = await getAdminUsersCollection();
+  const user = await collection.findOne({ username: session.username });
+  if (!user) return null;
+
+  if ((user.sessionVersion ?? 0) !== (session.sessionVersion ?? 0)) {
+    return null;
+  }
+  return user;
+}
+
+export async function isAuthenticated(): Promise<boolean> {
+  return (await getCurrentAdmin()) !== null;
 }
 
 /**
- * Returns true if the current session has at least the given role level.
- * Role hierarchy: staff (1) < manager (2) < admin (3)
+ * Returns true if the current session maps to a live user whose *current*
+ * role is at least `minRole`. Role hierarchy: staff (1) < manager (2) <
+ * admin (3). The role is read live from the DB (via getCurrentAdmin), not
+ * from the cookie, so a demotion is enforced on the next request.
  */
 export async function hasMinimumRole(minRole: string): Promise<boolean> {
-  const session = await getSession();
-  if (!session.isLoggedIn) return false;
-  const userLevel = ROLE_HIERARCHY[session.role ?? ""] ?? 0;
+  const user = await getCurrentAdmin();
+  if (!user) return false;
+  const userLevel = ROLE_HIERARCHY[user.role ?? ""] ?? 0;
   const requiredLevel = ROLE_HIERARCHY[minRole] ?? 0;
   return userLevel >= requiredLevel;
 }

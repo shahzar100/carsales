@@ -100,6 +100,9 @@ export async function POST(request: NextRequest) {
       { _id: user._id },
       {
         $set: { passwordHash, updatedAt: new Date() },
+        // Bump the session epoch so any sessions opened with the old password
+        // are invalidated on their next request. (Session revocation.)
+        $inc: { sessionVersion: 1 },
         $unset: { resetToken: "", resetTokenExpiry: "" },
       }
     );
