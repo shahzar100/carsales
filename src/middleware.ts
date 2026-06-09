@@ -6,16 +6,42 @@ import type { NextRequest } from "next/server";
  *
  * Two concerns live here:
  *   1. CSRF protection for state-changing API calls (legacy behaviour).
- *   2. Per-request CSP nonce so we can drop `'unsafe-inline'` on script-src
- *      (Day 12.1 / Finding #12). The nonce is generated here, written to a
- *      request header so Next.js hydration scripts pick it up, and echoed
- *      into the CSP response header.
+ *   2. A two-tier Content-Security-Policy (Day 12.1 / Finding #12, revised).
+ *
+ * ── Why two tiers ──
+ * A per-request nonce on `script-src` is the strongest protection, but it only
+ * works on *dynamically rendered* pages: Next.js stamps the nonce onto <script>
+ * tags by reading the request-header CSP at render time. Statically prerendered
+ * pages are built once with NO request and therefore NO nonce; bolting a
+ * per-request nonce + 'strict-dynamic' onto that frozen HTML blocks every
+ * script (the bug this revision fixes — all prerendered marketing pages shipped
+ * dead JS in production).
+ *
+ * The public marketing pages are deliberately static for throughput (PR #49,
+ * no force-dynamic). So we split by path:
+ *   • /admin/*  → nonce + 'strict-dynamic'. Always dynamic (every admin page
+ *     reads the iron-session cookie), so the nonce injects correctly. This is
+ *     the authenticated, high-value surface where strict script-src matters.
+ *   • everything else → 'self' 'unsafe-inline', no nonce. Stays static + CDN
+ *     cacheable. React auto-escaping + Zod input validation carry the XSS load
+ *     on these pages; the inline-script risk is the accepted trade for static
+ *     rendering.
+ *
+ * INVARIANT: every /admin/* page must stay dynamically rendered. If one is ever
+ * statically prerendered it will break exactly like the public pages did — keep
+ * the cookie/auth read (or an explicit `export const dynamic = "force-dynamic"`)
+ * in admin server components.
  *
  * Other security headers continue to live in next.config.ts; only the CSP
  * has to move because the nonce changes per request.
  */
 
-function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: false }): string {
+type CspOptions =
+  | { mode: "nonce"; nonce: string; reportOnly?: boolean }
+  | { mode: "static"; reportOnly?: boolean };
+
+function buildCsp(opts: CspOptions): string {
+  const reportOnly = opts.reportOnly ?? false;
   // Read at call time (not module load) so the CSP follows the current
   // NODE_ENV and stays unit-testable across dev/prod.
   const isProduction = process.env.NODE_ENV === "production";
@@ -25,10 +51,23 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
   const cdnHost = process.env.CLOUDFRONT_DOMAIN
     ? ` https://${process.env.CLOUDFRONT_DOMAIN}`
     : "";
-  // `'strict-dynamic'` lets scripts loaded by nonced scripts run without
-  // their own nonce — required for Next.js's RSC payload script that injects
-  // further script tags during hydration. The Cloudflare host is needed for
-  // the Turnstile widget; frame-src is needed for the challenge iframe.
+  // 'unsafe-eval' is only tolerated in dev (React refresh / source maps).
+  const devEval = isProduction ? "" : " 'unsafe-eval'";
+  // script-src is the only directive that differs by tier.
+  //   • nonce mode: `'strict-dynamic'` lets scripts loaded by nonced scripts
+  //     run without their own nonce — required for Next.js's RSC payload script
+  //     that injects further script tags during hydration. Host allowlists are
+  //     ignored under 'strict-dynamic', so the nonce is the sole gate.
+  //   • static mode: no nonce can match the build-time HTML, so fall back to
+  //     'self' (the same-origin /_next/static chunks) + 'unsafe-inline' (the
+  //     inline RSC bootstrap scripts Next emits). 'strict-dynamic' is omitted
+  //     because it would disable the 'self'/'unsafe-inline' allowlist.
+  // The Cloudflare host is needed for the Turnstile widget in both tiers;
+  // frame-src below is needed for the challenge iframe.
+  const scriptSrc =
+    opts.mode === "nonce"
+      ? `script-src 'self' 'nonce-${opts.nonce}' 'strict-dynamic' https://challenges.cloudflare.com${devEval}`
+      : `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${devEval}`;
   //
   // style-src normally keeps `'unsafe-inline'`. Audited 2026-05-13: 12
   // non-email `style={{...}}` attributes, all with runtime-dynamic values
@@ -37,8 +76,8 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
   // runtime. `next/font` also injects inline `<style>` blocks with
   // @font-face declarations to avoid CLS. Dropping `'unsafe-inline'` would
   // need every animated component rewritten — cost/benefit doesn't justify
-  // it given style-src XSS is a much weaker class than the script-src XSS
-  // the nonce above already closes.
+  // it given style-src XSS is a much weaker class than the script-src risk
+  // handled above.
   //
   // We still emit a Content-Security-Policy-Report-Only mirror with the
   // tighter `style-src 'self'` so we gather telemetry on what would break
@@ -57,7 +96,7 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
   // to https://; the production deployment is HTTPS-only behind Vercel.
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${isProduction ? "" : " 'unsafe-eval'"}`,
+    scriptSrc,
     styleSrc,
     // img-src mirrors connect-src + next.config remotePatterns so stored S3 /
     // CloudFront image URLs render even when not proxied through next/image.
@@ -74,7 +113,7 @@ function buildCsp(nonce: string, opts: { reportOnly: boolean } = { reportOnly: f
     "frame-src https://challenges.cloudflare.com",
     // frame-ancestors is meaningless in a report-only policy (browsers ignore
     // it and log a warning), so only emit it in the enforced CSP.
-    ...(opts.reportOnly ? [] : ["frame-ancestors 'none'"]),
+    ...(reportOnly ? [] : ["frame-ancestors 'none'"]),
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
@@ -134,16 +173,31 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // ── CSP nonce ──
-  // Skip on API routes — they don't render HTML, so the CSP nonce isn't
-  // needed and computing one on every API call is wasted work.
+  // ── CSP ──
+  // Skip on API routes — they don't render HTML, so the CSP isn't needed and
+  // computing one on every API call is wasted work.
   if (request.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
+  // Static (public) tier: a fixed, nonce-free policy that survives prerendering
+  // and CDN caching. We deliberately do NOT write the CSP onto the request
+  // headers here — that header is only how Next.js discovers a nonce to inject,
+  // and we want no nonce on these pages so 'unsafe-inline' stays effective.
+  if (!request.nextUrl.pathname.startsWith("/admin")) {
+    const csp = buildCsp({ mode: "static" });
+    const cspReportOnly = buildCsp({ mode: "static", reportOnly: true });
+    const response = NextResponse.next();
+    response.headers.set("Content-Security-Policy", csp);
+    response.headers.set("Content-Security-Policy-Report-Only", cspReportOnly);
+    return response;
+  }
+
+  // Nonce tier: /admin/* is always dynamically rendered, so Next.js stamps this
+  // per-request nonce onto every <script> when it reads the request-header CSP.
   const nonce = generateNonce();
-  const csp = buildCsp(nonce);
-  const cspReportOnly = buildCsp(nonce, { reportOnly: true });
+  const csp = buildCsp({ mode: "nonce", nonce });
+  const cspReportOnly = buildCsp({ mode: "nonce", nonce, reportOnly: true });
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
