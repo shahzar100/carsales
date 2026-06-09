@@ -7,7 +7,11 @@ describe("businessInfo utility", () => {
 
       expect(result).toBeDefined();
       expect(result.businessName).toBe("MMC Leeds");
-      expect(result.phone).toBe("0113 468 9292");
+      // Asserts the live CORE_SEED value in src/lib/utils/businessInfo.ts.
+      // NOTE: the email templates (src/emails/*) still hard-code the older
+      // "0113 468 9292" — that mismatch is a content bug to resolve
+      // separately, not a test expectation to flip back.
+      expect(result.phone).toBe("0113 548 4182");
       expect(result.email).toBe("info@mmcleeds.co.uk");
       expect(result.address).toBe("Roseville Road");
       expect(result.city).toBe("Leeds");
@@ -52,7 +56,8 @@ describe("businessInfo utility", () => {
 
       expect(result.hours).toBeDefined();
       expect(result.hours.monday).toBe("9:00 AM - 6:00 PM");
-      expect(result.hours.sunday).toBe("Closed");
+      // CORE_SEED opens Sundays 10–4 (not closed).
+      expect(result.hours.sunday).toBe("10:00 AM - 4:00 PM");
     });
 
     it("does not re-seed on subsequent calls", async () => {

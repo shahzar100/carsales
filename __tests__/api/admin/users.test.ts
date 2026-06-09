@@ -20,7 +20,20 @@ jest.mock("@/lib/utils/auth", () => ({
   // POST / user-creation calls getSession() for the audit log; without
   // this mock every "happy path" assertion gets a 500 from
   // `(0 , _auth.getSession) is not a function`.
-  getSession: jest.fn(async () => ({ username: "test-admin" })),
+  //
+  // The caller MUST carry an explicit role: the route enforces a
+  // role-ceiling (a caller cannot mint a user above their own level), and
+  // `session.role ?? "staff"` would otherwise treat this mock as staff —
+  // making every "create manager/admin" assertion 403 instead of 200.
+  getSession: jest.fn(async () => ({ username: "test-admin", role: "admin" })),
+}));
+
+// The route fires a setup email via waitUntil(). Under jest the real
+// transport's dynamic import throws ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG;
+// the route swallows it, but mocking keeps the test output clean and
+// deterministic. (Mirrors users/password.test.ts.)
+jest.mock("@/emails/send", () => ({
+  sendEmail: jest.fn().mockResolvedValue({ success: true }),
 }));
 const {
   isAuthenticated: mockIsAuthenticated,
