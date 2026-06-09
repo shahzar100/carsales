@@ -1,4 +1,5 @@
 {
+  "css.lint.unknownAtRules": "ignore",
   "chat.agent.maxRequests": 30,
   "chat.tools.terminal.enableAutoApprove": true,
   "chat.tools.terminal.autoApprove": {

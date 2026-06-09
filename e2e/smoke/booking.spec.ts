@@ -16,6 +16,7 @@ test("signed-in customer can book a viewing", async ({ page }) => {
 
   const car = await pickAvailableCar(page);
   expect(car, "need at least one car on the target to book").toBeTruthy();
+  if (!car) return; // expect() above already failed the test; this narrows `car` for the type checker
 
   let booked = false;
   let last = "";

@@ -34,7 +34,7 @@ export const options = {
   },
 };
 
-export default function () {
+export default function vu() {
   const s = scenarios[Math.floor(Math.random() * scenarios.length)];
   const res = http.request(s.method, `${TARGET}${s.path}`, null, {
     tags: { scenario: s.name },
