@@ -8,7 +8,13 @@ export async function GET() {
 
     return NextResponse.json({
       isLoggedIn: session.isLoggedIn || false,
-      ...(session.isLoggedIn && { username: session.username }),
+      // `role` lets the client nav show role-appropriate tabs (e.g. the
+      // Users & Access page is manager+). Authorization is still enforced
+      // server-side on every page and API route — this is display only.
+      ...(session.isLoggedIn && {
+        username: session.username,
+        role: session.role,
+      }),
     });
   } catch (error) {
     logError(error, { route: "GET /api/admin/session" });

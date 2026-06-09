@@ -9,6 +9,7 @@ import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { sendEmail } from "@/emails/send";
 import { PasswordReset } from "@/emails/PasswordReset";
 import { logError, logEvent } from "@/lib/utils/observability";
+import type { AdminUserSummary } from "@/lib/interfaces";
 
 // 10 user-creation attempts per hour per IP
 const userCreateLimiter = createRateLimiter("admin-user-create", {
@@ -17,6 +18,56 @@ const userCreateLimiter = createRateLimiter("admin-user-create", {
 });
 
 const validRoles = ["staff", "manager", "admin"] as const;
+
+/**
+ * GET /api/admin/users — list every admin user for the access-management page.
+ *
+ * Gated to manager+ (consistent with the create + lookup routes). The result
+ * is a {@link AdminUserSummary}: the password hash, TOTP secret, and reset
+ * token are never projected out of Mongo into the response — only what the UI
+ * needs to render the roster and decide which controls to show.
+ */
+export async function GET() {
+  try {
+    const authorized = await hasMinimumRole("manager");
+    if (!authorized) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const collection = await getAdminUsersCollection();
+    const docs = await collection
+      .find({}, { projection: { passwordHash: 0, totpSecret: 0 } })
+      .sort({ createdAt: 1 })
+      .toArray();
+
+    const users: AdminUserSummary[] = docs.map((doc) => ({
+      _id: doc._id.toString(),
+      username: doc.username,
+      email: doc.email,
+      role: doc.role,
+      createdAt: doc.createdAt
+        ? new Date(doc.createdAt).toISOString()
+        : undefined,
+      lastLogin: doc.lastLogin
+        ? new Date(doc.lastLogin).toISOString()
+        : undefined,
+      twoFactorEnabled: doc.totpEnabled === true,
+      // "Pending setup" = created but never signed in while still holding an
+      // unconsumed setup token. Gating on `!lastLogin` keeps an *active* user
+      // who was merely sent a reset link from being mislabelled as pending.
+      // We expose only the boolean, never the token itself.
+      pendingSetup: !doc.lastLogin && Boolean(doc.resetToken),
+    }));
+
+    return NextResponse.json({ users });
+  } catch (error) {
+    logError(error, { route: "GET /api/admin/users" });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
