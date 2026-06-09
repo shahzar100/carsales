@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import type { Reservation } from "@/lib/interfaces";
 import { logError } from "@/lib/utils/observability";
+import Pagination from "@/components/Helpful/Pagination";
 
 const rowVariants = {
   hidden: { opacity: 0, y: 8 },
@@ -73,10 +74,25 @@ export default function ReservationsTable({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(pagination.total / pagination.limit)
+  );
+
   const updateFilter = (status: string) => {
+    // Changing the filter resets to page 1 — a deep-linked page can point
+    // past the end of the freshly filtered set otherwise.
     const params = new URLSearchParams();
     if (status) params.set("status", status);
     router.push(`/admin/dashboard/reservations?${params.toString()}`);
+  };
+
+  const goToPage = (page: number) => {
+    const params = new URLSearchParams();
+    if (filter.status) params.set("status", filter.status);
+    if (page > 1) params.set("page", String(page));
+    const query = params.toString();
+    router.push(`/admin/dashboard/reservations${query ? `?${query}` : ""}`);
   };
 
   const transition = async (
@@ -290,6 +306,15 @@ export default function ReservationsTable({
           </m.tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        totalItems={pagination.total}
+        startIndex={(pagination.page - 1) * pagination.limit}
+        endIndex={pagination.page * pagination.limit}
+      />
     </div>
   );
 }
