@@ -131,6 +131,9 @@ export async function POST(request: NextRequest) {
     session.isLoggedIn = true;
     session.username = admin.username;
     session.role = admin.role as string | undefined;
+    // Snapshot the current session epoch so a later bump (e.g. a password
+    // reset) invalidates this cookie. (Session revocation.)
+    session.sessionVersion = admin.sessionVersion ?? 0;
     await session.save();
 
     // Note: deliberately NOT calling loginLimiter.reset(ip). Resetting on

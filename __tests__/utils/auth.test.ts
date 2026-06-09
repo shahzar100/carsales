@@ -12,6 +12,8 @@ import {
   hashPassword,
   verifyPassword,
   isAuthenticated,
+  hasMinimumRole,
+  getCurrentAdmin,
   getSession,
 } from "@/lib/utils/auth";
 
@@ -19,11 +21,13 @@ import {
 const mockSession: {
   isLoggedIn: any;
   username: any;
+  sessionVersion?: any;
   save: jest.Mock;
   destroy: jest.Mock;
 } = {
   isLoggedIn: false,
   username: undefined,
+  sessionVersion: undefined,
   save: jest.fn(),
   destroy: jest.fn(),
 };
@@ -38,11 +42,27 @@ jest.mock("next/headers", () => ({
   cookies: jest.fn(() => Promise.resolve({})),
 }));
 
+// Authorization now reads the live admin row (session revocation). Mock the
+// collection so the real getCurrentAdmin doesn't reach a database.
+const mockFindOne = jest.fn();
+jest.mock("@/lib/models", () => ({
+  getAdminUsersCollection: jest.fn(async () => ({
+    findOne: (...a: unknown[]) => mockFindOne(...a),
+  })),
+}));
+
 describe("Authentication Utilities", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSession.isLoggedIn = false;
     mockSession.username = undefined;
+    mockSession.sessionVersion = undefined;
+    // Default: the session maps to a live admin whose epoch matches.
+    mockFindOne.mockResolvedValue({
+      username: "admin",
+      role: "admin",
+      sessionVersion: 0,
+    });
   });
 
   describe("\ud83d\udd12 Security Standards - Password Hashing", () => {
@@ -302,6 +322,78 @@ describe("Authentication Utilities", () => {
     it("should handle empty string hash in verifyPassword", async () => {
       const result = await verifyPassword("password", "");
       expect(result).toBe(false);
+    });
+  });
+
+  describe("🔒 Session revocation (live DB-backed authorization)", () => {
+    beforeEach(() => {
+      // A valid, logged-in session for these cases; each test varies the DB.
+      mockSession.isLoggedIn = true;
+      mockSession.username = "bob";
+      mockSession.sessionVersion = 0;
+    });
+
+    it("revokes immediately when the user row is gone (deleted account)", async () => {
+      mockFindOne.mockResolvedValue(null);
+      expect(await isAuthenticated()).toBe(false);
+      expect(await hasMinimumRole("staff")).toBe(false);
+      expect(await getCurrentAdmin()).toBeNull();
+    });
+
+    it("revokes when the stored sessionVersion is behind the DB (forced logout)", async () => {
+      mockSession.sessionVersion = 0;
+      mockFindOne.mockResolvedValue({
+        username: "bob",
+        role: "admin",
+        sessionVersion: 1, // bumped by a password reset after this cookie was issued
+      });
+      expect(await isAuthenticated()).toBe(false);
+      expect(await hasMinimumRole("admin")).toBe(false);
+    });
+
+    it("stays valid while the versions match", async () => {
+      mockSession.sessionVersion = 2;
+      mockFindOne.mockResolvedValue({
+        username: "bob",
+        role: "manager",
+        sessionVersion: 2,
+      });
+      expect(await isAuthenticated()).toBe(true);
+    });
+
+    it("treats absent versions on both sides as 0 (match)", async () => {
+      mockSession.sessionVersion = undefined;
+      mockFindOne.mockResolvedValue({ username: "bob", role: "staff" });
+      expect(await isAuthenticated()).toBe(true);
+    });
+
+    it("hasMinimumRole reads the LIVE role — a demotion takes effect at once", async () => {
+      // The cookie was minted while bob was admin, but the DB now says staff.
+      mockFindOne.mockResolvedValue({
+        username: "bob",
+        role: "staff",
+        sessionVersion: 0,
+      });
+      expect(await hasMinimumRole("admin")).toBe(false);
+      expect(await hasMinimumRole("manager")).toBe(false);
+      expect(await hasMinimumRole("staff")).toBe(true);
+    });
+
+    it("hasMinimumRole respects the hierarchy for a live manager", async () => {
+      mockFindOne.mockResolvedValue({
+        username: "bob",
+        role: "manager",
+        sessionVersion: 0,
+      });
+      expect(await hasMinimumRole("staff")).toBe(true);
+      expect(await hasMinimumRole("manager")).toBe(true);
+      expect(await hasMinimumRole("admin")).toBe(false);
+    });
+
+    it("getCurrentAdmin returns null when not logged in (no DB read)", async () => {
+      mockSession.isLoggedIn = false;
+      expect(await getCurrentAdmin()).toBeNull();
+      expect(mockFindOne).not.toHaveBeenCalled();
     });
   });
 
