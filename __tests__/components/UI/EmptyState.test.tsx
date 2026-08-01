@@ -48,13 +48,13 @@ describe("EmptyState", () => {
     expect(screen.getByRole("status")).toBeInTheDocument();
   });
 
-  it("uses dashed border by default", () => {
-    render(<EmptyState title="Empty" />);
+  it("uses dashed border when dashed prop is true", () => {
+    render(<EmptyState title="Empty" dashed={true} />);
     expect(screen.getByRole("status").className).toContain("border-dashed");
   });
 
-  it("can opt out of the dashed border", () => {
-    render(<EmptyState title="Empty" dashed={false} />);
+  it("uses solid border by default (no action, no dashed prop)", () => {
+    render(<EmptyState title="Empty" />);
     expect(screen.getByRole("status").className).not.toContain("border-dashed");
   });
 });

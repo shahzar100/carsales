@@ -7,7 +7,7 @@ import {
   getCarViewingBookingsCollection,
 } from "@/lib/models";
 import { getBusinessInfo } from "@/lib/utils/businessInfo";
-import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
+import { hasMinimumRole } from "@/lib/utils/auth";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { sendEmail } from "@/emails/send";
 import { BookingCancellation } from "@/emails/BookingCancellation";
@@ -38,11 +38,6 @@ const cancelSchema = z.object({
 // iron-session (same gate as the rest of /api/admin/**).
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     if (!(await hasMinimumRole("manager"))) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },

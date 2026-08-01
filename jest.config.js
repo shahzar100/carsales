@@ -1,4 +1,5 @@
-const nextJest = require("next/jest");
+const _nextJestMod = require("next/jest");
+const nextJest = _nextJestMod.default ?? _nextJestMod;
 
 const createJestConfig = nextJest({
   dir: "./",
@@ -6,22 +7,26 @@ const createJestConfig = nextJest({
 
 const customJestConfig = {
   testEnvironment: "jsdom",
+  // Restrict haste-map scanning to project source dirs only.
+  // This prevents .claude/worktrees/ from polluting the module index
+  // with duplicate mock files and causing Jest to exit silently.
+  roots: ["<rootDir>/src", "<rootDir>/__tests__"],
   setupFiles: ["<rootDir>/jest.env.setup.js"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.component.js"],
   testMatch: ["<rootDir>/__tests__/**/*.test.{ts,tsx,js,jsx}"],
   testPathIgnorePatterns: [
     "<rootDir>/.next/",
+    "<rootDir>/.claude/",
     "<rootDir>/node_modules/",
     "<rootDir>/__tests__/api/",
+    // These files carry @jest-environment node — run them under jest.config.api.js
+    // where the node environment loads cleanly. Loading them under jsdom causes
+    // LegacyFakeTimers to be empty due to a Node 24 circular-dep race.
+    "<rootDir>/__tests__/app/api/",
+    "<rootDir>/__tests__/utils/",
     "<rootDir>/__tests__/utils/businessInfo",
     "<rootDir>/__tests__/utils/middleware",
-    // node-only tests with a MongoMemoryServer dependency — they live in
-    // __tests__/utils/ but only the api config has the mongo setup hook.
     "<rootDir>/__tests__/utils/getDashboardData",
-    // Server-only test: pokes `process.env.NODE_ENV` + re-requires
-    // iron-session / `src/lib/env.ts` to assert production cookie flags.
-    // Belongs only in the api (node) config — running it under jsdom
-    // duplicates the result in the test explorer.
     "<rootDir>/__tests__/utils/auth",
   ],
   moduleNameMapper: {
@@ -69,6 +74,16 @@ module.exports = async () => {
   config.transformIgnorePatterns = [
     "/node_modules/(?!(bson|mongodb|geist|next-auth|@auth|@panva|jose|oauth4webapi|preact-render-to-string|preact)/)",
     "^.+\\.module\\.(css|sass|scss)$",
+  ];
+  // Exclude .claude worktrees from jest-haste-map module scanning so it
+  // doesn't see duplicate mock files and crash before running tests.
+  config.modulePathIgnorePatterns = [
+    ...(config.modulePathIgnorePatterns ?? []),
+    "<rootDir>/.claude/",
+  ];
+  config.watchPathIgnorePatterns = [
+    ...(config.watchPathIgnorePatterns ?? []),
+    "<rootDir>/.claude/",
   ];
   return config;
 };

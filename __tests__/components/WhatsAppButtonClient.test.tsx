@@ -115,12 +115,10 @@ describe("WhatsAppButtonClient", () => {
     // jsdom default location is about:blank — push a real URL via JSDOM's
     // location patch.
     const originalLocation = window.location;
-    Object.defineProperty(window, "location", {
-      writable: true,
-      value: new URL(
-        "https://example.com/BrowseFleet/abc-123?utm_source=mailchimp&campaign=spring#section"
-      ),
-    });
+    delete (window as any).location;
+    (window as unknown as { location: Location }).location = new URL(
+      "https://example.com/BrowseFleet/abc-123?utm_source=mailchimp&campaign=spring#section"
+    ) as unknown as Location;
 
     render(
       <WhatsAppButtonClient phone="0113 468 9292" businessName="MMC" />
@@ -137,9 +135,7 @@ describe("WhatsAppButtonClient", () => {
     expect(text).not.toContain("#section");
 
     // Restore
-    Object.defineProperty(window, "location", {
-      writable: true,
-      value: originalLocation,
-    });
+    delete (window as any).location;
+    (window as unknown as { location: Location }).location = originalLocation;
   });
 });

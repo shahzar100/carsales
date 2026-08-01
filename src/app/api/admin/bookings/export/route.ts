@@ -5,15 +5,11 @@ import {
   getServiceAppointmentsCollection,
   getCarViewingBookingsCollection,
 } from "@/lib/models";
-import {
-  hasMinimumRole,
-  isAuthenticated,
-} from "@/lib/utils/auth";
+import { hasMinimumRole } from "@/lib/utils/auth";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
 import {
   serverError,
-  unauthorized,
   forbidden,
   tooManyRequests,
 } from "@/lib/utils/apiResponse";
@@ -80,7 +76,6 @@ function toIso(value: unknown): string {
 
 export async function GET(request: NextRequest) {
   try {
-    if (!(await isAuthenticated())) return unauthorized();
     if (!(await hasMinimumRole("manager"))) {
       return forbidden("Manager role required");
     }

@@ -170,6 +170,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             <ul
               ref={listRef}
               role="listbox"
+              tabIndex={-1}
               aria-activedescendant={
                 highlightedIndex >= 0 ? `option-${highlightedIndex}` : undefined
               }
@@ -217,7 +218,11 @@ const Dropdown: React.FC<DropdownProps> = ({
                         <m.span
                           initial={{ scale: 0, rotate: -90 }}
                           animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: "spring", stiffness: 480, damping: 18 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 480,
+                            damping: 18,
+                          }}
                         >
                           <Check className="h-4 w-4 text-red-600" />
                         </m.span>

@@ -132,7 +132,12 @@ const AdminForm = () => {
               <m.span
                 initial={{ scale: 0.6, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 420, damping: 18, delay: 0.1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 420,
+                  damping: 18,
+                  delay: 0.1,
+                }}
                 className="absolute top-3 left-3 inline-flex"
               >
                 <ShieldCheck className="h-5 w-5 text-gray-400" />
@@ -145,10 +150,9 @@ const AdminForm = () => {
                 maxLength={6}
                 autoComplete="one-time-code"
                 value={totpCode}
-                onChange={(e) =>
-                  setTotpCode(e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ""))}
                 required
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- focus management in modal: moves focus to the first actionable input per WCAG 2.4.3
                 autoFocus
                 className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 tracking-widest shadow-sm transition-all hover:border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                 placeholder="123 456"
@@ -174,17 +178,8 @@ const AdminForm = () => {
         )}
       </AnimatePresence>
 
-      <Button
-        type="submit"
-        loading={loading}
-        size="lg"
-        customWidth="w-full"
-      >
-        {loading
-          ? "Signing in..."
-          : requires2fa
-            ? "Verify"
-            : "Sign In"}
+      <Button type="submit" loading={loading} size="lg" customWidth="w-full">
+        {loading ? "Signing in..." : requires2fa ? "Verify" : "Sign In"}
       </Button>
     </form>
   );

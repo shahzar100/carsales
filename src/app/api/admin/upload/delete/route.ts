@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ipAddress } from "@vercel/functions";
-import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
+import { hasMinimumRole } from "@/lib/utils/auth";
 import { deleteS3Object } from "@/lib/utils/s3";
 import { createRateLimiter } from "@/lib/utils/rateLimit";
 import { logError } from "@/lib/utils/observability";
@@ -17,11 +17,6 @@ const deleteLimiter = createRateLimiter("admin-upload-delete", {
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     if (!(await hasMinimumRole("manager"))) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },

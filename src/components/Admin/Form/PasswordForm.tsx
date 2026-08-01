@@ -109,7 +109,7 @@ const PasswordForm = () => {
           return true;
         },
         content: (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div role="radiogroup" aria-label="Password action" className="grid gap-4 sm:grid-cols-2">
             <SelectionCard
               selected={data.action === "reset"}
               onSelect={() => update("action", "reset")}
@@ -255,8 +255,8 @@ const PasswordForm = () => {
                   <span className="font-medium">Note:</span> A secure
                   password-reset link will be emailed to{" "}
                   <span className="font-medium">{foundUser?.email}</span>. Their
-                  current password stays active until they use the link to set
-                  a new one.
+                  current password stays active until they use the link to set a
+                  new one.
                 </InfoBanner>
               </>
             )}

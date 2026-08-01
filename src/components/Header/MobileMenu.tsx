@@ -59,7 +59,7 @@ export default function MobileMenu({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: "100%" }}
           transition={{ type: "spring", stiffness: 360, damping: 36 }}
-          className="fixed inset-0 z-80 flex flex-col bg-[#0a0a0a] text-white md:hidden"
+          className="fixed inset-0 z-80 flex h-dvh min-h-dvh flex-col overflow-hidden bg-[#0a0a0a] text-white md:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
@@ -97,7 +97,7 @@ export default function MobileMenu({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
             <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
               {/* Inline search */}
               <form role="search" onSubmit={onSearchSubmit}>
@@ -220,27 +220,36 @@ export default function MobileMenu({
                     </button>
                   </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2 px-1">
-                    <Link
-                      href="/login"
-                      onClick={() => onNav("/login", "Sign in")}
-                      className={
-                        "inline-flex h-12 items-center justify-center rounded-lg bg-red-600 text-[14px] font-semibold text-white transition-colors hover:bg-red-700 " +
-                        FOCUS_RING
-                      }
+                  <div className="space-y-2 px-1">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        href="/login"
+                        onClick={() => onNav("/login", "Sign in")}
+                        className={
+                          "inline-flex h-12 items-center justify-center rounded-lg bg-red-600 text-[14px] font-semibold text-white transition-colors hover:bg-red-700 " +
+                          FOCUS_RING
+                        }
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/register"
+                        onClick={() => onNav("/register", "Create account")}
+                        className={
+                          "inline-flex h-12 items-center justify-center rounded-lg border border-white/8 bg-white/5 text-[14px] font-semibold text-white transition-colors hover:bg-white/10 " +
+                          FOCUS_RING
+                        }
+                      >
+                        Create account
+                      </Link>
+                    </div>
+                    <MobileLink
+                      href="/contact"
+                      label="Contact"
+                      onNav={onNav}
                     >
-                      Log in
-                    </Link>
-                    <Link
-                      href="/register"
-                      onClick={() => onNav("/register", "Create account")}
-                      className={
-                        "inline-flex h-12 items-center justify-center rounded-lg border border-white/8 bg-white/5 text-[14px] font-semibold text-white transition-colors hover:bg-white/10 " +
-                        FOCUS_RING
-                      }
-                    >
-                      Create account
-                    </Link>
+                      Need help signing in?
+                    </MobileLink>
                   </div>
                 )}
               </div>

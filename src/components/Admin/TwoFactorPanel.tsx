@@ -151,7 +151,13 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
                 x: { duration: 0.36, ease: "easeOut" },
               },
             }}
-            exit={{ opacity: 0, y: -4, height: 0, marginTop: 0, transition: { duration: 0.15 } }}
+            exit={{
+              opacity: 0,
+              y: -4,
+              height: 0,
+              marginTop: 0,
+              transition: { duration: 0.15 },
+            }}
             style={{ overflow: "hidden" }}
             className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
           >
@@ -163,154 +169,159 @@ export default function TwoFactorPanel({ initialEnabled }: Props) {
 
       {/* Enrolment flow */}
       <AnimatePresence mode="wait" initial={false}>
-      {!enabled && step === "idle" && (
-        <m.div
-          key="enable-btn"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.22 }}
-          className="mt-6"
-        >
-          <Button
-            type="button"
-            onClick={startEnrol}
-            loading={loading}
+        {!enabled && step === "idle" && (
+          <m.div
+            key="enable-btn"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22 }}
+            className="mt-6"
           >
-            Enable 2FA
-          </Button>
-        </m.div>
-      )}
-
-      {step === "verifying" && (
-        <m.form
-          key="verify-form"
-          onSubmit={verifyCode}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25 }}
-          className="mt-6 space-y-4"
-        >
-          {qrSrc && (
-            <m.div
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: "spring", stiffness: 360, damping: 24, delay: 0.1 }}
-              className="flex flex-col items-center gap-2"
-            >
-              <Image
-                src={qrSrc}
-                alt="2FA QR code"
-                width={220}
-                height={220}
-                unoptimized
-              />
-              <p className="text-xs text-gray-500">
-                Scan with Google Authenticator, 1Password, Authy, …
-              </p>
-            </m.div>
-          )}
-          <details className="text-sm text-gray-600">
-            <summary className="cursor-pointer">Can&apos;t scan? Show secret</summary>
-            <code className="mt-2 block break-all rounded bg-gray-100 p-2 font-mono text-xs">
-              {secret}
-            </code>
-          </details>
-          <label
-            htmlFor="totpCode"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Enter the 6-digit code from your app
-          </label>
-          <input
-            id="totpCode"
-            type="text"
-            inputMode="numeric"
-            pattern="\d{6}"
-            maxLength={6}
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-            required
-            autoFocus
-            className="w-full rounded-lg border border-gray-200 px-4 py-3 tracking-widest shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-            placeholder="123 456"
-          />
-          <div className="flex gap-2">
-            <Button type="submit" loading={loading}>
-              Verify and enable
+            <Button type="button" onClick={startEnrol} loading={loading}>
+              Enable 2FA
             </Button>
+          </m.div>
+        )}
+
+        {step === "verifying" && (
+          <m.form
+            key="verify-form"
+            onSubmit={verifyCode}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="mt-6 space-y-4"
+          >
+            {qrSrc && (
+              <m.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 360,
+                  damping: 24,
+                  delay: 0.1,
+                }}
+                className="flex flex-col items-center gap-2"
+              >
+                <Image
+                  src={qrSrc}
+                  alt="2FA QR code"
+                  width={220}
+                  height={220}
+                  unoptimized
+                />
+                <p className="text-xs text-gray-500">
+                  Scan with Google Authenticator, 1Password, Authy, …
+                </p>
+              </m.div>
+            )}
+            <details className="text-sm text-gray-600">
+              <summary className="cursor-pointer">
+                Can&apos;t scan? Show secret
+              </summary>
+              <code className="mt-2 block rounded bg-gray-100 p-2 font-mono text-xs break-all">
+                {secret}
+              </code>
+            </details>
+            <label
+              htmlFor="totpCode"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Enter the 6-digit code from your app
+            </label>
+            <input
+              id="totpCode"
+              type="text"
+              inputMode="numeric"
+              pattern="\d{6}"
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              required
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- modal focus management: WCAG 2.4.3
+              autoFocus
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 tracking-widest shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+              placeholder="123 456"
+            />
+            <div className="flex gap-2">
+              <Button type="submit" loading={loading}>
+                Verify and enable
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setStep("idle")}
+                variant="ghost"
+              >
+                Cancel
+              </Button>
+            </div>
+          </m.form>
+        )}
+
+        {enabled && step === "idle" && (
+          <m.div
+            key="disable-btn"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22 }}
+            className="mt-6"
+          >
             <Button
               type="button"
-              onClick={() => setStep("idle")}
+              onClick={() => setStep("disabling")}
               variant="ghost"
+              className="text-red-600"
             >
-              Cancel
-            </Button>
-          </div>
-        </m.form>
-      )}
-
-      {enabled && step === "idle" && (
-        <m.div
-          key="disable-btn"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.22 }}
-          className="mt-6"
-        >
-          <Button
-            type="button"
-            onClick={() => setStep("disabling")}
-            variant="ghost"
-            className="text-red-600"
-          >
-            Disable 2FA
-          </Button>
-        </m.div>
-      )}
-
-      {step === "disabling" && (
-        <m.form
-          key="disable-form"
-          onSubmit={disable}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25 }}
-          className="mt-6 space-y-4"
-        >
-          <label
-            htmlFor="disable2faPassword"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Confirm with your current password
-          </label>
-          <input
-            id="disable2faPassword"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoFocus
-            className="w-full rounded-lg border border-gray-200 px-4 py-3 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-            placeholder="Current password"
-          />
-          <div className="flex gap-2">
-            <Button type="submit" loading={loading}>
               Disable 2FA
             </Button>
-            <Button
-              type="button"
-              onClick={() => setStep("idle")}
-              variant="ghost"
+          </m.div>
+        )}
+
+        {step === "disabling" && (
+          <m.form
+            key="disable-form"
+            onSubmit={disable}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="mt-6 space-y-4"
+          >
+            <label
+              htmlFor="disable2faPassword"
+              className="block text-sm font-medium text-gray-700"
             >
-              Cancel
-            </Button>
-          </div>
-        </m.form>
-      )}
+              Confirm with your current password
+            </label>
+            <input
+              id="disable2faPassword"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- modal focus management: WCAG 2.4.3
+              autoFocus
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+              placeholder="Current password"
+            />
+            <div className="flex gap-2">
+              <Button type="submit" loading={loading}>
+                Disable 2FA
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setStep("idle")}
+                variant="ghost"
+              >
+                Cancel
+              </Button>
+            </div>
+          </m.form>
+        )}
       </AnimatePresence>
     </section>
   );

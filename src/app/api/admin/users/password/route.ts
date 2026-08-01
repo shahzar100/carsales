@@ -4,7 +4,6 @@ import crypto from "crypto";
 import {
   getSession,
   hasMinimumRole,
-  isAuthenticated,
 } from "@/lib/utils/auth";
 import { getAdminUsersCollection } from "@/lib/models";
 import { sendEmail } from "@/emails/send";
@@ -44,15 +43,9 @@ const passwordActionLimiter = createRateLimiter("admin-password-action", {
  */
 export async function POST(request: NextRequest) {
   try {
-    // ── Auth gate ──────────────────────────────────────────
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     // Resetting a password is admin-only. Manager/staff cannot escalate via
     // this route. (CODEBASE_ISSUES A1.)
-    const isAdmin = await hasMinimumRole("admin");
-    if (!isAdmin) {
+    if (!(await hasMinimumRole("admin"))) {
       return NextResponse.json(
         { error: "Forbidden — admin role required" },
         { status: 403 }

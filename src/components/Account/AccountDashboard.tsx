@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -11,17 +11,10 @@ import {
   LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { AnimatePresence, m } from "motion/react";
 import SavedCarsList from "./SavedCarsList";
 import BookingsList, { type ActivityItem } from "./BookingsList";
 import AccountSettings from "./AccountSettings";
 import EmailVerificationBanner from "./EmailVerificationBanner";
-import { useApi } from "@/hooks/useApi";
-
-type BookingsResponse = {
-  upcoming?: ActivityItem[];
-  history?: ActivityItem[];
-};
 
 /**
  * The single customer dashboard. Saved cars, upcoming bookings and
@@ -62,39 +55,62 @@ export default function AccountDashboard({
 }) {
   const router = useRouter();
   const params = useSearchParams();
-  const tabParam = params.get("tab");
+  const initialTab = params.get("tab");
   const [tab, setTab] = useState<TabId>(
-    isTabId(tabParam) ? tabParam : "saved"
+    isTabId(initialTab) ? initialTab : "saved"
   );
 
-  // Follow the ?tab= param after mount. The header's garage links
-  // (/account?tab=upcoming, …) change the URL without remounting the
-  // dashboard, so seeding the tab once in useState left every link stuck on
-  // Saved cars. Re-sync whenever the param changes; in-page tab clicks still
-  // update state instantly below, so this only catches URL-driven changes
-  // (and is a no-op when the value already matches).
+  // Keep the active tab in sync with the URL — handles the case where the
+  // user navigates to /account?tab=settings from the header account menu
+  // while already on the /account page (the component never remounts, only
+  // rerenders with a new searchParams value).
   useEffect(() => {
-    setTab(isTabId(tabParam) ? tabParam : "saved");
-  }, [tabParam]);
+    const paramTab = params.get("tab");
+    if (isTabId(paramTab) && paramTab !== tab) {
+      setTab(paramTab);
+    }
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // (#cleanup) Replaces the hand-rolled useEffect+cancelled-flag fetch
-  // with the shared useApi hook. The init object is memoised so the
-  // hook's dep array stays stable across re-renders.
-  const init = useMemo<RequestInit>(() => ({ cache: "no-store" }), []);
-  const {
-    data: bookingsData,
-    error: bookingsErrorMsg,
-    loading: bookingsLoading,
-  } = useApi<BookingsResponse>("/api/account/bookings", { init });
-  const bookings = {
-    upcoming: bookingsData?.upcoming ?? [],
-    history: bookingsData?.history ?? [],
-  };
-  const bookingsError = bookingsErrorMsg !== null;
+  const [bookings, setBookings] = useState<{
+    upcoming: ActivityItem[];
+    history: ActivityItem[];
+  }>({ upcoming: [], history: [] });
+  const [bookingsLoading, setBookingsLoading] = useState(true);
+  const [bookingsError, setBookingsError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/account/bookings", {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          if (!cancelled) setBookingsError(true);
+          return;
+        }
+        const json = await res.json();
+        if (!cancelled && json?.success) {
+          setBookings({
+            upcoming: json.data.upcoming ?? [],
+            history: json.data.history ?? [],
+          });
+        }
+      } catch {
+        if (!cancelled) setBookingsError(true);
+      } finally {
+        if (!cancelled) setBookingsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const selectTab = useCallback(
     (id: TabId) => {
-      setTab(id); // instant feedback; the effect above keeps URL → tab in sync
+      setTab(id);
+      // Keep the URL in sync without a full navigation.
       router.replace(`/account?tab=${id}`, { scroll: false });
     },
     [router]
@@ -146,37 +162,26 @@ export default function AccountDashboard({
                 ? bookings.history.length
                 : null;
           return (
-            <m.button
+            <button
               key={id}
               role="tab"
               aria-selected={active}
               type="button"
               onClick={() => selectTab(id)}
-              whileTap={{ scale: 0.96 }}
-              className={`relative -mb-px flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+              className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
                 active
-                  ? "text-red-600"
-                  : "text-gray-500 hover:text-gray-800"
+                  ? "border-red-600 text-red-600"
+                  : "border-transparent text-gray-500 hover:text-gray-800"
               }`}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
               {label}
               {count !== null && count > 0 && (
-                <m.span
-                  layout
-                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
-                >
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                   {count}
-                </m.span>
+                </span>
               )}
-              {active && (
-                <m.span
-                  layoutId="account-tab-underline"
-                  className="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"
-                  transition={{ type: "spring", stiffness: 480, damping: 32 }}
-                />
-              )}
-            </m.button>
+            </button>
           );
         })}
       </div>
@@ -190,37 +195,27 @@ export default function AccountDashboard({
           </p>
         )}
 
-        <AnimatePresence mode="wait" initial={false}>
-          <m.div
-            key={tab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            {tab === "saved" && <SavedCarsList />}
+        {tab === "saved" && <SavedCarsList />}
 
-            {tab === "upcoming" && (
-              <BookingsList
-                items={bookings.upcoming}
-                loading={bookingsLoading}
-                emptyTitle="No upcoming bookings"
-                emptyDescription="When you book a service, car viewing or reservation, it'll show up here."
-              />
-            )}
+        {tab === "upcoming" && (
+          <BookingsList
+            items={bookings.upcoming}
+            loading={bookingsLoading}
+            emptyTitle="No upcoming bookings"
+            emptyDescription="When you book a service, car viewing or reservation, it'll show up here."
+          />
+        )}
 
-            {tab === "history" && (
-              <BookingsList
-                items={bookings.history}
-                loading={bookingsLoading}
-                emptyTitle="No past bookings yet"
-                emptyDescription="Completed and cancelled bookings made with your email address will appear here."
-              />
-            )}
+        {tab === "history" && (
+          <BookingsList
+            items={bookings.history}
+            loading={bookingsLoading}
+            emptyTitle="No past bookings yet"
+            emptyDescription="Completed and cancelled bookings made with your email address will appear here."
+          />
+        )}
 
-            {tab === "settings" && <AccountSettings />}
-          </m.div>
-        </AnimatePresence>
+        {tab === "settings" && <AccountSettings />}
       </div>
     </div>
   );

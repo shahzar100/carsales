@@ -143,11 +143,20 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
             <Link href="/BrowseFleet" className="hover:text-red-600">
               Browse Fleet
             </Link>
-            <ChevronRight className="h-3 w-3 text-gray-300" aria-hidden="true" />
+            <ChevronRight
+              className="h-3 w-3 text-gray-300"
+              aria-hidden="true"
+            />
             <span>{car.fuel}</span>
-            <ChevronRight className="h-3 w-3 text-gray-300" aria-hidden="true" />
+            <ChevronRight
+              className="h-3 w-3 text-gray-300"
+              aria-hidden="true"
+            />
             <span>{car.make}</span>
-            <ChevronRight className="h-3 w-3 text-gray-300" aria-hidden="true" />
+            <ChevronRight
+              className="h-3 w-3 text-gray-300"
+              aria-hidden="true"
+            />
             <span className="font-semibold text-gray-900">{car.model}</span>
           </nav>
           <Link
@@ -206,6 +215,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
 
               {/* Gallery */}
               <div className="w-full">
+                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- gallery region is keyboard-navigable with tabIndex and explicit onKeyDown */}
                 <div
                   role="region"
                   aria-label={`${carTitle} image gallery`}
@@ -222,7 +232,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                       setActiveImageIndex((prev) => (prev + 1) % totalImages);
                     }
                   }}
-                  className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-950 sm:aspect-[16/10] sm:rounded-2xl focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-950 focus:ring-2 focus:ring-red-500 focus:outline-none sm:aspect-[16/10] sm:rounded-2xl"
                 >
                   <AnimatePresence initial={false} mode="wait">
                     <m.div
@@ -308,7 +318,11 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         }
                         whileHover={{ scale: 1.1, x: -2 }}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 420,
+                          damping: 18,
+                        }}
                         className="absolute top-1/2 left-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronLeft className="h-[22px] w-[22px]" />
@@ -317,11 +331,17 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         type="button"
                         aria-label="Next image"
                         onClick={() =>
-                          setActiveImageIndex((prev) => (prev + 1) % totalImages)
+                          setActiveImageIndex(
+                            (prev) => (prev + 1) % totalImages
+                          )
                         }
                         whileHover={{ scale: 1.1, x: 2 }}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 420,
+                          damping: 18,
+                        }}
                         className="absolute top-1/2 right-3 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/75 sm:flex"
                       >
                         <ChevronRight className="h-[22px] w-[22px]" />
@@ -354,7 +374,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                 {/* Thumbnail strip */}
                 {totalImages > 1 && (
                   <div
-                    className="mt-3 flex gap-2 overflow-x-auto pb-1 px-4 sm:px-0"
+                    className="mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:px-0"
                     style={{ scrollbarWidth: "none" }}
                   >
                     {allImages.map((img, i) => (
@@ -368,11 +388,15 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         }
                         whileHover={{ scale: 1.06, y: -2 }}
                         whileTap={{ scale: 0.94 }}
-                        transition={{ type: "spring", stiffness: 460, damping: 22 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 460,
+                          damping: 22,
+                        }}
                         className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg sm:h-[84px] sm:w-[84px] ${
                           i === activeImageIndex
                             ? "opacity-100"
-                            : "ring-1 ring-gray-200 opacity-80 hover:opacity-100"
+                            : "opacity-80 ring-1 ring-gray-200 hover:opacity-100"
                         }`}
                       >
                         <Image
@@ -385,7 +409,11 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         {i === activeImageIndex && (
                           <m.span
                             layoutId="gallery-thumb-ring"
-                            transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 480,
+                              damping: 28,
+                            }}
                             className="pointer-events-none absolute inset-0 rounded-lg ring-2 ring-red-600"
                           />
                         )}
@@ -512,7 +540,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                 {/* Price block */}
                 <div className="flex flex-col gap-2.5">
                   <div className="flex flex-wrap items-baseline gap-2.5">
-                    <span className="text-[40px] font-extrabold leading-none tracking-tight text-gray-900 tabular-nums sm:text-5xl">
+                    <span className="text-[40px] leading-none font-extrabold tracking-tight text-gray-900 tabular-nums sm:text-5xl">
                       {formatPrice(car.price)}
                     </span>
                     <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-emerald-700">
@@ -592,7 +620,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                       <span className="mt-0.5 text-sm font-bold text-gray-900">
                         Call dealer
                       </span>
-                      <span className="text-[11px] font-medium leading-snug text-gray-500">
+                      <span className="text-[11px] leading-snug font-medium text-gray-500">
                         {phone}
                         {openStatus.isOpen && openStatus.closesAt
                           ? ` · open until ${openStatus.closesAt}`
@@ -612,7 +640,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         <span className="mt-0.5 text-sm font-bold text-gray-900">
                           Get directions
                         </span>
-                        <span className="text-[11px] font-medium leading-snug text-gray-500">
+                        <span className="text-[11px] leading-snug font-medium text-gray-500">
                           {dealerCity || "Visit our showroom"}
                         </span>
                       </a>
@@ -627,7 +655,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                         <span className="mt-0.5 text-sm font-bold text-gray-900">
                           Send enquiry
                         </span>
-                        <span className="text-[11px] font-medium leading-snug text-gray-500">
+                        <span className="text-[11px] leading-snug font-medium text-gray-500">
                           Reply usually within an hour
                         </span>
                       </a>
@@ -647,7 +675,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-red-50 text-red-600">
                         <t.icon className="h-3.5 w-3.5" />
                       </span>
-                      <span className="text-[11px] font-semibold leading-tight text-gray-700">
+                      <span className="text-[11px] leading-tight font-semibold text-gray-700">
                         {t.label}
                       </span>
                     </div>
@@ -694,8 +722,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                     <div className="text-xs">
                       {dealerAddress || "12 Bridge St"}
                       <br />
-                      {dealerCity || "Morley"}{" "}
-                      {dealerZip || "LS27 9AB"}
+                      {dealerCity || "Morley"} {dealerZip || "LS27 9AB"}
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
@@ -799,7 +826,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
                       )}
                     </div>
                     <div className="flex flex-col gap-1.5 p-3">
-                      <div className="text-sm font-bold leading-tight text-gray-900">
+                      <div className="text-sm leading-tight font-bold text-gray-900">
                         {s.make} {s.model}
                       </div>
                       <div className="flex gap-1.5 text-[11px] text-gray-500">
@@ -873,7 +900,7 @@ const CarDetailView: React.FC<CarDetailViewProps> = ({ car, similar = [] }) => {
               <div className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
                 {car.make} {car.model}
               </div>
-              <div className="text-xl font-extrabold leading-none tracking-tight text-gray-900 tabular-nums">
+              <div className="text-xl leading-none font-extrabold tracking-tight text-gray-900 tabular-nums">
                 {formatPrice(car.price)}
               </div>
               <div className="mt-0.5 text-[10px] font-bold tracking-wide text-emerald-600 uppercase">

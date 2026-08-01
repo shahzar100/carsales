@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ipAddress } from "@vercel/functions";
-import { isAuthenticated, hasMinimumRole } from "@/lib/utils/auth";
+import { hasMinimumRole } from "@/lib/utils/auth";
 import {
   generatePresignedUploadUrl,
   getPublicUrl,
@@ -35,11 +35,6 @@ function sanitizeFileName(fileName: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     if (!(await hasMinimumRole("manager"))) {
       return NextResponse.json(
         { error: "Forbidden — manager role required" },

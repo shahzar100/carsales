@@ -92,8 +92,8 @@ const UserForm = () => {
             </div>
             <InfoBanner>
               <strong>Note:</strong> When you submit, the new user is emailed a
-              secure link to set their own password — no password is shown
-              here or stored in plain text.
+              secure link to set their own password — no password is shown here
+              or stored in plain text.
             </InfoBanner>
           </div>
         ),
@@ -109,7 +109,7 @@ const UserForm = () => {
           return true;
         },
         content: (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div role="radiogroup" aria-label="Privilege level" className="grid gap-4 sm:grid-cols-3">
             <SelectionCard
               selected={data.role === "staff"}
               onSelect={() => update("role", "staff")}

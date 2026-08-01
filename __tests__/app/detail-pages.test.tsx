@@ -53,6 +53,22 @@ jest.mock("@/lib/models", () => ({
     findOne: (q: unknown) => mockFindOne(q),
     find: (q: unknown) => mockFind(q),
   })),
+  // businessInfo collections needed by generateMetadata via getBusinessInfo
+  getBusinessInfoCollection: jest.fn(async () => ({
+    findOne: jest.fn().mockResolvedValue({ businessName: "MMC Leeds" }),
+  })),
+  getDetailingPackagesCollection: jest.fn(async () => ({
+    find: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+  })),
+  getTintOptionsCollection: jest.fn(async () => ({
+    find: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+  })),
+  getServiceOverviewsCollection: jest.fn(async () => ({
+    find: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+  })),
+  getRecoveryInfoCollection: jest.fn(async () => ({
+    findOne: jest.fn().mockResolvedValue(null),
+  })),
   serializeDocument: (d: unknown) => ({ ...(d as object) }),
 }));
 jest.mock("@/lib/utils/observability", () => ({

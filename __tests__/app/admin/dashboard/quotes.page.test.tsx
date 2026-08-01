@@ -46,6 +46,7 @@ import QuotesPage from "@/app/(admin)/admin/dashboard/quotes/page";
 function chain(rows: unknown[]) {
   const c: any = {};
   c.sort = jest.fn().mockReturnValue(c);
+  c.skip = jest.fn().mockReturnValue(c);
   c.limit = jest.fn().mockReturnValue(c);
   c.toArray = jest.fn().mockResolvedValue(rows);
   return c;

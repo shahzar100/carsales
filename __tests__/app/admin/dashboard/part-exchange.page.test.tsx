@@ -43,6 +43,7 @@ import PartExchangePage from "@/app/(admin)/admin/dashboard/part-exchange/page";
 function chain(rows: unknown[]) {
   const c: any = {};
   c.sort = jest.fn().mockReturnValue(c);
+  c.skip = jest.fn().mockReturnValue(c);
   c.limit = jest.fn().mockReturnValue(c);
   c.toArray = jest.fn().mockResolvedValue(rows);
   return c;

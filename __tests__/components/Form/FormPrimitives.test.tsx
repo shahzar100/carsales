@@ -144,7 +144,7 @@ describe("SelectionCard", () => {
     render(
       <SelectionCard selected={false} onSelect={onSelect} title="Option" />
     );
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("radio"));
     expect(onSelect).toHaveBeenCalled();
   });
 

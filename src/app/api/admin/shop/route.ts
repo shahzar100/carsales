@@ -32,6 +32,7 @@ import { logError } from "@/lib/utils/observability";
 const MARKETING_PATHS_WITH_BUSINESS_INFO = [
   "/", // HeroSection on the home page
   "/AboutUs",
+  "/AccidentClaims",
   "/Book",
   "/Booking/confirmation",
   "/FAQ",
@@ -124,7 +125,9 @@ export async function PUT(request: NextRequest) {
     try {
       body = await request.json();
     } catch {
-      return badRequest("Invalid JSON in request body — could not parse the data");
+      return badRequest(
+        "Invalid JSON in request body — could not parse the data"
+      );
     }
 
     if (!body || typeof body !== "object") {

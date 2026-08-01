@@ -328,7 +328,10 @@ describe("ToastContext", () => {
   });
 
   describe("📋 Functional Standards - Auto-dismissal", () => {
-    it("should auto-remove toast after duration", () => {
+    it("should store duration on toast (component-owned dismissal)", () => {
+      // Auto-dismissal is owned by the Toast component's animation-frame
+      // countdown, not by a setTimeout in the context. Verify the duration
+      // is stored correctly and that removeToast() removes the toast on demand.
       const { result } = renderHook(() => useToast(), {
         wrapper: ToastProvider,
       });
@@ -342,9 +345,10 @@ describe("ToastContext", () => {
       });
 
       expect(result.current.toasts.length).toBe(1);
+      expect(result.current.toasts[0].duration).toBe(3000);
 
       act(() => {
-        jest.advanceTimersByTime(3000);
+        result.current.removeToast(result.current.toasts[0].id);
       });
 
       expect(result.current.toasts.length).toBe(0);
@@ -395,7 +399,7 @@ describe("ToastContext", () => {
       expect(result.current.toasts.length).toBe(1);
     });
 
-    it("should handle multiple toasts with different durations", () => {
+    it("should handle multiple toasts with different durations (durations stored)", () => {
       const { result } = renderHook(() => useToast(), {
         wrapper: ToastProvider,
       });
@@ -407,21 +411,10 @@ describe("ToastContext", () => {
       });
 
       expect(result.current.toasts.length).toBe(3);
-
-      act(() => {
-        jest.advanceTimersByTime(1000);
-      });
-      expect(result.current.toasts.length).toBe(2);
-
-      act(() => {
-        jest.advanceTimersByTime(2000);
-      });
-      expect(result.current.toasts.length).toBe(1);
-
-      act(() => {
-        jest.advanceTimersByTime(2000);
-      });
-      expect(result.current.toasts.length).toBe(0);
+      const durations = result.current.toasts.map((t) => t.duration);
+      expect(durations).toContain(1000);
+      expect(durations).toContain(3000);
+      expect(durations).toContain(5000);
     });
   });
 
