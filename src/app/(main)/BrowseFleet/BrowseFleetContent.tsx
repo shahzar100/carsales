@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CarInterface } from "@/lib/interfaces";
 import CarListCard from "@/components/Car/CarListCard";
@@ -31,17 +31,65 @@ interface BrowseFleetContentProps {
   totalAvailable: number;
 }
 
+/** Local, unapplied copy of the filter controls — only pushed to the URL
+ * when the user clicks Search. Keeps typing/selecting responsive without
+ * a server round-trip on every keystroke. */
+interface DraftFilters {
+  search: string;
+  make: string; // "all" or a facet value
+  priceMin: number | null;
+  priceMax: number | null;
+  yearMin: number | null;
+  yearMax: number | null;
+  mileageMin: number | null;
+  mileageMax: number | null;
+  doors: string; // "all" or a facet value (string form)
+  colour: string; // "all" or a facet value
+  features: string[];
+}
+
+const EMPTY_DRAFT: DraftFilters = {
+  search: "",
+  make: "all",
+  priceMin: null,
+  priceMax: null,
+  yearMin: null,
+  yearMax: null,
+  mileageMin: null,
+  mileageMax: null,
+  doors: "all",
+  colour: "all",
+  features: [],
+};
+
+function filtersToDraft(filters: ParsedCarFilters): DraftFilters {
+  return {
+    search: filters.search ?? "",
+    make: filters.make ?? "all",
+    priceMin: filters.priceMin ?? null,
+    priceMax: filters.priceMax ?? null,
+    yearMin: filters.yearMin ?? null,
+    yearMax: filters.yearMax ?? null,
+    mileageMin: filters.mileageMin ?? null,
+    mileageMax: filters.mileageMax ?? null,
+    doors: filters.doors !== undefined ? String(filters.doors) : "all",
+    colour: filters.colour ?? "all",
+    features: filters.features ?? [],
+  };
+}
+
 /**
  * (#19) Customer fleet listing — URL-driven filters.
  *
- * Filter state lives in the URL. Changing a filter pushes a new URL
- * with `router.push`, which re-runs the server component and re-fetches
- * the matching cars. `useTransition` keeps the UI responsive during
- * the round-trip.
+ * Filter *controls* are staged in local `draft` state. Nothing hits the
+ * URL until "Search" is clicked, which pushes the whole draft at once.
+ * Sort and pagination are the exception — those still apply immediately,
+ * since there's no reason to make someone click Search just to re-sort.
  *
- * No client-side `filterCars()` anymore — the server already did the
- * work, and we just render. (Old FilterContext stays in place for any
- * other consumers but isn't used here.)
+ * `useTransition` keeps the UI responsive during the round-trip, and the
+ * draft is re-synced from `filters` whenever the committed filters change
+ * (Search, Clear, pagination, browser back/forward), so the controls
+ * never drift from what's actually been applied.
  */
 const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
   cars,
@@ -54,6 +102,18 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
+  const [draft, setDraft] = useState<DraftFilters>(() =>
+    filtersToDraft(filters)
+  );
+
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
+  // Whenever the committed filters change for any reason (Search, Clear,
+  // pagination, back/forward nav), bring the draft controls back in sync.
+  useEffect(() => {
+    setDraft(filtersToDraft(filters));
+  }, [filters]);
 
   // Mutate one or more keys in the URL search params, leaving everything
   // else (including unrelated query string keys) intact. `null` removes
@@ -83,14 +143,40 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
     [router, pathname, searchParams]
   );
 
-  const setFeatures = useCallback(
-    (features: string[]) => {
-      setParams({ features: features.length ? features.join(",") : null });
-    },
-    [setParams]
-  );
+  // Pushes the current draft to the URL in one go. This is the only place
+  // draft filter values reach the server.
+  const applyFilters = useCallback(() => {
+    setParams({
+      search: draft.search.trim() || null,
+      make: draft.make === "all" ? null : draft.make,
+      priceMin: draft.priceMin,
+      priceMax: draft.priceMax,
+      yearMin: draft.yearMin,
+      yearMax: draft.yearMax,
+      mileageMin: draft.mileageMin,
+      mileageMax: draft.mileageMax,
+      doors: draft.doors === "all" ? null : draft.doors,
+      colour: draft.colour === "all" ? null : draft.colour,
+      features: draft.features.length ? draft.features.join(",") : null,
+    });
+  }, [draft, setParams]);
 
+  const toggleFeature = useCallback((feature: string) => {
+    setDraft((d) => ({
+      ...d,
+      features: d.features.includes(feature)
+        ? d.features.filter((f) => f !== feature)
+        : [...d.features, feature],
+    }));
+  }, []);
+
+  const clearFeatures = useCallback(() => {
+    setDraft((d) => ({ ...d, features: [] }));
+  }, []);
+
+  // Clears both the staged draft and the applied URL filters, instantly.
   const resetFilters = useCallback(() => {
+    setDraft(EMPTY_DRAFT);
     startTransition(() => {
       router.push(pathname, { scroll: false });
     });
@@ -100,15 +186,17 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
   const startIndex = (filters.page - 1) * filters.perPage;
   const endIndex = startIndex + cars.length;
 
+  // Reflects what's actually been applied (the committed `filters` prop),
+  // not the unsaved draft — so this stays accurate to what's on screen.
   const activeCount = [
-    filters.search,
-    filters.status,
+    filters.search !== undefined && filters.search !== "",
+    filters.status === "available",
     filters.priceMin !== undefined || filters.priceMax !== undefined,
-    filters.make,
+    filters.make !== undefined,
     filters.yearMin !== undefined || filters.yearMax !== undefined,
     filters.mileageMin !== undefined || filters.mileageMax !== undefined,
     filters.doors !== undefined,
-    filters.colour,
+    filters.colour !== undefined,
     filters.features && filters.features.length > 0,
   ].filter(Boolean).length;
 
@@ -116,8 +204,17 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
     <div
       className={`flex flex-col gap-8 ${isPending ? "opacity-70" : ""} transition-opacity`}
     >
+      <button
+        onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+        className="flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md md:hidden"
+      >
+        <SlidersHorizontal size={16} className="text-white" />
+      </button>
       {/* Filters */}
-      <div className="card">
+
+      <div
+        className={`card ${isMobileFiltersOpen ? "block" : "hidden md:block"}`}
+      >
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-red-500 to-red-600 shadow-sm">
@@ -135,13 +232,6 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
               </p>
             </div>
           </div>
-
-          {activeCount > 0 && (
-            <Button onClick={resetFilters} variant="ghost" disabled={false}>
-              <RotateCcw size={14} className="text-red-500" />
-              <span className="text-sm">Clear</span>
-            </Button>
-          )}
         </div>
 
         {/* Primary filters */}
@@ -155,26 +245,31 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
                 id="fleet-search"
                 type="text"
                 placeholder="Make, model, colour…"
-                defaultValue={filters.search ?? ""}
-                onChange={(e) => setParams({ search: e.target.value })}
+                value={draft.search}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, search: e.target.value }))
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") applyFilters();
+                }}
                 className="input"
               />
             </div>
 
             <FilterSelect
               label="Make"
-              value={filters.make ?? "all"}
-              onChange={(v) => setParams({ make: v === "all" ? null : v })}
+              value={draft.make}
+              onChange={(v) => setDraft((d) => ({ ...d, make: v }))}
               options={facets.makes.map((m) => ({ value: m, label: m }))}
               placeholder="All Makes"
             />
 
             <RangeInput
               label="Price (£)"
-              minValue={filters.priceMin ?? null}
-              maxValue={filters.priceMax ?? null}
-              onMinChange={(v) => setParams({ priceMin: v })}
-              onMaxChange={(v) => setParams({ priceMax: v })}
+              minValue={draft.priceMin}
+              maxValue={draft.priceMax}
+              onMinChange={(v) => setDraft((d) => ({ ...d, priceMin: v }))}
+              onMaxChange={(v) => setDraft((d) => ({ ...d, priceMax: v }))}
             />
           </div>
         </div>
@@ -184,26 +279,24 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <RangeInput
               label="Year"
-              minValue={filters.yearMin ?? null}
-              maxValue={filters.yearMax ?? null}
-              onMinChange={(v) => setParams({ yearMin: v })}
-              onMaxChange={(v) => setParams({ yearMax: v })}
+              minValue={draft.yearMin}
+              maxValue={draft.yearMax}
+              onMinChange={(v) => setDraft((d) => ({ ...d, yearMin: v }))}
+              onMaxChange={(v) => setDraft((d) => ({ ...d, yearMax: v }))}
               minPlaceholder="From"
               maxPlaceholder="To"
             />
             <RangeInput
               label="Mileage"
-              minValue={filters.mileageMin ?? null}
-              maxValue={filters.mileageMax ?? null}
-              onMinChange={(v) => setParams({ mileageMin: v })}
-              onMaxChange={(v) => setParams({ mileageMax: v })}
+              minValue={draft.mileageMin}
+              maxValue={draft.mileageMax}
+              onMinChange={(v) => setDraft((d) => ({ ...d, mileageMin: v }))}
+              onMaxChange={(v) => setDraft((d) => ({ ...d, mileageMax: v }))}
             />
             <FilterSelect
               label="Doors"
-              value={
-                filters.doors !== undefined ? String(filters.doors) : "all"
-              }
-              onChange={(v) => setParams({ doors: v === "all" ? null : v })}
+              value={draft.doors}
+              onChange={(v) => setDraft((d) => ({ ...d, doors: v }))}
               options={facets.doors.map((d) => ({
                 value: String(d),
                 label: `${d} doors`,
@@ -212,8 +305,8 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
             />
             <FilterSelect
               label="Colour"
-              value={filters.colour ?? "all"}
-              onChange={(v) => setParams({ colour: v === "all" ? null : v })}
+              value={draft.colour}
+              onChange={(v) => setDraft((d) => ({ ...d, colour: v }))}
               options={facets.colours.map((c) => ({ value: c, label: c }))}
               placeholder="All Colours"
             />
@@ -221,19 +314,27 @@ const BrowseFleetContent: React.FC<BrowseFleetContentProps> = ({
               <div className="sm:col-span-2 lg:col-span-4">
                 <CarFeatures
                   allFeatures={facets.features}
-                  selectedFeatures={filters.features ?? []}
-                  onToggle={(feature) => {
-                    const current = filters.features ?? [];
-                    const next = current.includes(feature)
-                      ? current.filter((f) => f !== feature)
-                      : [...current, feature];
-                    setFeatures(next);
-                  }}
-                  onClearAll={() => setFeatures([])}
+                  selectedFeatures={draft.features}
+                  onToggle={toggleFeature}
+                  onClearAll={clearFeatures}
                 />
               </div>
             )}
           </div>
+        </div>
+
+        {/* Apply / reset */}
+        <div className="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4">
+          {activeCount > 0 && (
+            <Button onClick={resetFilters} variant="ghost" disabled={false}>
+              <RotateCcw size={14} className="text-red-500" />
+              <span className="text-sm">Clear all</span>
+            </Button>
+          )}
+          <Button onClick={applyFilters} variant="primary" disabled={false}>
+            <Search size={14} />
+            <span className="text-sm">Search</span>
+          </Button>
         </div>
       </div>
 

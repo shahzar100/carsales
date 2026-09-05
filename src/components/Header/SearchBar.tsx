@@ -8,7 +8,7 @@ interface DesktopSearchProps {
   inputRef: React.RefObject<HTMLInputElement | null>;
   value: string;
   onChange: (v: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
 // The persistent md+ search field in the top bar.
@@ -53,7 +53,7 @@ interface MobileSearchSheetProps {
   inputRef: React.RefObject<HTMLInputElement | null>;
   value: string;
   onChange: (v: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   onClose: () => void;
 }
 

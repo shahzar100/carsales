@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
+import type { Filter, Document } from "mongodb";
 import Loading from "./Loading";
 import { CarInterface } from "@/lib/interfaces";
 import { getCarsCollection, serializeDocument } from "@/lib/models";
@@ -26,9 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-// (#27) Revalidate the fleet listing every 60 seconds. Admin mutations
-// also call revalidatePath('/BrowseFleet') so changes are visible without
-// waiting for the timer.
 export const revalidate = 60;
 
 interface FleetFacets {
@@ -38,84 +36,148 @@ interface FleetFacets {
   features: string[];
 }
 
-/**
- * (#19) Fetch the facets the filter UI needs — unique makes, colours,
- * etc. These come from the full dataset, NOT the filtered set, so the
- * dropdowns don't shrink as the user narrows their search.
- *
- * Restricted to `status: "available"` because customers shouldn't see
- * options that only exist in sold/reserved listings.
- */
-async function getFacets(): Promise<FleetFacets> {
-  const cars = await getCarsCollection();
-  const docs = await cars
-    .find(
-      { status: "available" },
-      {
-        projection: {
-          make: 1,
-          colour: 1,
-          doors: 1,
-          features: 1,
-        },
-      }
-    )
-    .toArray();
-
-  const makes = Array.from(new Set(docs.map((c) => c.make))).sort();
-  const colours = Array.from(new Set(docs.map((c) => c.colour))).sort();
-  const doors = Array.from(new Set(docs.map((c) => c.doors))).sort(
-    (a, b) => a - b
-  );
-  const features = Array.from(
-    new Set(docs.flatMap((c) => c.features ?? []))
-  ).sort();
-  return { makes, colours, doors, features };
-}
-
 interface FleetPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 /**
- * (#19) BrowseFleet — DB-side filtering, URL-driven state.
- *
- * Previously this fetched the entire car collection and let the client
- * filter it in JS. That's fine at 50 cars; at 500+ it ships hundreds of
- * KB of unused data on every request. Now the URL is the source of
- * truth: filters are parsed server-side, MongoDB returns only the
- * matching page, and the client just renders.
- *
- * Side benefits:
- *   - Shareable filter URLs (`/BrowseFleet?make=BMW&priceMax=20000`)
- *   - Real pagination instead of `.slice()` on the client
- *   - Indexable filter combos for SEO once we add canonical handling
+ * Only expose complete listings. `$exists` alone would still allow null and
+ * empty-string values, so every required field is checked for a real,
+ * non-blank value. `$type: "number"` covers int/long/double/decimal, so it
+ * doesn't wrongly exclude a car just because a number was inserted as a
+ * different BSON numeric subtype.
  */
+const mqlRequiredFieldsFilter: Filter<CarInterface> = {
+  status: "available",
+  $and: [
+    { make: { $type: "string", $regex: /\S/ } },
+    { model: { $type: "string", $regex: /\S/ } },
+    { fuel: { $type: "string", $regex: /\S/ } },
+    { transmission: { $type: "string", $regex: /\S/ } },
+    { colour: { $type: "string", $regex: /\S/ } },
+    { year: { $type: "int" } },
+    { price: { $type: "int" } },
+    { mileage: { $type: "int" } },
+    { doors: { $type: "int" } },
+  ],
+};
+
+/** Reusable $match stage enforcing the same completeness rules post-$search. */
+const requiredFieldsMatchStage = { $match: mqlRequiredFieldsFilter };
+
+/**
+ * Atlas Search only understands search operators inside `compound.filter`
+ * (text, equals, range, exists, etc.) — NOT aggregation stages like $match.
+ * Use `equals` if `status` is indexed as a string/token field in the Atlas
+ * Search index; fall back to `text` only if it's indexed as analyzed text.
+ */
+function buildSearchStage(searchTerm: string) {
+  return {
+    $search: {
+      index: "default",
+      compound: {
+        must: [{ text: { query: searchTerm, path: { wildcard: "*" } } }],
+        filter: [{ text: { query: "available", path: "status" } }],
+      },
+    },
+  };
+}
+
+/**
+ * Safely normalizes Next.js searchParams values into a single string.
+ */
+function getSingleSearchParam(param: string | string[] | undefined): string {
+  if (Array.isArray(param)) return param[0] || "";
+  return param || "";
+}
+
+/**
+ * Extracts distinct facet values from complete, available listings only.
+ */
+async function getFacets(searchTerm: string): Promise<FleetFacets> {
+  const cars = await getCarsCollection();
+  const sanitizedSearch = searchTerm.trim();
+
+  const pipeline: Document[] = sanitizedSearch
+    ? [buildSearchStage(sanitizedSearch), requiredFieldsMatchStage]
+    : [requiredFieldsMatchStage];
+
+  const docs = await cars.aggregate(pipeline).toArray();
+
+  const makes = Array.from(
+    new Set(docs.map((c) => c.make).filter(Boolean))
+  ).sort() as string[];
+  const colours = Array.from(
+    new Set(docs.map((c) => c.colour).filter(Boolean))
+  ).sort() as string[];
+  const doors = Array.from(
+    new Set(docs.map((c) => c.doors).filter((d) => typeof d === "number"))
+  ).sort((a, b) => a - b) as number[];
+  const features = Array.from(
+    new Set(
+      docs.flatMap((c) =>
+        (Array.isArray(c.features) ? c.features : []).filter(Boolean)
+      )
+    )
+  ).sort() as string[];
+
+  return { makes, colours, doors, features };
+}
+
 export default async function BrowseFleetPage({
   searchParams,
 }: FleetPageProps) {
   const params = await searchParams;
+  const searchTerm = getSingleSearchParam(params.search).trim();
+
   const filters = parseCarFilters(params);
-  const mongoFilter = buildCarMongoFilter(filters);
+  const mongoFilter: Filter<CarInterface> = {
+    $and: [mqlRequiredFieldsFilter, buildCarMongoFilter(filters)],
+  };
   const sort = buildCarSort(filters.sort);
   const skip = (filters.page - 1) * filters.perPage;
 
   const carsColl = await getCarsCollection();
-  const [cars, total, facets, totalAvailable] = await Promise.all([
-    carsColl
+
+  let carsPromise: Promise<Document[]>;
+  let totalPromise: Promise<number>;
+
+  if (searchTerm) {
+    const searchStage = buildSearchStage(searchTerm);
+
+    carsPromise = carsColl
+      .aggregate([
+        searchStage,
+        requiredFieldsMatchStage,
+        { $sort: sort },
+        { $skip: skip },
+        { $limit: filters.perPage },
+      ])
+      .toArray();
+
+    totalPromise = carsColl
+      .aggregate([searchStage, requiredFieldsMatchStage, { $count: "total" }])
+      .toArray()
+      .then((res) => res[0]?.total || 0);
+  } else {
+    carsPromise = carsColl
       .find(mongoFilter)
       .sort(sort)
       .skip(skip)
       .limit(filters.perPage)
-      .toArray(),
-    carsColl.countDocuments(mongoFilter),
-    getFacets(),
-    carsColl.countDocuments({ status: "available" }),
+      .toArray();
+
+    totalPromise = carsColl.countDocuments(mongoFilter);
+  }
+
+  const [cars, total, facets, totalAvailable] = await Promise.all([
+    carsPromise,
+    totalPromise,
+    getFacets(searchTerm),
+    carsColl.countDocuments(mqlRequiredFieldsFilter),
   ]);
 
-  const serialized = cars.map(
-    (c) => serializeDocument(c) as CarInterface
-  );
+  const serialized = cars.map((c) => serializeDocument(c) as CarInterface);
 
   const heroProps = {
     icon: Car,

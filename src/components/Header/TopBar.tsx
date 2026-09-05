@@ -10,7 +10,7 @@ interface TopBarProps {
   search: string;
   searchInputRef: React.RefObject<HTMLInputElement | null>;
   onSearchChange: (v: string) => void;
-  onSearchSubmit: (e: React.FormEvent) => void;
+  onSearchSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   onMobileSearchOpen: () => void;
   onNav: (href: string, label: string) => void;
   rightCluster: React.ReactNode;
@@ -29,7 +29,7 @@ export default function TopBar({
 }: TopBarProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="flex h-16 items-center gap-3 sm:gap-4 md:h-[72px]">
+      <div className="flex h-16 items-center gap-3 sm:gap-4 md:h-18">
         {/* Logo + wordmark */}
         <Link
           href="/"
@@ -74,7 +74,7 @@ export default function TopBar({
             onClick={onMobileSearchOpen}
             aria-label="Search"
             className={
-              "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-white/[0.08] hover:text-white md:hidden " +
+              "inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-white/8 hover:text-white md:hidden " +
               FOCUS_RING
             }
           >

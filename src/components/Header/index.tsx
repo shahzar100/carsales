@@ -142,7 +142,7 @@ export default function Header() {
     [closeAll, pathname, setIsNavigating, setNavigationTarget]
   );
 
-  const submitSearch = (e: React.FormEvent) => {
+  const submitSearch = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmed = search.trim();
     closeAll();
@@ -171,7 +171,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-[60] border-b border-white/[0.06] bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md">
+    <header className="sticky top-0 z-60 border-b border-white/6 bg-[#0a0a0a]/95 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)] backdrop-blur-md">
       <TopBar
         search={search}
         searchInputRef={searchInputRef}

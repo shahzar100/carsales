@@ -2,13 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ArrowRight,
-  LogOut,
-  Search,
-  User,
-  X,
-} from "lucide-react";
+import { ArrowRight, LogOut, Search, User, X } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import {
   ACCOUNT_LINKS,
@@ -31,7 +25,7 @@ interface MobileMenuProps {
   displayName: string;
   search: string;
   onSearchChange: (v: string) => void;
-  onSearchSubmit: (e: React.FormEvent) => void;
+  onSearchSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   onClose: () => void;
   onNav: (href: string, label: string) => void;
   onLogout: () => void;
@@ -201,9 +195,7 @@ export default function MobileMenu({
                           label={item.label}
                           onNav={onNav}
                         >
-                          {Icon && (
-                            <Icon size={18} className="text-red-400" />
-                          )}
+                          {Icon && <Icon size={18} className="text-red-400" />}
                           {item.label}
                         </MobileLink>
                       );
@@ -243,11 +235,7 @@ export default function MobileMenu({
                         Create account
                       </Link>
                     </div>
-                    <MobileLink
-                      href="/contact"
-                      label="Contact"
-                      onNav={onNav}
-                    >
+                    <MobileLink href="/contact" label="Contact" onNav={onNav}>
                       Need help signing in?
                     </MobileLink>
                   </div>
